@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>取经之路 - 西游记专题导览</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    display: flex;
+    height: 100vh;
+    font-family: "STKaiti", "Microsoft YaHei", serif;
+    background: linear-gradient(135deg, #e6fffb, #fff9e6);
+}
+
+/* 左侧栏 */
+.sidebar {
+    width: 300px;
+    background: linear-gradient(180deg, #008b8b 0%, #005f5f 100%);
+    color: #FFD700;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 5px 0 18px rgba(0,0,0,0.25);
+    border-right: 2px solid #FFD700;
+}
+
+.sidebar h2 {
+    text-align: center;
+    font-size: 1.6rem;
+    margin: 0;
+    padding: 40px 0;
+    background: rgba(0,0,0,0.15);
+    letter-spacing: 4px;
+    color: #FFD700;
+}
+
+.nav-item {
+    padding: 22px 30px;
+    cursor: pointer;
+    transition: 0.3s;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    font-size: 1.1rem;
+    color: #ffe89a;
+}
+
+.nav-item:hover {
+    background: rgba(0,139,139,0.18);
+    padding-left: 45px;
+    color: #fff8e1;
+}
+
+.nav-item.active {
+    background: linear-gradient(90deg, #FFD700, #e6c200);
+    color: #004d40;
+    font-weight: bold;
+}
+
+/* 内容区 */
+.main-content {
+    flex: 1;
+    padding: 50px;
+    overflow-y: auto;
+    background-image: url('https://www.transparenttextures.com/patterns/papyrus.png');
+}
+
+.content-box {
+    background: rgba(255, 252, 230, 0.95);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px;
+    border: 1px solid #FFD700;
+    box-shadow: 0 0 25px rgba(0,0,0,0.15);
+    min-height: 80vh;
+}
+
+h1 {
+    color: #C02C3F;
+    border-left: 8px solid #FFD700;
+    padding-left: 15px;
+}
+
+h2 {
+    color: #C02C3F;
+    border-bottom: 1px solid #FFD700;
+    padding-bottom: 5px;
+    margin-top: 30px;
+}
+
+h3 {
+    color: #8b1a1a;
+    margin-top: 24px;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed rgba(192,44,63,0.35);
+    font-size: 1.2rem;
+}
+ p {
+    line-height: 1.8;
+    text-indent: 2em;
+    font-size: 1.2rem;       
+ }
+.back-link {
+    position: fixed;
+    top: 20px;
+    right: 40px;
+    text-decoration: none;
+    color: #C02C3F;
+    font-weight: bold;
+    background: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+th {
+    background: #fff3b0;
+}
+
+.badge-notification-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.badge-notification-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.badge-notification-card {
+    background: linear-gradient(135deg, #fff9e6, #fff);
+    border-radius: 20px;
+    padding: 40px 50px;
+    text-align: center;
+    max-width: 350px;
+    transform: scale(0.8);
+    transition: transform 0.3s;
+}
+
+.badge-notification-overlay.show .badge-notification-card {
+    transform: scale(1);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <h2>取经之路</h2>
+    <div class="nav-item active" onclick="changeTab(this, '柒 · 五指山下')">柒·五指山下</div>
+    <div class="nav-item" onclick="changeTab(this, '捌 · 唐僧收徒')">捌·唐僧收徒</div>
+    <div class="nav-item" onclick="changeTab(this, '玖 · 三打白骨精')">玖·三打白骨精</div>
+    <div class="nav-item" onclick="changeTab(this, '拾 · 真假美猴王')">拾·真假美猴王</div>
+    <div class="nav-item" onclick="changeTab(this, '拾壹 · 火焰山受阻')">拾壹·火焰山受阻</div>
+    <div class="nav-item" onclick="changeTab(this, '拾贰 · 歇后语趣谈')">拾贰·歇后语趣谈</div>
+</div>
+
+<div class="main-content">
+    <a href="xiyou.html" class="back-link">← 返回主页</a>
+
+    <div class="content-box">
+        <h1 id="content-title">柒 · 五指山下</h1>
+        <div id="content-body"></div>
+    </div>
+</div>
+
+<div class="badge-notification-overlay" id="badgeNotification">
+    <div class="badge-notification-card" id="badgeCard">
+        <div style="font-size: 1.5rem; color: #8b4513; margin-bottom: 20px;">🎉 恭喜获得勋章！</div>
+        <div style="font-size: 2.5rem; margin-bottom: 15px;">🎖️</div>
+        <div style="font-size: 1.8rem; font-weight: bold; margin-bottom: 10px;" id="badgeName"></div>
+        <div style="color: #666; margin-bottom: 20px;" id="badgeDesc"></div>
+        <button onclick="closeBadgeNotification()" style="background: #8b4513; color: #fff; border: none; padding: 10px 30px; border-radius: 20px; font-size: 1rem; cursor: pointer;">太棒了！</button>
+    </div>
+</div>
+
+<script>
+const contentData = {
+
+"柒 · 五指山下": `
+
+<h3>一、镇压经过</h3>
+<p>
+孙悟空与如来赌赛翻筋斗云，自以为飞到天尽头，在五根肉红柱下留字、撒尿为证。转身欲回时，如来翻掌一推，将其推出西天门，五指化作金、木、水、火、土五座联山，名唤"五行山"，将孙悟空压在山根之下，只露头颅与一臂。
+</p>
+
+<p>
+孙悟空一度挣扎欲出，山体摇动。如来随即遣阿傩尊者携一张六字真言帖，贴于山顶。帖一落，山根合缝，孙悟空法力被封，彻底困住。
+</p>
+
+<h3>二、监押与生存状态</h3>
+<p>
+如来召土地神与五方揭谛常驻监押，六百年间看守未换。
+</p>
+
+<p>
+饮食为"铁丸充饥、铜汁解渴"。这既是维持生命的苦刑，也暗含保护——孙悟空法力被禁，若无外力抵御五百年一轮的天劫，早已灰飞烟灭。铜汁铁丸滚烫坚硬，却替他扛住了劫数。
+</p>
+
+<p>
+山顶那帖六字真言，本质不是锁链，而是镇定心神的法门。六百年里，孙悟空每一次狂躁怒吼，都被它轻轻按下，直至沉静。
+</p>
+
+<h3>三、六百年间的内在变化</h3>
+<p>
+头一百年：日夜谩骂，骂如来使诈，骂天庭诸神，骂一切能骂之物。无人应答。
+</p>
+
+<p>
+第二个一百年：骂声渐稀，开始数蚂蚁、看云、辨草木枯荣。沉默比愤怒更久。
+</p>
+
+<p>
+第三个一百年及以后：反复回忆一生——从花果山称王、菩提学艺、龙宫地府、大闹天宫，到被压此山。起初想不通哪个环节错了，后来不再追问"谁对谁错"。
+</p>
+
+<p>
+他渐渐意识到两件事：
+</p>
+
+<ul>
+<li>如来若要杀他，一刀足矣。压山六百年、供食供水，是罚，也是保。</li>
+<li>出路只有一条：等那个取经人。</li>
+</ul>
+
+<p>
+观音路过时，他在山下大喊"菩萨，如来骗了我"，声音里已无五百年前的戾气。观音问他可愿保唐僧西行、将功折罪，他几乎没有犹豫便应下。
+</p>
+
+<p>
+这不是妥协，是六百年里唯一想通的出口。
+</p>
+
+<h3>📊 五行山六百年变化表</h3>
+<table style="width:100%; border-collapse: collapse; background:#fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); margin: 20px 0;">
+<thead>
+<tr style="background:#8b1a1a; color:#000;">
+<th style="padding:12px; border:1px solid #5a1212; width:20%; font-size: 1rem;">时间</th>
+<th style="padding:12px; border:1px solid #5a1212; width:35%; font-size: 1rem;">外在状态</th>
+<th style="padding:12px; border:1px solid #5a1212; width:45%; font-size: 1rem;">内在变化</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">头一百年</td>
+<td style="padding:10px; border:1px solid #ddd;">日夜谩骂，挣扎欲出</td>
+<td style="padding:10px; border:1px solid #ddd;">愤怒、不甘，认为被如来欺骗</td>
+</tr>
+
+<tr style="background:#f9f9f9;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">第二个一百年</td>
+<td style="padding:10px; border:1px solid #ddd;">骂声渐稀，观察周围环境</td>
+<td style="padding:10px; border:1px solid #ddd;">开始沉默，注意力转向外界</td>
+</tr>
+
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">第三个一百年及以后</td>
+<td style="padding:10px; border:1px solid #ddd;">平静接受现状，等待取经人</td>
+<td style="padding:10px; border:1px solid #ddd;">反思一生，理解如来用意，寻找出口</td>
+</tr>
+
+<tr style="background:#f9f9f9;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">获救时刻</td>
+<td style="padding:10px; border:1px solid #ddd;">重获自由，拜唐僧为师</td>
+<td style="padding:10px; border:1px solid #ddd;">真正放下过去，开始新的征程</td>
+</tr>
+</tbody>
+</table>
+
+<h3>四、获救时刻</h3>
+<p>
+贞观十三年秋，唐僧西行途经两界山（五行山已入大唐疆域，改名此山）。
+</p>
+
+<p>
+孙悟空主动高呼"我师父来也"，自述五百年前罪过，称观音菩萨法旨令他做取经人徒弟。
+</p>
+
+<p>
+唐僧半信半疑，被猎户刘伯钦扶上山巅。见山顶四方石上金字熠熠，跪地祝告，伸手揭帖。
+</p>
+
+<p>
+帖飘半空，香风阵阵。监押揭谛领命回天，朗声道："今日他的难满，吾等回见如来，缴此封皮去也。"
+</p>
+
+<p>
+随即一声山崩地裂的巨响，孙悟空从烟尘中纵身跃出，向唐僧拜了四拜。
+</p>
+
+<p>
+他起身，没有回头看那座压了他六百年的山。
+</p>
+
+<p>
+只牵住白马，说："师父，走吧。"
+</p>
+
+<h3>五、事件本质</h3>
+<p>
+五行山不是纯粹的刑罚，而是从"对抗秩序"到"被秩序接纳"的过渡装置。
+</p>
+
+<p>
+六百年不是虚度，是孙悟空从反叛者到修行者的内在转化期——狂躁被磨平，仇恨被消解，开始接受规则、渴望归属。
+</p>
+
+<p>
+铜汁铁丸是苦，也是恩；压山是罚，也是保。他分得清，所以出山后从未找如来复仇。
+</p>
+
+<p>
+不回头看山，意味着真正的放下。
+</p>
+
+<tbody>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">头一百年</td>
+<td style="padding:10px; border:1px solid #ddd;">日夜谩骂，挣扎欲出</td>
+<td style="padding:10px; border:1px solid #ddd;">愤怒、不甘，认为被如来欺骗</td>
+</tr>
+
+<tr style="background:#f9f9f9;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">第二个一百年</td>
+<td style="padding:10px; border:1px solid #ddd;">骂声渐稀，观察周围环境</td>
+<td style="padding:10px; border:1px solid #ddd;">开始沉默，注意力转向外界</td>
+</tr>
+
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">第三个一百年及以后</td>
+<td style="padding:10px; border:1px solid #ddd;">平静接受现状，等待取经人</td>
+<td style="padding:10px; border:1px solid #ddd;">反思一生，理解如来用意，寻找出口</td>
+</tr>
+
+<tr style="background:#f9f9f9;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">获救时刻</td>
+<td style="padding:10px; border:1px solid #ddd;">重获自由，拜唐僧为师</td>
+<td style="padding:10px; border:1px solid #ddd;">真正放下过去，开始新的征程</td>
+</tr>
+</tbody>
+</table>
+
+<h3>🤔 思考与启示</h3>
+<div style="background: #fff4d6; padding: 20px; border-left: 6px solid #C02C3F; border-radius: 8px; margin-top: 20px;">
+<p>
+孙悟空在五行山下的六百年，是一段充满痛苦但意义深远的经历。这段时间不仅是对他大闹天宫的惩罚，更是对他心性的磨练和重塑。
+</p>
+
+<p>
+💡 <strong>成长需要时间和磨练</strong>：孙悟空从一个狂躁的反叛者转变为一个沉稳的修行者，用了整整六百年。这告诉我们，真正的成长不是一蹴而就的，需要时间的沉淀和经历的磨练。
+</p>
+
+<p>
+💡 <strong>困境中的反思</strong>：在被困的日子里，孙悟空从愤怒到沉默，再到反思，最终找到了自己的出路。当我们面临困境时，不妨也给自己一些时间，冷静思考，寻找解决问题的方法。
+</p>
+
+<p>
+💡 <strong>放下与重生</strong>：孙悟空获救时没有回头看五行山，意味着他真正放下了过去的仇恨和不甘。有时候，放下不是软弱，而是一种智慧，只有放下过去，才能迎接新的开始。
+</p>
+
+<p>
+💡 <strong>责任与使命</strong>：孙悟空选择护送唐僧取经，不是妥协，而是找到了自己的使命。每个人都需要找到自己的责任和使命，这会给我们前进的动力和方向。
+</p>
+
+<p>
+五行山下的故事告诉我们，人生中的挫折和困境，往往是成长的机会。只要我们保持反思，勇于面对，最终一定能够找到属于自己的出路，实现自我的超越和重生。🌟
+</p>
+</div>
+`,
+
+"捌 · 唐僧收徒": `
+
+<h3>一、两界山收孙悟空</h3>
+<p>
+<strong>地点：</strong>两界山（即五行山，大唐疆域新名）
+</p>
+
+<p>
+<strong>过程：</strong>唐僧途经山下，闻一猴露头露手高呼"师父"。猴自言五百年前大闹天宫，被压于此，奉观音法旨等候取经人。唐僧依言登山，揭去山顶六字真言帖。霎时山崩地裂，猴脱身而出，拜唐僧为师。
+</p>
+
+<p>
+<strong>命名：</strong>唐僧为其取名"行者"，收作大徒弟。
+</p>
+
+<p>
+<strong>寓意：</strong>两界山为凡圣分界，收悟空即收心猿、破无明，修行自此起步。
+</p>
+
+<h3>二、鹰愁涧收白龙马（脚力，非徒弟）</h3>
+<p>
+<strong>地点：</strong>蛇盘山鹰愁涧
+</p>
+
+<p>
+<strong>起因：</strong>唐僧坐骑被涧中玉龙吞食。
+</p>
+
+<p>
+<strong>背景：</strong>玉龙乃西海龙王三太子，因纵火烧毁玉帝御赐明珠，父王告其忤逆，被判死罪。观音亲向玉帝求情，救下性命，安排于此等候取经人，充作脚力。
+</p>
+
+<p>
+<strong>结果：</strong>孙悟空与之争斗，玉龙不敌。观音点化，玉龙化身为白马，从此驮唐僧西行。
+</p>
+
+<p>
+<strong>重要说明：</strong>白龙马并非唐僧徒弟，而是坐骑。理由：
+</p>
+
+<ul>
+<li>观音从未安排他拜师；</li>
+<li>若按入队顺序应为二师兄，实际排位在八戒之后；</li>
+<li>唐僧从未称其为"徒弟"，归朝复命时也只提三位徒儿；</li>
+<li>无名号，与"悟"字辈三人不同；</li>
+<li>称悟空"大师兄"是礼节性称呼，并非同门弟子。</li>
+</ul>
+
+<img src="images/tang_monk_disciples.jpg" alt="唐僧与白龙马（86版西游）" style="width:100%; border-radius:10px; margin:20px 0;">
+
+<h3>三、高老庄收猪八戒</h3>
+<p>
+<strong>地点：</strong>乌斯藏国界高老庄
+</p>
+
+<p>
+<strong>起因：</strong>投宿高太公家，知其三女翠兰被一妖入赘为婿，此妖初时勤谨，后现猪形，将翠兰锁于后院。
+</p>
+
+<p>
+<strong>过程：</strong>孙悟空幻化翠兰模样，待妖怪入房时现本相。妖怪化作狂风逃往福陵山云栈洞。悟空追至洞中，妖怪持九齿钉耙迎战。战间悟空自报保唐僧西行，妖怪当即丢耙，愿随拜见师父。
+</p>
+
+<p>
+<strong>背景：</strong>此妖原系上界天蓬元帅，因醉酒调戏嫦娥被贬下凡，错投猪胎。后经观音点化，赐名"猪悟能"，命在此等候取经人。
+</p>
+
+<p>
+<strong>命名：</strong>唐僧为其取名"八戒"，收作二徒弟。
+</p>
+
+<p>
+<strong>寓意：</strong>高老庄——无思为高，收悟能即断执著、伏欲念，拔除轮回之根。
+</p>
+
+<h3>四、流沙河收沙悟净</h3>
+<p>
+<strong>地点：</strong>流沙河（八百里汹涌，鹅毛不起）
+</p>
+
+<p>
+<strong>过程：</strong>师徒正愁渡河，河中闪出一妖，红发蓝面，项悬九骷髅，径奔唐僧。孙悟空护师，八戒与之战。妖不敌，钻水不出。八戒诱战两次，妖始终不肯上岸。
+</p>
+
+<p>
+<strong>背景：</strong>孙悟空往南海求见观音，方知此妖原是上界卷帘大将，因蟠桃会上失手打碎玻璃盏，被玉帝贬下流沙河，每七日飞剑穿胸百余下。后观音点化，赐名"沙悟净"，命在此等候取经人。
+</p>
+
+<p>
+<strong>结果：</strong>观音遣弟子木叉携红葫芦至流沙河，唤出妖怪。妖确认唐僧身份，当即皈依。以颈下九骷髅与红葫芦结成法船，渡唐僧过河。
+</p>
+
+<p>
+<strong>命名：</strong>唐僧收其为徒，取法号"沙和尚"，作三徒弟。
+</p>
+
+<p>
+<strong>寓意：</strong>流沙河喻尘沙烦恼，收悟净即尽分别心、消三毒，道心渐澄。
+</p>
+
+<h3>五、收徒顺序与定数</h3>
+<p>
+孙悟空（两界山）——大徒弟<br>
+白龙马（鹰愁涧）——脚力，非徒弟<br>
+猪八戒（高老庄）——二徒弟<br>
+沙悟净（流沙河）——三徒弟
+</p>
+
+<p>
+三位正式徒弟在唐僧收徒之前，皆已被观音菩萨点化、赐法号，并领受"等候取经人"之法旨。唐僧收徒，本质是奉旨接收、完成名义上的师徒认定。
+</p>
+
+<p>
+三徒法号皆属 "悟"字辈，同承观音点化之缘；白龙马无名号，恰是"非徒弟"身份的有力佐证。
+</p>
+
+<h3>六、唐僧收徒的修行次第</h3>
+<p>
+收悟空——破无明、定心猿<br>
+收悟能——断执念、伏欲流<br>
+收悟净——净尘沙、澄道心
+</p>
+
+`,
+
+"玖 · 三打白骨精": `
+
+<h2>一、白骨精的诡计</h2>
+<p>
+师徒四人行至白虎岭，遇到了白骨精。白骨精为了吃唐僧肉长生不老，先后变成村姑、老妇和老翁，企图欺骗唐僧。
+</p>
+
+<p>
+白骨精的变化术非常高明，骗过了唐僧和猪八戒，但被孙悟空的火眼金睛识破。
+</p>
+
+<h3>二、孙悟空三打白骨精</h3>
+<p>
+第一次，白骨精变成村姑，送斋饭给唐僧。孙悟空识破她的伪装，一棒将她打死。但白骨精留下假尸，逃脱了灵魂。
+</p>
+
+<p>
+第二次，白骨精变成老妇，寻找女儿。孙悟空再次识破，又一棒将她打死。白骨精再次留下假尸逃脱。
+</p>
+
+<p>
+第三次，白骨精变成老翁，寻找妻子和女儿。孙悟空虽然知道唐僧会责怪他，但为了保护师父，还是一棒将白骨精打死。这次，白骨精现出原形，变成一堆白骨。
+</p>
+
+<h3>三、唐僧的误解</h3>
+<p>
+唐僧肉眼凡胎，看不出白骨精的伪装，认为孙悟空滥杀无辜。加上猪八戒在一旁挑唆，唐僧非常生气，念起紧箍咒惩罚孙悟空。
+</p>
+
+<p>
+最后，唐僧写下贬书，将孙悟空赶回花果山。孙悟空虽然满心委屈，但还是拜别了唐僧，返回了花果山。
+</p>
+
+<h3>四、师徒重归于好</h3>
+<p>
+孙悟空离开后，唐僧被黄袍怪捉住。猪八戒和沙僧不敌黄袍怪，只好前往花果山请孙悟空回来。
+</p>
+
+<p>
+孙悟空虽然被唐僧赶走，但心中仍然牵挂师父。他假扮成百花羞公主，打败了黄袍怪，救出了唐僧。唐僧意识到自己错怪了孙悟空，师徒二人重归于好，继续西行。
+</p>
+
+<div style="background: #fff4d6; padding: 20px; border-left: 6px solid #C02C3F; border-radius: 8px; margin-top: 20px;">
+<p>
+三打白骨精的故事告诉我们，真相往往不是表面看起来的那样，需要我们用智慧去辨别。同时，它也展现了孙悟空的忠诚和唐僧的慈悲，以及师徒之间的深厚情谊。在现实生活中，我们也会遇到各种伪装和误解，这时候需要我们保持清醒的头脑，同时也要学会理解和宽容他人。
+</p>
+</div>
+`,
+
+"拾 · 真假美猴王": `
+
+<h2>一、六耳猕猴的出现</h2>
+<p>
+师徒四人行至西牛贺洲，孙悟空因打死强盗再次被唐僧赶走。孙悟空无奈返回花果山，却发现一个自称孙悟空的猴子抢占了他的洞府。
+</p>
+
+<p>
+这个假孙悟空是六耳猕猴变的，他不仅抢占了花果山，还打伤了唐僧，抢走了行李和通关文牒，企图自己去西天取经。
+</p>
+
+<h3>二、真假难辨</h3>
+<p>
+孙悟空回到取经队伍，发现唐僧已经被打伤，非常愤怒。他与六耳猕猴展开了激烈的战斗，但两人的武艺和神通完全相同，难分胜负。
+</p>
+
+<p>
+他们先后到观音菩萨、玉皇大帝、唐僧、阎罗王等处辨别真假，但都无法分辨。观音菩萨的紧箍咒对两人都有效，玉皇大帝的照妖镜也无法照出六耳猕猴的原形。
+</p>
+
+<h3>三、如来佛祖辨真假</h3>
+<p>
+最后，两人来到灵山，拜见如来佛祖。如来佛祖一眼就认出了六耳猕猴，告诉他："你是六耳猕猴，善聆音，能察理，知前后，万物皆明。" 六耳猕猴见被识破，想要逃跑，却被如来佛祖用金钵盂罩住，现出了原形。
+</p>
+
+<p>
+孙悟空一棒将六耳猕猴打死，消除了这个假猴王。
+</p>
+
+<h3>四、师徒再次重归于好</h3>
+<p>
+经历了真假美猴王的事件后，唐僧意识到孙悟空的重要性，不再轻易将他赶走。孙悟空也更加成熟，不再任性妄为，一心一意保护唐僧取经。
+</p>
+
+<p>
+这个事件不仅考验了师徒之间的信任，也让孙悟空更加明确了自己的使命，为后续的取经之路奠定了更坚实的基础。
+</p>
+
+<div style="background: #fff4d6; padding: 20px; border-left: 6px solid #C02C3F; border-radius: 8px; margin-top: 20px;">
+<p>
+真假美猴王的故事告诉我们，有时候最强大的敌人不是别人，而是自己内心的杂念和欲望。六耳猕猴可以说是孙悟空内心阴暗面的化身，他的出现和被消灭，象征着孙悟空对自我的超越和成长。在现实生活中，我们也会遇到各种诱惑和挑战，只有保持清醒的头脑，坚定自己的信念，才能战胜内心的恶魔，实现真正的自我。
+</p>
+</div>
+`,
+
+"拾壹 · 火焰山受阻": `
+
+<h2>一、火焰山的来历</h2>
+<p>
+火焰山位于西牛贺洲，是一座终年燃烧着熊熊烈火的高山。据传说，这座山是孙悟空大闹天宫时，蹬倒了太上老君的八卦炉，炉中的耐火砖掉落人间形成的。
+</p>
+
+<p>
+火焰山的火势非常猛烈，方圆八百里寸草不生，飞鸟难越。师徒四人来到这里，被大火阻挡，无法前进。
+</p>
+
+<h3>二、铁扇公主的芭蕉扇</h3>
+<p>
+要过火焰山，必须用铁扇公主的芭蕉扇扇灭火焰。铁扇公主是牛魔王的妻子，红孩儿的母亲。因红孩儿被观音菩萨收为善财童子，铁扇公主对孙悟空怀恨在心。
+</p>
+
+<p>
+孙悟空来到芭蕉洞，向铁扇公主借芭蕉扇。铁扇公主不肯借给他，反而用芭蕉扇将他扇出五万四千里。
+</p>
+
+<h3>三、孙悟空三借芭蕉扇</h3>
+<p>
+第一次借扇，孙悟空被铁扇公主扇走。他得到灵吉菩萨的定风丹后，再次前往芭蕉洞。
+</p>
+
+<p>
+第二次借扇，孙悟空变成小虫，钻进铁扇公主的肚子里，逼迫她交出芭蕉扇。但铁扇公主给了他一把假扇，越扇火越大。
+</p>
+
+<p>
+第三次借扇，孙悟空变成牛魔王的模样，从铁扇公主那里骗到了真扇。但牛魔王又变成猪八戒的模样，将芭蕉扇骗了回去。
+</p>
+
+<p>
+最后，孙悟空请来天兵天将，打败了牛魔王。铁扇公主无奈，只好将芭蕉扇交给孙悟空。
+</p>
+
+<h3>四、扇灭火焰，继续西行</h3>
+<p>
+孙悟空用芭蕉扇扇灭了火焰山的大火，师徒四人得以继续西行。火焰山的百姓感激孙悟空，热情地款待了他们。
+</p>
+
+<p>
+火焰山受阻的经历，展现了孙悟空的智慧和毅力，也体现了团队合作的重要性。在困难面前，只有坚持不懈，才能找到解决问题的方法。
+</p>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 20px 0;">
+
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #C02C3F;">
+<h4>一借芭蕉扇</h4>
+<p>被铁扇公主用芭蕉扇扇出五万四千里，后得灵吉菩萨定风丹。</p>
+</div>
+
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #C02C3F;">
+<h4>二借芭蕉扇</h4>
+<p>变成小虫钻进铁扇公主肚子，得到假扇，越扇火越大。</p>
+</div>
+
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #C02C3F;">
+<h4>三借芭蕉扇</h4>
+<p>变成牛魔王骗得真扇，后被牛魔王变成猪八戒骗回，最终请来天兵天将打败牛魔王，得到芭蕉扇。</p>
+</div>
+
+</div>
+`,
+
+"拾贰 · 歇后语趣谈": `
+<div id="quiz-cover" style="text-align:center; padding: 60px 20px; background: linear-gradient(135deg, #fff9e6, #e6fffb); border: 2px solid #008b8b; border-radius: 15px; margin: 20px;">
+    <h1 style="color: #008b8b; margin-bottom: 20px;">🐵 西游记 · 歇后语趣谈</h1>
+    <p style="font-size:1.2rem; color: #555; line-height: 1.6;">
+        歇后语是中华文化的瑰宝，<br>
+        西游记中的歇后语更是妙趣横生。<br>
+        你能猜出多少？快来挑战吧！
+    </p>
+    <button onclick="startXiehouyuQuiz()" style="padding:15px 50px; background:#008b8b; color:#FFD700; border:none; cursor:pointer; font-size:1.3rem; border-radius:30px; margin-top:30px; box-shadow: 0 4px 15px rgba(0,139,139,0.3); transition: 0.3s;">
+        开始挑战
+    </button>
+</div>
+
+<div id="quiz-content" style="display:none; animation: fadeIn 1s;">
+    <p style="background: #fff8e1; padding: 15px; border-left: 5px solid #FFD700; margin: 20px;">
+        <strong>提示：</strong> 歇后语前半部分是引子，后半部分是谜底。点击"查看答案"来检验你的成果。
+    </p>
+    <div id="quiz-app" style="background: white; padding: 0 20px;"></div>
+</div>
+
+<style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .question-box { margin-bottom: 20px; padding: 15px; border-bottom: 1px inset #eee; }
+    .answer-text { margin-top: 10px; padding: 12px; background: #e6fffb; color: #008b8b; border-radius: 5px; font-weight: bold; border: 1px dashed #008b8b; }
+    summary { color: #008b8b; cursor: pointer; font-weight: bold; outline: none; }
+    summary:hover { text-decoration: underline; }
+</style>
+`
+};
+
+const XIEHOUYU_QUIZ_DATA = [
+    // 孙悟空系列
+    { type: '选择', q: '孙悟空大闹天宫 —— ？', options: 'A.慌了神 | B.翻了天 | C.闹翻天 | D.无法无天', a: 'A', note: '形容遇到突发情况时惊慌失措的样子。' },
+    { type: '选择', q: '孙悟空借芭蕉扇 —— ？', options: 'A.一借再借 | B.一物降一物 | C.借不到手 | D.费尽周折', a: 'B', note: '比喻某种事物专门有另一种事物来克制它。' },
+    { type: '选择', q: '孙悟空翻跟头 —— ？', options: 'A.一步登天 | B.十万八千里 | C.翻来覆去 | D.以上都对', a: 'D', note: '既可以指一步登天，也可以指十万八千里，形容速度极快或距离极远。' },
+    { type: '选择', q: '孙悟空的金箍棒 —— ？', options: 'A.威力无比 | B.能大能小 | C.随心所欲 | D.B和C都对', a: 'D', note: '形容事物灵活多变，可以随心控制。' },
+    { type: '选择', q: '孙悟空七十二变 —— ？', options: 'A.花样多 | B.神通广大 | C.变化多端 | D.以上都对', a: 'D', note: '形容本领高强，变化多端。' },
+    { type: '选择', q: '孙悟空当齐天大圣 —— ？', options: 'A.自封为王 | B.众猴拥护 | C.以上都对 | D.以上都错', a: 'C', note: '既可以指自封为王，也可以指众猴拥护。' },
+    { type: '选择', q: '孙悟空守桃园 —— ？', options: 'A.尽职尽责 | B.自食其果 | C.监守自盗 | D.以上都对', a: 'B', note: '比喻自己做的事情自己承担后果。' },
+    { type: '选择', q: '孙悟空钻进铁扇公主肚子里 —— ？', options: 'A.在里头耍威风 | B.心腹之患 | C.以上都对 | D.以上都错', a: 'C', note: '既可以指在里头耍威风，也可以指心腹之患。' },
+    { type: '选择', q: '孙悟空遇到如来佛 —— ？', options: 'A.甘拜下风 | B.翻不出手掌心 | C.无能为力 | D.以上都对', a: 'B', note: '比喻再大的本领也逃不出更高明的掌控。' },
+    { type: '选择', q: '孙大圣听了紧箍咒 —— ？', options: 'A.头疼 | B.受不了 | C.求饶 | D.以上都对', a: 'A', note: '形容遇到难以忍受的事情。' },
+    
+    // 猪八戒系列
+    { type: '选择', q: '猪八戒照镜子 —— ？', options: 'A.里外不是人 | B.自找没趣 | C.丑态百出 | D.以上都对', a: 'A', note: '形容两边都不讨好，处于尴尬境地。' },
+    { type: '选择', q: '猪八戒吃人参果 —— ？', options: 'A.全不知滋味 | B.食而不知其味 | C.囫囵吞枣 | D.以上都对', a: 'D', note: '形容吃东西不细嚼慢咽，不知味道。' },
+    { type: '选择', q: '猪八戒娶媳妇 —— ？', options: 'A.背着走 | B.痴心妄想 | C.以上都对 | D.以上都错', a: 'C', note: '既可以指背着走，也可以指痴心妄想。' },
+    { type: '选择', q: '猪八戒耍把式 —— ？', options: 'A.倒打一耙 | B.胡乱来 | C.装模作样 | D.以上都对', a: 'A', note: '比喻做错了事不承认，反而指责别人。' },
+    { type: '选择', q: '猪八戒进了女儿国 —— ？', options: 'A.看花了眼 | B.不想走了 | C.以上都对 | D.以上都错', a: 'C', note: '形容被眼前的美好事物吸引，流连忘返。' },
+    { type: '选择', q: '猪八戒西天取经 —— ？', options: 'A.三心二意 | B.半途而废 | C.心不在焉 | D.以上都对', a: 'A', note: '形容做事不专心，意志不坚定。' },
+    { type: '选择', q: '猪八戒见了白骨精 —— ？', options: 'A.垂涎三尺 | B.上当受骗 | C.以上都对 | D.以上都错', a: 'A', note: '形容见到美色或美食时的贪婪样子。' },
+    { type: '选择', q: '猪八戒丢了钉耙 —— ？', options: 'A.凭什么保师父 | B.没了武器 | C.以上都对 | D.以上都错', a: 'A', note: '比喻失去了赖以生存的本领或工具。' },
+    { type: '选择', q: '猪八戒掉进泔水桶 —— ？', options: 'A.有吃有喝 | B.得其所哉 | C.以上都对 | D.以上都错', a: 'C', note: '形容找到了适合自己的地方，或讽刺人不知羞耻。' },
+    { type: '选择', q: '猪八戒卖凉粉 —— ？', options: 'A.人样不济，调料好 | B.外表不好，内里好 | C.以上都对 | D.以上都错', a: 'A', note: '形容人虽然外表不好看，但有真本事。' },
+    
+    // 唐僧系列
+    { type: '选择', q: '唐僧取经 —— ？', options: 'A.一心一意 | B.千辛万苦 | C.以上都对 | D.以上都错', a: 'C', note: '既可以指一心一意，也可以指千辛万苦。' },
+    { type: '选择', q: '唐僧念佛 —— ？', options: 'A.一本正经 | B.一本真经 | C.以上都对 | D.以上都错', a: 'C', note: '形容态度庄重严肃，或真的在念经。' },
+    { type: '选择', q: '唐僧肉 —— ？', options: 'A.人人都想吃 | B.长生不老 | C.以上都对 | D.以上都错', a: 'A', note: '比喻人人都想得到的好东西。' },
+    { type: '选择', q: '唐僧跑进和尚店 —— ？', options: 'A.同吃斋饭 | B.一路货色 | C.以上都对 | D.以上都错', a: 'C', note: '形容同类人聚在一起。' },
+    { type: '选择', q: '唐僧念紧箍咒 —— ？', options: 'A.痛苦在后头 | B.痛苦在猴头 | C.以上都对 | D.以上都错', a: 'C', note: '谐音双关，"猴头"指孙悟空，"后头"指后面。' },
+    { type: '选择', q: '唐僧西天取经 —— ？', options: 'A.多灾多难 | B.九九八十一难 | C.以上都对 | D.以上都错', a: 'C', note: '形容做事困难重重，历经磨难。' },
+    
+    // 其他人物与情节
+    { type: '选择', q: '白骨精骗唐僧 —— ？', options: 'A.一计不成又生一计 | B.没安好心 | C.以上都对 | D.以上都错', a: 'C', note: '形容坏人不断设计害人。' },
+    { type: '选择', q: '白骨精给唐僧送饭 —— ？', options: 'A.假心假意 | B.虚情假意 | C.以上都对 | D.以上都错', a: 'C', note: '形容表面热情，实际上心怀不轨。' },
+    { type: '选择', q: '白骨精遇上孙悟空 —— ？', options: 'A.原形毕露 | B.无处藏身 | C.以上都对 | D.以上都错', a: 'A', note: '比喻伪装被识破，真面目暴露。' },
+    { type: '选择', q: '白骨精演说 —— ？', options: 'A.妖言惑众 | B.花言巧语 | C.以上都对 | D.以上都错', a: 'A', note: '形容用虚假的言论迷惑人心。' },
+    { type: '选择', q: '铁扇公主肚子里的孙悟空 —— ？', options: 'A.折腾不休 | B.翻江倒海 | C.以上都对 | D.以上都错', a: 'A', note: '形容在内部制造麻烦。' },
+    { type: '选择', q: '铁扇公主的本领 —— ？', options: 'A.扇风点火 | B.呼风唤雨 | C.以上都对 | D.以上都错', a: 'A', note: '比喻煽动事端，挑拨离间。' },
+    { type: '选择', q: '牛魔王请客 —— ？', options: 'A.尽是妖精 | B.狐朋狗友 | C.以上都对 | D.以上都错', a: 'A', note: '形容聚集的都是一丘之貉。' },
+    { type: '选择', q: '沙和尚挑行李 —— ？', options: 'A.义不容辞 | B.责任旁贷 | C.以上都对 | D.以上都错', a: 'A', note: '形容责任在身，不能推辞。' },
+    { type: '选择', q: '花果山的猴子 —— ？', options: 'A.没一个省油的灯 | B.无法无天 | C.以上都对 | D.以上都错', a: 'C', note: '形容都不是好惹的角色。' },
+    { type: '选择', q: '花果山的日子 —— ？', options: 'A.猴年马月 | B.逍遥自在 | C.以上都对 | D.以上都错', a: 'A', note: '形容遥遥无期的时间。' },
+    { type: '选择', q: '花果山的孙大圣 —— ？', options: 'A.无爹无娘 | B.无牵无挂 | C.以上都对 | D.以上都错', a: 'C', note: '形容孤身一人，没有牵挂。' },
+    { type: '选择', q: '水帘洞的洞口 —— ？', options: 'A.别有洞天 | B.鳖有洞天 | C.以上都对 | D.以上都错', a: 'C', note: '谐音双关，形容另有一番天地。' },
+    { type: '选择', q: '火焰山上的西瓜 —— ？', options: 'A.又解渴又解饿 | B.难得的好东西 | C.以上都对 | D.以上都错', a: 'A', note: '形容在困难中遇到的好东西。' },
+    { type: '选择', q: '玉皇大帝拜孙悟空 —— ？', options: 'A.称兄道弟 | B.猢狲兄道弟 | C.以上都对 | D.以上都错', a: 'C', note: '谐音双关，形容地位悬殊却称兄道弟。' },
+    { type: '选择', q: '二郎神斗孙悟空 —— ？', options: 'A.你变我也变 | B.以变应变 | C.以上都对 | D.以上都错', a: 'C', note: '形容针锋相对，见招拆招。' },
+    { type: '选择', q: '红孩儿喷火 —— ？', options: 'A.自己先热 | B.伤人先伤己 | C.以上都对 | D.以上都错', a: 'A', note: '比喻做事之前自己先受影响。' },
+    { type: '选择', q: '蟠桃园里跳舞 —— ？', options: 'A.四面楚歌 | B.得意忘形 | C.以上都对 | D.以上都错', a: 'A', note: '形容处境危险，四面受敌。' }
+];
+
+function changeTab(element, title) {
+    const items = document.querySelectorAll('.nav-item');
+    items.forEach(item => item.classList.remove('active'));
+    element.classList.add('active');
+
+    document.getElementById('content-title').innerText = title;
+    document.getElementById('content-body').innerHTML = contentData[title];
+}
+
+function startXiehouyuQuiz() {
+    document.getElementById('quiz-cover').style.display = 'none';
+    document.getElementById('quiz-content').style.display = 'block';
+    
+    const quizApp = document.getElementById('quiz-app');
+    if (!quizApp || quizApp.innerHTML !== "") return;
+    
+    XIEHOUYU_QUIZ_DATA.forEach((item, index) => {
+        const qId = `q-xiehouyu-${index}`;
+        const div = document.createElement('div');
+        div.style.cssText = "margin-bottom:30px; padding:20px; background: rgba(255, 252, 230, 0.95); border:1px solid #d2c5a7; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.05);";
+        
+        let html = `<p style="font-size:1.1rem; font-family: 'STKaiti', 'Microsoft YaHei', serif;"><strong>第${index + 1}题：</strong>${item.q}</p>`;
+        
+        const opts = item.options.split('|');
+        html += `<div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:15px;">`;
+        opts.forEach(opt => {
+            const val = opt.trim().charAt(0);
+            html += `<button onclick="checkSelect(this, '${val}', '${item.a}', '${qId}')" 
+                     style="padding:10px 20px; border:1px solid #8b4513; background: rgba(255, 255, 255, 0.7); cursor:pointer; border-radius:4px; transition:0.3s; font-size:1rem; font-family: 'STKaiti', 'Microsoft YaHei', serif; color: #8b4513;">
+                     ${opt.trim()}
+                     </button>`;
+        });
+        html += `</div>`;
+        
+        html += `<div id="feedback-${qId}" style="margin-top:15px; display:none;"></div>`;
+        
+        html += `<details id="note-${qId}" style="margin-top:10px; display:none;">
+                    <summary style="color:#C02C3F; cursor:pointer; font-weight:bold; font-family: 'STKaiti', 'Microsoft YaHei', serif;">查看解析</summary>
+                    <div style="margin-top:10px; padding:12px; background: rgba(255, 248, 230, 0.9); border-left:4px solid #C02C3F; font-size:0.9rem; font-family: 'STKaiti', 'Microsoft YaHei', serif;">
+                        <strong>解析：</strong>${item.note}
+                    </div>
+                </details>`;
+        
+        div.innerHTML = html;
+        quizApp.appendChild(div);
+    });
+}
+
+function checkSelect(btn, userVal, correctVal, qId) {
+    const feedback = document.getElementById(`feedback-${qId}`);
+    const note = document.getElementById(`note-${qId}`);
+    feedback.style.display = "block";
+    note.style.display = "block";
+
+    if (userVal === correctVal) {
+        btn.style.background = "#dcfce7";
+        btn.style.borderColor = "#16a34a";
+        feedback.innerHTML = `<span style="color:#16a34a; font-weight:bold; font-family: 'STKaiti', 'Microsoft YaHei', serif;">✅ 回答正确！</span>`;
+    } else {
+        btn.style.background = "#fee2e2";
+        btn.style.borderColor = "#ef4444";
+        feedback.innerHTML = `<span style="color:#ef4444; font-weight:bold; font-family: 'STKaiti', 'Microsoft YaHei', serif;">❌ 回答错误，正确答案是 ${correctVal}</span>`;
+    }
+    
+    const buttons = btn.parentElement.querySelectorAll('button');
+    buttons.forEach(b => b.onclick = null);
+}
+
+window.onload = function() {
+    changeTab(document.querySelector('.nav-item'), '柒 · 五指山下');
+};
+
+const BadgeManager = {
+    STORAGE_KEY: 'badge_data_v1',
+    
+    getData() {
+        try {
+            const data = localStorage.getItem(this.STORAGE_KEY);
+            return data ? JSON.parse(data) : {
+                unlockedBadges: [],
+                badgeUnlockTime: {},
+                readingProgress: {
+                    xiyou: { stage1: false, stage2: false, stage3: false },
+                    sanguo: { stage1: false, stage2: false, stage3: false },
+                    shuihu: { stage1: false, stage2: false, stage3: false },
+                    honglou: { stage1: false, stage2: false, stage3: false }
+                }
+            };
+        } catch (e) {
+            return {
+                unlockedBadges: [],
+                badgeUnlockTime: {},
+                readingProgress: {
+                    xiyou: { stage1: false, stage2: false, stage3: false },
+                    sanguo: { stage1: false, stage2: false, stage3: false },
+                    shuihu: { stage1: false, stage2: false, stage3: false },
+                    honglou: { stage1: false, stage2: false, stage3: false }
+                }
+            };
+        }
+    },
+    
+    saveData(data) {
+        try {
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+        } catch (e) {
+            console.error('保存勋章数据失败:', e);
+        }
+    },
+    
+    isStageRead(book, stage) {
+        const data = this.getData();
+        return data.readingProgress[book] && data.readingProgress[book]['stage' + stage];
+    },
+    
+    markStageRead(book, stage) {
+        const data = this.getData();
+        if (!data.readingProgress[book]) {
+            data.readingProgress[book] = { stage1: false, stage2: false, stage3: false };
+        }
+        data.readingProgress[book]['stage' + stage] = true;
+        this.saveData(data);
+        return this.checkAndUnlockBadges();
+    },
+    
+    isBookCompleted(book) {
+        const data = this.getData();
+        const progress = data.readingProgress[book];
+        return progress && progress.stage1 && progress.stage2 && progress.stage3;
+    },
+    
+    getCompletedBooksCount() {
+        let count = 0;
+        ['xiyou', 'sanguo', 'shuihu', 'honglou'].forEach(book => {
+            if (this.isBookCompleted(book)) count++;
+        });
+        return count;
+    },
+    
+    checkAndUnlockBadges() {
+        const data = this.getData();
+        const newlyUnlocked = [];
+        
+        const bookBadges = [
+            { id: 'xiyou_reader', name: '西游行者', desc: '完成西游记阅读', book: 'xiyou' },
+            { id: 'sanguo_reader', name: '三国通览', desc: '完成三国演义阅读', book: 'sanguo' },
+            { id: 'shuihu_reader', name: '水浒知音', desc: '完成水浒传阅读', book: 'shuihu' },
+            { id: 'honglou_reader', name: '红楼初探', desc: '完成红楼梦阅读', book: 'honglou' },
+            { id: 'all_books_reader', name: '四大名著通', desc: '完成全部名著阅读', book: 'all' }
+        ];
+        
+        bookBadges.forEach(badge => {
+            if (data.unlockedBadges.includes(badge.id)) return;
+            
+            let shouldUnlock = false;
+            if (badge.book === 'all') {
+                shouldUnlock = this.getCompletedBooksCount() >= 4;
+            } else {
+                shouldUnlock = this.isBookCompleted(badge.book);
+            }
+            
+            if (shouldUnlock) {
+                data.unlockedBadges.push(badge.id);
+                data.badgeUnlockTime[badge.id] = Date.now();
+                newlyUnlocked.push(badge);
+            }
+        });
+        
+        if (newlyUnlocked.length > 0) {
+            this.saveData(data);
+        }
+        
+        return newlyUnlocked;
+    }
+};
+
+function showBadgeNotification(badge) {
+    document.getElementById('badgeName').textContent = badge.name;
+    document.getElementById('badgeDesc').textContent = badge.desc;
+    
+    const card = document.getElementById('badgeCard');
+    const rarityColors = {
+        common: '#d4af37',
+        rare: '#9c27b0',
+        epic: '#ff6b35'
+    };
+    const color = rarityColors[badge.rarity] || rarityColors.common;
+    card.style.border = '4px solid ' + color;
+    card.style.boxShadow = '0 10px 40px ' + color + '80';
+    document.getElementById('badgeName').style.color = color;
+    
+    document.getElementById('badgeNotification').classList.add('show');
+}
+
+function closeBadgeNotification() {
+    document.getElementById('badgeNotification').classList.remove('show');
+}
+
+let autoReadStartTime = Date.now();
+let hasScrolledEnough = false;
+const MIN_READ_TIME = 30000;
+const SCROLL_THRESHOLD = 0.8;
+let autoReadMarked = false;
+
+function initAutoReadTracking() {
+    if (BadgeManager.isStageRead('xiyou', 2)) {
+        autoReadMarked = true;
+        return;
+    }
+    
+    const mainContent = document.querySelector('.main-content');
+    
+    mainContent.addEventListener('scroll', function() {
+        if (autoReadMarked) return;
+        
+        const scrollPercent = (mainContent.scrollTop + mainContent.clientHeight) / mainContent.scrollHeight;
+        if (scrollPercent >= SCROLL_THRESHOLD) {
+            hasScrolledEnough = true;
+            checkAndMarkAutoRead();
+        }
+    });
+    
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden && !autoReadMarked) {
+            checkAndMarkAutoRead();
+        }
+    });
+    
+    window.addEventListener('beforeunload', function() {
+        if (!autoReadMarked) {
+            checkAndMarkAutoRead();
+        }
+    });
+}
+
+function checkAndMarkAutoRead() {
+    if (autoReadMarked) return;
+    
+    const readTime = Date.now() - autoReadStartTime;
+    if (readTime >= MIN_READ_TIME && hasScrolledEnough) {
+        const newlyUnlocked = BadgeManager.markStageRead('xiyou', 2);
+        autoReadMarked = true;
+        
+        if (newlyUnlocked.length > 0) {
+            localStorage.setItem('pending_badge_notification', newlyUnlocked[0].id);
+        }
+    }
+}
+
+window.addEventListener('load', function() {
+    initAutoReadTracking();
+});
+</script>
+
+</body>
+</html>

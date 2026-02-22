@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大观寻梦 - 红楼梦专题导览</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    display: flex;
+    height: 100vh;
+    font-family: "STKaiti", "Microsoft YaHei", serif;
+    background: linear-gradient(135deg, #fff5f6, #fef6e8);
+}
+
+.sidebar {
+    width: 300px;
+    background: linear-gradient(180deg, #d4708a 0%, #b03060 100%);
+    color: #d4af37;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 5px 0 18px rgba(0,0,0,0.25);
+    border-right: 2px solid #d4af37;
+}
+
+.sidebar h2 {
+    text-align: center;
+    font-size: 1.6rem;
+    margin: 0;
+    padding: 40px 0;
+    background: rgba(0,0,0,0.15);
+    letter-spacing: 4px;
+    color: #d4af37;
+}
+
+.nav-item {
+    padding: 22px 30px;
+    cursor: pointer;
+    transition: 0.3s;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    font-size: 1.1rem;
+    color: #ffe89a;
+}
+
+.nav-item:hover {
+    background: rgba(212,112,138,0.3);
+    padding-left: 45px;
+    color: #fff8e1;
+}
+
+.nav-item.active {
+    background: linear-gradient(90deg, #d4af37, #c9a227);
+    color: #8b1a4a;
+    font-weight: bold;
+}
+
+.main-content {
+    flex: 1;
+    padding: 50px;
+    overflow-y: auto;
+    background-image: url('https://www.transparenttextures.com/patterns/papyrus.png');
+}
+
+.content-box {
+    background: rgba(255, 250, 250, 0.95);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px;
+    border: 1px solid #d4af37;
+    box-shadow: 0 0 25px rgba(0,0,0,0.15);
+    min-height: 80vh;
+}
+
+h1 {
+    color: #b03060;
+    border-left: 8px solid #d4af37;
+    padding-left: 15px;
+}
+
+h2 {
+    color: #b03060;
+    border-bottom: 1px solid #d4af37;
+    padding-bottom: 5px;
+    margin-top: 30px;
+}
+
+h3 {
+    color: #8b1a4a;
+    margin-top: 24px;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed rgba(176,48,96,0.35);
+}
+
+.back-link {
+    position: fixed;
+    top: 20px;
+    right: 40px;
+    text-decoration: none;
+    color: #b03060;
+    font-weight: bold;
+    background: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    z-index: 100;
+}
+
+p {
+    line-height: 1.8;
+    text-indent: 2em;
+    font-size: 1.2rem;
+}
+
+.badge-notification-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.badge-notification-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.badge-notification-card {
+    background: linear-gradient(135deg, #fff9e6, #fff);
+    border-radius: 20px;
+    padding: 40px 50px;
+    text-align: center;
+    max-width: 350px;
+    transform: scale(0.8);
+    transition: transform 0.3s;
+}
+
+.badge-notification-overlay.show .badge-notification-card {
+    transform: scale(1);
+}
+
+.mindmap-container {
+    position: relative;
+    width: 100%;
+    height: 600px;
+    border: 2px solid #d4af37;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fffdfb;
+}
+
+.mindmap-canvas {
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+}
+
+.mindmap-canvas:active {
+    cursor: grabbing;
+}
+
+.mindmap-controls {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+.mindmap-btn {
+    width: 40px;
+    height: 40px;
+    border: 2px solid #b03060;
+    background: white;
+    color: #b03060;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.mindmap-btn:hover {
+    background: #b03060;
+    color: white;
+}
+
+.mindmap-legend {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255,255,255,0.95);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #d4af37;
+    font-size: 14px;
+    z-index: 10;
+}
+
+.mindmap-legend h4 {
+    margin: 0 0 10px 0;
+    color: #b03060;
+    font-size: 14px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+}
+
+.legend-line {
+    width: 30px;
+    height: 3px;
+    margin-right: 10px;
+}
+
+.legend-blood { background: #b03060; }
+.legend-marriage { background: #d4af37; }
+.legend-master { background: #888; border-style: dashed; }
+
+.mindmap-tips {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(255,255,255,0.95);
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid #d4af37;
+    font-size: 12px;
+    color: #666;
+    z-index: 10;
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <h2>大观寻梦</h2>
+    <div class="nav-item active" onclick="changeTab(this, '壹 · 黛玉进府')">壹·黛玉进府</div>
+    <div class="nav-item" onclick="changeTab(this, '贰 · 宝黛初见')">贰·宝黛初见</div>
+    <div class="nav-item" onclick="changeTab(this, '叁 · 金玉良缘')">叁·金玉良缘</div>
+    <div class="nav-item" onclick="changeTab(this, '肆 · 大观园诗社')">肆·大观园诗社</div>
+    <div class="nav-item" onclick="changeTab(this, '伍 · 菊花诗会')">伍·菊花诗会</div>
+    <div class="nav-item" onclick="changeTab(this, '陆 · 人物关系图')">陆·人物关系图</div>
+</div>
+
+<div class="main-content">
+    <a href="honglou.html" class="back-link">← 返回主页</a>
+
+    <div class="content-box">
+        <h1 id="content-title">壹 · 黛玉进府</h1>
+        <div id="content-body"></div>
+    </div>
+</div>
+
+<div class="badge-notification-overlay" id="badgeNotification">
+    <div class="badge-notification-card" id="badgeCard">
+        <div style="font-size: 1.5rem; color: #8b4513; margin-bottom: 20px;">🎉 恭喜获得勋章！</div>
+        <div style="font-size: 2.5rem; margin-bottom: 15px;">🎖️</div>
+        <div style="font-size: 1.8rem; font-weight: bold; margin-bottom: 10px;" id="badgeName"></div>
+        <div style="color: #666; margin-bottom: 20px;" id="badgeDesc"></div>
+        <button onclick="closeBadgeNotification()" style="background: #8b4513; color: #fff; border: none; padding: 10px 30px; border-radius: 20px; font-size: 1rem; cursor: pointer;">太棒了！</button>
+    </div>
+</div>
+
+<script>
+const contentData = {
+
+"壹 · 黛玉进府": `
+<h2>一、身世飘零：孤女入豪门</h2>
+<p>
+林黛玉出身于姑苏书香门第，父亲林如海是前科探花，官至巡盐御史，母亲贾敏则是荣国府贾母的幼女。然而命运多舛，黛玉幼年丧母，父亲又公务繁忙无暇照顾，只得投奔外祖母贾母。这一去，便从江南水乡走进了京城的富贵温柔乡，也开启了她短暂而璀璨的一生。
+</p>
+
+<p>
+黛玉自幼体弱多病，却天资聪颖。书中借癞头和尚之口暗示她的命运：若要平安度过此生，便不可见外姓亲友，不可听哭声。这番话预示了黛玉注定要经历情感纠葛，最终泪尽而逝的悲剧结局。她带着这样的命运暗示走进贾府，每一步都像是走向早已注定的终局。
+</p>
+
+<h3>二、步步留心：寄人篱下的生存智慧</h3>
+<p>
+初入贾府，黛玉展现出了超乎年龄的成熟与谨慎。她深知自己"寄人篱下"的处境，因此处处小心，时时在意，生怕被人耻笑。这种敏感与谨慎，既是她聪慧的表现，也埋下了日后多愁善感的性格种子。
+</p>
+
+<p>
+贾府的富贵气象让黛玉大开眼界。雕梁画栋、金碧辉煌的建筑，衣着华丽、举止有度的丫鬟婆子，都与她素来的清雅生活形成强烈反差。然而，黛玉并未因此自卑或失态，反而表现得从容得体，展现出大家闺秀的教养。
+</p>
+
+<h3>三、群芳初聚：贾府众生相</h3>
+<p>
+黛玉在贾府见到了众多亲戚：迎春温婉、探春精明、惜春稚气，三位表姐妹各有风姿。而最令人印象深刻的，当属王熙凤的出场。
+</p>
+
+<p>
+凤姐的出场堪称经典——未见其人，先闻其声。在一片恭肃严整的氛围中，她的笑声格外响亮，打破了贾府的规矩。这种反差立刻刻画出凤姐泼辣豪爽、不拘礼法的性格。她对黛玉的热情赞美、对贾母的讨好奉承，转眼间的悲喜转换，无不展现出她八面玲珑的处世手腕。
+</p>
+
+<h3>四、人物关系的深层解读</h3>
+<p>
+黛玉进府这一回，曹雪芹借黛玉之眼，为读者勾勒出贾府的人物图谱。贾母的慈爱、王夫人的深沉、熙凤的精明、三春的各异性情，都在黛玉的观察中一一呈现。而黛玉本人的敏感与谨慎，也为后续情节埋下伏笔。
+</p>
+
+<h3>📊 黛玉进府人物关系表</h3>
+<table style="width:100%; border-collapse: collapse; background:#fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
+<thead>
+<tr style="background:#b03060; color:#fff;">
+<th style="padding:12px; border:1px solid #8b1a4a; width:25%;">人物</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">与黛玉关系</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">性格特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">贾母</td>
+<td style="padding:10px; border:1px solid #ddd;">外祖母</td>
+<td style="padding:10px; border:1px solid #ddd;">慈爱宽厚，疼爱孙辈</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">王熙凤</td>
+<td style="padding:10px; border:1px solid #ddd;">表嫂</td>
+<td style="padding:10px; border:1px solid #ddd;">精明能干，泼辣豪爽</td>
+</tr>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">迎春/探春/惜春</td>
+<td style="padding:10px; border:1px solid #ddd;">表姐妹</td>
+<td style="padding:10px; border:1px solid #ddd;">温婉、精明、稚气</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">王夫人</td>
+<td style="padding:10px; border:1px solid #ddd;">舅母</td>
+<td style="padding:10px; border:1px solid #ddd;">表面宽厚，内心深沉</td>
+</tr>
+</tbody>
+</table>
+
+<h3>思考</h3>
+<div style="background:#fff5f5; padding:20px; border-left:6px solid #b03060; border-radius:8px; margin-top:20px;">
+<p>
+黛玉进府是《红楼梦》的重要开篇，曹雪芹以黛玉的视角展开叙事，让读者跟随这位敏感的少女走进贾府。黛玉"步步留心"的态度，既是对寄人篱下处境的清醒认知，也预示了她日后敏感多疑的性格走向。这种敏感，源于她的聪慧，也将成为她悲剧命运的根源。
+</p>
+</div>
+`,
+
+"贰 · 宝黛初见": `
+<h2>一、命中注定的相遇</h2>
+<p>
+黛玉进府次日，贾宝玉外出还愿归来。在此之前，黛玉已从王夫人处听说宝玉是个"混世魔王"，心中不免好奇又担忧。然而当宝玉真正出现在她面前时，一切预设的印象都被打破了。
+</p>
+
+<p>
+宝玉的外貌描写堪称古典文学中的经典：面如满月，眉目含情，虽是少年却有一种超凡脱俗的气质。更令人称奇的是，黛玉一见宝玉，竟有"似曾相识"之感——仿佛在哪里见过一般。这种奇妙的感觉，正是"木石前盟"的暗示，是前世因缘在今生的回响。
+</p>
+
+<h3>二、宝玉眼中的黛玉：病态之美</h3>
+<p>
+宝玉眼中的黛玉，是一种独特的病态之美。她眉间似蹙非蹙，眼中似喜非喜，娇弱如花，柔弱似柳。这种美不同于传统意义上的健康明艳，而是一种带着忧郁与脆弱的独特气质。曹雪芹用"心较比干多一窍，病如西子胜三分"来形容黛玉，既点出她的聪慧过人，也暗示了她的命运多舛。
+</p>
+
+<p>
+宝玉一见黛玉便脱口而出："这个妹妹我曾见过的。"这句话看似荒唐，实则道出了两人前世今生的因缘。在旁人眼中这是胡言乱语，在宝黛之间却是灵魂的相认。
+</p>
+
+<h3>三、赠字与摔玉：性格的初现</h3>
+<p>
+宝玉为黛玉取字"颦颦"，因见她眉间常带愁容。这个雅号既是对黛玉外貌的精准捕捉，也预示了她一生愁绪不断的命运。探春问及出处，宝玉引经据典地解释，展现出他虽不喜读书却博闻强记的特点。
+</p>
+
+<p>
+最令人震撼的是"摔玉"情节。当宝玉得知黛玉没有玉时，竟摘下自己的通灵宝玉狠命摔去，骂道："什么罕物，连人之高低不择！"这一举动看似荒唐，实则蕴含深意：宝玉追求的是人人平等，他无法接受自己独有而黛玉没有的不公。这既是对黛玉的特殊情感表达，也是他叛逆性格的初次展现。
+</p>
+
+<h3>四、木石前盟：神话背景</h3>
+<p>
+宝黛初见的"似曾相识"，源于《红楼梦》开篇的神话设定。前世，宝玉是赤瑕宫的神瑛侍者，黛玉是西方灵河岸边的绛珠仙草。神瑛侍者以甘露灌溉绛珠草，使其得以存活。后来绛珠草修成女体，为报灌溉之恩，发愿下凡以一生眼泪偿还。
+</p>
+
+<p>
+这个神话设定为宝黛爱情赋予了宿命色彩。黛玉的眼泪不是软弱的表现，而是偿还前世恩情的必然。她注定要为宝玉流尽一生的眼泪，这既是爱情的见证，也是悲剧的预言。
+</p>
+
+<h3>📊 宝黛初见对照表</h3>
+<table style="width:100%; border-collapse: collapse; background:#fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
+<thead>
+<tr style="background:#b03060; color:#fff;">
+<th style="padding:12px; border:1px solid #8b1a4a; width:25%;">维度</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">宝玉</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">黛玉</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">初见感受</td>
+<td style="padding:10px; border:1px solid #ddd;">似曾相识，一见如故</td>
+<td style="padding:10px; border:1px solid #ddd;">眼熟心惊，莫名亲切</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">性格表现</td>
+<td style="padding:10px; border:1px solid #ddd;">痴狂率真，摔玉示威</td>
+<td style="padding:10px; border:1px solid #ddd;">聪慧敏感，言辞得体</td>
+</tr>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">前世身份</td>
+<td style="padding:10px; border:1px solid #ddd;">神瑛侍者</td>
+<td style="padding:10px; border:1px solid #ddd;">绛珠仙草</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">命运关联</td>
+<td style="padding:10px; border:1px solid #ddd;">甘露灌溉之恩</td>
+<td style="padding:10px; border:1px solid #ddd;">一生眼泪偿还</td>
+</tr>
+</tbody>
+</table>
+
+<h3>思考</h3>
+<div style="background:#fff5f5; padding:20px; border-left:6px solid #b03060; border-radius:8px; margin-top:20px;">
+<p>
+宝黛初见是《红楼梦》中最经典的场景之一。"似曾相识"的奇妙感觉，暗示了两人前世今生的因缘。宝玉摔玉的举动，既是对平等的追求，也是对黛玉的特殊情感表达。黛玉的谨慎与宝玉的率真形成对比，却恰恰因为这种差异，两人才能成为知己。木石前盟的神话设定，为整部小说的爱情悲剧奠定了宿命基础。
+</p>
+</div>
+`,
+
+"叁 · 金玉良缘": `
+<h2>一、薛宝钗登场：完美的对手</h2>
+<p>
+黛玉进府不久，薛姨妈带着薛蟠、薛宝钗也来到了荣国府。薛家是金陵四大家族之一，与贾家有姻亲关系。宝钗比黛玉年长几岁，容貌端庄，性格温婉，处事圆滑，很快便赢得了贾府上下的喜爱。
+</p>
+
+<p>
+宝钗脖子上挂着一把金锁，据说是幼时和尚所赠，上面錾着"不离不弃，芳龄永继"八个字。而宝玉的通灵宝玉上刻着"莫失莫忘，仙寿恒昌"。两相对照，便有了"金玉良缘"的说法——金锁与宝玉，恰成一对。这与宝黛的"木石前盟"形成了鲜明对比。
+</p>
+
+<h3>二、两种姻缘的对立</h3>
+<p>
+《红楼梦》中存在两种姻缘观的深刻对立。"木石前盟"代表精神层面的知己之爱，源于前世的因缘，追求的是心灵的契合与自由。"金玉良缘"则代表世俗层面的门当户对，讲究的是家族利益与社会规范。
+</p>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0;">
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #b03060;">
+<h4 style="color: #b03060;">木石前盟（宝黛）</h4>
+<p><strong>来源：</strong>前世绛珠仙草与神瑛侍者的因缘</p>
+<p><strong>性质：</strong>精神层面的知己之爱</p>
+<p><strong>特点：</strong>纯真、叛逆、追求自由</p>
+<p><strong>结局：</strong>悲剧——泪尽而逝</p>
+</div>
+
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #d4af37;">
+<h4 style="color: #d4af37;">金玉良缘（宝钗）</h4>
+<p><strong>来源：</strong>金锁与宝玉的"天作之合"</p>
+<p><strong>性质：</strong>世俗层面的门当户对</p>
+<p><strong>特点：</strong>稳重、贤惠、符合礼教</p>
+<p><strong>结局：</strong>形式婚姻——有名无实</p>
+</div>
+</div>
+
+<h3>三、宝钗与黛玉：性格的对比</h3>
+<p>
+宝钗与黛玉性格迥异，形成鲜明对比。黛玉敏感多疑，锋芒毕露；宝钗豁达大度，藏愚守拙。黛玉追求精神自由，宝钗恪守世俗礼教。黛玉率真任性，常得罪人；宝钗圆滑世故，深得人心。
+</p>
+
+<p>
+宝钗的"完美"是封建礼教的产物。她待人宽厚，处事周全，劝宝玉读书上进，符合长辈的期望。然而这种"完美"背后，是对自我的压抑。她服用"冷香丸"，象征着她用理智压制情感。她虽对宝玉有情，却从不表露，始终保持着端庄的姿态。
+</p>
+
+<h3>四、黛玉的忧虑</h3>
+<p>
+宝钗的到来让黛玉感到了威胁。她看到宝玉对宝钗的关注，心中难免失落。加之"金玉良缘"的说法在府中流传，黛玉更加敏感多疑。她曾半开玩笑地说："早知他来，我就不来了。"这番话看似玩笑，实则流露出她内心的不安。
+</p>
+
+<p>
+黛玉的敏感源于她寄人篱下的处境，也源于她对宝玉的深情。她害怕失去宝玉的关注，害怕"金玉良缘"取代"木石前盟"。这种不安，将成为她日后多愁善感的重要原因。
+</p>
+
+<h3>📊 宝钗与黛玉对比</h3>
+<table style="width:100%; border-collapse: collapse; background:#fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
+<thead>
+<tr style="background:#b03060; color:#fff;">
+<th style="padding:12px; border:1px solid #8b1a4a; width:20%;">维度</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">薛宝钗</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">林黛玉</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">外貌</td>
+<td style="padding:10px; border:1px solid #ddd;">端庄丰腴，雍容华贵</td>
+<td style="padding:10px; border:1px solid #ddd;">清瘦柔弱，病态之美</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">性格</td>
+<td style="padding:10px; border:1px solid #ddd;">温婉大方，藏愚守拙</td>
+<td style="padding:10px; border:1px solid #ddd;">敏感多疑，锋芒毕露</td>
+</tr>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">处世</td>
+<td style="padding:10px; border:1px solid #ddd;">圆滑世故，深得人心</td>
+<td style="padding:10px; border:1px solid #ddd;">率真任性，得罪人多</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">对宝玉</td>
+<td style="padding:10px; border:1px solid #ddd;">劝其读书上进</td>
+<td style="padding:10px; border:1px solid #ddd;">理解其叛逆性情</td>
+</tr>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">象征物</td>
+<td style="padding:10px; border:1px solid #ddd;">金锁（金玉良缘）</td>
+<td style="padding:10px; border:1px solid #ddd;">绛珠草（木石前盟）</td>
+</tr>
+</tbody>
+</table>
+
+<h3>思考</h3>
+<div style="background:#fff5f5; padding:20px; border-left:6px solid #b03060; border-radius:8px; margin-top:20px;">
+<p>
+"金玉良缘"与"木石前盟"的对立，是《红楼梦》的核心矛盾之一。前者代表世俗的门当户对，后者代表精神的知己之爱。曹雪芹通过这一矛盾，批判了封建婚姻制度对人性的压抑。宝钗的"完美"是封建礼教的产物，黛玉的"不完美"却恰恰是她真实人性的体现。真正的爱情应该是精神的契合，而非世俗的匹配。
+</p>
+</div>
+`,
+
+"肆 · 大观园诗社": `
+<h2>一、大观园：青春的乌托邦</h2>
+<p>
+大观园是为元春省亲而建的皇家园林，占地广阔，亭台楼阁，山水花木，极尽奢华。元春省亲之后，命宝玉和众姐妹入住园中。宝玉住怡红院，黛玉住潇湘馆，宝钗住蘅芜苑，迎春住缀锦楼，探春住秋爽斋，惜春住藕香榭。
+</p>
+
+<p>
+大观园成为了这些少男少女的精神家园。在这里，他们暂时远离了封建礼教的束缚，可以自由地吟诗作对、赏花观景。诗社的成立，更是让这种精神自由达到了顶峰。然而，这种美好注定是短暂的，大观园的繁华终将散去。
+</p>
+
+<h3>二、海棠诗社：群芳初咏</h3>
+<p>
+探春发起诗社，众人响应。因贾芸送来白海棠花，便以"海棠"为题，成立"海棠诗社"。众人各取雅号：黛玉为"潇湘妃子"，宝钗为"蘅芜君"，宝玉为"怡红公子"，探春为"蕉下客"，李纨为"稻香老农"。
+</p>
+
+<p>
+首次诗会以白海棠为题，限"门、盆、魂、痕、昏"五字为韵。黛玉的诗灵动飘逸，借海棠抒发自己的孤高与愁绪；宝钗的诗含蓄浑厚，体现她稳重典雅的气质。李纨评判以宝钗为冠，黛玉次之，这一评判也反映了两人性格的差异。
+</p>
+
+<div style="background: #fef6f6; padding: 20px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #b03060;">
+<h4 style="color: #b03060;">黛玉《咏白海棠》（节选）</h4>
+<p style="font-style: italic; line-height: 1.8;">
+偷来梨蕊三分白，借得梅花一缕魂。<br>
+月窟仙人缝缟袂，秋闺怨女拭啼痕。
+</p>
+</div>
+
+<div style="background: #fef9e6; padding: 20px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #d4af37;">
+<h4 style="color: #d4af37;">宝钗《咏白海棠》（节选）</h4>
+<p style="font-style: italic; line-height: 1.8;">
+淡极始知花更艳，愁多焉得玉无痕。<br>
+欲偿白帝凭清洁，不语婷婷日又昏。
+</p>
+</div>
+
+<h3>三、菊花诗会：黛玉夺魁</h3>
+<p>
+史湘云要做东请客，宝钗建议以菊花为题办诗会。这次诗会，黛玉大放异彩，连作三首菊花诗，皆被评为佳作。李纨评道："题目新，诗也新，立意更新，恼不得要推潇湘妃子为魁了。"
+</p>
+
+<p>
+黛玉的诗借菊花抒发自己的孤高与愁绪，"孤标傲世偕谁隐，一样花开为底迟"道出了她内心的孤独与不甘。这次夺魁，证明了黛玉的才华，也让她在诗社中获得了认可。
+</p>
+
+<h3>四、诗社的深层意义</h3>
+<p>
+大观园诗社是《红楼梦》中最美好的篇章之一。在这里，少女们可以暂时摆脱封建礼教的束缚，展现自己的才华与个性。诗社不仅是一个文学活动，更是一种精神自由的象征。
+</p>
+
+<p>
+然而，这种美好是短暂的。随着贾府的衰落，大观园的繁华终将散去。诗社的成立与解散，恰如青春的短暂与美好，令人唏嘘。曹雪芹通过诗社的描写，表达了对青春、才华与自由的珍视。
+</p>
+
+<h3>📊 大观园诗社成员表</h3>
+<table style="width:100%; border-collapse: collapse; background:#fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
+<thead>
+<tr style="background:#b03060; color:#fff;">
+<th style="padding:12px; border:1px solid #8b1a4a;">人物</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">雅号</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">住处</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">诗风特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">林黛玉</td>
+<td style="padding:10px; border:1px solid #ddd;">潇湘妃子</td>
+<td style="padding:10px; border:1px solid #ddd;">潇湘馆</td>
+<td style="padding:10px; border:1px solid #ddd;">风流别致，灵动飘逸</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">薛宝钗</td>
+<td style="padding:10px; border:1px solid #ddd;">蘅芜君</td>
+<td style="padding:10px; border:1px solid #ddd;">蘅芜苑</td>
+<td style="padding:10px; border:1px solid #ddd;">含蓄浑厚，稳重典雅</td>
+</tr>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">贾宝玉</td>
+<td style="padding:10px; border:1px solid #ddd;">怡红公子</td>
+<td style="padding:10px; border:1px solid #ddd;">怡红院</td>
+<td style="padding:10px; border:1px solid #ddd;">清新自然，真情流露</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">贾探春</td>
+<td style="padding:10px; border:1px solid #ddd;">蕉下客</td>
+<td style="padding:10px; border:1px solid #ddd;">秋爽斋</td>
+<td style="padding:10px; border:1px solid #ddd;">豪放洒脱，有大家风范</td>
+</tr>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">史湘云</td>
+<td style="padding:10px; border:1px solid #ddd;">枕霞旧友</td>
+<td style="padding:10px; border:1px solid #ddd;">—</td>
+<td style="padding:10px; border:1px solid #ddd;">豪爽开朗，不拘小节</td>
+</tr>
+</tbody>
+</table>
+
+<h3>思考</h3>
+<div style="background:#fff5f5; padding:20px; border-left:6px solid #b03060; border-radius:8px; margin-top:20px;">
+<p>
+大观园诗社是《红楼梦》中最具理想色彩的篇章。在这里，少女们可以自由地展现才华，追求精神的自由。然而，这种美好终将逝去。诗社的兴衰，象征着青春的短暂与美好，也预示着贾府衰落、群芳离散的悲剧结局。
+</p>
+</div>
+`,
+
+"伍 · 菊花诗会": `
+<h2>一、诗会的缘起：湘云的困境与宝钗的帮助</h2>
+<p>
+史湘云要做东请客办诗会，却因手头拮据而犯难。宝钗体贴入微，主动提出帮忙，建议以菊花为题办诗会，并从自家拿来螃蟹助兴。这一安排既解决了湘云的难题，又为诗社增添了一次盛会。
+</p>
+
+<p>
+宝钗的处事之道在此处展现得淋漓尽致：既要成全湘云的面子，又要考虑实际可行性，还要照顾各方感受。她对湘云说的一番话，体现了封建社会中人际关系的复杂与微妙。
+</p>
+
+<h3>二、菊花诗十二题</h3>
+<p>
+这次诗会，宝钗和湘云拟定了十二个菊花诗题，以"忆、访、种、对、供、咏、画、问、簪、影、梦、菊"为序，形成一个完整的菊花诗系列。众人各自选题作诗，黛玉一人独作三首，皆被评为佳作。
+</p>
+
+<div style="background: #fef6f6; padding: 25px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #b03060;">
+<h4 style="color: #b03060;">黛玉《问菊》（节选）</h4>
+<p style="font-style: italic; line-height: 1.8;">
+孤标傲世偕谁隐，一样花开为底迟？<br>
+圃露庭霜何寂寞，鸿归蛩病可相思？
+</p>
+</div>
+
+<div style="background: #fef6f6; padding: 25px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #b03060;">
+<h4 style="color: #b03060;">黛玉《菊梦》（节选）</h4>
+<p style="font-style: italic; line-height: 1.8;">
+登仙非慕庄生蝶，忆旧还寻陶令盟。<br>
+醒时幽怨同谁诉，衰草寒烟无限情。
+</p>
+</div>
+
+<h3>三、黛玉夺魁：才华的证明</h3>
+<p>
+李纨评判众人诗作，以黛玉的《咏菊》《问菊》《菊梦》为前三名。黛玉终于在一次诗会中夺魁，证明了自己的才华。她的诗借菊花抒发自己的孤高与愁绪，"孤标傲世偕谁隐"道出了她内心的孤独与不甘。
+</p>
+
+<p>
+然而，才华并不能改变黛玉的命运。在封建社会中，女子的才华往往不被重视，甚至被视为"不守妇道"。黛玉的悲剧，不仅在于她与宝玉的爱情无法圆满，更在于她的才华与个性无法被世俗所容。
+</p>
+
+<h3>四、螃蟹咏：讽刺世态</h3>
+<p>
+菊花诗会后，众人吃螃蟹。宝玉率先作《螃蟹咏》，众人也跟着作。宝钗的螃蟹诗被众人评为"讽刺世人太毒了些"。
+</p>
+
+<div style="background: #fef9e6; padding: 25px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #d4af37;">
+<h4 style="color: #d4af37;">宝钗《螃蟹咏》（节选）</h4>
+<p style="font-style: italic; line-height: 1.8;">
+眼前道路无经纬，皮里春秋空黑黄。<br>
+于今落釜成何益，月浦空余禾黍香。
+</p>
+</div>
+
+<p>
+这首诗表面上写螃蟹，实则讽刺那些横行霸道、表里不一的人。"眼前道路无经纬，皮里春秋空黑黄"一联，辛辣地讽刺了世态炎凉，展现了宝钗性格中犀利的一面。
+</p>
+
+<h3>📊 菊花诗会排名</h3>
+<table style="width:100%; border-collapse: collapse; background:#fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
+<thead>
+<tr style="background:#b03060; color:#fff;">
+<th style="padding:12px; border:1px solid #8b1a4a;">排名</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">诗题</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">作者</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">评语</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold; text-align:center;">第一</td>
+<td style="padding:10px; border:1px solid #ddd;">《咏菊》</td>
+<td style="padding:10px; border:1px solid #ddd;">林黛玉</td>
+<td style="padding:10px; border:1px solid #ddd;">题目新，诗也新，立意更新</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold; text-align:center;">第二</td>
+<td style="padding:10px; border:1px solid #ddd;">《问菊》</td>
+<td style="padding:10px; border:1px solid #ddd;">林黛玉</td>
+<td style="padding:10px; border:1px solid #ddd;">孤标傲世，别出心裁</td>
+</tr>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold; text-align:center;">第三</td>
+<td style="padding:10px; border:1px solid #ddd;">《菊梦》</td>
+<td style="padding:10px; border:1px solid #ddd;">林黛玉</td>
+<td style="padding:10px; border:1px solid #ddd;">幽怨缠绵，情深意切</td>
+</tr>
+</tbody>
+</table>
+
+<h3>思考</h3>
+<div style="background:#fff5f5; padding:20px; border-left:6px solid #b03060; border-radius:8px; margin-top:20px;">
+<p>
+菊花诗会是《红楼梦》中最精彩的诗会之一。黛玉连夺前三，证明了她"心较比干多一窍"的才华。然而，才华并不能改变她的命运。在封建社会中，女子的才华往往不被重视。黛玉的悲剧，不仅在于她与宝玉的爱情无法圆满，更在于她的才华与个性无法被世俗所容。菊花诗会的热闹，恰恰衬托出黛玉内心的孤独与无奈。
+</p>
+</div>
+`,
+
+"陆 · 人物关系图": `
+
+<div class="mindmap-container" id="mindmap-container">
+    <canvas class="mindmap-canvas" id="mindmap-canvas"></canvas>
+    
+    <div class="mindmap-legend">
+        <h4>人物颜色</h4>
+        <div class="legend-item">
+            <div class="legend-line" style="background:#b03060;border-radius:50%;width:14px;height:14px;"></div>
+            <span>核心主角</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-line" style="background:#d4708a;border-radius:50%;width:14px;height:14px;"></div>
+            <span>贾府血亲</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-line" style="background:#d4af37;border-radius:50%;width:14px;height:14px;"></div>
+            <span>外姓姻亲</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-line" style="background:#888;border-radius:50%;width:14px;height:14px;"></div>
+            <span>外姓男性</span>
+        </div>
+        <h4 style="margin-top:12px;">关系图例</h4>
+        <div class="legend-item">
+            <div class="legend-line legend-blood"></div>
+            <span>血缘关系</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-line legend-marriage"></div>
+            <span>婚姻关系</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-line legend-master" style="border: 2px dashed #b03060; background: none;"></div>
+            <span>情感/姻缘</span>
+        </div>
+    </div>
+    
+    <div class="mindmap-tips">
+        💡 点击人物展开关系 | 拖动平移 | 按钮缩放/重置
+    </div>
+    
+    <div class="mindmap-controls">
+        <button class="mindmap-btn" onclick="zoomIn()" title="放大">+</button>
+        <button class="mindmap-btn" onclick="zoomOut()" title="缩小">−</button>
+        <button class="mindmap-btn" onclick="resetMap()" title="重置">⟲</button>
+    </div>
+</div>
+<p>
+图中带有 <span style="background:#d4af37;color:#fff;padding:2px 6px;border-radius:50%;font-size:12px;">+</span> 标记的人物表示有未显示的关系人，点击可展开。已展开的人物带有 <span style="background:#b03060;color:#fff;padding:2px 6px;border-radius:50%;font-size:12px;">−</span> 标记，再次点击可收起。通过不断点击，您可以逐步探索整个贾府的人物关系网络。
+</p>
+`
+};
+
+let mindmapInitialized = false;
+let scale = 1;
+let offsetX = 0;
+let offsetY = 0;
+let isDragging = false;
+let lastX = 0;
+let lastY = 0;
+let selectedNode = 'jiamu';
+let expandedNodes = new Set(['jiamu']);
+let clickStartTime = 0;
+let clickStartX = 0;
+let clickStartY = 0;
+
+const nodes = [
+    { id: 'jiamu', name: '贾母', x: 400, y: 80, color: '#b03060', radius: 40 },
+    { id: 'jiashe', name: '贾赦', x: 200, y: 180, color: '#d4708a', radius: 32 },
+    { id: 'jiazheng', name: '贾政', x: 400, y: 180, color: '#d4708a', radius: 32 },
+    { id: 'jiamin', name: '贾敏', x: 600, y: 180, color: '#d4708a', radius: 32 },
+    { id: 'xiangyun', name: '史湘云', x: 750, y: 180, color: '#d4af37', radius: 28 },
+    { id: 'xingfuren', name: '邢夫人', x: 100, y: 280, color: '#d4af37', radius: 28 },
+    { id: 'wangfuren', name: '王夫人', x: 300, y: 280, color: '#d4af37', radius: 28 },
+    { id: 'linruhai', name: '林如海', x: 500, y: 280, color: '#888', radius: 28 },
+    { id: 'jialian', name: '贾琏', x: 150, y: 380, color: '#d4708a', radius: 30 },
+    { id: 'jiaying', name: '迎春', x: 250, y: 380, color: '#d4708a', radius: 26 },
+    { id: 'jiayuan', name: '元春', x: 350, y: 380, color: '#d4708a', radius: 26 },
+    { id: 'baoyu', name: '宝玉', x: 450, y: 380, color: '#b03060', radius: 34 },
+    { id: 'jiatan', name: '探春', x: 550, y: 380, color: '#d4708a', radius: 26 },
+    { id: 'daiyu', name: '黛玉', x: 650, y: 380, color: '#b03060', radius: 30 },
+    { id: 'wangxifeng', name: '王熙凤', x: 150, y: 480, color: '#b03060', radius: 30 },
+    { id: 'jiaqiaojie', name: '巧姐', x: 150, y: 570, color: '#d4708a', radius: 22 },
+    { id: 'baochai', name: '宝钗', x: 450, y: 480, color: '#d4af37', radius: 30 },
+    { id: 'xueyi', name: '薛姨妈', x: 350, y: 480, color: '#d4af37', radius: 26 },
+];
+
+const edges = [
+    { from: 'jiamu', to: 'jiashe', type: 'blood' },
+    { from: 'jiamu', to: 'jiazheng', type: 'blood' },
+    { from: 'jiamu', to: 'jiamin', type: 'blood' },
+    { from: 'jiamu', to: 'xiangyun', type: 'blood' },
+    { from: 'jiashe', to: 'xingfuren', type: 'marriage' },
+    { from: 'jiazheng', to: 'wangfuren', type: 'marriage' },
+    { from: 'jiamin', to: 'linruhai', type: 'marriage' },
+    { from: 'jiashe', to: 'jialian', type: 'blood' },
+    { from: 'jiashe', to: 'jiaying', type: 'blood' },
+    { from: 'jiazheng', to: 'jiayuan', type: 'blood' },
+    { from: 'jiazheng', to: 'baoyu', type: 'blood' },
+    { from: 'jiazheng', to: 'jiatan', type: 'blood' },
+    { from: 'jiamin', to: 'daiyu', type: 'blood' },
+    { from: 'jialian', to: 'wangxifeng', type: 'marriage' },
+    { from: 'wangfuren', to: 'wangxifeng', type: 'blood' },
+    { from: 'jialian', to: 'jiaqiaojie', type: 'blood' },
+    { from: 'wangfuren', to: 'xueyi', type: 'blood' },
+    { from: 'xueyi', to: 'baochai', type: 'blood' },
+    { from: 'baoyu', to: 'daiyu', type: 'love', dashed: true },
+    { from: 'baoyu', to: 'baochai', type: 'love', dashed: true },
+];
+
+function getConnectedNodes(nodeId) {
+    const connected = new Set();
+    edges.forEach(edge => {
+        if (edge.from === nodeId) connected.add(edge.to);
+        if (edge.to === nodeId) connected.add(edge.from);
+    });
+    return connected;
+}
+
+function initMindmap() {
+    const container = document.getElementById('mindmap-container');
+    const canvas = document.getElementById('mindmap-canvas');
+    if (!canvas || !container) return;
+    
+    canvas.width = container.offsetWidth;
+    canvas.height = container.offsetHeight;
+    
+    drawMindmap();
+    
+    canvas.addEventListener('mousedown', handleMouseDown);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseup', handleMouseUp);
+    canvas.addEventListener('mouseleave', handleMouseUp);
+    
+    mindmapInitialized = true;
+}
+
+function drawMindmap() {
+    const canvas = document.getElementById('mindmap-canvas');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    ctx.save();
+    ctx.translate(offsetX, offsetY);
+    ctx.scale(scale, scale);
+    
+    const visibleNodes = new Set(expandedNodes);
+    expandedNodes.forEach(nodeId => {
+        getConnectedNodes(nodeId).forEach(id => visibleNodes.add(id));
+    });
+    
+    edges.forEach(edge => {
+        if (!visibleNodes.has(edge.from) || !visibleNodes.has(edge.to)) return;
+        if (!expandedNodes.has(edge.from) && !expandedNodes.has(edge.to)) return;
+        
+        const fromNode = nodes.find(n => n.id === edge.from);
+        const toNode = nodes.find(n => n.id === edge.to);
+        if (!fromNode || !toNode) return;
+        
+        ctx.beginPath();
+        ctx.moveTo(fromNode.x, fromNode.y);
+        ctx.lineTo(toNode.x, toNode.y);
+        
+        if (edge.type === 'blood') {
+            ctx.strokeStyle = '#b03060';
+            ctx.lineWidth = 2;
+        } else if (edge.type === 'marriage') {
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 2;
+        } else if (edge.type === 'love') {
+            ctx.strokeStyle = '#b03060';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+        }
+        
+        ctx.stroke();
+        ctx.setLineDash([]);
+    });
+    
+    nodes.forEach(node => {
+        if (!visibleNodes.has(node.id)) return;
+        
+        const isExpanded = expandedNodes.has(node.id);
+        const isSelected = selectedNode === node.id;
+        const connectedNodes = getConnectedNodes(node.id);
+        const hasHiddenConnections = [...connectedNodes].some(id => !visibleNodes.has(id));
+        
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+        
+        if (isSelected) {
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+            ctx.strokeStyle = node.color;
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            ctx.fillStyle = node.color;
+        } else {
+            ctx.fillStyle = node.color;
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.fillStyle = '#fff';
+        }
+        
+        ctx.font = 'bold 13px "Microsoft YaHei", serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(node.name, node.x, node.y);
+        
+        if (hasHiddenConnections) {
+            ctx.beginPath();
+            ctx.arc(node.x + node.radius - 5, node.y - node.radius + 5, 8, 0, Math.PI * 2);
+            ctx.fillStyle = '#d4af37';
+            ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 10px Arial';
+            ctx.fillText('+', node.x + node.radius - 5, node.y - node.radius + 5);
+        } else if (isExpanded && connectedNodes.size > 0 && node.id !== 'jiamu') {
+            ctx.beginPath();
+            ctx.arc(node.x + node.radius - 5, node.y - node.radius + 5, 8, 0, Math.PI * 2);
+            ctx.fillStyle = '#b03060';
+            ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 10px Arial';
+            ctx.fillText('−', node.x + node.radius - 5, node.y - node.radius + 5);
+        }
+    });
+    
+    ctx.restore();
+}
+
+function getNodeAtPosition(x, y) {
+    const canvas = document.getElementById('mindmap-canvas');
+    const rect = canvas.getBoundingClientRect();
+    const canvasX = (x - rect.left - offsetX) / scale;
+    const canvasY = (y - rect.top - offsetY) / scale;
+    
+    for (let i = nodes.length - 1; i >= 0; i--) {
+        const node = nodes[i];
+        const dx = canvasX - node.x;
+        const dy = canvasY - node.y;
+        if (dx * dx + dy * dy <= node.radius * node.radius) {
+            return node;
+        }
+    }
+    return null;
+}
+
+function handleMouseDown(e) {
+    clickStartTime = Date.now();
+    clickStartX = e.clientX;
+    clickStartY = e.clientY;
+    isDragging = true;
+    lastX = e.clientX;
+    lastY = e.clientY;
+}
+
+function handleMouseMove(e) {
+    if (!isDragging) return;
+    const dx = e.clientX - lastX;
+    const dy = e.clientY - lastY;
+    offsetX += dx;
+    offsetY += dy;
+    lastX = e.clientX;
+    lastY = e.clientY;
+    drawMindmap();
+}
+
+function handleMouseUp(e) {
+    const clickDuration = Date.now() - clickStartTime;
+    const moveDistance = Math.sqrt(
+        Math.pow(e.clientX - clickStartX, 2) + 
+        Math.pow(e.clientY - clickStartY, 2)
+    );
+    
+    if (clickDuration < 300 && moveDistance < 10) {
+        const node = getNodeAtPosition(e.clientX, e.clientY);
+        if (node) {
+            selectedNode = node.id;
+            
+            if (node.id === 'jiamu') {
+                expandedNodes.add(node.id);
+            } else if (expandedNodes.has(node.id)) {
+                expandedNodes.delete(node.id);
+            } else {
+                expandedNodes.add(node.id);
+            }
+        }
+    }
+    
+    isDragging = false;
+    drawMindmap();
+}
+
+function zoomIn() {
+    if (scale < 3) {
+        scale *= 1.2;
+        drawMindmap();
+    }
+}
+
+function zoomOut() {
+    if (scale > 0.3) {
+        scale *= 0.8;
+        drawMindmap();
+    }
+}
+
+function resetMap() {
+    scale = 1;
+    offsetX = 0;
+    offsetY = 0;
+    selectedNode = 'jiamu';
+    expandedNodes = new Set(['jiamu']);
+    drawMindmap();
+}
+
+function changeTab(element, title) {
+    const items = document.querySelectorAll('.nav-item');
+    items.forEach(item => item.classList.remove('active'));
+    element.classList.add('active');
+
+    document.getElementById('content-title').innerText = title;
+    document.getElementById('content-body').innerHTML = contentData[title];
+    
+    if (title === '陆 · 人物关系图') {
+        setTimeout(() => {
+            initMindmap();
+        }, 100);
+    }
+}
+
+window.onload = function() {
+    changeTab(document.querySelector('.nav-item'), '壹 · 黛玉进府');
+};
+
+const BadgeManager = {
+    STORAGE_KEY: 'badge_data_v1',
+    
+    getData() {
+        try {
+            const data = localStorage.getItem(this.STORAGE_KEY);
+            return data ? JSON.parse(data) : {
+                unlockedBadges: [],
+                badgeUnlockTime: {},
+                readingProgress: {
+                    xiyou: { stage1: false, stage2: false, stage3: false },
+                    sanguo: { stage1: false, stage2: false, stage3: false },
+                    shuihu: { stage1: false, stage2: false, stage3: false },
+                    honglou: { stage1: false, stage2: false, stage3: false }
+                }
+            };
+        } catch (e) {
+            return {
+                unlockedBadges: [],
+                badgeUnlockTime: {},
+                readingProgress: {
+                    xiyou: { stage1: false, stage2: false, stage3: false },
+                    sanguo: { stage1: false, stage2: false, stage3: false },
+                    shuihu: { stage1: false, stage2: false, stage3: false },
+                    honglou: { stage1: false, stage2: false, stage3: false }
+                }
+            };
+        }
+    },
+    
+    saveData(data) {
+        try {
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+        } catch (e) {
+            console.error('保存勋章数据失败:', e);
+        }
+    },
+    
+    isStageRead(book, stage) {
+        const data = this.getData();
+        return data.readingProgress[book] && data.readingProgress[book]['stage' + stage];
+    },
+    
+    markStageRead(book, stage) {
+        const data = this.getData();
+        if (!data.readingProgress[book]) {
+            data.readingProgress[book] = { stage1: false, stage2: false, stage3: false };
+        }
+        data.readingProgress[book]['stage' + stage] = true;
+        this.saveData(data);
+        return this.checkAndUnlockBadges();
+    },
+    
+    isBookCompleted(book) {
+        const data = this.getData();
+        const progress = data.readingProgress[book];
+        return progress && progress.stage1 && progress.stage2 && progress.stage3;
+    },
+    
+    getCompletedBooksCount() {
+        let count = 0;
+        ['xiyou', 'sanguo', 'shuihu', 'honglou'].forEach(book => {
+            if (this.isBookCompleted(book)) count++;
+        });
+        return count;
+    },
+    
+    checkAndUnlockBadges() {
+        const data = this.getData();
+        const newlyUnlocked = [];
+        
+        const bookBadges = [
+            { id: 'xiyou_reader', name: '西游行者', desc: '完成西游记阅读', book: 'xiyou' },
+            { id: 'sanguo_reader', name: '三国通览', desc: '完成三国演义阅读', book: 'sanguo' },
+            { id: 'shuihu_reader', name: '水浒知音', desc: '完成水浒传阅读', book: 'shuihu' },
+            { id: 'honglou_reader', name: '红楼初探', desc: '完成红楼梦阅读', book: 'honglou' },
+            { id: 'all_books_reader', name: '四大名著通', desc: '完成全部名著阅读', book: 'all' }
+        ];
+        
+        bookBadges.forEach(badge => {
+            if (data.unlockedBadges.includes(badge.id)) return;
+            
+            let shouldUnlock = false;
+            if (badge.book === 'all') {
+                shouldUnlock = this.getCompletedBooksCount() >= 4;
+            } else {
+                shouldUnlock = this.isBookCompleted(badge.book);
+            }
+            
+            if (shouldUnlock) {
+                data.unlockedBadges.push(badge.id);
+                data.badgeUnlockTime[badge.id] = Date.now();
+                newlyUnlocked.push(badge);
+            }
+        });
+        
+        if (newlyUnlocked.length > 0) {
+            this.saveData(data);
+        }
+        
+        return newlyUnlocked;
+    }
+};
+
+let autoReadStartTime = Date.now();
+let hasScrolledEnough = false;
+const MIN_READ_TIME = 30000;
+const SCROLL_THRESHOLD = 0.8;
+let autoReadMarked = false;
+
+function initAutoReadTracking() {
+    if (BadgeManager.isStageRead('honglou', 1)) {
+        autoReadMarked = true;
+        return;
+    }
+    
+    const mainContent = document.querySelector('.main-content');
+    
+    mainContent.addEventListener('scroll', function() {
+        if (autoReadMarked) return;
+        
+        const scrollPercent = (mainContent.scrollTop + mainContent.clientHeight) / mainContent.scrollHeight;
+        if (scrollPercent >= SCROLL_THRESHOLD) {
+            hasScrolledEnough = true;
+            checkAndMarkAutoRead();
+        }
+    });
+    
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden && !autoReadMarked) {
+            checkAndMarkAutoRead();
+        }
+    });
+    
+    window.addEventListener('beforeunload', function() {
+        if (!autoReadMarked) {
+            checkAndMarkAutoRead();
+        }
+    });
+}
+
+function checkAndMarkAutoRead() {
+    if (autoReadMarked) return;
+    
+    const readTime = Date.now() - autoReadStartTime;
+    if (readTime >= MIN_READ_TIME && hasScrolledEnough) {
+        const newlyUnlocked = BadgeManager.markStageRead('honglou', 1);
+        autoReadMarked = true;
+        
+        if (newlyUnlocked.length > 0) {
+            localStorage.setItem('pending_badge_notification', newlyUnlocked[0].id);
+        }
+    }
+}
+
+function showBadgeNotification(badge) {
+    document.getElementById('badgeName').textContent = badge.name;
+    document.getElementById('badgeDesc').textContent = badge.desc;
+    
+    const card = document.getElementById('badgeCard');
+    const rarityColors = {
+        common: '#d4af37',
+        rare: '#9c27b0',
+        epic: '#ff6b35'
+    };
+    const color = rarityColors[badge.rarity] || rarityColors.common;
+    card.style.border = '4px solid ' + color;
+    card.style.boxShadow = '0 10px 40px ' + color + '80';
+    document.getElementById('badgeName').style.color = color;
+    
+    document.getElementById('badgeNotification').classList.add('show');
+}
+
+function closeBadgeNotification() {
+    document.getElementById('badgeNotification').classList.remove('show');
+}
+
+window.addEventListener('load', function() {
+    initAutoReadTracking();
+});
+
+window.addEventListener('resize', () => {
+    if (mindmapInitialized) {
+        const container = document.getElementById('mindmap-container');
+        const canvas = document.getElementById('mindmap-canvas');
+        if (canvas && container) {
+            canvas.width = container.offsetWidth;
+            canvas.height = container.offsetHeight;
+            drawMindmap();
+        }
+    }
+});
+</script>
+
+</body>
+</html>

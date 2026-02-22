@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>红楼梦学习站 - 归彼大荒</title>
+    <style>
+        /* 1. 基础背景：极淡的粉色（如黛粉） */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #fdf5f6; 
+            font-family: "Microsoft YaHei", serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 2. 主容器 */
+        .container {
+            display: flex;
+            align-items: center;
+            gap: 100px; /* 保持一致的间距 */
+            max-width: 1000px;
+        }
+
+        /* 3. 人物画像区域 */
+        .character-box {
+            flex: 1;
+        }
+        .character-box img {
+            width: 400px; 
+            filter: drop-shadow(10px 10px 20px rgba(0,0,0,0.15));
+        }
+
+        /* 4. 按钮导航区域 */
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 30px; /* 统一按钮间距 */
+        }
+
+        /* 5. 抽屉式按钮样式（保持三国、水浒风格） */
+        .stage-btn {
+            text-decoration: none;
+            padding: 20px 40px;
+            background: #fff;
+            color: #333;
+            /* 使用红楼特色的绛红色装饰条 */
+            border-left: 5px solid #b03060; 
+            border-radius: 4px;
+            font-size: 1.25rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            width: 300px;
+            display: block;
+        }
+
+        /* 抽屉式悬停效果：向右平移 */
+        .stage-btn:hover {
+            transform: translateX(15px); /* 向右滑出 */
+            background-color: #b03060;
+            color: #fff;
+            box-shadow: 0 8px 25px rgba(176, 48, 96, 0.3);
+        }
+
+        /* 返回首页按钮 */
+        .back-home {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            text-decoration: none;
+            color: #b03060;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="book.html" class="back-home">← 返回主站</a>
+
+    <div class="container">
+        <div class="character-box">
+            <img src="images/daiyu.png" alt="林黛玉">
+        </div>
+
+        <div class="nav-menu">
+            <a href="honglou_stage1.html" class="stage-btn">
+                第一阶段：大观寻梦
+            </a>
+            <a href="honglou_stage2.html" class="stage-btn">
+                第二阶段：烈火烹油
+            </a>
+            <a href="honglou_stage3.html" class="stage-btn">
+                第三阶段：万艳同悲
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

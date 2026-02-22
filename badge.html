@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>勋章墙</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "SimSun", sans-serif;
+            background-color: #f5f5dc;
+            min-height: 100vh;
+            padding: 20px;
+            padding-top: 60px;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            right: 40px;
+            text-decoration: none;
+            color: #f5f5dc;
+            font-weight: bold;
+            background: #8b4513;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .page-title {
+            text-align: center;
+            color: #8b4513;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .stats-summary {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            background: linear-gradient(135deg, #fff9e6, #fff5d6);
+            border-radius: 15px;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 2px solid #d4af37;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #8b4513;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .section {
+            max-width: 900px;
+            margin: 0 auto 40px;
+        }
+
+        .section-title {
+            color: #8b4513;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #d4af37;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .badge-card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .badge-card.locked {
+            opacity: 0.6;
+            filter: grayscale(0.5);
+        }
+
+        .badge-card.locked .badge-icon {
+            filter: grayscale(1) brightness(0.7);
+        }
+
+        .badge-card.unlocked {
+            animation: unlockPulse 0.5s ease;
+        }
+
+        @keyframes unlockPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .badge-card.common.unlocked {
+            border: 3px solid #d4af37;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .badge-card.rare.unlocked {
+            border: 3px solid #9c27b0;
+            background: linear-gradient(135deg, #fff, #f3e5f5);
+            box-shadow: 0 4px 20px rgba(156, 39, 176, 0.3);
+        }
+
+        .badge-card.epic.unlocked {
+            border: 3px solid transparent;
+            background: linear-gradient(#fff, #fff) padding-box,
+                        linear-gradient(135deg, #ff6b35, #f7931e, #ff6b35) border-box;
+            box-shadow: 0 4px 25px rgba(255, 107, 53, 0.4);
+            animation: epicGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes epicGlow {
+            0%, 100% { box-shadow: 0 4px 25px rgba(255, 107, 53, 0.4); }
+            50% { box-shadow: 0 4px 35px rgba(255, 107, 53, 0.6); }
+        }
+
+        .badge-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+            transition: transform 0.3s;
+        }
+
+        .badge-card.unlocked:hover .badge-icon {
+            transform: scale(1.1);
+        }
+
+        .badge-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .badge-desc {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .badge-rarity {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .badge-rarity.common {
+            background: #fff9e6;
+            color: #d4af37;
+            border: 1px solid #d4af37;
+        }
+
+        .badge-rarity.rare {
+            background: #f3e5f5;
+            color: #9c27b0;
+            border: 1px solid #9c27b0;
+        }
+
+        .badge-rarity.epic {
+            background: linear-gradient(135deg, #fff5f0, #ffe0d0);
+            color: #ff6b35;
+            border: 1px solid #ff6b35;
+        }
+
+        .progress-container {
+            margin-top: 10px;
+        }
+
+        .progress-bar-bg {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .badge-card.common .progress-bar-fill {
+            background: linear-gradient(90deg, #d4af37, #f0d78c);
+        }
+
+        .badge-card.rare .progress-bar-fill {
+            background: linear-gradient(90deg, #9c27b0, #ce93d8);
+        }
+
+        .badge-card.epic .progress-bar-fill {
+            background: linear-gradient(90deg, #ff6b35, #f7931e);
+        }
+
+        .progress-text {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .lock-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.2rem;
+            opacity: 0.5;
+        }
+
+        .unlock-time {
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 8px;
+        }
+
+        .notification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .notification-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .notification-card {
+            background: linear-gradient(135deg, #fff9e6, #fff);
+            border-radius: 20px;
+            padding: 40px 50px;
+            text-align: center;
+            transform: scale(0.8);
+            transition: transform 0.3s;
+            max-width: 350px;
+            position: relative;
+        }
+
+        .notification-overlay.show .notification-card {
+            transform: scale(1);
+        }
+
+        .notification-card.common {
+            border: 4px solid #d4af37;
+            box-shadow: 0 10px 40px rgba(212, 175, 55, 0.5);
+        }
+
+        .notification-card.rare {
+            border: 4px solid #9c27b0;
+            box-shadow: 0 10px 40px rgba(156, 39, 176, 0.5);
+        }
+
+        .notification-card.epic {
+            border: 4px solid #ff6b35;
+            box-shadow: 0 10px 40px rgba(255, 107, 53, 0.5);
+            animation: epicNotify 1s ease-in-out infinite;
+        }
+
+        @keyframes epicNotify {
+            0%, 100% { box-shadow: 0 10px 40px rgba(255, 107, 53, 0.5); }
+            50% { box-shadow: 0 10px 60px rgba(255, 107, 53, 0.8); }
+        }
+
+        .notification-title {
+            font-size: 1.5rem;
+            color: #8b4513;
+            margin-bottom: 20px;
+        }
+
+        .notification-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            animation: bounceIn 0.5s ease;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .notification-badge-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .notification-badge-name.common { color: #d4af37; }
+        .notification-badge-name.rare { color: #9c27b0; }
+        .notification-badge-name.epic { color: #ff6b35; }
+
+        .notification-badge-desc {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .notification-close {
+            background: #8b4513;
+            color: #fff;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .notification-close:hover {
+            background: #a0522d;
+            transform: scale(1.05);
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: particleFloat 2s ease-out forwards;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) scale(0);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .page-title {
+                font-size: 1.8rem;
+            }
+            
+            .badge-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+            }
+            
+            .badge-icon {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .stats-summary {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="home.html" class="back-link">← 返回主页</a>
+    
+    <h1 class="page-title">🎖️ 勋章墙</h1>
+    
+    <div class="stats-summary">
+        <div class="stat-item">
+            <div class="stat-value" id="unlockedCount">0</div>
+            <div class="stat-label">已解锁勋章</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="totalQuestions">0</div>
+            <div class="stat-label">累计答题数</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="readingProgress">0/4</div>
+            <div class="stat-label">名著阅读</div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2 class="section-title">📚 阅读成就</h2>
+        <div class="badge-grid" id="readingBadges"></div>
+    </div>
+    
+    <div class="section">
+        <h2 class="section-title">✏️ 答题成就</h2>
+        <div class="badge-grid" id="quizBadges"></div>
+    </div>
+    
+    <div class="section">
+        <h2 class="section-title">🏆 名著精通</h2>
+        <div class="badge-grid" id="masteryBadges"></div>
+    </div>
+
+    <div class="notification-overlay" id="notificationOverlay">
+        <div class="notification-card" id="notificationCard">
+            <div class="particles" id="particles"></div>
+            <div class="notification-title">🎉 恭喜获得勋章！</div>
+            <div class="notification-icon" id="notificationIcon"></div>
+            <div class="notification-badge-name" id="notificationBadgeName"></div>
+            <div class="notification-badge-desc" id="notificationBadgeDesc"></div>
+            <button class="notification-close" onclick="closeNotification()">太棒了！</button>
+        </div>
+    </div>
+
+    <script>
+        const BADGES = [
+            { id: 'honglou_reader', name: '红楼初探', desc: '完成红楼梦阅读', rarity: 'common', type: 'reading', book: 'honglou' },
+            { id: 'sanguo_reader', name: '三国通览', desc: '完成三国演义阅读', rarity: 'common', type: 'reading', book: 'sanguo' },
+            { id: 'shuihu_reader', name: '水浒知音', desc: '完成水浒传阅读', rarity: 'common', type: 'reading', book: 'shuihu' },
+            { id: 'xiyou_reader', name: '西游行者', desc: '完成西游记阅读', rarity: 'common', type: 'reading', book: 'xiyou' },
+            { id: 'all_books_reader', name: '四大名著通', desc: '完成全部名著阅读', rarity: 'rare', type: 'reading', book: 'all' },
+            { id: '100_questions', name: '初试锋芒', desc: '累计答题100道', rarity: 'common', type: 'quiz', target: 100 },
+            { id: '500_questions', name: '勤学不辍', desc: '累计答题500道', rarity: 'common', type: 'quiz', target: 500 },
+            { id: '1000_questions', name: '博闻强识', desc: '累计答题1000道', rarity: 'rare', type: 'quiz', target: 1000 },
+            { id: '2000_questions', name: '学海无涯', desc: '累计答题2000道', rarity: 'epic', type: 'quiz', target: 2000 },
+            { id: 'honglou_characters', name: '金陵十二钗', desc: '红楼梦人物题掌握', rarity: 'rare', type: 'mastery', category: 'honglou_character', target: 0.8 },
+            { id: 'sanguo_strategists', name: '卧龙凤雏', desc: '三国谋士题掌握', rarity: 'rare', type: 'mastery', category: 'sanguo_strategist', target: 0.8 },
+            { id: 'shuihu_heroes', name: '一百零八将', desc: '水浒人物题掌握', rarity: 'rare', type: 'mastery', category: 'shuihu_character', target: 0.8 },
+            { id: 'xiyou_plot', name: '九九八十一难', desc: '西游情节题掌握', rarity: 'rare', type: 'mastery', category: 'xiyou_plot', target: 0.8 },
+            { id: 'poetry_master', name: '诗词雅士', desc: '诗词填空题掌握', rarity: 'epic', type: 'mastery', category: 'poetry', target: 0.8 }
+        ];
+
+        const BADGE_ICONS = {
+            honglou_reader: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="bookCover" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#7a1a1a"/>
+            <stop offset="100%" style="stop-color:#8e2323"/>
+        </linearGradient>
+    </defs>
+
+    <rect x="25" y="15" width="55" height="70" fill="#fdf5e6" stroke="#d4c5a1" stroke-width="0.5" />
+    <g stroke="#d4c5a1" stroke-width="0.3">
+        <line x1="77" y1="15" x2="77" y2="85" />
+        <line x1="74" y1="15" x2="74" y2="85" />
+    </g>
+
+    <path d="M20 15 L75 15 L75 85 L20 85 Z" fill="url(#bookCover)" stroke="#3e1414" stroke-width="1"/>
+
+    <rect x="20" y="15" width="4" height="70" fill="#000" fill-opacity="0.2" />
+
+    <g stroke="#d4c5a1" stroke-width="0.8">
+        <circle cx="24" cy="22" r="0.5" fill="#d4c5a1"/>
+        <circle cx="24" cy="40" r="0.5" fill="#d4c5a1"/>
+        <circle cx="24" cy="60" r="0.5" fill="#d4c5a1"/>
+        <circle cx="24" cy="78" r="0.5" fill="#d4c5a1"/>
+        <line x1="20" y1="22" x2="24" y2="22" />
+        <line x1="20" y1="40" x2="24" y2="40" />
+        <line x1="20" y1="60" x2="24" y2="60" />
+        <line x1="20" y1="78" x2="24" y2="78" />
+    </g>
+
+    <rect x="45" y="22" width="16" height="42" fill="#fdf5e6" stroke="#3e1414" stroke-width="0.4" />
+
+    <g font-family="Noto Serif SC, SimSun, serif" font-size="7" fill="#3e1414" text-anchor="middle" font-weight="bold">
+        <text x="53" y="32">红</text>
+        <text x="53" y="42">楼</text>
+        <text x="53" y="52">梦</text>
+    </g>
+</svg>`,
+            
+            sanguo_reader: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="sgCover" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#2c3e50"/>
+            <stop offset="100%" style="stop-color:#34495e"/>
+        </linearGradient>
+    </defs>
+
+    <rect x="25" y="15" width="55" height="70" fill="#fdf5e6" stroke="#bdc3c7" stroke-width="0.5" />
+    <g stroke="#bdc3c7" stroke-width="0.3">
+        <line x1="77" y1="15" x2="77" y2="85" />
+        <line x1="74" y1="15" x2="74" y2="85" />
+    </g>
+
+    <path d="M20 15 L75 15 L75 85 L20 85 Z" fill="url(#sgCover)" stroke="#1a252f" stroke-width="1"/>
+
+    <rect x="20" y="15" width="4" height="70" fill="#000" fill-opacity="0.3" />
+
+    <g stroke="#d4c5a1" stroke-width="0.8">
+        <circle cx="24" cy="22" r="0.5" fill="#d4c5a1"/>
+        <circle cx="24" cy="40" r="0.5" fill="#d4c5a1"/>
+        <circle cx="24" cy="60" r="0.5" fill="#d4c5a1"/>
+        <circle cx="24" cy="78" r="0.5" fill="#d4c5a1"/>
+        <line x1="20" y1="22" x2="24" y2="22" />
+        <line x1="20" y1="40" x2="24" y2="40" />
+        <line x1="20" y1="60" x2="24" y2="60" />
+        <line x1="20" y1="78" x2="24" y2="78" />
+    </g>
+
+    <rect x="45" y="22" width="16" height="42" fill="#fdf5e6" stroke="#1a252f" stroke-width="0.4" />
+
+    <g font-family="Noto Serif SC, SimSun, serif" font-size="6" fill="#1a252f" text-anchor="middle" font-weight="bold">
+        <text x="53" y="30">三</text>
+        <text x="53" y="38">国</text>
+        <text x="53" y="46">演</text>
+        <text x="53" y="54">义</text>
+    </g>
+</svg>`,
+            
+            shuihu_reader: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="shCover" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#8b4513"/> <stop offset="100%" style="stop-color:#5d2e0a"/> </linearGradient>
+    </defs>
+
+    <rect x="25" y="15" width="55" height="70" fill="#fdf5e6" stroke="#d2b48c" stroke-width="0.5" />
+    <g stroke="#d2b48c" stroke-width="0.3">
+        <line x1="77" y1="15" x2="77" y2="85" />
+        <line x1="74" y1="15" x2="74" y2="85" />
+    </g>
+
+    <path d="M20 15 L75 15 L75 85 L20 85 Z" fill="url(#shCover)" stroke="#3e1d06" stroke-width="1"/>
+
+    <rect x="20" y="15" width="4" height="70" fill="#000" fill-opacity="0.25" />
+
+    <g stroke="#d4c5a1" stroke-width="0.8">
+        <circle cx="24" cy="22" r="0.5" fill="#d4c5a1"/>
+        <circle cx="24" cy="40" r="0.5" fill="#d4c5a1"/>
+        <circle cx="24" cy="60" r="0.5" fill="#d4c5a1"/>
+        <circle cx="24" cy="78" r="0.5" fill="#d4c5a1"/>
+        <line x1="20" y1="22" x2="24" y2="22" />
+        <line x1="20" y1="40" x2="24" y2="40" />
+        <line x1="20" y1="60" x2="24" y2="60" />
+        <line x1="20" y1="78" x2="24" y2="78" />
+    </g>
+
+    <rect x="45" y="22" width="16" height="42" fill="#fdf5e6" stroke="#3e1d06" stroke-width="0.4" />
+
+    <g font-family="Noto Serif SC, SimSun, serif" font-size="7" fill="#3e1d06" text-anchor="middle" font-weight="bold">
+        <text x="53" y="32">水</text>
+        <text x="53" y="42">浒</text>
+        <text x="53" y="52">传</text>
+    </g>
+</svg>`,
+            
+            xiyou_reader: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="xyCover" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#d4a017"/> <stop offset="100%" style="stop-color:#b8860b"/> </linearGradient>
+    </defs>
+
+    <rect x="25" y="15" width="55" height="70" fill="#fdf5e6" stroke="#cfb53b" stroke-width="0.5" />
+    <g stroke="#cfb53b" stroke-width="0.3">
+        <line x1="77" y1="15" x2="77" y2="85" />
+        <line x1="74" y1="15" x2="74" y2="85" />
+    </g>
+
+    <path d="M20 15 L75 15 L75 85 L20 85 Z" fill="url(#xyCover)" stroke="#8b6508" stroke-width="1"/>
+
+    <rect x="20" y="15" width="4" height="70" fill="#000" fill-opacity="0.2" />
+
+    <g stroke="#fdf5e6" stroke-width="0.8">
+        <circle cx="24" cy="22" r="0.5" fill="#fdf5e6"/>
+        <circle cx="24" cy="40" r="0.5" fill="#fdf5e6"/>
+        <circle cx="24" cy="60" r="0.5" fill="#fdf5e6"/>
+        <circle cx="24" cy="78" r="0.5" fill="#fdf5e6"/>
+        <line x1="20" y1="22" x2="24" y2="22" />
+        <line x1="20" y1="40" x2="24" y2="40" />
+        <line x1="20" y1="60" x2="24" y2="60" />
+        <line x1="20" y1="78" x2="24" y2="78" />
+    </g>
+
+    <rect x="45" y="22" width="16" height="42" fill="#fdf5e6" stroke="#8b6508" stroke-width="0.4" />
+
+    <g font-family="Noto Serif SC, SimSun, serif" font-size="7" fill="#5d4037" text-anchor="middle" font-weight="bold">
+        <text x="53" y="32">西</text>
+        <text x="53" y="42">游</text>
+        <text x="53" y="52">记</text>
+    </g>
+</svg>`,
+            
+            all_books_reader: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="setCover" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#2c3e50"/>
+            <stop offset="100%" style="stop-color:#1a252f"/>
+        </linearGradient>
+    </defs>
+
+    <path d="M22 18 L77 18 L77 88 L22 88 Z" fill="#d4c5a1" stroke="#3e1414" stroke-width="0.5" />
+    <path d="M24 16 L79 16 L79 86 L24 86 Z" fill="#eaddca" stroke="#3e1414" stroke-width="0.5" />
+
+    <path d="M26 14 L81 14 L81 84 L26 84 Z" fill="url(#setCover)" stroke="#1a252f" stroke-width="1"/>
+
+    <rect x="26" y="14" width="5" height="70" fill="#000" fill-opacity="0.3" />
+
+    <rect x="78" y="30" width="4" height="10" rx="1" fill="#fdf5e6" stroke="#3e1414" stroke-width="0.3" />
+    <rect x="78" y="60" width="4" height="10" rx="1" fill="#fdf5e6" stroke="#3e1414" stroke-width="0.3" />
+
+    <rect x="42" y="24" width="22" height="48" fill="#fdf5e6" stroke="#1a252f" stroke-width="0.5" />
+
+    <g font-family="Noto Serif SC, SimSun, serif" font-size="8" fill="#1a252f" text-anchor="middle" font-weight="bold">
+        <text x="53" y="36">四</text>
+        <text x="53" y="46">大</text>
+        <text x="53" y="56">名</text>
+        <text x="53" y="66">著</text>
+    </g>
+
+    <rect x="49" y="68" width="8" height="8" fill="#c0392b" fill-opacity="0.8" />
+    <text x="53" y="74" font-family="serif" font-size="4" fill="#fff" text-anchor="middle">珍藏</text>
+</svg>`,
+            
+            '100_questions': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="paperGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#fdf5e6"/>
+            <stop offset="50%" style="stop-color:#faecd0"/>
+            <stop offset="100%" style="stop-color:#fdf5e6"/>
+        </linearGradient>
+    </defs>
+
+    <rect x="15" y="12" width="70" height="4" rx="2" fill="#5d4037" />
+    <rect x="15" y="84" width="70" height="4" rx="2" fill="#5d4037" />
+
+    <rect x="20" y="15" width="60" height="70" fill="url(#paperGrad)" stroke="#d4af37" stroke-width="0.5"/>
+
+    <rect x="23" y="18" width="54" height="64" fill="none" stroke="#d4af37" stroke-width="0.3" stroke-dasharray="2,1"/>
+
+    <circle cx="50" cy="38" r="12" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="1,1"/>
+    <text x="50" y="43" text-anchor="middle" font-family="Noto Serif SC, SimSun, serif" font-size="14" fill="#c0392b" font-weight="bold">百</text>
+
+    <g stroke="#8b4513" stroke-width="1" stroke-linecap="round" opacity="0.6">
+        <line x1="30" y1="58" x2="70" y2="58" />
+        <line x1="30" y1="66" x2="70" y2="66" />
+        <line x1="30" y1="74" x2="55" y2="74" />
+    </g>
+
+    <rect x="65" y="72" width="6" height="6" fill="#c0392b" opacity="0.8" />
+</svg>`,
+            
+            '500_questions': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="scrollGrad500" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#fdf5e6"/>
+            <stop offset="50%" style="stop-color:#f7e8c3"/>
+            <stop offset="100%" style="stop-color:#fdf5e6"/>
+        </linearGradient>
+    </defs>
+
+    <rect x="12" y="15" width="4" height="70" rx="1.5" fill="#4e342e" />
+    <rect x="11" y="12" width="6" height="3" rx="1" fill="#3e2723" />
+    <rect x="11" y="85" width="6" height="3" rx="1" fill="#3e2723" />
+    
+    <rect x="84" y="15" width="4" height="70" rx="1.5" fill="#4e342e" />
+    <rect x="83" y="12" width="6" height="3" rx="1" fill="#3e2723" />
+    <rect x="83" y="85" width="6" height="3" rx="1" fill="#3e2723" />
+
+    <rect x="16" y="18" width="68" height="64" fill="url(#scrollGrad500)" stroke="#d4af37" stroke-width="0.5"/>
+
+    <rect x="20" y="22" width="60" height="56" fill="none" stroke="#d4af37" stroke-width="0.3" opacity="0.8"/>
+
+    <rect x="38" y="28" width="24" height="20" fill="none" stroke="#c0392b" stroke-width="1.5"/>
+    <g font-family="Noto Serif SC, SimSun, serif" font-weight="bold" fill="#c0392b" text-anchor="middle">
+        <text x="50" y="42" font-size="12">五百</text>
+    </g>
+
+    <g stroke="#8b4513" stroke-width="0.8" stroke-linecap="round" opacity="0.4">
+        <line x1="28" y1="55" x2="72" y2="55" />
+        <line x1="28" y1="62" x2="72" y2="62" />
+        <line x1="28" y1="69" x2="72" y2="69" />
+    </g>
+
+    <rect x="70" y="30" width="8" height="8" fill="#c0392b" opacity="0.7" />
+    <text x="74" y="36" font-family="serif" font-size="4" fill="#fff" text-anchor="middle">考</text>
+</svg>`,
+            
+            '1000_questions': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="scrollGrad1000" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#f3eef5"/>
+            <stop offset="50%" style="stop-color:#e8daef"/>
+            <stop offset="100%" style="stop-color:#f3eef5"/>
+        </linearGradient>
+        
+        <radialGradient id="goldGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#ffeb3b"/>
+            <stop offset="100%" style="stop-color:#f9a825"/>
+        </radialGradient>
+    </defs>
+
+    <g fill="#4a148c">
+        <rect x="11" y="10" width="6" height="80" rx="2" />
+        <circle cx="14" cy="10" r="4" />
+        <circle cx="14" cy="90" r="4" />
+        <rect x="83" y="10" width="6" height="80" rx="2" />
+        <circle cx="86" cy="10" r="4" />
+        <circle cx="86" cy="90" r="4" />
+    </g>
+
+    <rect x="16" y="18" width="68" height="64" fill="url(#scrollGrad1000)" stroke="#7b1fa2" stroke-width="0.5"/>
+    
+    <g fill="#d4af37" opacity="0.3">
+        <circle cx="25" cy="30" r="0.8"/><circle cx="40" cy="70" r="0.5"/>
+        <circle cx="60" cy="25" r="0.7"/><circle cx="75" cy="55" r="0.6"/>
+        <circle cx="30" cy="50" r="0.4"/><circle cx="55" cy="75" r="0.8"/>
+    </g>
+
+    <circle cx="50" cy="42" r="14" fill="none" stroke="#6a1b9a" stroke-width="1" stroke-dasharray="2,2"/>
+    <text x="50" y="47" text-anchor="middle" font-family="Noto Serif SC, SimSun, serif" font-size="11" fill="#4a148c" font-weight="bold">千题</text>
+
+    <g stroke="#6a1b9a" stroke-width="0.6" stroke-linecap="round" opacity="0.4">
+        <line x1="28" y1="60" x2="72" y2="60" />
+        <line x1="28" y1="67" x2="72" y2="67" />
+        <line x1="28" y1="74" x2="60" y2="74" />
+    </g>
+
+    <path d="M72 15 L88 15 L88 32 L80 38 L72 32 Z" fill="url(#goldGlow)" stroke="#f57f17" stroke-width="0.8"/>
+    <text x="80" y="27" text-anchor="middle" font-family="serif" font-size="6" fill="#bf360c" font-weight="bold">极</text>
+    <path d="M76 15 L76 10 M84 15 L84 10" stroke="#f57f17" stroke-width="1" />
+</svg>`,
+            
+            '2000_questions': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="scrollGrad2000" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#fceabb"/>
+            <stop offset="50%" style="stop-color:#f8d347"/>
+            <stop offset="100%" style="stop-color:#fceabb"/>
+        </linearGradient>
+        
+        <linearGradient id="goldShine" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#ffd700"/>
+            <stop offset="50%" style="stop-color:#ffecb3"/>
+            <stop offset="100%" style="stop-color:#ffa000"/>
+        </linearGradient>
+    </defs>
+
+    <g fill="#fdf5e6" stroke="#d4af37" stroke-width="0.5">
+        <rect x="10" y="10" width="6" height="80" rx="3" />
+        <circle cx="13" cy="10" r="4.5" fill="url(#goldShine)"/>
+        <circle cx="13" cy="90" r="4.5" fill="url(#goldShine)"/>
+        <rect x="84" y="10" width="6" height="80" rx="3" />
+        <circle cx="87" cy="10" r="4.5" fill="url(#goldShine)"/>
+        <circle cx="87" cy="90" r="4.5" fill="url(#goldShine)"/>
+    </g>
+
+    <rect x="16" y="15" width="68" height="70" fill="url(#scrollGrad2000)" stroke="#d4af37" stroke-width="0.8"/>
+    
+    <g fill="none" stroke="#d4af37" stroke-width="0.3" opacity="0.4">
+        <path d="M25 25 Q30 20 35 25 T45 25" />
+        <path d="M60 75 Q65 70 70 75 T80 75" />
+    </g>
+
+    <circle cx="50" cy="42" r="18" fill="none" stroke="url(#goldShine)" stroke-width="2"/>
+    <circle cx="50" cy="42" r="15" fill="none" stroke="#e67e22" stroke-width="0.5" stroke-dasharray="2,1"/>
+    <text x="50" y="46" text-anchor="middle" font-family="Noto Serif SC, SimSun, serif" font-size="10" fill="#bf360c" font-weight="bold">二千</text>
+
+    <g stroke="#bf360c" stroke-width="0.8" stroke-linecap="round" opacity="0.5">
+        <line x1="28" y1="62" x2="72" y2="62" />
+        <line x1="28" y1="69" x2="72" y2="69" />
+        <line x1="28" y1="76" x2="50" y2="76" />
+    </g>
+
+    <path d="M19 18 L25 18 L22 28 Z" fill="#c0392b" />
+    <circle cx="22" cy="18" r="7" fill="url(#goldShine)" stroke="#d4af37" stroke-width="0.8"/>
+    <text x="22" y="21" text-anchor="middle" font-size="6" fill="#bf360c" font-weight="bold">超</text>
+
+    <path d="M75 18 L81 18 L78 30 Z" fill="#c0392b" />
+    <circle cx="78" cy="18" r="9" fill="url(#goldShine)" stroke="#d4af37" stroke-width="1"/>
+    <text x="78" y="22" text-anchor="middle" font-size="8" fill="#bf360c" font-weight="bold">尊</text>
+</svg>`,
+            
+            'honglou_characters': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <radialGradient id="fanGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#fff5f7"/>
+            <stop offset="100%" style="stop-color:#f8bbd9"/>
+        </radialGradient>
+    </defs>
+
+    <rect x="48" y="70" width="4" height="25" rx="2" fill="#2c3e50" />
+    <circle cx="50" cy="92" r="1.5" fill="#c0392b" />
+    <path d="M50 92 L50 98" stroke="#c0392b" stroke-width="0.5" stroke-dasharray="1,0.5" />
+
+    <circle cx="50" cy="45" r="40" fill="url(#fanGrad)" stroke="#d4af37" stroke-width="1.5"/>
+    
+    <circle cx="50" cy="45" r="36" fill="none" stroke="#f48fb1" stroke-width="0.5" stroke-dasharray="2,2" opacity="0.6"/>
+
+    <g font-family="Noto Serif SC, SimSun, serif" fill="#880e4f" text-anchor="middle">
+        <text x="50" y="32" font-size="8" font-weight="bold">金</text>
+        <text x="50" y="41" font-size="8" font-weight="bold">陵</text>
+        <text x="50" y="50" font-size="8" font-weight="bold">十</text>
+        <text x="50" y="59" font-size="8" font-weight="bold">二</text>
+        <text x="50" y="68" font-size="8" font-weight="bold">钗</text>
+    </g>
+
+    <circle cx="28" cy="23" r="3" fill="#f06292" opacity="0.8"/>
+    <circle cx="26" cy="21" r="1.5" fill="#fff" opacity="0.5"/>
+    <circle cx="72" cy="23" r="3" fill="#f06292" opacity="0.8"/>
+    <circle cx="28" cy="67" r="3" fill="#f06292" opacity="0.8"/>
+    <circle cx="72" cy="67" r="3" fill="#f06292" opacity="0.8"/>
+    
+    <ellipse cx="78" cy="45" rx="2" ry="3" fill="#f8bbd9" transform="rotate(30 78 45)"/>
+</svg>`,
+            
+            'sanguo_strategists': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="stratGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#f8f9fa"/>
+            <stop offset="100%" style="stop-color:#e3f2fd"/>
+        </linearGradient>
+    </defs>
+
+    <circle cx="50" cy="50" r="42" fill="none" stroke="#1565c0" stroke-width="0.5" stroke-dasharray="8,4" opacity="0.3"/>
+
+    <circle cx="50" cy="50" r="40" fill="url(#stratGrad)" stroke="#1565c0" stroke-width="1.5"/>
+
+    <polygon points="50,18 73,27 82,50 73,73 50,82 27,73 18,50 27,27" fill="none" stroke="#90caf9" stroke-width="0.8"/>
+
+    <path d="M45 88 L55 88 L52 98 L48 98 Z" fill="#5d4037" />
+
+    <g stroke="#1565c0" stroke-width="0.5" fill="none" opacity="0.6">
+        <path d="M20 50 Q25 45 30 50" />
+        <path d="M70 50 Q75 55 80 50" />
+    </g>
+
+    <g font-family="Noto Serif SC, SimSun, serif" fill="#0d47a1" text-anchor="middle" font-weight="bold">
+        <text x="42" y="42" font-size="9">卧</text>
+        <text x="42" y="52" font-size="9">龙</text>
+        
+        <text x="58" y="48" font-size="9">凤</text>
+        <text x="58" y="58" font-size="9">雏</text>
+    </g>
+
+    <g transform="translate(50, 28) scale(0.6)">
+        <path d="M0 -10 A10 10 0 0 1 0 10 A5 5 0 0 1 0 0 A5 5 0 0 0 0 -10" fill="#1565c0" />
+        <path d="M0 10 A10 10 0 0 1 0 -10 A5 5 0 0 0 0 0 A5 5 0 0 1 0 10" fill="none" stroke="#1565c0" stroke-width="1" />
+        <circle cy="-5" r="1.5" fill="#fff" />
+        <circle cy="5" r="1.5" fill="#1565c0" />
+    </g>
+    
+    <g stroke="#1565c0" stroke-width="0.3" opacity="0.4">
+        <line x1="40" y1="75" x2="40" y2="85" />
+        <line x1="50" y1="78" x2="50" y2="85" />
+        <line x1="60" y1="75" x2="60" y2="85" />
+    </g>
+</svg>`,
+            
+            'shuihu_heroes': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="noticeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#fdf5e6"/>
+            <stop offset="100%" style="stop-color:#e6d5b8"/>
+        </linearGradient>
+    </defs>
+
+    <path d="M15 10 L85 12 L82 90 L18 88 Z" fill="url(#noticeGrad)" stroke="#8b4513" stroke-width="1"/>
+
+    <path d="M15 25 L18 25 M82 70 L85 70" stroke="#8b4513" stroke-width="0.5"/>
+
+    <rect x="14" y="8" width="72" height="3" fill="#5d4037" rx="1" />
+
+    <g font-family="Noto Serif SC, SimSun, serif" fill="#1a1a1a" text-anchor="middle">
+        <text x="50" y="30" font-size="12" font-weight="900" letter-spacing="2">梁山好汉</text>
+        
+        <g stroke="#1a1a1a" stroke-width="0.5" opacity="0.3">
+            <line x1="25" y1="45" x2="75" y2="45" />
+            <line x1="25" y1="55" x2="75" y2="55" />
+            <line x1="25" y1="65" x2="75" y2="65" />
+        </g>
+        
+        <text x="50" y="52" font-size="6" font-style="italic">一〇八将 聚义</text>
+    </g>
+
+    <rect x="65" y="70" width="12" height="12" fill="#c0392b" fill-opacity="0.8" />
+    <text x="71" y="78" font-family="serif" font-size="5" fill="#fff" text-anchor="middle" font-weight="bold">义</text>
+
+    <circle cx="25" cy="20" r="1.5" fill="#8b4513" opacity="0.2"/>
+</svg>`,
+            
+            'xiyou_plot': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="staffGold" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#FFD700"/>
+            <stop offset="100%" style="stop-color:#B8860B"/>
+        </linearGradient>
+    </defs>
+
+    <g fill="#FFFDE7" stroke="#FFD54F" stroke-width="1.5">
+        <circle cx="35" cy="55" r="15" />
+        <circle cx="50" cy="45" r="20" />
+        <circle cx="65" cy="55" r="15" />
+        <rect x="35" y="55" width="30" height="15" stroke="none" />
+        <line x1="35" y1="70" x2="65" y2="70" stroke="#FFD54F" />
+    </g>
+
+    <g stroke="#FFB300" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.6">
+        <path d="M20 40 Q10 40 5 45" />
+        <path d="M80 60 Q90 60 95 55" />
+    </g>
+
+    <g transform="rotate(-15, 50, 50)">
+        <rect x="10" y="47" width="80" height="6" fill="#D32F2F" stroke="#8B0000" stroke-width="0.5" />
+        <rect x="10" y="47" width="12" height="6" fill="url(#staffGold)" stroke="#B8860B" stroke-width="0.5" />
+        <rect x="78" y="47" width="12" height="6" fill="url(#staffGold)" stroke="#B8860B" stroke-width="0.5" />
+        
+        <line x1="25" y1="50" x2="35" y2="50" stroke="#FFD700" stroke-width="0.5" opacity="0.5" />
+        <line x1="65" y1="50" x2="75" y2="50" stroke="#FFD700" stroke-width="0.5" opacity="0.5" />
+    </g>
+
+    <g font-family="Noto Serif SC, SimSun, serif" fill="#E65100" text-anchor="middle" font-weight="900">
+        <text x="50" y="45" font-size="8">九九</text>
+        <text x="50" y="56" font-size="8">八十一难</text>
+    </g>
+
+    <path d="M45 85 Q50 80 55 85 T65 85" fill="none" stroke="#FFA000" stroke-width="1" />
+</svg>`,
+            
+            'poetry_master': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="inkstoneGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#333333"/>
+            <stop offset="100%" style="stop-color:#1a1a1a"/>
+        </linearGradient>
+        <radialGradient id="inkGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#444444"/>
+            <stop offset="100%" style="stop-color:#000000"/>
+        </radialGradient>
+        <linearGradient id="brushStem" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#5d4037"/>
+            <stop offset="100%" style="stop-color:#8d6e63"/>
+        </linearGradient>
+    </defs>
+
+    <g transform="rotate(-2, 50, 50)">
+        <rect x="20" y="20" width="65" height="60" fill="#fff9e6" stroke="#d4af37" stroke-width="0.5"/>
+        <g font-family="Noto Serif SC, SimSun, serif" fill="#2c3e50" text-anchor="middle" font-weight="bold">
+            <text x="45" y="45" font-size="9">诗词</text>
+            <text x="45" y="60" font-size="9">雅士</text>
+        </g>
+        <rect x="68" y="65" width="7" height="7" fill="#c0392b"/>
+        <text x="71.5" y="70.5" font-family="serif" font-size="4" fill="#fff" text-anchor="middle">赏</text>
+    </g>
+
+    <g transform="translate(68, 12) scale(0.6)">
+        <path d="M5 10 Q-5 30 5 50 L55 60 Q65 30 55 5 Z" fill="url(#inkstoneGrad)" stroke="#444" stroke-width="1"/>
+        <ellipse cx="28" cy="30" rx="18" ry="15" fill="url(#inkGlow)" stroke="#222" stroke-width="0.5"/>
+    </g>
+
+    <g transform="translate(18, 15) rotate(-5)">
+        <path d="M0 0 L4 0 L3.5 65 L0.5 65 Z" fill="url(#brushStem)" stroke="#3e2723" stroke-width="0.2"/>
+        <circle cx="2" cy="-2" r="1.5" fill="none" stroke="#5d4037" stroke-width="0.5"/>
+        
+        <g transform="translate(0, 65)">
+            <rect x="0" y="0" width="4" height="4" fill="#d4af37"/>
+            <path d="M0 4 Q-3 15 2 22 Q7 15 4 4 Z" fill="#fdfdfd" stroke="#ccc" stroke-width="0.2"/>
+            <path d="M-0.8 12 Q2 22 4.8 12 L2 20 Z" fill="#000"/>
+        </g>
+    </g>
+</svg>`
+        };
+
+        const RARITY_NAMES = {
+            common: '普通',
+            rare: '稀有',
+            epic: '史诗'
+        };
+
+        const BadgeManager = {
+            STORAGE_KEY: 'badge_data_v1',
+            QUIZ_COUNT_KEY: 'quiz_total_count_v1',
+            HISTORY_KEY: 'quiz_history_v1',
+            
+            getData() {
+                try {
+                    const data = localStorage.getItem(this.STORAGE_KEY);
+                    return data ? JSON.parse(data) : {
+                        unlockedBadges: [],
+                        badgeUnlockTime: {},
+                        readingProgress: {
+                            xiyou: { stage1: false, stage2: false, stage3: false },
+                            sanguo: { stage1: false, stage2: false, stage3: false },
+                            shuihu: { stage1: false, stage2: false, stage3: false },
+                            honglou: { stage1: false, stage2: false, stage3: false }
+                        }
+                    };
+                } catch (e) {
+                    return {
+                        unlockedBadges: [],
+                        badgeUnlockTime: {},
+                        readingProgress: {
+                            xiyou: { stage1: false, stage2: false, stage3: false },
+                            sanguo: { stage1: false, stage2: false, stage3: false },
+                            shuihu: { stage1: false, stage2: false, stage3: false },
+                            honglou: { stage1: false, stage2: false, stage3: false }
+                        }
+                    };
+                }
+            },
+            
+            saveData(data) {
+                try {
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+                } catch (e) {
+                    console.error('保存勋章数据失败:', e);
+                }
+            },
+            
+            getTotalQuizCount() {
+                const history = this.getHistoryData();
+                let total = 0;
+                Object.values(history).forEach(item => {
+                    total += item.totalAttempts || 0;
+                });
+                return total;
+            },
+            
+            getHistoryData() {
+                try {
+                    const data = localStorage.getItem(this.HISTORY_KEY);
+                    return data ? JSON.parse(data) : {};
+                } catch (e) {
+                    return {};
+                }
+            },
+            
+            getReadingProgress(book) {
+                const data = this.getData();
+                return data.readingProgress[book] || { stage1: false, stage2: false, stage3: false };
+            },
+            
+            isBookCompleted(book) {
+                const progress = this.getReadingProgress(book);
+                return progress.stage1 && progress.stage2 && progress.stage3;
+            },
+            
+            getCompletedBooksCount() {
+                let count = 0;
+                ['xiyou', 'sanguo', 'shuihu', 'honglou'].forEach(book => {
+                    if (this.isBookCompleted(book)) count++;
+                });
+                return count;
+            },
+            
+            markStageRead(book, stage) {
+                const data = this.getData();
+                if (!data.readingProgress[book]) {
+                    data.readingProgress[book] = { stage1: false, stage2: false, stage3: false };
+                }
+                data.readingProgress[book]['stage' + stage] = true;
+                this.saveData(data);
+                
+                return this.checkAndUnlockBadges();
+            },
+            
+            getBadgeProgress(badge) {
+                if (badge.type === 'quiz') {
+                    const current = this.getTotalQuizCount();
+                    return {
+                        current: Math.min(current, badge.target),
+                        target: badge.target,
+                        percent: Math.min(100, Math.round((current / badge.target) * 100))
+                    };
+                } else if (badge.type === 'reading') {
+                    if (badge.book === 'all') {
+                        const completed = this.getCompletedBooksCount();
+                        return {
+                            current: completed,
+                            target: 4,
+                            percent: Math.round((completed / 4) * 100)
+                        };
+                    } else {
+                        const progress = this.getReadingProgress(badge.book);
+                        const completed = (progress.stage1 ? 1 : 0) + (progress.stage2 ? 1 : 0) + (progress.stage3 ? 1 : 0);
+                        return {
+                            current: completed,
+                            target: 3,
+                            percent: Math.round((completed / 3) * 100)
+                        };
+                    }
+                } else if (badge.type === 'mastery') {
+                    const mastery = this.getCategoryMastery(badge.category);
+                    return {
+                        current: Math.round(mastery * 100),
+                        target: 80,
+                        percent: Math.min(100, Math.round(mastery * 100 / 80 * 100))
+                    };
+                }
+                return { current: 0, target: 1, percent: 0 };
+            },
+            
+            getCategoryMastery(category) {
+                try {
+                    const statsData = localStorage.getItem('category_stats_v1');
+                    if (statsData) {
+                        const stats = JSON.parse(statsData);
+                        if (stats[category] && stats[category].total > 0) {
+                            return stats[category].correct / stats[category].total;
+                        }
+                    }
+                    const data = localStorage.getItem('category_mastery_v1');
+                    if (data) {
+                        const mastery = JSON.parse(data);
+                        return mastery[category] || 0;
+                    }
+                } catch (e) {
+                    console.error('获取分类掌握度失败:', e);
+                }
+                return 0;
+            },
+            
+            setCategoryMastery(category, value) {
+                try {
+                    let mastery = {};
+                    const data = localStorage.getItem('category_mastery_v1');
+                    if (data) {
+                        mastery = JSON.parse(data);
+                    }
+                    mastery[category] = value;
+                    localStorage.setItem('category_mastery_v1', JSON.stringify(mastery));
+                } catch (e) {
+                    console.error('保存分类掌握度失败:', e);
+                }
+            },
+            
+            isBadgeUnlocked(badgeId) {
+                const data = this.getData();
+                return data.unlockedBadges.includes(badgeId);
+            },
+            
+            checkAndUnlockBadges() {
+                const data = this.getData();
+                const newlyUnlocked = [];
+                
+                BADGES.forEach(badge => {
+                    if (data.unlockedBadges.includes(badge.id)) return;
+                    
+                    let shouldUnlock = false;
+                    
+                    if (badge.type === 'quiz') {
+                        const count = this.getTotalQuizCount();
+                        shouldUnlock = count >= badge.target;
+                    } else if (badge.type === 'reading') {
+                        if (badge.book === 'all') {
+                            shouldUnlock = this.getCompletedBooksCount() >= 4;
+                        } else {
+                            shouldUnlock = this.isBookCompleted(badge.book);
+                        }
+                    } else if (badge.type === 'mastery') {
+                        const mastery = this.getCategoryMastery(badge.category);
+                        shouldUnlock = mastery >= badge.target;
+                    }
+                    
+                    if (shouldUnlock) {
+                        data.unlockedBadges.push(badge.id);
+                        data.badgeUnlockTime[badge.id] = Date.now();
+                        newlyUnlocked.push(badge);
+                    }
+                });
+                
+                if (newlyUnlocked.length > 0) {
+                    this.saveData(data);
+                }
+                
+                return newlyUnlocked;
+            },
+            
+            formatUnlockTime(timestamp) {
+                const date = new Date(timestamp);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+        };
+
+        function renderBadgeCard(badge) {
+            const isUnlocked = BadgeManager.isBadgeUnlocked(badge.id);
+            const progress = BadgeManager.getBadgeProgress(badge);
+            const data = BadgeManager.getData();
+            
+            const lockIcon = !isUnlocked ? '<span class="lock-icon">🔒</span>' : '';
+            const unlockTime = isUnlocked && data.badgeUnlockTime[badge.id] 
+                ? `<div class="unlock-time">获得于 ${BadgeManager.formatUnlockTime(data.badgeUnlockTime[badge.id])}</div>` 
+                : '';
+            
+            return `
+                <div class="badge-card ${badge.rarity} ${isUnlocked ? 'unlocked' : 'locked'}">
+                    ${lockIcon}
+                    <div class="badge-icon">${BADGE_ICONS[badge.id]}</div>
+                    <div class="badge-name">${badge.name}</div>
+                    <div class="badge-desc">${badge.desc}</div>
+                    <span class="badge-rarity ${badge.rarity}">${RARITY_NAMES[badge.rarity]}</span>
+                    <div class="progress-container">
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="width: ${progress.percent}%"></div>
+                        </div>
+                        <div class="progress-text">${progress.current} / ${progress.target}</div>
+                    </div>
+                    ${unlockTime}
+                </div>
+            `;
+        }
+
+        function renderBadges() {
+            const readingBadges = BADGES.filter(b => b.type === 'reading');
+            const quizBadges = BADGES.filter(b => b.type === 'quiz');
+            const masteryBadges = BADGES.filter(b => b.type === 'mastery');
+            
+            document.getElementById('readingBadges').innerHTML = 
+                readingBadges.map(renderBadgeCard).join('');
+            document.getElementById('quizBadges').innerHTML = 
+                quizBadges.map(renderBadgeCard).join('');
+            document.getElementById('masteryBadges').innerHTML = 
+                masteryBadges.map(renderBadgeCard).join('');
+            
+            const data = BadgeManager.getData();
+            document.getElementById('unlockedCount').textContent = data.unlockedBadges.length;
+            document.getElementById('totalQuestions').textContent = BadgeManager.getTotalQuizCount();
+            document.getElementById('readingProgress').textContent = `${BadgeManager.getCompletedBooksCount()}/4`;
+        }
+
+        function showNotification(badge) {
+            const overlay = document.getElementById('notificationOverlay');
+            const card = document.getElementById('notificationCard');
+            const icon = document.getElementById('notificationIcon');
+            const name = document.getElementById('notificationBadgeName');
+            const desc = document.getElementById('notificationBadgeDesc');
+            
+            card.className = 'notification-card ' + badge.rarity;
+            icon.innerHTML = BADGE_ICONS[badge.id];
+            name.textContent = badge.name;
+            name.className = 'notification-badge-name ' + badge.rarity;
+            desc.textContent = badge.desc;
+            
+            createParticles(badge.rarity);
+            
+            overlay.classList.add('show');
+        }
+
+        function closeNotification() {
+            document.getElementById('notificationOverlay').classList.remove('show');
+        }
+
+        function createParticles(rarity) {
+            const container = document.getElementById('particles');
+            container.innerHTML = '';
+            
+            const colors = {
+                common: ['#d4af37', '#f0d78c', '#fff9e6'],
+                rare: ['#9c27b0', '#ce93d8', '#f3e5f5'],
+                epic: ['#ff6b35', '#f7931e', '#ffd700']
+            };
+            
+            const particleColors = colors[rarity] || colors.common;
+            
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.bottom = '0';
+                particle.style.background = particleColors[Math.floor(Math.random() * particleColors.length)];
+                particle.style.animationDelay = Math.random() * 0.5 + 's';
+                particle.style.animationDuration = (1 + Math.random()) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        function checkPendingNotification() {
+            const pending = localStorage.getItem('pending_badge_notification');
+            if (pending) {
+                localStorage.removeItem('pending_badge_notification');
+                const badge = BADGES.find(b => b.id === pending);
+                if (badge) {
+                    setTimeout(() => showNotification(badge), 500);
+                }
+            }
+        }
+
+        renderBadges();
+        checkPendingNotification();
+    </script>
+</body>
+</html>

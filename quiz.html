@@ -1,0 +1,3209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>答题练习</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "SimSun", sans-serif;
+            background-color: #f5f5dc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 40px;
+            overflow-y: auto;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            right: 40px;
+            text-decoration: none;
+            color: #f5f5dc;
+            font-weight: bold;
+            background: #8b4513;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .page-title {
+            color: #8b4513;
+            font-size: 2.5rem;
+            margin-bottom: 25px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .settings-card {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .setting-section {
+            margin-bottom: 25px;
+        }
+
+        .setting-section:last-of-type {
+            margin-bottom: 30px;
+        }
+
+        .section-label {
+            color: #8b4513;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .option-btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 5px 30px;
+            border: 3px solid #333;
+            border-radius: 15px;
+            background: #fff;
+            color: #8b4513;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .option-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        }
+
+        .option-btn.selected {
+            border-color: #d4af37;
+            background: linear-gradient(135deg, #fff9e6, #fff5d6);
+            color: #8b4513;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+        }
+
+        .mode-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mode-btn .emoji {
+            font-size: 2.5rem;
+        }
+
+        .helper-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .helper-btn .emoji {
+            font-size: 2rem;
+        }
+
+        .slider-container {
+            width: 100%;
+            padding: 20px 0;
+            user-select: none;
+        }
+
+        .slider-track {
+            position: relative;
+            width: 100%;
+            height: 40px;
+        }
+
+        .slider-axis {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #d4af37;
+            border-radius: 2px;
+            transform: translateY(-50%);
+        }
+
+        .slider-ticks {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+        }
+
+        .slider-tick {
+            position: relative;
+            width: 3px;
+            height: 20px;
+            background: #d4af37;
+            top: 50%;
+            transform: translateY(-50%);
+            border-radius: 1px;
+        }
+
+        .slider-thumb {
+            position: absolute;
+            top: 50%;
+            width: 28px;
+            height: 28px;
+            background: #d4af37;
+            border-radius: 50%;
+            cursor: grab;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+            border: 3px solid #fff;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s, box-shadow 0.2s;
+            z-index: 10;
+        }
+
+        .slider-thumb:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .slider-thumb:active {
+            cursor: grabbing;
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+
+        .slider-labels span {
+            width: 30px;
+            text-align: center;
+            color: #8b4513;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .start-btn {
+            width: 100%;
+            padding: 22px 50px;
+            border: none;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #8b4513, #a0522d);
+            color: #f5f5dc;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(139, 69, 19, 0.3);
+        }
+
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(139, 69, 19, 0.4);
+        }
+
+        .start-btn:active {
+            transform: translateY(0);
+        }
+
+        .quiz-container {
+            display: none;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .quiz-container.active {
+            display: block;
+        }
+
+        .settings-card.hidden {
+            display: none;
+        }
+
+        .history-stats {
+            background: linear-gradient(135deg, #8b4513, #a0522d);
+            border-radius: 15px;
+            padding: 20px 25px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .history-stat-item {
+            text-align: center;
+            color: #f5f5dc;
+        }
+
+        .history-stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .history-stat-label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .history-stat-divider {
+            width: 1px;
+            height: 40px;
+            background: rgba(245, 245, 220, 0.3);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ddd;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #d4af37;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        .question-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #8b4513;
+        }
+
+        .question-number {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .question-mode {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            color: #333;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 12px;
+            border-left: 4px solid #d4af37;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .option-item {
+            padding: 15px 20px;
+            background: #fff;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1rem;
+        }
+
+        .option-item:hover {
+            border-color: #d4af37;
+            transform: translateX(5px);
+        }
+
+        .option-item.selected {
+            border-color: #d4af37;
+            background: linear-gradient(135deg, #fff9e6, #fff5d6);
+        }
+
+        .option-item.correct {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+        }
+
+        .option-item.wrong {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .option-item.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .analysis-box {
+            display: none;
+            padding: 20px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-left: 4px solid #8b4513;
+        }
+
+        .analysis-box.show {
+            display: block;
+        }
+
+        .analysis-title {
+            font-weight: bold;
+            color: #8b4513;
+            margin-bottom: 10px;
+        }
+
+        .analysis-text {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .quiz-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #8b4513, #a0522d);
+            color: #f5f5dc;
+        }
+
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 69, 19, 0.3);
+        }
+
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .prev-btn {
+            background: linear-gradient(135deg, #666, #888);
+            color: #f5f5dc;
+        }
+
+        .prev-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .prev-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .skip-btn {
+            background: linear-gradient(135deg, #d4af37, #c9a227);
+            color: #fff;
+        }
+
+        .skip-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .skipped-count {
+            color: #d4af37;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+
+        .result-container {
+            display: none;
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+            min-height: 100vh;
+            margin-top: -60px;
+        }
+
+        .result-container.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .result-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .result-emoji {
+            font-size: 4rem;
+        }
+
+        .result-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .result-score {
+            font-size: 4rem;
+            color: #d4af37;
+            margin-bottom: 20px;
+        }
+
+        .result-text {
+            font-size: 1.5rem;
+            color: #8b4513;
+            margin-bottom: 30px;
+        }
+
+        .result-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .result-btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #8b4513, #a0522d);
+            color: #f5f5dc;
+            margin: 10px;
+        }
+
+        .result-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 69, 19, 0.3);
+        }
+
+        .no-questions {
+            text-align: center;
+            padding: 50px;
+            color: #8b4513;
+        }
+
+        .no-questions h2 {
+            margin-bottom: 20px;
+        }
+
+        .fill-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 15px;
+            font-size: 1.1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+        }
+
+        .fill-input:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+
+        .fill-input.correct {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+        }
+
+        .fill-input.wrong {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .submit-btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #8b4513, #a0522d);
+            color: #f5f5dc;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .brief-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            font-size: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            resize: vertical;
+            font-family: inherit;
+            line-height: 1.6;
+        }
+
+        .brief-textarea:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+
+        .answer-reveal {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .answer-reveal .label {
+            font-weight: bold;
+            color: #16a34a;
+            margin-bottom: 8px;
+        }
+
+        .question-type-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #d4af37;
+            color: #fff;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            margin-left: 10px;
+        }
+
+        .question-history-tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            margin-left: 8px;
+            font-weight: normal;
+        }
+
+        .question-history-tag.new {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .question-history-tag.done {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        /* 错题本样式 */
+        .wrong-book-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .wrong-book-modal.active {
+            display: flex;
+        }
+
+        .wrong-book-content {
+            background: #f5f5dc;
+            width: 100%;
+            max-width: 800px;
+            max-height: 85vh;
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .wrong-book-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            background: linear-gradient(135deg, #8b4513, #a0522d);
+            color: #f5f5dc;
+        }
+
+        .wrong-book-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .wrong-book-close {
+            background: none;
+            border: none;
+            color: #f5f5dc;
+            font-size: 2rem;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.3s;
+        }
+
+        .wrong-book-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .wrong-book-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 20px;
+            background: rgba(139, 69, 19, 0.1);
+            border-bottom: 1px solid rgba(139, 69, 19, 0.2);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #8b4513;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .wrong-book-filters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid rgba(139, 69, 19, 0.1);
+        }
+
+        .filter-btn {
+            padding: 8px 20px;
+            border: 2px solid #8b4513;
+            background: transparent;
+            color: #8b4513;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            background: rgba(139, 69, 19, 0.1);
+        }
+
+        .filter-btn.active {
+            background: #8b4513;
+            color: #f5f5dc;
+        }
+
+        .wrong-book-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .wrong-item {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #f44336;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .wrong-item.skipped {
+            border-left-color: #ff9800;
+        }
+
+        .wrong-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .wrong-item-type {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .wrong-item-type.wrong {
+            background: #ffebee;
+            color: #f44336;
+        }
+
+        .wrong-item-type.skipped {
+            background: #fff3e0;
+            color: #ff9800;
+        }
+
+        .wrong-item-mode {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .wrong-item-question {
+            font-size: 1.1rem;
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .wrong-item-answer {
+            font-size: 0.95rem;
+            color: #16a34a;
+            padding: 10px;
+            background: #f0fdf4;
+            border-radius: 8px;
+        }
+
+        .wrong-item-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .wrong-item-delete {
+            background: none;
+            border: none;
+            color: #f44336;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .wrong-item-delete:hover {
+            background: #ffebee;
+        }
+
+        .wrong-book-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px;
+            border-top: 1px solid rgba(139, 69, 19, 0.1);
+        }
+
+        .wrong-book-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .wrong-book-btn.primary {
+            background: linear-gradient(135deg, #8b4513, #a0522d);
+            color: #f5f5dc;
+        }
+
+        .wrong-book-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 69, 19, 0.3);
+        }
+
+        .wrong-book-btn.primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .wrong-book-btn.danger {
+            background: #fff;
+            color: #f44336;
+            border: 2px solid #f44336;
+        }
+
+        .wrong-book-btn.danger:hover {
+            background: #ffebee;
+        }
+
+        .wrong-book-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: #8b4513;
+        }
+
+        .wrong-book-empty .emoji {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .wrong-book-empty p {
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 600px) {
+            .settings-card {
+                padding: 35px 25px;
+            }
+
+            .btn-group {
+                gap: 15px;
+            }
+
+            .option-btn {
+                padding: 15px 20px;
+                font-size: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .wrong-book-stats {
+                gap: 15px;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
+            }
+
+            .wrong-book-actions {
+                flex-direction: column;
+            }
+
+            .wrong-book-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="home.html" class="back-link">← 返回主页</a>
+    
+    <h1 class="page-title">答题练习</h1>
+    
+    <div class="settings-card">
+        <div class="history-stats">
+            <div class="history-stat-item">
+                <span class="history-stat-number" id="historyCompleted">0</span>
+                <span class="history-stat-label">已完成</span>
+            </div>
+            <div class="history-stat-divider"></div>
+            <div class="history-stat-item">
+                <span class="history-stat-number" id="historyTotal">800</span>
+                <span class="history-stat-label">总题数</span>
+            </div>
+            <div class="history-stat-divider"></div>
+            <div class="history-stat-item">
+                <span class="history-stat-number" id="historyAccuracy">0%</span>
+                <span class="history-stat-label">正确率</span>
+            </div>
+        </div>
+        <div class="setting-section">
+            <span class="section-label">选择模式</span>
+            <div class="btn-group">
+                <button class="option-btn mode-btn selected" data-mode="review" onclick="selectMode(this)">
+                    <span class="emoji">📚</span>
+                    <span>复习模式</span>
+                </button>
+                <button class="option-btn mode-btn" data-mode="extend" onclick="selectMode(this)">
+                    <span class="emoji">🌟</span>
+                    <span>拓展模式</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="setting-section">
+            <span class="section-label">题目数量</span>
+            <div class="slider-container">
+                <div class="slider-track" id="sliderTrack">
+                    <div class="slider-axis"></div>
+                    <div class="slider-ticks">
+                        <div class="slider-tick"></div>
+                        <div class="slider-tick"></div>
+                        <div class="slider-tick"></div>
+                        <div class="slider-tick"></div>
+                        <div class="slider-tick"></div>
+                        <div class="slider-tick"></div>
+                        <div class="slider-tick"></div>
+                        <div class="slider-tick"></div>
+                        <div class="slider-tick"></div>
+                        <div class="slider-tick"></div>
+                    </div>
+                    <div class="slider-thumb" id="sliderThumb"></div>
+                </div>
+                <div class="slider-labels">
+                    <span>5</span>
+                    <span>10</span>
+                    <span>15</span>
+                    <span>20</span>
+                    <span>25</span>
+                    <span>30</span>
+                    <span>35</span>
+                    <span>40</span>
+                    <span>45</span>
+                    <span>50</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="setting-section">
+            <span class="section-label">辅助功能</span>
+            <div class="btn-group">
+                <button class="option-btn helper-btn" onclick="openWrongBook()">
+                    <span class="emoji">📖</span>
+                    <span>错题本</span>
+                </button>
+                <button class="option-btn helper-btn" id="autoAnalysisBtn" onclick="toggleAutoAnalysis()">
+                    <span class="emoji">💡</span>
+                    <span>自动显示解析</span>
+                </button>
+                <button class="option-btn helper-btn" id="smartQuizBtn" onclick="toggleSmartQuiz()">
+                    <span class="emoji">🎯</span>
+                    <span>优先薄弱题</span>
+                </button>
+            </div>
+        </div>
+
+        <button class="start-btn" onclick="startQuiz()">开始答题</button>
+    </div>
+
+    <div class="quiz-container" id="quizContainer">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        
+        <div class="question-info">
+            <span class="question-number" id="questionNumber">第 1 题 / 共 10 题</span>
+            <span class="question-mode" id="questionMode">复习模式</span>
+        </div>
+        
+        <div class="question-text" id="questionText">
+            题目内容将显示在这里
+        </div>
+        
+        <div class="options-list" id="optionsList">
+        </div>
+        
+        <div class="analysis-box" id="analysisBox">
+            <div class="analysis-title">📝 解析</div>
+            <div class="analysis-text" id="analysisText">解析内容</div>
+        </div>
+        
+        <div class="quiz-actions">
+            <button class="action-btn prev-btn" id="prevBtn" onclick="prevQuestion()" disabled>上一题</button>
+            <button class="action-btn skip-btn" id="skipBtn" onclick="skipQuestion()">跳题</button>
+            <button class="action-btn next-btn" id="nextBtn" onclick="nextQuestion()" disabled>下一题</button>
+        </div>
+    </div>
+
+    <div class="result-container" id="resultContainer">
+        <div class="result-content">
+            <span class="result-emoji">🎉</span>
+            <div class="result-center">
+                <div class="result-score" id="resultScore">0/10</div>
+                <div class="result-text" id="resultText">正确率：0%</div>
+                <div class="result-buttons">
+                    <button class="result-btn" onclick="restartQuiz()">重新答题</button>
+                    <button class="result-btn" onclick="backToSettings()">返回设置</button>
+                </div>
+            </div>
+            <span class="result-emoji">🎉</span>
+        </div>
+    </div>
+
+    <!-- 错题本弹窗 -->
+    <div class="wrong-book-modal" id="wrongBookModal">
+        <div class="wrong-book-content">
+            <div class="wrong-book-header">
+                <h2>📖 错题本</h2>
+                <button class="wrong-book-close" onclick="closeWrongBook()">×</button>
+            </div>
+            <div class="wrong-book-stats" id="wrongBookStats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalWrongCount">0</div>
+                    <div class="stat-label">总错题</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="wrongCount">0</div>
+                    <div class="stat-label">答错</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="skippedCount">0</div>
+                    <div class="stat-label">跳过</div>
+                </div>
+            </div>
+            <div class="wrong-book-filters">
+                <button class="filter-btn active" data-filter="all" onclick="filterWrongBook('all')">全部</button>
+                <button class="filter-btn" data-filter="wrong" onclick="filterWrongBook('wrong')">答错</button>
+                <button class="filter-btn" data-filter="skipped" onclick="filterWrongBook('skipped')">跳过</button>
+            </div>
+            <div class="wrong-book-list" id="wrongBookList">
+                <!-- 错题列表将动态生成 -->
+            </div>
+            <div class="wrong-book-actions">
+                <button class="wrong-book-btn primary" id="startWrongBookQuizBtn" onclick="startWrongBookQuiz()">开始复习错题</button>
+                <button class="wrong-book-btn danger" onclick="confirmClearWrongBook()">清空错题本</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const reviewQuestions = [
+            { type: '选择', q: '诸葛亮在《隆中对》中建议刘备首先夺取的战略要地是？', options: ['益州', '荆州', '冀州', '凉州'], a: 'B', note: '荆州北据汉沔，东连吴会，西通巴蜀，是夺取天下的第一步。' },
+            { type: '选择', q: '官渡之战中，曹操奇袭了袁绍的哪一个粮仓导致其全线崩溃？', options: ['官渡', '延津', '乌巢', '白马'], a: 'C', note: '奇袭乌巢由许攸献计，烧毁粮草是此战反败为胜的核心。' },
+            { type: '选择', q: '三国中人口最少、资源最贫乏的一方是？', options: ['曹魏', '孙吴', '蜀汉', '辽东'], a: 'C', note: '蜀汉实际控制人口仅约90万，远低于魏国，且地形封闭导致扩张困难。' },
+            { type: '选择', q: '曹操"挟天子以令诸侯"中的"天子"指的是？', options: ['汉献帝', '汉灵帝', '汉少帝', '汉桓帝'], a: 'A', note: '曹操迎汉献帝于许都，获得了政治上的正统地位。' },
+            { type: '选择', q: '奠定三国鼎立格局的关键战役是？', options: ['官渡之战', '赤壁之战', '夷陵之战', '汉中之战'], a: 'B', note: '赤壁之战后，曹操北撤，三足鼎立雏形初现。' },
+            { type: '选择', q: '曹操求贤令中提到的用人标准是？', options: ['仁德至上', '名声显赫', '唯才是举', '血统纯正'], a: 'C', note: '曹操不计出身，打破了东汉末年看重门第的传统。' },
+            { type: '选择', q: '官渡之战发生时，北方势力最强大的割据军阀是？', options: ['曹操', '袁绍', '吕布', '公孙瓒'], a: 'B', note: '当时袁绍占据冀、青、幽、并四州，兵力远超曹操。' },
+            { type: '选择', q: '提出"十胜十败"论来分析曹操必胜、袁绍必败的人是？', options: ['荀彧', '郭嘉', '贾诩', '程昱'], a: 'B', note: '郭嘉的"十胜十败"极大地鼓舞了曹军士气。' },
+            { type: '选择', q: '赤壁之战中，黄盖执行的策略是？', options: ['反间计', '美人计', '苦肉计', '空城计'], a: 'C', note: '黄盖受苦肉计后假装投降，以此接近曹军船队放火。' },
+            { type: '选择', q: '曹操统一北方的过程中，最后平定的主要对手是？', options: ['袁绍及其子', '吕布', '张绣', '陶谦'], a: 'A', note: '官渡战后，曹操历经数年才彻底消灭袁氏残余势力。' },
+            { type: '选择', q: '被称为"王佐之才"，为曹操规划"奉天子"战略的是？', options: ['郭嘉', '荀彧', '司马懿', '荀攸'], a: 'B', note: '荀彧是曹操阵营的首功之臣，负责内政与战略。' },
+            { type: '选择', q: '汉末爆发的哪场起义直接导致了军阀割据的局面？', options: ['黄巾起义', '绿林起义', '赤眉起义', '大泽乡起义'], a: 'A', note: '朝廷为镇压黄巾放权给地方，导致地方长官掌握兵权。' },
+            { type: '选择', q: '曹操在白马之战中，派谁斩杀了袁绍大将颜良？', options: ['张辽', '许褚', '关羽', '徐晃'], a: 'C', note: '关羽此时投靠曹操，为报恩而立下大功。' },
+            { type: '选择', q: '孙权接替其兄掌管江东，其兄是？', options: ['孙坚', '孙策', '孙静', '孙翊'], a: 'B', note: '孙策人称"小霸王"，是孙吴基业的开创者。' },
+            { type: '选择', q: '诸葛亮隐居的地方被称为？', options: ['隆中', '卧龙岗', '柴桑', '江夏'], a: 'A', note: '刘备曾三顾茅庐于此，并诞生了著名的《隆中对》。' },
+            { type: '选择', q: '三国时期，曹魏政权的都城主要在？', options: ['长安', '洛阳', '许昌', '邺城'], a: 'B', note: '虽然初期在许昌，但后来迁都洛阳作为正统象征。' },
+            { type: '选择', q: '曹操在诗歌《短歌行》中表达了什么心境？', options: ['思乡之情', '归隐之意', '求贤若渴', '儿女情长'], a: 'C', note: '"周公吐哺，天下归心"表达了其收揽人才的雄心。' },
+            { type: '选择', q: '诸葛亮在赤壁之战前，说服谁联合抗曹？', options: ['周瑜', '孙权', '鲁肃', '张昭'], a: 'B', note: '诸葛亮通过舌战群儒和智激孙权，促成了孙刘联盟。' },
+            { type: '选择', q: '下列哪位不属于"五虎上将"？', options: ['马超', '黄忠', '魏延', '赵云'], a: 'C', note: '魏延虽是重臣，但在演义中并非五虎将成员。' },
+            { type: '选择', q: '曹操在赤壁之战中惨败的直接技术原因是？', options: ['粮食短缺', '战船相连', '士兵叛变', '缺乏箭支'], a: 'B', note: '战船用铁锁相连，导致火攻时无法躲避，瞬间全毁。' },
+            { type: '选择', q: '三国时期，主要的农耕税收制度是？', options: ['摊丁入亩', '租庸调制', '屯田制', '一条鞭法'], a: 'C', note: '屯田制不仅提供粮食，还通过农耕固定了人口。' },
+            { type: '选择', q: '刘备在哪个地方正式称帝？', options: ['荆州', '成都', '汉中', '白帝城'], a: 'B', note: '221年刘备在成都称帝，国号汉，史称蜀汉。' },
+            { type: '选择', q: '曹操阵营中，负责北方防务并曾大败乌桓的人是？', options: ['曹仁', '曹彰', '张辽', '曹操亲自统帅'], a: 'D', note: '曹操亲征乌桓，扫清了袁氏残余和北方威胁。' },
+            { type: '选择', q: '官渡之战后，袁绍因为什么原因加速了灭亡？', options: ['曹军围城', '忧愤而死', '儿子争位', '内部投降'], a: 'C', note: '袁绍死后，袁谭、袁尚兄弟不和，给了曹操可乘之机。' },
+            { type: '选择', q: '孙吴水军在赤壁之战中的指挥官是？', options: ['鲁肃', '陆逊', '周瑜', '甘宁'], a: 'C', note: '周瑜作为大都督，是赤壁之战东吴一方的主帅。' },
+            { type: '选择', q: '曹操实施"屯田制"最早是在哪个地方试行？', options: ['许下', '兖州', '青州', '冀州'], a: 'A', note: '在许县（许昌）一带试行成功后推广全国。' },
+            { type: '选择', q: '汉末被称为"江东猛虎"的是？', options: ['孙策', '孙坚', '孙权', '程普'], a: 'B', note: '孙坚因勇猛被称为猛虎，他在反董卓战争中表现出色。' },
+            { type: '选择', q: '诸葛亮认为刘备作为皇室后裔，最大的政治资本是？', options: ['武力强悍', '地盘稳固', '仁德名望', '金钱丰厚'], a: 'C', note: '刘备的仁德形象使其在吸引士人和流民方面极具优势。' },
+            { type: '选择', q: '赤壁之战发生的河流是？', options: ['黄河', '汉江', '长江', '淮河'], a: 'C', note: '长江天险是孙刘联盟赖以抵抗曹操骑兵的关键。' },
+            { type: '选择', q: '曹操将汉献帝迁往许都后，自任什么官职？', options: ['太尉', '司空', '大将军', '丞相'], a: 'B', note: '曹操初任司空，后改为丞相，掌握朝廷大权。' },
+            { type: '选择', q: '关羽在曹操阵营时被封为什么爵位？', options: ['汉寿亭侯', '温侯', '武乡侯', '关内侯'], a: 'A', note: '这是关羽一生最看重的正式封号。' },
+            { type: '选择', q: '官渡之战中，袁绍拒绝了谁提出的奇袭许都的正确建议？', options: ['田丰', '沮授', '许攸', '审配'], a: 'C', note: '许攸因建议不被采纳且家人受累，转投曹操。' },
+            { type: '选择', q: '曹操攻打吕布时，吕布在哪座城市被部下出卖？', options: ['下邳', '小沛', '徐州', '寿春'], a: 'A', note: '曹操水淹下邳，吕布众叛亲离。' },
+            { type: '选择', q: '刘备投奔荆州刘表期间，曾在哪里结识徐庶？', options: ['襄阳', '新野', '江陵', '樊城'], a: 'B', note: '刘备当时屯兵新野，徐庶是其第一位重要谋士。' },
+            { type: '选择', q: '赤壁之战前夕，曹操最担心的是什么？', options: ['士兵晕船', '孙权投降', '刘备逃跑', '天气突变'], a: 'A', note: '北方士兵不习水性，晕船严重影响了曹军战斗力。' },
+            { type: '选择', q: '孙吴政权在地理防御上，除了长江天险外，最重要的陆路门户是？', options: ['合肥', '汉中', '江陵', '徐州'], a: 'A', note: '合肥是曹魏南下的咽喉，张辽曾在此威震逍遥津，孙权一生未能攻克。' },
+            { type: '选择', q: '诸葛亮北伐的主要路线是穿过哪座山脉？', options: ['大别山', '秦岭', '太行山', '巫山'], a: 'B', note: '秦岭山脉阻断了汉中与关中，蜀军必须翻越艰险的"蜀道"才能进攻魏国。' },
+            { type: '选择', q: '三国时期，中原地区（曹魏）的人口约占全国总人口的比例是？', options: ['30%', '50%', '65%以上', '90%'], a: 'C', note: '曹魏占据了东汉时期人口最密集的黄河流域，这是其最终统一全国的底气。' },
+            { type: '选择', q: '关羽失去荆州的关键原因，是孙吴执行了什么策略？', options: ['围魏救赵', '白衣渡江', '空城计', '反间计'], a: 'B', note: '吕蒙让士兵穿上白衣化装成商船，奇袭了烽火台，关羽因后方失陷而溃败。' },
+            { type: '选择', q: '哪一个州被称为"天下之腹"，在三国早期是各方争夺最激烈的十字路口？', options: ['益州', '荆州', '幽州', '并州'], a: 'B', note: '荆州连接四方，是《隆中对》中实现"两路并举"的绝对枢纽。' },
+            { type: '选择', q: '蜀汉在汉中防御魏国时，最著名的险要关隘是？', options: ['剑门关', '山海关', '虎牢关', '嘉峪关'], a: 'A', note: '剑门关一夫当关万夫莫开，是保卫成都平原的最后屏障。' },
+            { type: '选择', q: '曹魏政权为了运送士兵和军粮到南方，大规模开凿了什么？', options: ['运河', '驿道', '隧道', '长城'], a: 'A', note: '曹操开凿了白沟等运河，完善了北方的水陆运输系统。' },
+            { type: '选择', q: '刘备在哪个战役后失去了对荆州的控制权？', options: ['赤壁之战', '官渡之战', '夷陵之战', '长坂坡之战'], a: 'C', note: '夷陵之战惨败于陆逊，刘备精锐损失殆尽，蜀汉从此彻底失去荆州。' },
+            { type: '选择', q: '孙权定都建业（今南京），主要是利用了哪里的地形？', options: ['石头山天险', '太湖水网', '洞庭湖平原', '秦岭山脉'], a: 'A', note: '南京虎踞龙盘，依山带江，是江东政权的最佳政治中心。' },
+            { type: '选择', q: '三国中，最后被灭亡的国家是？', options: ['曹魏', '蜀汉', '孙吴', '西晋'], a: 'C', note: '蜀汉263年亡，曹魏265年被西晋代，孙吴直到280年才被西晋所灭。' },
+            { type: '选择', q: '诸葛亮在汉中实行什么政策，以解决北伐军粮短缺的问题？', options: ['抢夺敌粮', '木牛流马', '缩减人口', '割让土地'], a: 'B', note: '木牛流马是蜀汉特有的运输工具，虽然载重有限，但适应山地地形。' },
+            { type: '选择', q: '孙吴的统治基础主要依靠的是？', options: ['中原流民', '江东大族', '外籍雇佣军', '西域游牧民族'], a: 'B', note: '孙家父子通过与朱、张、顾、陆等江东大姓结盟，稳固了统治。' },
+            { type: '选择', q: '魏蜀边境最著名的"子午谷奇计"是由谁提出的？', options: ['诸葛亮', '魏延', '姜维', '司马懿'], a: 'B', note: '魏延建议奇袭长安，但诸葛亮认为过于冒险而未采纳。' },
+            { type: '选择', q: '下列哪个地理名词与曹操的起家之地密切相关？', options: ['巴蜀', '兖州', '江东', '陇西'], a: 'B', note: '曹操在兖州建立根据地，并以此为跳板吞并中原。' },
+            { type: '选择', q: '三国后期，作为曹魏权力中枢所在地的洛阳，其最大的短板是？', options: ['城防脆弱', '依赖东南漕运', '海拔过高', '气候干旱'], a: 'B', note: '洛阳人口众多，粮食高度依赖来自南方的运河供给。' },
+            { type: '填空', q: '曹操推行的_________制，解决了流民与军队的粮食补给问题。', a: '屯田制', note: '分为民屯和军屯，是曹魏称霸的经济支撑。' },
+            { type: '填空', q: '"守江必守_________"是孙吴政权在地理防御上的核心铁律。', a: '淮', note: '淮河是长江的门户，失去淮南，长江天险将无险可守。' },
+            { type: '填空', q: '诸葛亮北伐翻越的秦岭中，最著名的险道包括子午谷、斜谷和_________。', a: '陈仓道', note: '诸葛亮曾围攻陈仓不下，可见此道之险。' },
+            { type: '填空', q: '曹操求贤令中强调选拔人才不分门第，其标准总结为"_________"。', a: '唯才是举', note: '这在注重门第名声的东汉末年是非常激进的改革。' },
+            { type: '填空', q: '曹魏名将张辽在_________之战中，以七千守军击败孙权十万大军。', a: '合肥', note: '从此"张辽止啼"成为江东著名的典故。' },
+            { type: '填空', q: '蜀汉政权的都城在_________。', a: '成都', note: '成都平原资源丰富，是刘备立国的根本。' },
+            { type: '填空', q: '赤壁之战中，曹军将战船用铁链连接在一起，这种做法被称为"_________"。', a: '连环船', note: '这虽解决了晕船问题，却成了火攻的致命弱点。' },
+            { type: '填空', q: '"东风不与周郎便，铜雀春深锁二乔"指的是_________战役。', a: '赤壁', note: '杜牧以此诗感慨气候对历史进程的偶然性影响。' },
+            { type: '填空', q: '诸葛亮隐居时，自比于古代名将管仲和_________。', a: '乐毅', note: '表现了其志向远大，绝非寻常隐士。' },
+            { type: '填空', q: '刘备三顾茅庐后，诸葛亮为其提出的宏伟蓝图被称为《_________》。', a: '隆中对', note: '这是中国历史上著名的战略规划。' },
+            { type: '填空', q: '官渡之战中，袁绍阵营的谋士_________因家人被捕而转投曹操。', a: '许攸', note: '他的投降直接导致了乌巢粮草被毁。' },
+            { type: '填空', q: '三国中，领土面积最大、实力最强的是_________。', a: '曹魏', note: '曹魏占据了当时华夏最核心的黄河流域。' },
+            { type: '填空', q: '孙权在赤壁之战中，拔刀砍掉案角，表示绝不投降_________。', a: '曹操', note: '以此展示其联刘抗曹的坚定决心。' },
+            { type: '填空', q: '刘备在攻占_________后，势力达到巅峰。', a: '汉中', note: '随后刘备进位汉中王。' },
+            { type: '填空', q: '魏国名将司马懿的主要对手是蜀汉的_________。', a: '诸葛亮', note: '两人在祁山、渭水一带展开了长期的心理与战略博弈。' },
+            { type: '填空', q: '三国鼎立时期，最晚建立的政权是_________。', a: '孙吴', note: '孙权直到229年才正式称帝，晚于魏、蜀。' },
+            { type: '填空', q: '曹魏政权废除汉献帝，建立魏朝的人是_________。', a: '曹丕', note: '曹丕是曹操的长子，史称魏文帝。' },
+            { type: '填空', q: '蜀汉在南方的经营主要是平定了_________地区的叛乱。', a: '南中', note: '诸葛亮"七擒孟获"确保了后方的稳定。' },
+            { type: '填空', q: '历史上，赤壁之战的具体发生年份是公元_________年。', a: '208', note: '这是中国历史上最著名的以少胜多的战役之一。' },
+            { type: '填空', q: '"既生瑜，何生亮"是文学作品中_________对诸葛亮的感慨。', a: '周瑜', note: '虽是演义虚构，但体现了两大天才的激烈碰撞。' },
+            { type: '填空', q: '孙吴政权最著名的水军基地位于_________。', a: '柴桑', note: '这里是扼守长江中下游的关键点。' },
+            { type: '填空', q: '曹操死后，被追尊为_________皇帝。', a: '魏武帝', note: '曹操一生未称帝，但其基业由子孙继承。' },
+            { type: '填空', q: '诸葛亮最后一次北伐病逝于_________。', a: '五丈原', note: '"出师未捷身先死，长使英雄泪满襟。"' },
+            { type: '填空', q: '被称为"江表之虎臣"的是孙吴阵营的_________。', a: '程普', note: '这些老将是孙家三代创业的基石。' },
+            { type: '填空', q: '刘备病逝的地方是_________，并在那里将刘禅托付给诸葛亮。', a: '白帝城', note: '史称"刘备托孤"。' },
+            { type: '填空', q: '曹魏后期，掌握国家大权并最终由其子孙代魏的是_________家族。', a: '司马', note: '司马懿通过高平陵之变夺取了军政大权。' },
+            { type: '填空', q: '孙吴为了扩大资源，曾派遣将军卫温到达了_________。', a: '夷洲', note: '这是中国古代历史上记载较早的海上远航。' },
+            { type: '填空', q: '诸葛亮北伐时期，由于粮草不济，多次被迫_________。', a: '退兵', note: '后勤补给一直是蜀汉北伐的死穴。' },
+            { type: '填空', q: '历史上，刘备的字是_________。', a: '玄德', note: '中山靖王刘胜之后，刘备一直以此作为政治口号。' },
+            { type: '填空', q: '曹操著名的诗句"老骥伏枥，志在千里"出自《_________》。', a: '龟虽寿', note: '表现了曹操晚年依然不减的雄心壮志。' },
+            { type: '填空', q: '曹魏政权为了选拔人才，在后期由陈群提出了_________制，但这导致了门阀势力的崛起。', a: '九品中正', note: '这一制度后来演变为"上品无寒门，下品无势族"。' },
+            { type: '填空', q: '孙吴政权在地理上主要依靠长江，而其水军最精锐的部队被称为_________。', a: '解烦卫', note: '这是孙权直接统领的一支精锐部队。' },
+            { type: '填空', q: '"鞠躬尽瘁，死而后已"出自诸葛亮的《_________》。', a: '后出师表', note: '这八个字成为了诸葛亮一生忠诚与勤勉的真实写照。' },
+            { type: '填空', q: '历史上，赤壁之战的战场位于今天的_________省境内。', a: '湖北', note: '赤壁的地理位置至今在学术界仍有多种说法，但均在湖北省境内。' },
+            { type: '填空', q: '曹操在赤壁战败后，撤退时走的是极其泥泞的_________，损失惨重。', a: '华容道', note: '华容道当时是一片沼泽地，曹军在撤退过程中遭遇了巨大自然阻碍。' },
+            { type: '填空', q: '三国中，最后一位称帝的君主是吴国的_________。', a: '孙皓', note: '孙皓也是吴国的亡国之君，其统治后期非常残暴。' },
+            { type: '填空', q: '蜀汉在军事防守上，由姜维在_________死守，阻挡了钟会的大军。', a: '剑阁', note: '剑阁天险让魏军主力一度陷入僵局。' },
+            { type: '填空', q: '曹丕代汉建魏，标志着中国历史正式进入了_________时期。', a: '三国', note: '此前虽有割据，但在名义上仍属于东汉。' },
+            { type: '填空', q: '关羽死后被后世尊称为"_________"，成为了忠义的化身。', a: '武圣', note: '与文圣孔子并列，关羽的影响力早已超越了军事领域。' },
+            { type: '填空', q: '蜀汉灭亡时，后主刘禅投降魏国，被封为_________。', a: '安乐公', note: '这也是"乐不思蜀"典故的背景。' },
+            { type: '填空', q: '曹操的文学成就极高，他与曹丕、曹植并称为"_________"。', a: '三曹', note: '他们是建安文学的领军人物。' },
+            { type: '填空', q: '孙吴政权灭亡的标志是西晋水军攻克了其首都_________。', a: '建业', note: '西晋名将王濬楼船下益州，金陵王气黯然收。' },
+            { type: '填空', q: '被称为"锦马超"的蜀汉将领属于_________少数民族势力。', a: '羌胡', note: '马超在西北地区拥有极高的威望。' },
+            { type: '填空', q: '三国时期，魏国的地盘主要位于_________流域。', a: '黄河', note: '黄河流域在当时依然是中国的政治与经济中心。' },
+            { type: '填空', q: '"士别三日，即更刮目相待"是说孙吴名将_________勤奋好学。', a: '吕蒙', note: '吕蒙从一介武夫成长为深谋远虑的统帅，奇袭荆州即出自其手。' },
+            { type: '简答', q: '简述荆州在三国地理博弈中为何被称为"被诅咒的十字路口"？', a: '战略地位极其重要，但地势平坦，无险可守。荆州是连接魏、蜀、吴三方的枢纽。对于占据者来说，它虽然是向四周扩张的跳板，但由于缺乏天然屏障且三方利益冲突无法调和，导致占据者必须随时面对多线作战的巨大压力。', note: '荆州是连接魏、蜀、吴三方的枢纽。对于占据者来说，它虽然是向四周扩张的跳板，但由于缺乏天然屏障且三方利益冲突无法调和，导致占据者必须随时面对多线作战的巨大压力。' },
+            { type: '简答', q: '曹操之所以能从汉末群雄中脱颖而出，其"屯田制"起到了什么作用？', a: '解决了粮食补给问题，并实现了人口的社会管理。屯田制通过将流民与土地结合，不仅保证了军队的军粮供给，还使曹操在战乱中获得了稳定的税收和兵源，从而在持久战中耗赢了其他军阀。', note: '屯田制通过将流民与土地结合，不仅保证了军队的军粮供给，还使曹操在战乱中获得了稳定的税收和兵源，从而在持久战中耗赢了其他军阀。' },
+            { type: '简答', q: '为什么《隆中对》中强调"跨有荆益"是北伐成功的前提？', a: '目的是形成两路并举的钳形攻势。如果只从益州出兵，会受阻于秦岭山道；若同时从荆州出兵宛洛，魏国必须分兵防御，蜀汉才能打破地理限制，使魏国首尾不能相顾。', note: '如果只从益州出兵，会受阻于秦岭山道；若同时从荆州出兵宛洛，魏国必须分兵防御，蜀汉才能打破地理限制，使魏国首尾不能相顾。' },
+            { type: '简答', q: '分析赤壁之战中孙刘联军获胜的地理环境因素。', a: '利用了水网地形、气候（东南风）和北方士兵的生理局限。南方湿润多水阻断了北方骑兵的机动性；曹军不习水性导致连环锁船；周瑜敏锐捕捉到冬至前后的气象变化，利用火攻扩大了战果。', note: '南方湿润多水阻断了北方骑兵的机动性；曹军不习水性导致连环锁船；周瑜敏锐捕捉到冬至前后的气象变化，利用火攻扩大了战果。' },
+            { type: '简答', q: '从长远来看，为什么曹魏统一全国是历史的必然？', a: '综合国力（人口、资源、正统地位）的绝对压制。曹魏占据了当时全国超过65%的人口和农耕产区。在长期的对峙中，魏国的容错率远高于蜀吴。随着时间的推移，这种巨大的资源差距最终演变为无法逾越的军事压制。', note: '曹魏占据了当时全国超过65%的人口和农耕产区。在长期的对峙中，魏国的容错率远高于蜀吴。随着时间的推移，这种巨大的资源差距最终演变为无法逾越的军事压制。' },
+            
+            // 必背古诗部分
+            { type: '填空', q: '曹植《七步诗》中"本自同根生，_________？"的下一句是？', a: '相煎何太急', note: '' },
+            { type: '填空', q: '曹植《七步诗》中"萁在釜下燃，_________。"的下一句是？', a: '豆在釜中泣', note: '' },
+            { type: '填空', q: '曹操《观沧海》中"东临碣石，_________。"的下一句是？', a: '以观沧海', note: '' },
+            { type: '填空', q: '曹操《观沧海》中"秋风萧瑟，_________。"的下一句是？', a: '洪波涌起', note: '' },
+            { type: '填空', q: '曹操《观沧海》中"日月之行，若出其中；_________，若出其里。"的下一句是？', a: '星汉灿烂', note: '' },
+            { type: '填空', q: '曹操《龟虽寿》中"神龟虽寿，_________。"的下一句是？', a: '犹有竟时', note: '' },
+            { type: '填空', q: '曹操《龟虽寿》中"老骥伏枥，_________。"的下一句是？', a: '志在千里', note: '' },
+            { type: '填空', q: '曹操《龟虽寿》中"烈士暮年，_________。"的下一句是？', a: '壮心不已', note: '' },
+            { type: '填空', q: '诸葛亮《诫子书》中"夫君子之行，静以修身，_________。"的下一句是？', a: '俭以养德', note: '' },
+            { type: '填空', q: '诸葛亮《诫子书》中"非淡泊无以明志，_________。"的下一句是？', a: '非宁静无以致远', note: '' },
+            { type: '填空', q: '诸葛亮《诫子书》中"非学无以广才，_________。"的下一句是？', a: '非志无以成学', note: '' },
+            { type: '填空', q: '诸葛亮《出师表》中"先帝创业未半而中道崩殂，今天下三分，_________，此诚危急存亡之秋也。"的下一句是？', a: '益州疲弊', note: '' },
+            { type: '填空', q: '诸葛亮《出师表》中"诚宜开张圣听，以光先帝遗德，恢弘志士之气，不宜妄自菲薄，_________，以塞忠谏之路也。"的下一句是？', a: '引喻失义', note: '' },
+            { type: '填空', q: '诸葛亮《出师表》中"亲贤臣，远小人，_________；亲小人，远贤臣，此后汉所以倾颓也。"的下一句是？', a: '此先汉所以兴隆也', note: '' },
+            
+            // 水浒传英雄测试部分
+            { type: '填空', q: '天魁星·及时雨的姓名是？', a: '宋江', note: '' },
+            { type: '填空', q: '天罡星·玉麒麟的姓名是？', a: '卢俊义', note: '' },
+            { type: '填空', q: '天机星·智多星的姓名是？', a: '吴用', note: '' },
+            { type: '填空', q: '天闲星·入云龙的姓名是？', a: '公孙胜', note: '' },
+            { type: '填空', q: '天勇星·大刀的姓名是？', a: '关胜', note: '' },
+            { type: '填空', q: '天雄星·豹子头的姓名是？', a: '林冲', note: '' },
+            { type: '填空', q: '天猛星·霹雳火的姓名是？', a: '秦明', note: '' },
+            { type: '填空', q: '天威星·双鞭的姓名是？', a: '呼延灼', note: '' },
+            { type: '填空', q: '天英星·小李广的姓名是？', a: '花荣', note: '' },
+            { type: '填空', q: '天贵星·小旋风的姓名是？', a: '柴进', note: '' },
+            { type: '填空', q: '天富星·扑天雕的姓名是？', a: '李应', note: '' },
+            { type: '填空', q: '天满星·美髯公的姓名是？', a: '朱仝', note: '' },
+            { type: '填空', q: '天孤星·花和尚的姓名是？', a: '鲁智深', note: '' },
+            { type: '填空', q: '天伤星·行者的姓名是？', a: '武松', note: '' },
+            { type: '填空', q: '天立星·双枪将的姓名是？', a: '董平', note: '' },
+            { type: '填空', q: '天捷星·没羽箭的姓名是？', a: '张清', note: '' },
+            { type: '填空', q: '天暗星·青面兽的姓名是？', a: '杨志', note: '' },
+            { type: '填空', q: '天祐星·金枪手的姓名是？', a: '徐宁', note: '' },
+            { type: '填空', q: '天空星·急先锋的姓名是？', a: '索超', note: '' },
+            { type: '填空', q: '天速星·神行太保的姓名是？', a: '戴宗', note: '' },
+            { type: '填空', q: '天异星·赤发鬼的姓名是？', a: '刘唐', note: '' },
+            { type: '填空', q: '天杀星·黑旋风的姓名是？', a: '李逵', note: '' },
+            { type: '填空', q: '天微星·九纹龙的姓名是？', a: '史进', note: '' },
+            { type: '填空', q: '天究星·没遮拦的姓名是？', a: '穆弘', note: '' },
+            { type: '填空', q: '天退星·插翅虎的姓名是？', a: '雷横', note: '' },
+            { type: '填空', q: '天寿星·混江龙的姓名是？', a: '李俊', note: '' },
+            { type: '填空', q: '天剑星·立地太岁的姓名是？', a: '阮小二', note: '' },
+            { type: '填空', q: '天平星·船火儿的姓名是？', a: '张横', note: '' },
+            { type: '填空', q: '天罪星·短命二郎的姓名是？', a: '阮小五', note: '' },
+            { type: '填空', q: '天损星·浪里白条的姓名是？', a: '张顺', note: '' },
+            { type: '填空', q: '天败星·活阎罗的姓名是？', a: '阮小七', note: '' },
+            { type: '填空', q: '天牢星·病关索的姓名是？', a: '杨雄', note: '' },
+            { type: '填空', q: '天慧星·拼命三郎的姓名是？', a: '石秀', note: '' },
+            { type: '填空', q: '天暴星·两头蛇的姓名是？', a: '解珍', note: '' },
+            { type: '填空', q: '天哭星·双尾蝎的姓名是？', a: '解宝', note: '' },
+            { type: '填空', q: '天巧星·浪子的姓名是？', a: '燕青', note: '' },
+            { type: '填空', q: '地魁星·神机军师的姓名是？', a: '朱武', note: '' },
+            { type: '填空', q: '地煞星·镇三山的姓名是？', a: '黄信', note: '' },
+            { type: '填空', q: '地勇星·病尉迟的姓名是？', a: '孙立', note: '' },
+            { type: '填空', q: '地杰星·丑郡马的姓名是？', a: '宣赞', note: '' },
+            { type: '填空', q: '地雄星·井木犴的姓名是？', a: '郝思文', note: '' },
+            { type: '填空', q: '地威星·百胜将的姓名是？', a: '韩滔', note: '' },
+            { type: '填空', q: '地英星·天目将的姓名是？', a: '彭玘', note: '' },
+            { type: '填空', q: '地奇星·圣水将的姓名是？', a: '单廷圭', note: '' },
+            { type: '填空', q: '地猛星·神火将的姓名是？', a: '魏定国', note: '' },
+            { type: '填空', q: '地文星·圣手书生的姓名是？', a: '萧让', note: '' },
+            { type: '填空', q: '地正星·铁面孔目的姓名是？', a: '裴宣', note: '' },
+            { type: '填空', q: '地阔星·摩云金翅的姓名是？', a: '欧鹏', note: '' },
+            { type: '填空', q: '地阖星·火眼狻猊的姓名是？', a: '邓飞', note: '' },
+            { type: '填空', q: '地强星·锦毛虎的姓名是？', a: '燕顺', note: '' },
+            { type: '填空', q: '地暗星·锦豹子的姓名是？', a: '杨林', note: '' },
+            { type: '填空', q: '地轴星·轰天雷的姓名是？', a: '凌振', note: '' },
+            { type: '填空', q: '地会星·神算子的姓名是？', a: '蒋敬', note: '' },
+            { type: '填空', q: '地佐星·小温侯的姓名是？', a: '吕方', note: '' },
+            { type: '填空', q: '地祐星·赛仁贵的姓名是？', a: '郭盛', note: '' },
+            { type: '填空', q: '地灵星·神医的姓名是？', a: '安道全', note: '' },
+            { type: '填空', q: '地兽星·紫髯伯的姓名是？', a: '皇甫端', note: '' },
+            { type: '填空', q: '地微星·矮脚虎的姓名是？', a: '王英', note: '' },
+            { type: '填空', q: '地慧星·一丈青的姓名是？', a: '扈三娘', note: '' },
+            { type: '填空', q: '地暴星·丧门神的姓名是？', a: '鲍旭', note: '' },
+            { type: '填空', q: '地然星·混世魔王的姓名是？', a: '樊瑞', note: '' },
+            { type: '填空', q: '地猖星·毛头星的姓名是？', a: '孔明', note: '' },
+            { type: '填空', q: '地狂星·独火星的姓名是？', a: '孔亮', note: '' },
+            { type: '填空', q: '地飞星·八臂哪吒的姓名是？', a: '项充', note: '' },
+            { type: '填空', q: '地走星·飞天大圣的姓名是？', a: '李衮', note: '' },
+            { type: '填空', q: '地巧星·玉臂匠的姓名是？', a: '金大坚', note: '' },
+            { type: '填空', q: '地明星·铁笛仙的姓名是？', a: '马麟', note: '' },
+            { type: '填空', q: '地进星·出洞蛟的姓名是？', a: '童威', note: '' },
+            { type: '填空', q: '地退星·翻江蜃的姓名是？', a: '童猛', note: '' },
+            { type: '填空', q: '地满星·玉幡竿的姓名是？', a: '孟康', note: '' },
+            { type: '填空', q: '地遂星·通臂猿的姓名是？', a: '侯健', note: '' },
+            { type: '填空', q: '地周星·跳涧虎的姓名是？', a: '陈达', note: '' },
+            { type: '填空', q: '地隐星·白花蛇的姓名是？', a: '杨春', note: '' },
+            { type: '填空', q: '地异星·白面郎君的姓名是？', a: '郑天寿', note: '' },
+            { type: '填空', q: '地理星·九尾龟的姓名是？', a: '陶宗旺', note: '' },
+            { type: '填空', q: '地俊星·铁扇子的姓名是？', a: '宋清', note: '' },
+            { type: '填空', q: '地乐星·铁叫子的姓名是？', a: '乐和', note: '' },
+            { type: '填空', q: '地捷星·花项虎的姓名是？', a: '龚旺', note: '' },
+            { type: '填空', q: '地速星·中箭虎的姓名是？', a: '丁得孙', note: '' },
+            { type: '填空', q: '地镇星·小遮拦的姓名是？', a: '穆春', note: '' },
+            { type: '填空', q: '地嵇星·操刀鬼的姓名是？', a: '曹正', note: '' },
+            { type: '填空', q: '地魔星·云里金刚的姓名是？', a: '宋万', note: '' },
+            { type: '填空', q: '地妖星·摸着天的姓名是？', a: '杜迁', note: '' },
+            { type: '填空', q: '地幽星·病大虫的姓名是？', a: '薛永', note: '' },
+            { type: '填空', q: '地伏星·金眼彪的姓名是？', a: '施恩', note: '' },
+            { type: '填空', q: '地僻星·打虎将的姓名是？', a: '李忠', note: '' },
+            { type: '填空', q: '地空星·小霸王的姓名是？', a: '周通', note: '' },
+            { type: '填空', q: '地孤星·金钱豹子的姓名是？', a: '汤隆', note: '' },
+            { type: '填空', q: '地全星·鬼脸儿的姓名是？', a: '杜兴', note: '' },
+            { type: '填空', q: '地短星·出林龙的姓名是？', a: '邹渊', note: '' },
+            { type: '填空', q: '地角星·独角龙的姓名是？', a: '邹润', note: '' },
+            { type: '填空', q: '地囚星·旱地忽律的姓名是？', a: '朱贵', note: '' },
+            { type: '填空', q: '地藏星·笑面虎的姓名是？', a: '朱富', note: '' },
+            { type: '填空', q: '地平星·铁臂膊的姓名是？', a: '蔡福', note: '' },
+            { type: '填空', q: '地损星·一枝花的姓名是？', a: '蔡庆', note: '' },
+            { type: '填空', q: '地奴星·催命判官的姓名是？', a: '李立', note: '' },
+            { type: '填空', q: '地察星·青眼虎的姓名是？', a: '李云', note: '' },
+            { type: '填空', q: '地恶星·没面目的姓名是？', a: '焦挺', note: '' },
+            { type: '填空', q: '地丑星·石将军的姓名是？', a: '石勇', note: '' },
+            { type: '填空', q: '地数星·小尉迟的姓名是？', a: '孙新', note: '' },
+            { type: '填空', q: '地阴星·母大虫的姓名是？', a: '顾大嫂', note: '' },
+            { type: '填空', q: '地刑星·菜园子的姓名是？', a: '张青', note: '' },
+            { type: '填空', q: '地壮星·母夜叉的姓名是？', a: '孙二娘', note: '' },
+            { type: '填空', q: '地劣星·活闪婆的姓名是？', a: '王定六', note: '' },
+            { type: '填空', q: '地健星·险道神的姓名是？', a: '郁保四', note: '' },
+            { type: '填空', q: '地耗星·白日鼠的姓名是？', a: '白胜', note: '' },
+            { type: '填空', q: '地贼星·鼓上蚤的姓名是？', a: '时迁', note: '' },
+            { type: '填空', q: '地狗星·金毛犬的姓名是？', a: '段景住', note: '' },
+            
+            // 水浒传百题挑战部分
+            // 选择题
+            { type: '选择', q: '《水浒传》的开篇诗"试看书林隐处，几多俊逸儒流"之后，紧接着的历史事件是？', options: ['陈桥兵变', '黄袍加身', '杯酒释兵权', '澶渊之盟'], a: 'A', note: '小说开篇以陈桥兵变、宋太祖定天下引出背景，展现乱世到治世的交替。' },
+            { type: '选择', q: '洪太尉在龙虎山放走的妖魔共有多少位？', options: ['36位', '72位', '108位', '100位'], a: 'C', note: '对应了上应天罡星36员、下应地煞星72员，合共108将。' },
+            { type: '选择', q: '"九纹龙"史进的师父是？', options: ['王进', '林冲', '鲁智深', '李忠'], a: 'A', note: '王进因得罪高俅逃亡，途中指点史进武艺，史进自此才算学得真本事。' },
+            { type: '选择', q: '鲁智深在五台山出家前，打死的恶霸是？', options: ['镇关西', '蒋门神', '西门庆', '牛二'], a: 'A', note: '鲁提辖拳打镇关西是全书第一个高潮，展现了极致的侠义与快意。' },
+            { type: '选择', q: '林冲买刀，误入的白虎节堂是何处？', options: ['太尉府军机重地', '皇宫禁苑', '开封府大堂', '枢密院'], a: 'A', note: '白虎节堂是古代高级军政重地，林冲带刀进入给了高俅陷害的借口。' },
+            { type: '选择', q: '"风雪山神庙"中，林冲用何物杀死陆谦？', options: ['花枪', '朴刀', '解腕尖刀', '宝剑'], a: 'C', note: '林冲先用枪刺，最后是用解腕尖刀剜心，可见恨之入骨。' },
+            { type: '选择', q: '"智取生辰纲"发生在何处？', options: ['黄泥冈', '蜈蚣岭', '快活林', '赤松林'], a: 'A', note: '"黄泥冈上巧用药"，这一劫让杨志失去了官场前途。' },
+            { type: '选择', q: '梁山"七星聚义"中，最后一位上山的是？', options: ['吴用', '公孙胜', '白胜', '刘唐'], a: 'C', note: '"白日鼠"白胜负责挑酒诱敌，也是聚义的关键一环。' },
+            { type: '选择', q: '宋江杀死阎婆惜的直接原因是？', options: ['她与张文远私通', '她勒索金子与梁山书信', '她辱骂宋太公', '她拒绝与宋江和离'], a: 'B', note: '宋江虽知私通，但招文袋里的梁山书信是致命威胁，属于"灭口"行为。' },
+            { type: '选择', q: '武松在景阳冈打死的猛虎，最后被谁抬走？', options: ['猎户', '阳谷县士兵', '当地里正', '围观百姓'], a: 'A', note: '书中描写猎户见到武松打死老虎后大为震惊，随后将其抬往阳谷县。' },
+            { type: '选择', q: '"王婆贪贿说风情"中，潘驴邓小闲，"邓"指的是？', options: ['邓通的财富', '邓禹的功业', '忍耐的功夫', '模样俊俏'], a: 'A', note: '邓通是汉代大富豪，这里代指要有丰厚的家产财力。' },
+            { type: '选择', q: '武松为兄报仇，杀潘金莲和西门庆的先后顺序是？', options: ['先杀潘，后杀西门', '先杀西门，后杀潘', '同一天先后杀死', '设计让二人互杀'], a: 'A', note: '武松先在家中祭奠哥哥并手刃潘金莲，再去狮子楼斗杀西门庆。' },
+            { type: '选择', q: '宋江在浔阳楼题的反诗中，"他时若遂凌云志"的下一句是？', options: ['敢笑黄巢不丈夫', '血染浔阳江口', '报与桃花一处开', '讥讽权奸当道时'], a: 'A', note: '这句诗尽显宋江虽然表面谦卑，实则内心极具野望。' },
+            { type: '选择', q: '江州劫法场时，李逵使用的武器是？', options: ['双戒刀', '两把板斧', '混铁棍', '朴刀'], a: 'B', note: '李逵标志性的武器就是两把黑漆板斧，被称为"杀人机器"。' },
+            { type: '选择', q: '梁山好汉"三打祝家庄"的直接导火索是？', options: ['时迁偷吃报晓公鸡', '石秀打探盘陀路', '李应与祝家庄结仇', '宋江欲扩充粮草'], a: 'A', note: '一个鸡引发的血案，时迁被抓导致梁山师出有名。' },
+            { type: '选择', q: '祝家庄的盘陀路，识别方向的秘诀是？', options: ['看北斗星', '见白杨树转弯', '遇红灯则停', '只走右边道路'], a: 'B', note: '这种迷魂阵般的路，若无本地人指点，很难攻入核心。' },
+            { type: '选择', q: '"一丈青"扈三娘最终嫁给了？', options: ['宋江', '林冲', '王英', '祝彪'], a: 'C', note: '这是水浒传中公认的最"不速配"婚姻，体现了宋江对功臣的拉拢。' },
+            { type: '选择', q: '"黑旋风斗浪里白条"发生在？', options: ['浔阳江', '梁山泊', '大名府', '蓟州'], a: 'A', note: '旱鸭子李逵在水里被张顺教训得不轻，是不打不相识的经典。' },
+            { type: '选择', q: '晁盖在曾头市被谁射中毒箭？', options: ['史文恭', '曾涂', '曾升', '苏定'], a: 'A', note: '箭上刻有"史文恭"字样，这也成了卢俊义后来上山的契机。' },
+            { type: '选择', q: '为赚取卢俊义上山，吴用扮作什么身份？', options: ['算命先生', '游方和尚', '卖卦道士', '贩枣商人'], a: 'A', note: '吴用利用卢俊义当时对"血光之灾"的恐惧，巧设反诗陷阱。' },
+            
+            // 填空题
+            { type: '填空', q: '《水浒传》的作者，一般被认为是元末明初的 _____。', a: '施耐庵', note: '文学史上也有"施耐庵、罗贯中合著"的说法。' },
+            { type: '填空', q: '梁山好汉的根据地梁山泊，位于当时的 _____ 省。', a: '山东', note: '北宋时期的巨野泽，即现在的山东省梁山县。' },
+            { type: '填空', q: '史进因身上纹有九条青龙，得绰号 _____。', a: '九纹龙', note: '纹身是宋代江湖人的潮流标配。' },
+            { type: '填空', q: '鲁智深在五台山出家，智真长老赐其法名"智深"，他的俗家姓名为 _____。', a: '鲁达', note: '原本是渭州小种经略相公帐下的提辖官。' },
+            { type: '填空', q: '林冲发配沧州途中，在 _____ 被鲁智深所救。', a: '野猪林', note: '鲁智深一路暗地保护，直到危急关头出手。' },
+            { type: '填空', q: '杨志在东京街头卖刀，杀死的无赖名叫 _____。', a: '牛二', note: '杨志想卖刀求财，牛二却来寻死。' },
+            { type: '填空', q: '"智取生辰纲"中，白胜挑酒唱的民歌首句是" _____ "。', a: '赤日炎炎似火烧', note: '下句是"野田禾稻半枯焦"，描写了酷热的环境背景。' },
+            { type: '填空', q: '宋江的弟弟名叫 _____。', a: '宋清', note: '外号"铁扇子"，他在梁山负责排设筵宴。' },
+            { type: '填空', q: '武松在 _____（地点）连喝十八碗酒，后过岗打虎。', a: '景阳冈', note: '也叫"三碗不过冈"酒家。' },
+            { type: '填空', q: '帮助西门庆与潘金莲勾搭成奸的茶坊老板娘是 _____。', a: '王婆', note: '她是古典文学中最为人熟知的"牵线恶人"形象。' },
+            
+            // 简答题
+            { type: '简答', q: '简述"智取生辰纲"中吴用的计谋核心步骤，并分析此事件对梁山发展的意义。', a: '计谋步骤：1.利用酷热天气诱渴；2.扮作枣商消除戒心；3.一桶真酒诱导，另一桶巧妙下药；4.白胜演戏，杨志中计。意义：它是梁山事业的起点，获得了巨额资金，并促成了晁盖集团的成型，打破了杨志的体制梦想，是江湖力量对抗官方财源的象征。', note: '计谋步骤：1.利用酷热天气诱渴；2.扮作枣商消除戒心；3.一桶真酒诱导，另一桶巧妙下药；4.白胜演戏，杨志中计。意义：它是梁山事业的起点，获得了巨额资金，并促成了晁盖集团的成型，打破了杨志的体制梦想，是江湖力量对抗官方财源的象征。' },
+            { type: '简答', q: '"林冲风雪山神庙"是人物塑造的经典片段。请结合具体情节，分析林冲性格在此事件前后发生了怎样的转变。', a: '转变前：极度隐忍、委曲求全。即便被发配、被暗杀，依然修缮草料场，幻想刑满归家。转变后：彻底觉醒、绝望爆发。听闻陆谦密谋后明白官逼民反，无路可退，由"软弱教头"转变为"复仇死神"，那一刻的杀伐果决奠定了他梁山战神的基础。', note: '转变前：极度隐忍、委曲求全。即便被发配、被暗杀，依然修缮草料场，幻想刑满归家。转变后：彻底觉醒、绝望爆发。听闻陆谦密谋后明白官逼民反，无路可退，由"软弱教头"转变为"复仇死神"，那一刻的杀伐果决奠定了他梁山战神的基础。' },
+            
+            // 继续添加水浒传百题挑战剩余题目
+            // 选择题（续）
+            { type: '选择', q: '卢俊义在墙上题的反诗"芦花丛里一扁舟"下一句是？', options: ['煞曜翻作白虎星', '俊杰俄从此地游', '英雄聚义在山东', '事遇机关命亦休'], a: 'B', note: '这首藏头诗合起来是"卢俊义反"，导致卢麒麟家破人亡。' },
+            { type: '选择', q: '梁山排座次时，排名第四位的"入云龙"是？', options: ['吴用', '公孙胜', '关胜', '林冲'], a: 'B', note: '公孙胜作为身怀法术的世外高人，其排位反映了梁山对超自然力量的尊重。' },
+            { type: '选择', q: '天降石碣上，侧首一边刻着"替天行道"，另一边刻着？', options: ['忠义双全', '保境安民', '顺天护国', '聚义同心'], a: 'A', note: '这四个字是梁山集团的政治纲领。' },
+            { type: '选择', q: '宋江在菊花大会上作《满江红》词，唱到哪句时引发武松、李逵反对？', options: ['日月常悬忠烈胆', '望天王降诏，早招安', '义胆包天，忠肝盖地', '统豹虎，御边幅'], a: 'B', note: '"招安"二字直接点燃了反对派和现实派的冲突。' },
+            { type: '选择', q: '"燕青智扑擎天柱"中，"擎天柱"指的是相扑高手？', options: ['任原', '高俅', '蒋忠', '焦挺'], a: 'A', note: '燕青以小博大，展现了惊人的相扑技巧，这是他高光时刻之一。' },
+            { type: '选择', q: '第一次招安时，偷换御酒，导致招安失败的是？', options: ['阮小二', '阮小五', '阮小七', '张顺'], a: 'C', note: '阮小七性格桀骜，这番举动也预示了他最终不归顺朝廷的性格。' },
+            { type: '选择', q: '梁山活捉高俅后，谁在京城疏通关节，最终促成招安？', options: ['宿太尉', '李师师', '崔靖', '闻焕章'], a: 'A', note: '宿太尉在书中被塑造成一个正面且清廉的官员，是梁山招安的"贵人"。' },
+            { type: '选择', q: '招安后，陈桥驿小校因何事被宋江处斩？', options: ['顶撞上官', '克扣酒肉', '擅离职守', '杀害贪官'], a: 'D', note: '为了证明自己彻底臣服朝廷规矩，宋江忍痛斩杀了这名杀害贪官的小校。' },
+            { type: '选择', q: '征辽途中，宋江拜访的两位世外高人是罗真人和？', options: ['智真长老', '张天师', '公孙胜师父', '紫虚观主'], a: 'A', note: '智真长老是鲁智深的师父，曾给宋江四句偈语暗示未来。' },
+            { type: '选择', q: '征田虎时，会使妖术"金砖法"和神行术的敌将是？', options: ['乔道清', '马灵', '孙安', '卞祥'], a: 'B', note: '马灵的神行速度甚至超过戴宗，最终归降。' },
+            { type: '选择', q: '张清与琼英的姻缘，源于？', options: ['阵前比武招亲', '宋江指婚', '梦中互授武艺', '旧日相识'], a: 'C', note: '这是全书唯一的超现实浪漫爱情，石子结缘。' },
+            { type: '选择', q: '征王庆时，发动百姓起义，献城给梁山的义士是？', options: ['萧让', '萧嘉穗', '金大坚', '安道全'], a: 'B', note: '萧嘉穗是真正的隐逸豪杰，功成后扁舟而去。' },
+            { type: '选择', q: '征方腊首战，在润州阵亡的第一位梁山好汉是？', options: ['宋万', '焦挺', '陶宗旺', '以上三人同时阵亡'], a: 'D', note: '这一战极度惨烈，宣告了梁山好汉大损耗的序幕。' },
+            { type: '选择', q: '"浪里白条"张顺魂断于何处？', options: ['西湖断桥', '钱塘江潮', '涌金门水闸', '太湖芦苇荡'], a: 'C', note: '张顺死于乱箭攒心，是书中最令人扼腕的瞬间之一。' },
+            { type: '选择', q: '杭州之战中，被"小养由基"庞万春射死的梁山好汉有几位？', options: ['4位', '6位', '8位', '10位'], a: 'B', note: '史进、石勇、陈达、杨春、李忠、薛永均丧生于此。' },
+            { type: '选择', q: '武松在征方腊时失去的是？', options: ['左臂', '右臂', '左腿', '右眼'], a: 'A', note: '独臂行者，自此看透尘世，留在了六和塔。' },
+            { type: '选择', q: '鲁智深在浙江听到钱塘潮信后，最终？', options: ['还俗归乡', '坐化圆寂', '战死沙场', '出海为王'], a: 'B', note: '"今日方知我是我"，鲁智深完成了终极觉悟。' },
+            { type: '选择', q: '征方腊后，梁山一百零八将中生还回朝的有多少人？', options: ['27人', '36人', '48人', '56人'], a: 'A', note: '只有四分之一的人生还，一代英雄落幕。' },
+            { type: '选择', q: '宋江被赐毒酒，死前担心谁造反而将其毒死？', options: ['李逵', '花荣', '吴用', '卢俊义'], a: 'A', note: '为了所谓的"忠义"名声，不惜带着唯一的赤诚兄弟一起死。' },
+            { type: '选择', q: '吴用和花荣在何处自缢，为宋江殉葬？', options: ['梁山泊忠义堂', '蓼儿洼宋江墓前', '楚州南门外', '庐山脚下'], a: 'B', note: '悲剧的终点，生时聚义，死后同穴。' },
+            { type: '选择', q: '宋徽宗梦游梁山泊后，追封宋江为什么侯？', options: ['忠烈义济灵应侯', '靖忠侯', '楚州安抚侯', '顺天护国侯'], a: 'A', note: '生前得不到的尊重，死后化作了虚无的谥号。' },
+            { type: '选择', q: '书中未提及的梁山征讨对象是？', options: ['辽国', '田虎', '王庆', '（此为陷阱，以上皆提及）'], a: 'D', note: '《水浒传》完整版通常包含征辽及剿灭国内三大寇（田、王、方）。' },
+            { type: '选择', q: '梁山好汉中，原是东京八十万禁军教头的有？', options: ['林冲、徐宁', '林冲、王进', '林冲、丘岳', '林冲、周昂'], a: 'A', note: '林冲是正教头，徐宁则是钩镰枪教头，王进并非梁山中人。' },
+            { type: '选择', q: '"没羽箭"张清的绝技是？', options: ['飞石打人', '连珠箭法', '袖箭', '流星锤'], a: 'A', note: '其石子绝技曾在连败梁山十五将。' },
+            { type: '选择', q: '戴宗的外号"神行太保"源于他能？', options: ['日行千里', '夜间视物', '水上疾走', '攀岩走壁'], a: 'A', note: '通过在他腿上贴神行太保符来实现。' },
+            { type: '选择', q: '梁山泊最初的寨主是？', options: ['晁盖', '王伦', '宋江', '林冲'], a: 'B', note: '白衣秀士王伦，因心胸狭隘被林冲火并。' },
+            { type: '选择', q: '下列人物中，不属于"梁山泊早期创始团队成员"的是？', options: ['杜迁', '宋万', '朱贵', '白胜'], a: 'D', note: '白胜是晁盖派系，杜、宋、朱是更早的王伦班底。' },
+            { type: '选择', q: '高俅发迹，是因为他擅长什么技艺得到端王（即后来的徽宗）赏识？', options: ['书法', '蹴鞠', '绘画', '诗词'], a: 'B', note: '踢得一脚好球，彻底改变了高俅的人生命运。' },
+            { type: '选择', q: '李逵的故乡是？', options: ['沂水县', '江州', '蓟州', '大名府'], a: 'A', note: '他在沂水县百丈村还有个老母亲，曾回去背母上山。' },
+            { type: '选择', q: '《水浒传》的成书，主要取材于？', options: ['正史《宋史》', '民间话本、杂剧', '作者个人经历', '前代小说汇编'], a: 'B', note: '文学史通常认为这是民间集体创作与文人润色的结晶。' },
+            
+            // 填空题（续）
+            { type: '填空', q: '宋江在 _____（地名）的楼上题写了反诗。', a: '浔阳楼', note: '那是他一生中最苦闷、也最具反骨的时刻。' },
+            { type: '填空', q: '戴宗传假信计谋失败，是因为印章" _____ "四字被黄文炳识破。', a: '翰林蔡京', note: '蔡京给儿子蔡九写信不应用此公章，黄文炳眼尖发现了漏洞。' },
+            { type: '填空', q: '梁山好汉大闹江州后，在白龙庙举行了 _____。', a: '小聚义', note: '也有人称其为"白龙庙二十九人聚义"。' },
+            { type: '填空', q: '李逵的绰号是 _____。', a: '黑旋风', note: '形容他杀起人来像黑色风暴一样不可收拾。' },
+            { type: '填空', q: '"三打祝家庄"中，宋江从 _____ 老人处得知盘陀路的秘密。', a: '钟离', note: '钟离老人不仅救了梁山军，还指引了破阵之法。' },
+            { type: '填空', q: '扈三娘的哥哥是 _____，他向梁山求和。', a: '扈成', note: '可惜扈三娘全家最终还是被李逵所杀。' },
+            { type: '填空', q: '呼延灼用 _____ 阵法大败梁山初战。', a: '连环马', note: '此阵威力巨大，重骑兵连接，势如破竹。' },
+            { type: '填空', q: '徐宁的独门绝技是用 _____ 枪破连环马。', a: '钩镰', note: '由于钩镰枪能钩马腿，正克制连环马阵。' },
+            { type: '填空', q: '晁盖的遗嘱是：捉得 _____ 者，为梁山泊主。', a: '史文恭', note: '这道遗言直接决定了卢俊义上山的地位，也让宋江略显尴尬。' },
+            { type: '填空', q: '卢俊义的家仆，后来成为梁山好汉的是 _____。', a: '燕青', note: '绰号"浪子"，才华横溢，是全书最完美的形象之一。' },
+            { type: '填空', q: '吴用为逼朱仝上山，指使 _____ 害死了沧州知府的小衙内。', a: '李逵', note: '这是梁山行事极具争议、冷酷残忍的一幕。' },
+            { type: '填空', q: '梁山排座次时，石碣上的文字是由道士 _____ 翻译的。', a: '何玄通', note: '通过宗教化的神秘仪式，赋予了排名的绝对权威性。' },
+            { type: '填空', q: '梁山好汉中，以"孝"闻名的黑大汉是 _____。', a: '李逵', note: '李逵虽然杀人如麻，但对他娘确是一片至诚。' },
+            { type: '填空', q: '高俅征讨梁山，其党羽 _____ 在济州打造海鳅船。', a: '叶春', note: '这些先进的船只最终都被张顺、阮氏兄弟破坏。' },
+            { type: '填空', q: '招安后，梁山军首次出征大辽，首战夺取的州郡是 _____。', a: '檀州', note: '从此开启了梁山为朝廷征战四方的悲壮旅程。' },
+            { type: '填空', q: '征辽途中，宋江在 _____（地点）参禅，智真长老赠其偈语。', a: '五台山', note: '智真长老看出了宋江等人的命运终局。' },
+            { type: '填空', q: '征田虎时，投降梁山并拜公孙胜为师的敌国师是 _____。', a: '乔道清', note: '乔道清幻术高超，归顺后是极佳的战力。' },
+            { type: '填空', q: '"神驹子"马灵的法宝是 _____ 和风火轮。', a: '金砖', note: '他头上有第三只眼，外貌与神话中的华光天王相似。' },
+            { type: '填空', q: '琼英的飞石绝技，是其丈夫 _____ 在梦中传授。', a: '张清', note: '所谓"千里姻缘一线牵"，两人在梦中已结连理。' },
+            { type: '填空', q: '征王庆时，梁山好汉中 _____ 病故于途中。', a: '孙安', note: '孙安武艺极高，曾与秦明战成平手。' },
+            { type: '填空', q: '方腊在 _____（地名）自号圣公，建立政权。', a: '清溪县', note: '清溪县是方腊的大本营，也是最终决战地。' },
+            { type: '填空', q: '征方腊时，在杭州感染瘟疫而病故的梁山好汉有 _____ 位。', a: '6', note: '包括林冲在内的六人因风瘫、瘟疫等病在此。' },
+            { type: '填空', q: '秦明在清溪县被方腊之侄 _____ 杀死。', a: '方杰', note: '方杰武艺不凡，也是梁山五虎将之一秦明的终结者。' },
+            { type: '填空', q: '阮小七因身穿 _____（衣物），被奸臣诬告有僭越之心。', a: '龙袍', note: '其实是他在缴获的方腊御衣中贪玩穿戴，落下了把柄。' },
+            { type: '填空', q: '燕青在离开前，曾用韩信、彭越的典故劝告 _____ 急流勇退。', a: '卢俊义', note: '可惜卢麒麟执迷于功名，最终受害。' },
+            { type: '填空', q: '宋江被朝廷封为 _____ 安抚使兼兵马都总管。', a: '楚州', note: '官职虽然上去了，但死期也近了。' },
+            { type: '填空', q: '毒死宋江的御酒中，下的毒药是 _____。', a: '水银', note: '书中称为"慢药"，会逐渐渗入骨髓而死。' },
+            { type: '填空', q: '李逵临死前说："生时伏侍哥哥，死了也只是 _____ 。"', a: '哥哥部下一个小鬼', note: '体现了李逵一生最纯粹也最悲剧的忠诚。' },
+            { type: '填空', q: '吴用和花荣是在得知宋江死讯后，在 _____（具体地点）自缢身亡。', a: '蓼儿洼', note: '蓼儿洼景致类似梁山泊，是他们寻找的精神寄托。' },
+            { type: '填空', q: '宋徽宗梦游时，在梁山泊忠义堂上见到 _____（人物）的牌位。', a: '宋江', note: '天子如梦方醒，却为时已晚。' },
+            { type: '填空', q: '梁山五虎将分别是：关胜、林冲、秦明、呼延灼、 _____。', a: '董平', note: '绰号"双枪将"，以心灵手巧、勇猛善战闻名。' },
+            { type: '填空', q: '梁山八骠骑兼先锋使中，箭法最精的是 _____。', a: '花荣', note: '绰号"小李广"，百步穿杨，从未虚发。' },
+            { type: '填空', q: '专管梁山钱粮支出纳入的好汉是 _____。', a: '蒋敬', note: '绰号"神算子"，精通算法，掌管财务大权。' },
+            { type: '填空', q: '负责制作梁山兵符印信、旌旗袍袄的是 _____ 和萧让。', a: '金大坚', note: '外号"玉臂匠"，擅长雕刻。' },
+            { type: '填空', q: '《水浒传》的别名之一是《 _____ 》。', a: '忠义水浒传', note: '这个名字体现了宋江追求的核心价值观。' },
+            
+            // 简答题（续）
+            { type: '简答', q: '宋江力主招安，而武松、鲁智深、李逵等人强烈反对。请阐述双方主要理由，并分析这场"招安之辩"所反映的梁山内部矛盾。', a: '宋江理由：求名于后世，为兄弟谋封妻荫子。反对派理由：朝廷腐败不可信（鲁智深）、自由自在最快活（李逵）、招安冷了人心（武松）。矛盾反映：这是江湖自由主义与儒家忠君思想的冲突，是平民阶层对上升通道的渴望与对腐朽体制绝望之间的对立。', note: '宋江理由：求名于后世，为兄弟谋封妻荫子。反对派理由：朝廷腐败不可信（鲁智深）、自由自在最快活（李逵）、招安冷了人心（武松）。矛盾反映：这是江湖自由主义与儒家忠君思想的冲突，是平民阶层对上升通道的渴望与对腐朽体制绝望之间的对立。' },
+            { type: '简答', q: '"征方腊"是梁山好汉的覆灭之战。与之前征辽、田虎、王庆相比，此战在过程与结果上有何显著不同？体现了怎样的创作意图？', a: '不同：战况极度惨烈，108将死伤大半，不再有公孙胜等神力相助，甚至充满瘟疫与意外。意图：通过如此惨烈的毁灭，作者揭示了招安之路的虚无与悲惨，强化了"狡兔死走狗烹"的历史真实感，将英雄传奇升华为深度的人性悲剧。', note: '不同：战况极度惨烈，108将死伤大半，不再有公孙胜等神力相助，甚至充满瘟疫与意外。意图：通过如此惨烈的毁灭，作者揭示了招安之路的虚无与悲惨，强化了"狡兔死走狗烹"的历史真实感，将英雄传奇升华为深度的人性悲剧。' },
+            { type: '简答', q: '"楚州毒酒"是全书结局的高潮。请解读宋江毒死李逵这一行为，并分析"忠义"二字在全书结尾处的复杂性与悲剧性。', a: '解读：宋江杀李逵是为了保全他最后一点"忠义"的名节（怕李逵造反），用兄弟的命来殉自己的名。复杂性：此处的"忠"是对昏君的愚忠，"义"是被"忠"裹挟的牺牲。这种忠义在结尾彻底幻灭，揭示了在黑暗社会下，高尚的道德追求最终成了权谋者的祭品。', note: '解读：宋江杀李逵是为了保全他最后一点"忠义"的名节（怕李逵造反），用兄弟的命来殉自己的名。复杂性：此处的"忠"是对昏君的愚忠，"义"是被"忠"裹挟的牺牲。这种忠义在结尾彻底幻灭，揭示了在黑暗社会下，高尚的道德追求最终成了权谋者的祭品。' },
+            
+            // 西游记歇后语趣谈部分
+            // 孙悟空系列
+            { type: '选择', q: '孙悟空大闹天宫 —— ？', options: ['慌了神', '翻了天', '闹翻天', '无法无天'], a: 'A', note: '形容遇到突发情况时惊慌失措的样子。' },
+            { type: '选择', q: '孙悟空借芭蕉扇 —— ？', options: ['一借再借', '一物降一物', '借不到手', '费尽周折'], a: 'B', note: '比喻某种事物专门有另一种事物来克制它。' },
+            { type: '选择', q: '孙悟空翻跟头 —— ？', options: ['一步登天', '十万八千里', '翻来覆去', '以上都对'], a: 'D', note: '既可以指一步登天，也可以指十万八千里，形容速度极快或距离极远。' },
+            { type: '选择', q: '孙悟空的金箍棒 —— ？', options: ['威力无比', '能大能小', '随心所欲', 'B和C都对'], a: 'D', note: '形容事物灵活多变，可以随心控制。' },
+            { type: '选择', q: '孙悟空七十二变 —— ？', options: ['花样多', '神通广大', '变化多端', '以上都对'], a: 'D', note: '形容本领高强，变化多端。' },
+            { type: '选择', q: '孙悟空当齐天大圣 —— ？', options: ['自封为王', '众猴拥护', '以上都对', '以上都错'], a: 'C', note: '既可以指自封为王，也可以指众猴拥护。' },
+            { type: '选择', q: '孙悟空守桃园 —— ？', options: ['尽职尽责', '自食其果', '监守自盗', '以上都对'], a: 'B', note: '比喻自己做的事情自己承担后果。' },
+            { type: '选择', q: '孙悟空钻进铁扇公主肚子里 —— ？', options: ['在里头耍威风', '心腹之患', '以上都对', '以上都错'], a: 'C', note: '既可以指在里头耍威风，也可以指心腹之患。' },
+            { type: '选择', q: '孙悟空遇到如来佛 —— ？', options: ['甘拜下风', '翻不出手掌心', '无能为力', '以上都对'], a: 'B', note: '比喻再大的本领也逃不出更高明的掌控。' },
+            { type: '选择', q: '孙大圣听了紧箍咒 —— ？', options: ['头疼', '受不了', '求饶', '以上都对'], a: 'A', note: '形容遇到难以忍受的事情。' },
+            
+            // 猪八戒系列
+            { type: '选择', q: '猪八戒照镜子 —— ？', options: ['里外不是人', '自找没趣', '丑态百出', '以上都对'], a: 'A', note: '形容两边都不讨好，处于尴尬境地。' },
+            { type: '选择', q: '猪八戒吃人参果 —— ？', options: ['全不知滋味', '食而不知其味', '囫囵吞枣', '以上都对'], a: 'D', note: '形容吃东西不细嚼慢咽，不知味道。' },
+            { type: '选择', q: '猪八戒娶媳妇 —— ？', options: ['背着走', '痴心妄想', '以上都对', '以上都错'], a: 'C', note: '既可以指背着走，也可以指痴心妄想。' },
+            { type: '选择', q: '猪八戒耍把式 —— ？', options: ['倒打一耙', '胡乱来', '装模作样', '以上都对'], a: 'A', note: '比喻做错了事不承认，反而指责别人。' },
+            { type: '选择', q: '猪八戒进了女儿国 —— ？', options: ['看花了眼', '不想走了', '以上都对', '以上都错'], a: 'C', note: '形容被眼前的美好事物吸引，流连忘返。' },
+            { type: '选择', q: '猪八戒西天取经 —— ？', options: ['三心二意', '半途而废', '心不在焉', '以上都对'], a: 'A', note: '形容做事不专心，意志不坚定。' },
+            { type: '选择', q: '猪八戒见了白骨精 —— ？', options: ['垂涎三尺', '上当受骗', '以上都对', '以上都错'], a: 'A', note: '形容见到美色或美食时的贪婪样子。' },
+            { type: '选择', q: '猪八戒丢了钉耙 —— ？', options: ['凭什么保师父', '没了武器', '以上都对', '以上都错'], a: 'A', note: '比喻失去了赖以生存的本领或工具。' },
+            { type: '选择', q: '猪八戒掉进泔水桶 —— ？', options: ['有吃有喝', '得其所哉', '以上都对', '以上都错'], a: 'C', note: '形容找到了适合自己的地方，或讽刺人不知羞耻。' },
+            { type: '选择', q: '猪八戒卖凉粉 —— ？', options: ['人样不济，调料好', '外表不好，内里好', '以上都对', '以上都错'], a: 'A', note: '形容人虽然外表不好看，但有真本事。' },
+            
+            // 唐僧系列
+            { type: '选择', q: '唐僧取经 —— ？', options: ['一心一意', '千辛万苦', '以上都对', '以上都错'], a: 'C', note: '既可以指一心一意，也可以指千辛万苦。' },
+            { type: '选择', q: '唐僧念佛 —— ？', options: ['一本正经', '一本真经', '以上都对', '以上都错'], a: 'C', note: '形容态度庄重严肃，或真的在念经。' },
+            { type: '选择', q: '唐僧肉 —— ？', options: ['人人都想吃', '长生不老', '以上都对', '以上都错'], a: 'A', note: '比喻人人都想得到的好东西。' },
+            { type: '选择', q: '唐僧跑进和尚店 —— ？', options: ['同吃斋饭', '一路货色', '以上都对', '以上都错'], a: 'C', note: '形容同类人聚在一起。' },
+            { type: '选择', q: '唐僧念紧箍咒 —— ？', options: ['痛苦在后头', '痛苦在猴头', '以上都对', '以上都错'], a: 'C', note: '谐音双关，"猴头"指孙悟空，"后头"指后面。' },
+            { type: '选择', q: '唐僧西天取经 —— ？', options: ['多灾多难', '九九八十一难', '以上都对', '以上都错'], a: 'C', note: '形容做事困难重重，历经磨难。' },
+            
+            // 其他人物与情节
+            { type: '选择', q: '白骨精骗唐僧 —— ？', options: ['一计不成又生一计', '没安好心', '以上都对', '以上都错'], a: 'C', note: '形容坏人不断设计害人。' },
+            { type: '选择', q: '白骨精给唐僧送饭 —— ？', options: ['假心假意', '虚情假意', '以上都对', '以上都错'], a: 'C', note: '形容表面热情，实际上心怀不轨。' },
+            { type: '选择', q: '白骨精遇上孙悟空 —— ？', options: ['原形毕露', '无处藏身', '以上都对', '以上都错'], a: 'A', note: '比喻伪装被识破，真面目暴露。' },
+            { type: '选择', q: '白骨精演说 —— ？', options: ['妖言惑众', '花言巧语', '以上都对', '以上都错'], a: 'A', note: '形容用虚假的言论迷惑人心。' },
+            { type: '选择', q: '铁扇公主肚子里的孙悟空 —— ？', options: ['折腾不休', '翻江倒海', '以上都对', '以上都错'], a: 'A', note: '形容在内部制造麻烦。' },
+            { type: '选择', q: '铁扇公主的本领 —— ？', options: ['扇风点火', '呼风唤雨', '以上都对', '以上都错'], a: 'A', note: '比喻煽动事端，挑拨离间。' },
+            { type: '选择', q: '牛魔王请客 —— ？', options: ['尽是妖精', '狐朋狗友', '以上都对', '以上都错'], a: 'A', note: '形容聚集的都是一丘之貉。' },
+            { type: '选择', q: '沙和尚挑行李 —— ？', options: ['义不容辞', '责任旁贷', '以上都对', '以上都错'], a: 'A', note: '形容责任在身，不能推辞。' },
+            { type: '选择', q: '花果山的猴子 —— ？', options: ['没一个省油的灯', '无法无天', '以上都对', '以上都错'], a: 'C', note: '形容都不是好惹的角色。' },
+            { type: '选择', q: '花果山的日子 —— ？', options: ['猴年马月', '逍遥自在', '以上都对', '以上都错'], a: 'A', note: '形容遥遥无期的时间。' },
+            { type: '选择', q: '花果山的孙大圣 —— ？', options: ['无爹无娘', '无牵无挂', '以上都对', '以上都错'], a: 'C', note: '形容孤身一人，没有牵挂。' },
+            { type: '选择', q: '水帘洞的洞口 —— ？', options: ['别有洞天', '鳖有洞天', '以上都对', '以上都错'], a: 'C', note: '谐音双关，形容另有一番天地。' },
+            { type: '选择', q: '火焰山上的西瓜 —— ？', options: ['又解渴又解饿', '难得的好东西', '以上都对', '以上都错'], a: 'A', note: '形容在困难中遇到的好东西。' },
+            { type: '选择', q: '玉皇大帝拜孙悟空 —— ？', options: ['称兄道弟', '猢狲兄道弟', '以上都对', '以上都错'], a: 'C', note: '谐音双关，形容地位悬殊却称兄道弟。' },
+            { type: '选择', q: '二郎神斗孙悟空 —— ？', options: ['你变我也变', '以变应变', '以上都对', '以上都错'], a: 'C', note: '形容针锋相对，见招拆招。' },
+            { type: '选择', q: '红孩儿喷火 —— ？', options: ['自己先热', '伤人先伤己', '以上都对', '以上都错'], a: 'A', note: '比喻做事之前自己先受影响。' },
+            { type: '选择', q: '蟠桃园里跳舞 —— ？', options: ['四面楚歌', '得意忘形', '以上都对', '以上都错'], a: 'A', note: '形容处境危险，四面受敌。' },
+            
+            // 西游记百题挑战部分
+            // 选择题
+            { type: '选择', q: '孙悟空的第一个师父是谁？', options: ['唐僧', '菩提祖师', '如来佛祖', '观音菩萨'], a: 'B', note: '孙悟空在灵台方寸山斜月三星洞拜菩提祖师为师，学得七十二变和筋斗云。' },
+            { type: '选择', q: '唐僧的俗家姓是什么？', options: ['李', '王', '陈', '刘'], a: 'C', note: '唐僧俗姓陈，名祎，法号玄奘，是唐代著名高僧。' },
+            { type: '选择', q: '猪八戒的武器是什么？', options: ['金箍棒', '九齿钉耙', '降妖宝杖', '风火轮'], a: 'B', note: '九齿钉耙是太上老君用神冰铁亲自锤炼，重五千零四十八斤。' },
+            { type: '选择', q: '沙悟净在流沙河时，项上挂着什么？', options: ['佛珠', '九颗骷髅', '宝石', '金铃'], a: 'B', note: '沙僧在流沙河吃人，将取经人的骷髅串成项链，共九颗。' },
+            { type: '选择', q: '白龙马原本是谁的儿子？', options: ['东海龙王', '西海龙王', '南海龙王', '北海龙王'], a: 'B', note: '白龙马是西海龙王三太子，因纵火烧毁玉帝御赐明珠，被判死罪。' },
+            { type: '选择', q: '孙悟空被压在五行山下多少年？', options: ['三百年', '五百年', '六百年', '一千年'], a: 'B', note: '孙悟空大闹天宫后被如来佛祖压在五行山下五百年。' },
+            { type: '选择', q: '唐僧取经用了多少年？', options: ['十年', '十二年', '十四年', '十六年'], a: 'C', note: '唐僧贞观十三年出发，贞观二十七年返回，历时十四年。' },
+            { type: '选择', q: '取经团队经历了多少难？', options: ['九九八十一难', '七七四十九难', '六六三十六难', '八八六十四难'], a: 'A', note: '取经团队历经九九八十一难，方得真经。' },
+            { type: '选择', q: '孙悟空最终被封为什么？', options: ['旃檀功德佛', '斗战胜佛', '净坛使者', '金身罗汉'], a: 'B', note: '孙悟空一路降妖除魔，功劳最大，被封为斗战胜佛。' },
+            { type: '选择', q: '猪八戒最终被封为什么？', options: ['斗战胜佛', '净坛使者', '金身罗汉', '八部天龙'], a: 'B', note: '猪八戒因贪吃，被封为净坛使者，负责享用贡品。' },
+            { type: '选择', q: '沙悟净最终被封为什么？', options: ['净坛使者', '金身罗汉', '八部天龙', '斗战胜佛'], a: 'B', note: '沙悟净一路挑担牵马，任劳任怨，被封为金身罗汉。' },
+            { type: '选择', q: '白龙马最终被封为什么？', options: ['金身罗汉', '八部天龙', '净坛使者', '旃檀功德佛'], a: 'B', note: '白龙马被封为八部天龙，在灵山后崖化龙池恢复龙身。' },
+            { type: '选择', q: '唐僧最终被封为什么？', options: ['斗战胜佛', '旃檀功德佛', '净坛使者', '金身罗汉'], a: 'B', note: '唐僧本是金蝉子转世，历经磨难取得真经，被封为旃檀功德佛。' },
+            { type: '选择', q: '铁扇公主的芭蕉扇能扇灭火焰山的大火吗？', options: ['能', '不能', '只能扇小一点', '要扇七七四十九次'], a: 'A', note: '芭蕉扇是天地初开时的灵宝，能扇灭火焰山八百里大火。' },
+            { type: '选择', q: '红孩儿是被谁收伏的？', options: ['孙悟空', '观音菩萨', '如来佛祖', '玉皇大帝'], a: 'B', note: '红孩儿的三昧真火烧伤孙悟空，后请观音菩萨用金箍收伏，封为善财童子。' },
+            { type: '选择', q: '真假美猴王中，假猴王是谁变的？', options: ['牛魔王', '六耳猕猴', '黄袍怪', '黄风怪'], a: 'B', note: '六耳猕猴善聆音，能察理，与孙悟空本领相同，后被如来识破。' },
+            { type: '选择', q: '白骨精几次变化欺骗唐僧？', options: ['一次', '两次', '三次', '四次'], a: 'C', note: '白骨精先后变成村姑、老妇、老翁三次欺骗唐僧，都被孙悟空打死。' },
+            { type: '选择', q: '唐僧取经是从哪里出发的？', options: ['洛阳', '长安', '北京', '南京'], a: 'B', note: '唐僧从长安（今西安）出发，西行取经。' },
+            { type: '选择', q: '真经藏在哪里？', options: ['五台山', '普陀山', '灵山', '峨眉山'], a: 'C', note: '真经藏于西天灵山大雷音寺。' },
+            { type: '选择', q: '取经回来后，唐僧要把经书藏在哪里？', options: ['少林寺', '大雁塔', '小雁塔', '法门寺'], a: 'B', note: '唐僧将真经藏于长安大雁塔。' },
+            { type: '选择', q: '孙悟空的如意金箍棒重多少斤？', options: ['三千六百斤', '七千二百斤', '一万三千五百斤', '一万八千斤'], a: 'C', note: '金箍棒原是东海龙宫的定海神针，重一万三千五百斤。' },
+            { type: '选择', q: '孙悟空大闹天宫时，被谁放入八卦炉中炼了七七四十九天？', options: ['元始天尊', '太上老君', '玉皇大帝', '如来佛祖'], a: 'B', note: '太上老君将孙悟空放入八卦炉，想用三昧真火将其炼成丹药。' },
+            { type: '选择', q: '孙悟空的火眼金睛是在哪里炼成的？', options: ['花果山', '菩提洞', '八卦炉', '水帘洞'], a: 'C', note: '孙悟空在八卦炉中被烟熏出了火眼金睛，能识破妖魔变化。' },
+            { type: '选择', q: '猪八戒在天庭的官职是什么？', options: ['托塔天王', '天蓬元帅', '卷帘大将', '齐天大圣'], a: 'B', note: '猪八戒原是天蓬元帅，统领八万水军，因调戏嫦娥被贬下凡。' },
+            { type: '选择', q: '沙悟净在天庭的官职是什么？', options: ['托塔天王', '天蓬元帅', '卷帘大将', '齐天大圣'], a: 'C', note: '沙悟净原是卷帘大将，因失手打碎琉璃盏被贬下流沙河。' },
+            { type: '选择', q: '孙悟空的第一个称号是什么？', options: ['齐天大圣', '美猴王', '弼马温', '斗战胜佛'], a: 'B', note: '孙悟空在花果山称王，被众猴尊称为"美猴王"。' },
+            { type: '选择', q: '孙悟空在天庭担任的第一个官职是什么？', options: ['齐天大圣', '美猴王', '弼马温', '卷帘大将'], a: 'C', note: '玉帝封孙悟空为弼马温，负责养马，孙悟空嫌官小反下天庭。' },
+            { type: '选择', q: '孙悟空偷吃了王母娘娘的什么？', options: ['人参果', '蟠桃', '仙丹', '蟠桃和仙丹'], a: 'D', note: '孙悟空偷吃蟠桃，又偷吃太上老君的仙丹，闯下大祸。' },
+            { type: '选择', q: '镇元大仙的人参果多少年成熟一次？', options: ['三千年', '六千年', '九千年', '一万年'], a: 'C', note: '人参果三千年一开花，三千年一结果，三千年一成熟，共九千年。' },
+            { type: '选择', q: '人参果要用什么才能摘下来？', options: ['金箍棒', '九齿钉耙', '金击子', '银钩'], a: 'C', note: '人参果遇金而落，需用金击子敲击才能摘下。' },
+            { type: '选择', q: '人参果遇什么会消失？', options: ['遇金', '遇木', '遇土', '遇水'], a: 'C', note: '人参果遇土而入，掉在地上就会消失。' },
+            { type: '选择', q: '黄风怪的三昧神风是谁教他的？', options: ['太上老君', '灵吉菩萨', '如来佛祖', '观音菩萨'], a: 'A', note: '黄风怪原是灵山脚下的黄毛貂鼠，偷学了太上老君的三昧神风。' },
+            { type: '选择', q: '收伏黄风怪的是谁？', options: ['观音菩萨', '灵吉菩萨', '文殊菩萨', '普贤菩萨'], a: 'B', note: '灵吉菩萨用定风丹和飞龙杖收伏了黄风怪。' },
+            { type: '选择', q: '唐僧收孙悟空为徒的地点是？', options: ['花果山', '五行山', '高老庄', '流沙河'], a: 'B', note: '唐僧在五行山（两界山）下救出孙悟空，收为大徒弟。' },
+            { type: '选择', q: '唐僧收猪八戒为徒的地点是？', options: ['花果山', '五行山', '高老庄', '流沙河'], a: 'C', note: '唐僧在高老庄收猪八戒为二徒弟。' },
+            { type: '选择', q: '唐僧收沙悟净为徒的地点是？', options: ['花果山', '五行山', '高老庄', '流沙河'], a: 'D', note: '唐僧在流沙河收沙悟净为三徒弟。' },
+            { type: '选择', q: '观音菩萨给唐僧的紧箍咒是用来约束谁的？', options: ['唐僧', '孙悟空', '猪八戒', '沙悟净'], a: 'B', note: '紧箍咒是观音菩萨给唐僧用来约束孙悟空的。' },
+            { type: '选择', q: '牛魔王的妻子是谁？', options: ['铁扇公主', '玉面狐狸', '蜘蛛精', '蝎子精'], a: 'A', note: '牛魔王的妻子是铁扇公主，又名罗刹女。' },
+            { type: '选择', q: '牛魔王的儿子是谁？', options: ['红孩儿', '黑熊精', '黄袍怪', '狮子精'], a: 'A', note: '红孩儿是牛魔王和铁扇公主的儿子。' },
+            { type: '选择', q: '红孩儿的三昧真火烧伤了谁？', options: ['唐僧', '猪八戒', '孙悟空', '沙悟净'], a: 'C', note: '红孩儿的三昧真火烧伤了孙悟空，差点将他烧死。' },
+            { type: '选择', q: '金角大王和银角大王是谁的下属？', options: ['太上老君', '如来佛祖', '玉皇大帝', '观音菩萨'], a: 'A', note: '金角大王和银角大王是太上老君看守金炉和银炉的童子。' },
+            { type: '选择', q: '金角大王和银角大王用什么法宝把孙悟空压住？', options: ['金刚琢', '须弥山', '紫金红葫芦', '羊脂玉净瓶'], a: 'B', note: '银角大王用须弥山、峨眉山、泰山三座大山压住孙悟空。' },
+            { type: '选择', q: '狮驼岭的三大王分别是什么？', options: ['狮子、大象、老鹰', '狮子、老虎、老鹰', '大象、老虎、老鹰', '狮子、大象、金雕'], a: 'D', note: '狮驼岭三大王分别是青狮、白象、大鹏金翅雕。' },
+            { type: '选择', q: '狮驼岭的大鹏金翅雕是谁的亲戚？', options: ['如来佛祖', '玉皇大帝', '太上老君', '观音菩萨'], a: 'A', note: '大鹏金翅雕是如来佛祖的舅舅，孔雀大明王菩萨的弟弟。' },
+            { type: '选择', q: '收伏大鹏金翅雕的是谁？', options: ['观音菩萨', '文殊菩萨', '如来佛祖', '太上老君'], a: 'C', note: '如来佛祖亲自收伏大鹏金翅雕，将其留在灵山。' },
+            { type: '选择', q: '女儿国的国名是什么？', options: ['西梁女国', '东梁女国', '南梁女国', '北梁女国'], a: 'A', note: '女儿国名为西梁女国，全国皆是女子。' },
+            { type: '选择', q: '女儿国的水喝了会怎样？', options: ['长生不老', '怀孕生子', '变成女子', '忘记一切'], a: 'B', note: '女儿国的子母河水喝了会怀孕生子。' },
+            { type: '选择', q: '蝎子精是被谁收伏的？', options: ['观音菩萨', '昴日星官', '如来佛祖', '太上老君'], a: 'B', note: '蝎子精被昴日星官（大公鸡）收伏。' },
+            { type: '选择', q: '《西游记》的作者是谁？', options: ['罗贯中', '施耐庵', '吴承恩', '曹雪芹'], a: 'C', note: '《西游记》的作者是明代小说家吴承恩。' },
+            
+            // 填空题
+            { type: '填空', q: '《西游记》是中国古典四大名著之一，作者是明代的 _____。', a: '吴承恩', note: '吴承恩（约1500-1582），字汝忠，号射阳山人。' },
+            { type: '填空', q: '孙悟空的故乡是 _____。', a: '花果山', note: '花果山位于东胜神洲傲来国。' },
+            { type: '填空', q: '孙悟空的水帘洞洞口对联是"花果山福地， _____ 洞天"。', a: '水帘洞', note: '这副对联点明了花果山和水帘洞的仙境地位。' },
+            { type: '填空', q: '孙悟空学艺的地方是灵台方寸山 _____。', a: '斜月三星洞', note: '菩提祖师的道场，孙悟空在此学得七十二变和筋斗云。' },
+            { type: '填空', q: '孙悟空的如意金箍棒原是东海龙宫的 _____。', a: '定海神针', note: '定海神针是大禹治水时留下的测量海水深浅的神铁。' },
+            { type: '填空', q: '孙悟空大闹天宫后，被如来佛祖压在 _____ 下。', a: '五行山', note: '五行山又名两界山，是大唐与西域的分界。' },
+            { type: '填空', q: '唐僧的法号是 _____。', a: '玄奘', note: '唐僧俗姓陈，法号玄奘，被尊称为"三藏法师"。' },
+            { type: '填空', q: '唐僧是如来佛祖第二弟子 _____ 转世。', a: '金蝉子', note: '金蝉子因不听讲法、轻慢大教，被贬下凡。' },
+            { type: '填空', q: '唐僧的坐骑白龙马原是西海龙王三太子 _____。', a: '敖烈', note: '敖烈因纵火烧毁明珠，被判死罪，后经观音点化等候取经人。' },
+            { type: '填空', q: '猪八戒在高老庄娶的媳妇叫 _____。', a: '高翠兰', note: '猪八戒入赘高老庄，娶高太公之女高翠兰为妻。' },
+            { type: '填空', q: '猪八戒的九齿钉耙重 _____ 斤。', a: '五千零四十八', note: '九齿钉耙全名"上宝沁金耙"，是太上老君亲手打造。' },
+            { type: '填空', q: '沙悟净的武器叫 _____。', a: '降妖宝杖', note: '降妖宝杖是鲁班用梭罗仙木打造，重五千零四十八斤。' },
+            { type: '填空', q: '观音菩萨住在南方的 _____。', a: '普陀山', note: '普陀山位于南海，是观音菩萨的道场。' },
+            { type: '填空', q: '如来佛祖住在西方的 _____。', a: '灵山', note: '灵山又名西天，是大雷音寺所在地。' },
+            { type: '填空', q: '唐僧取经共取得真经 _____ 卷。', a: '五千零四十八', note: '唐僧取回真经共三十五部，五千零四十八卷。' },
+            { type: '填空', q: '孙悟空会 _____ 般变化。', a: '七十二', note: '七十二变是地煞变化术，猪八戒会三十六变（天罡变化术）。' },
+            { type: '填空', q: '孙悟空一个筋斗能翻 _____ 里。', a: '十万八千', note: '筋斗云是孙悟空的独门绝技，一个筋斗十万八千里。' },
+            { type: '填空', q: '唐僧师徒取经行程共 _____ 里。', a: '十万八千', note: '从长安到灵山，共十万八千里路。' },
+            { type: '填空', q: '白骨精住在 _____。', a: '白虎岭', note: '白骨精是白虎岭上一具白骨成精。' },
+            { type: '填空', q: '红孩儿住在 _____。', a: '火云洞', note: '火云洞位于号山枯松涧。' },
+            { type: '填空', q: '铁扇公主住在 _____。', a: '芭蕉洞', note: '芭蕉洞位于翠云山。' },
+            { type: '填空', q: '牛魔王住在 _____。', a: '摩云洞', note: '牛魔王后来入赘玉面狐狸的摩云洞。' },
+            { type: '填空', q: '火焰山是孙悟空当年蹬倒太上老君的 _____ 形成的。', a: '八卦炉', note: '八卦炉中的耐火砖掉落人间，形成了火焰山。' },
+            { type: '填空', q: '镇元大仙住在 _____。', a: '五庄观', note: '五庄观位于万寿山，有人参果树。' },
+            { type: '填空', q: '人参果又名 _____。', a: '草还丹', note: '人参果又名草还丹，闻一闻能活三百六十岁。' },
+            { type: '填空', q: '黄风怪住在 _____。', a: '黄风岭', note: '黄风岭黄风洞是黄风怪的巢穴。' },
+            { type: '填空', q: '金角大王和银角大王住在 _____。', a: '莲花洞', note: '莲花洞位于平顶山。' },
+            { type: '填空', q: '黄眉大王住在 _____。', a: '小雷音寺', note: '黄眉大王假扮佛祖，在小雷音寺捉住唐僧。' },
+            { type: '填空', q: '盘丝洞有 _____ 个蜘蛛精。', a: '七', note: '七个蜘蛛精是七姐妹，号称"七情蜘蛛"。' },
+            { type: '填空', q: '狮驼岭的三大王分别是青狮、白象和 _____。', a: '大鹏', note: '大鹏金翅雕是三大王中最厉害的。' },
+            { type: '填空', q: '唐僧在女儿国差点被 _____ 精强逼成亲。', a: '蝎子', note: '蝎子精将唐僧掳入琵琶洞，欲强行成亲。' },
+            { type: '填空', q: '真假美猴王中，假猴王是 _____。', a: '六耳猕猴', note: '六耳猕猴善聆音，能察理，知前后，万物皆明。' },
+            { type: '填空', q: '孙悟空被唐僧赶走后，回到 _____。', a: '花果山', note: '孙悟空被赶走后，回到花果山重整旗鼓。' },
+            { type: '填空', q: '唐僧在五行山下救出孙悟空，给他取名 _____。', a: '孙行者', note: '唐僧给孙悟空取名"行者"，意为修行之人。' },
+            { type: '填空', q: '唐僧在高老庄收猪八戒，给他取名 _____。', a: '猪八戒', note: '唐僧给猪八戒取名"八戒"，意为戒除八种贪欲。' },
+            { type: '填空', q: '唐僧在流沙河收沙悟净，给他取名 _____。', a: '沙和尚', note: '唐僧给沙悟净取名"沙和尚"，意为出家人。' },
+            { type: '填空', q: '观音菩萨给唐僧的袈裟叫 _____。', a: '锦襕袈裟', note: '锦襕袈裟是观音菩萨送给唐僧的宝物，穿上不入沉沦。' },
+            { type: '填空', q: '观音菩萨给唐僧的锡杖叫 _____。', a: '九环锡杖', note: '九环锡杖持在手中，不遭毒害。' },
+            { type: '填空', q: '唐僧取经出发时，唐王李世民送给他一个 _____。', a: '紫金钵盂', note: '紫金钵盂是唐王所赐，唐僧用它换取了有字真经。' },
+            { type: '填空', q: '唐僧师徒取经归来，在通天河被老鼋翻入水中，是因为唐僧忘了问老鼋 _____。', a: '寿命', note: '老鼋请唐僧问佛祖自己何时能脱本壳得人身，唐僧忘了问。' },
+            { type: '填空', q: '唐僧师徒取回的真经在通天河被水浸湿，晾晒时 _____ 残缺。', a: '经尾', note: '经书晾晒时被粘掉一角，至今藏经阁所藏经书仍有残缺。' },
+            { type: '填空', q: '阿傩、伽叶先传给唐僧的是 _____ 经。', a: '无字', note: '无字经代表"空"，是佛法的最高境界。' },
+            { type: '填空', q: '唐僧师徒渡凌云渡时，唐僧脱去了 _____。', a: '凡胎', note: '唐僧在凌云渡脱去凡胎，肉身漂走，方得成佛。' },
+            { type: '填空', q: '《西游记》全书共 _____ 回。', a: '一百', note: '《西游记》共一百回，是中国古典长篇小说的典型结构。' },
+            
+            // 简答题
+            { type: '简答', q: '简述"三打白骨精"的故事情节，并分析唐僧为什么要赶走孙悟空。', a: '情节：白骨精先后变成村姑、老妇、老翁三次欺骗唐僧，都被孙悟空识破并打死。唐僧肉眼凡胎看不出妖魔，误认为孙悟空滥杀无辜，加上猪八戒挑唆，唐僧念紧箍咒并写下贬书，将孙悟空赶回花果山。原因：唐僧慈悲为怀，不辨真假；猪八戒挑拨离间；孙悟空行事鲁莽，没有解释清楚。', note: '情节：白骨精先后变成村姑、老妇、老翁三次欺骗唐僧，都被孙悟空识破并打死。唐僧肉眼凡胎看不出妖魔，误认为孙悟空滥杀无辜，加上猪八戒挑唆，唐僧念紧箍咒并写下贬书，将孙悟空赶回花果山。原因：唐僧慈悲为怀，不辨真假；猪八戒挑拨离间；孙悟空行事鲁莽，没有解释清楚。' },
+            { type: '简答', q: '分析孙悟空的形象特点及其成长历程。', a: '形象特点：勇敢无畏、嫉恶如仇、聪明机智、重情重义、桀骜不驯。成长历程：从石猴到美猴王（称王）；从美猴王到弼马温、齐天大圣（反叛）；从齐天大圣到五行山下被压（受罚）；从五行山下到取经路上（修行）；从取经路上到斗战胜佛（成佛）。孙悟空的成长是从反叛者到修行者的转变，体现了修行的主题。', note: '形象特点：勇敢无畏、嫉恶如仇、聪明机智、重情重义、桀骜不驯。成长历程：从石猴到美猴王（称王）；从美猴王到弼马温、齐天大圣（反叛）；从齐天大圣到五行山下被压（受罚）；从五行山下到取经路上（修行）；从取经路上到斗战胜佛（成佛）。孙悟空的成长是从反叛者到修行者的转变，体现了修行的主题。' },
+            { type: '简答', q: '分析取经团队中四个角色的象征意义。', a: '唐僧：代表信念和目标，是团队的核心和灵魂，象征修行者的"心"。孙悟空：代表能力和行动，是降妖除魔的主力，象征"心猿"，需要约束。猪八戒：代表欲望和惰性，贪吃好色、懒惰散漫，象征修行路上的障碍。沙悟净：代表踏实和忠诚，任劳任怨、默默奉献，象征修行者的坚持。四人组合象征修行者内心的不同层面：信念、能力、欲望、坚持。', note: '唐僧：代表信念和目标，是团队的核心和灵魂，象征修行者的"心"。孙悟空：代表能力和行动，是降妖除魔的主力，象征"心猿"，需要约束。猪八戒：代表欲望和惰性，贪吃好色、懒惰散漫，象征修行路上的障碍。沙悟净：代表踏实和忠诚，任劳任怨、默默奉献，象征修行者的坚持。四人组合象征修行者内心的不同层面：信念、能力、欲望、坚持。' },
+            { type: '简答', q: '分析"九九八十一难"的象征意义。', a: '八十一难象征修行路上的种种考验和磨难。从内容看：妖魔之难代表外在障碍；自然之难代表环境考验；人心之难代表世俗诱惑；师徒之难代表内部矛盾。从结构看：八十一难是"九九归真"的体现，九是阳数之极，九九八十一代表圆满。从主题看：每一难都是一次修行，每一次战胜都是一次成长，磨难是通往觉悟的必经之路。', note: '八十一难象征修行路上的种种考验和磨难。从内容看：妖魔之难代表外在障碍；自然之难代表环境考验；人心之难代表世俗诱惑；师徒之难代表内部矛盾。从结构看：八十一难是"九九归真"的体现，九是阳数之极，九九八十一代表圆满。从主题看：每一难都是一次修行，每一次战胜都是一次成长，磨难是通往觉悟的必经之路。' },
+            { type: '简答', q: '分析《西游记》的主题思想及其现实意义。', a: '主题思想：1.修行主题：取经之路即修行之路，磨难是修行的必经过程。2.成长主题：从反叛到觉悟，从凡人到成佛的成长历程。3.团队主题：信念、能力、坚持、克服欲望缺一不可。4.反抗主题：孙悟空大闹天宫体现了反抗精神。现实意义：1.面对困难要坚持不懈，磨难是成长的机会。2.团队合作需要相互信任、包容。3.要有坚定的信念和目标。4.要克服内心的欲望和惰性。5.真正的修行在于实践，不在于形式。', note: '主题思想：1.修行主题：取经之路即修行之路，磨难是修行的必经过程。2.成长主题：从反叛到觉悟，从凡人到成佛的成长历程。3.团队主题：信念、能力、坚持、克服欲望缺一不可。4.反抗主题：孙悟空大闹天宫体现了反抗精神。现实意义：1.面对困难要坚持不懈，磨难是成长的机会。2.团队合作需要相互信任、包容。3.要有坚定的信念和目标。4.要克服内心的欲望和惰性。5.真正的修行在于实践，不在于形式。' },
+            
+            // 红楼梦诗词填空部分
+            // 葬花吟
+            { type: '填空', q: '《葬花吟》（林黛玉）中"花谢花飞花满天"的下一句是？', a: '红消香断有谁怜？', note: '林黛玉的代表作，表达了对生命短暂的感慨。' },
+            { type: '填空', q: '《葬花吟》（林黛玉）中"游丝软系飘春榭"的下一句是？', a: '落絮轻沾扑绣帘。', note: '描绘了春天落花飞舞的景象。' },
+            { type: '填空', q: '《葬花吟》（林黛玉）中"闺中女儿惜春暮"的下一句是？', a: '愁绪满怀无释处。', note: '表达了林黛玉对春天即将逝去的哀愁。' },
+            { type: '填空', q: '《葬花吟》（林黛玉）中"手把花锄出绣帘"的下一句是？', a: '忍踏落花来复去。', note: '描写了林黛玉葬花时的不忍之情。' },
+            { type: '填空', q: '《葬花吟》（林黛玉）中"柳丝榆荚自芳菲"的下一句是？', a: '不管桃飘与李飞。', note: '对比了柳树榆树的茂盛和桃李的凋零。' },
+            { type: '填空', q: '《葬花吟》（林黛玉）中"桃李明年能再发"的下一句是？', a: '明年闺中知有谁？', note: '表达了对生命无常的感慨。' },
+            
+            // 咏白海棠
+            { type: '填空', q: '《咏白海棠》（林黛玉）中"半卷湘帘半掩门"的下一句是？', a: '碾冰为土玉为盆。', note: '描写了白海棠的栽培环境。' },
+            { type: '填空', q: '《咏白海棠》（林黛玉）中"偷来梨蕊三分白"的下一句是？', a: '借得梅花一缕魂。', note: '巧妙地描写了白海棠的颜色和神韵。' },
+            { type: '填空', q: '《咏白海棠》（林黛玉）中"月窟仙人缝缟袂"的下一句是？', a: '秋闺怨女拭啼痕。', note: '用拟人手法描写白海棠。' },
+            { type: '填空', q: '《咏白海棠》（林黛玉）中"娇羞默默同谁诉"的下一句是？', a: '倦倚西风夜已昏。', note: '表达了白海棠的孤独和寂寞。' },
+            
+            // 咏菊
+            { type: '填空', q: '《咏菊》（林黛玉）中"无赖诗魔昏晓侵"的下一句是？', a: '绕篱欹石自沉音。', note: '描写了诗人对菊花的痴迷。' },
+            { type: '填空', q: '《咏菊》（林黛玉）中"毫端蕴秀临霜写"的下一句是？', a: '口齿噙香对月吟。', note: '描写了诗人创作菊花诗的情景。' },
+            { type: '填空', q: '《咏菊》（林黛玉）中"满纸自怜题素怨"的下一句是？', a: '片言谁解诉秋心。', note: '表达了诗人的孤独和无人理解的感慨。' },
+            { type: '填空', q: '《咏菊》（林黛玉）中"一从陶令平章后"的下一句是？', a: '千古高风说到今。', note: '引用陶渊明爱菊的典故。' },
+            
+            // 秋窗风雨夕
+            { type: '填空', q: '《秋窗风雨夕》（林黛玉）中"秋花惨淡秋草黄"的下一句是？', a: '耿耿秋灯秋夜长。', note: '描写了秋天的凄凉景象。' },
+            { type: '填空', q: '《秋窗风雨夕》（林黛玉）中"已觉秋窗秋不尽"的下一句是？', a: '那堪风雨助凄凉！', note: '表达了对风雨加剧凄凉的感慨。' },
+            { type: '填空', q: '《秋窗风雨夕》（林黛玉）中"助秋风雨来何速！"的下一句是？', a: '惊破秋窗秋梦续。', note: '描写了风雨突然到来的情景。' },
+            { type: '填空', q: '《秋窗风雨夕》（林黛玉）中"抱得秋情不忍眠"的下一句是？', a: '自向秋屏移泪烛。', note: '表达了诗人的秋愁和失眠。' },
+            
+            // 好了歌
+            { type: '填空', q: '《好了歌》（跛足道人）中"世人都晓神仙好"的下一句是？', a: '惟有功名忘不了！', note: '表达了对功名的执着。' },
+            { type: '填空', q: '《好了歌》（跛足道人）中"古今将相在何方？"的下一句是？', a: '荒冢一堆草没了。', note: '表达了对功名虚幻的感慨。' },
+            { type: '填空', q: '《好了歌》（跛足道人）中"世人都晓神仙好"的下一句是？', a: '只有金银忘不了！', note: '表达了对金钱的执着。' },
+            { type: '填空', q: '《好了歌》（跛足道人）中"终朝只恨聚无多"的下一句是？', a: '及到多时眼闭了。', note: '表达了对金钱虚幻的感慨。' },
+            { type: '填空', q: '《好了歌》（跛足道人）中"世人都晓神仙好"的下一句是？', a: '只有姣妻忘不了！', note: '表达了对美色的执着。' },
+            { type: '填空', q: '《好了歌》（跛足道人）中"君生日日说恩情"的下一句是？', a: '君死又随人去了。', note: '表达了对感情虚幻的感慨。' },
+            { type: '填空', q: '《好了歌》（跛足道人）中"世人都晓神仙好"的下一句是？', a: '只有儿孙忘不了！', note: '表达了对儿孙的执着。' },
+            { type: '填空', q: '《好了歌》（跛足道人）中"痴心父母古来多"的下一句是？', a: '孝顺儿孙谁见了？', note: '表达了对亲情虚幻的感慨。' },
+            
+            // 飞鸟各投林
+            { type: '填空', q: '《飞鸟各投林》（结尾诗）中"为官的，家业凋零"的下一句是？', a: '富贵的，金银散尽。', note: '表达了对富贵无常的感慨。' },
+            { type: '填空', q: '《飞鸟各投林》（结尾诗）中"有恩的，死里逃生"的下一句是？', a: '无情的，分明报应。', note: '表达了因果报应的思想。' },
+            { type: '填空', q: '《飞鸟各投林》（结尾诗）中"欠命的，命已还"的下一句是？', a: '欠泪的，泪已尽。', note: '暗示了林黛玉的命运。' },
+            { type: '填空', q: '《飞鸟各投林》（结尾诗）中"冤冤相报实非轻"的下一句是？', a: '分离聚合皆前定。', note: '表达了命运前定的思想。' },
+            { type: '填空', q: '《飞鸟各投林》（结尾诗）中"欲知命短问前生"的下一句是？', a: '老来富贵也真侥幸。', note: '表达了对命运无常的感慨。' },
+            { type: '填空', q: '《飞鸟各投林》（结尾诗）中"看破的，遁入空门"的下一句是？', a: '痴迷的，枉送了性命。', note: '暗示了贾宝玉的命运。' },
+            { type: '填空', q: '《飞鸟各投林》（结尾诗）中"好一似食尽鸟投林"的下一句是？', a: '落了片白茫茫大地真干净！', note: '表达了对一切皆空的感慨。' },
+            
+            // 红楼梦百题挑战部分
+            // 选择题
+            { type: '选择', q: '《红楼梦》的作者是谁？', options: ['曹雪芹', '高鹗', '吴承恩', '罗贯中'], a: 'A', note: '曹雪芹创作了《红楼梦》前八十回，后四十回一般认为是高鹗所续。' },
+            { type: '选择', q: '贾宝玉的前世身份是？', options: ['神瑛侍者', '通灵宝玉', '绛珠仙草', '石头'], a: 'A', note: '贾宝玉前世是赤瑕宫神瑛侍者，通灵宝玉是他携带下凡的灵石。' },
+            { type: '选择', q: '林黛玉的前世身份是？', options: ['神瑛侍者', '通灵宝玉', '绛珠仙草', '警幻仙姑'], a: 'C', note: '林黛玉前世是西方灵河岸边的绛珠仙草，因受神瑛侍者灌溉之恩，下凡还泪。' },
+            { type: '选择', q: '"金陵十二钗"正册中排名第一的是？', options: ['林黛玉', '薛宝钗', '贾元春', '林黛玉与薛宝钗并列'], a: 'D', note: '正册首页画着一株桂花、一株雪梅，判词合写黛玉、宝钗二人，暗示二人并列第一。' },
+            { type: '选择', q: '贾宝玉与林黛玉的关系是？', options: ['亲兄妹', '表兄妹', '堂兄妹', '无血缘关系'], a: 'B', note: '黛玉之母贾敏是宝玉的姑母，因此二人是表兄妹关系。' },
+            { type: '选择', q: '贾宝玉与薛宝钗的关系是？', options: ['亲兄妹', '表姐弟', '堂姐弟', '无血缘关系'], a: 'B', note: '宝钗之母薛姨妈是宝玉的姨母，因此二人是表姐弟关系。' },
+            { type: '选择', q: '王熙凤是贾宝玉的什么人？', options: ['亲嫂子', '堂嫂', '表嫂', '婶母'], a: 'C', note: '王熙凤是贾琏之妻，贾琏是宝玉的堂兄，因此凤姐是宝玉的堂嫂。但凤姐也是王夫人的内侄女，从母系论又是表嫂。' },
+            { type: '选择', q: '贾府的"四春"按年龄从大到小排列是？', options: ['元迎探惜', '元探迎惜', '迎元探惜', '惜探迎元'], a: 'A', note: '元春最长，迎春次之，探春第三，惜春最小。"元迎探惜"谐音"原应叹息"。' },
+            { type: '选择', q: '探春的生母是？', options: ['王夫人', '赵姨娘', '邢夫人', '尤氏'], a: 'B', note: '探春是贾政与赵姨娘所生，是庶出女儿，但她由王夫人抚养，自视为主子小姐。' },
+            { type: '选择', q: '贾母有几个儿子？', options: ['一个', '两个', '三个', '四个'], a: 'B', note: '贾母有贾赦、贾政两个儿子，贾赦是长房承袭荣国公，贾政是次房。' },
+            { type: '选择', q: '林黛玉初入贾府时住在什么地方？', options: ['潇湘馆', '碧纱橱', '蘅芜苑', '怡红院'], a: 'B', note: '黛玉初入贾府时住在贾母房中的碧纱橱内，后来大观园建成才入住潇湘馆。' },
+            { type: '选择', q: '大观园是为谁而建？', options: ['贾母', '王夫人', '贾元春', '贾宝玉'], a: 'C', note: '大观园是为元妃省亲而建，元春省亲后，宝玉和众姐妹才入住园中。' },
+            { type: '选择', q: '贾宝玉住在大观园的什么地方？', options: ['潇湘馆', '蘅芜苑', '怡红院', '稻香村'], a: 'C', note: '宝玉住在怡红院，这是大观园中最华丽的院落。' },
+            { type: '选择', q: '林黛玉住在大观园的什么地方？', options: ['潇湘馆', '蘅芜苑', '怡红院', '稻香村'], a: 'A', note: '黛玉住在潇湘馆，因院中多竹，又称"有凤来仪"。' },
+            { type: '选择', q: '薛宝钗住在大观园的什么地方？', options: ['潇湘馆', '蘅芜苑', '怡红院', '稻香村'], a: 'B', note: '宝钗住在蘅芜苑，院中多藤萝薜荔，清幽雅致。' },
+            { type: '选择', q: '"金玉良缘"指的是谁与谁的婚姻？', options: ['宝玉与黛玉', '宝玉与宝钗', '贾琏与凤姐', '贾珠与李纨'], a: 'B', note: '"金玉良缘"指薛宝钗的金锁与贾宝玉的通灵宝玉相配，是贾府长辈认可的姻缘。' },
+            { type: '选择', q: '"木石前盟"指的是谁与谁的爱情？', options: ['宝玉与黛玉', '宝玉与宝钗', '贾琏与凤姐', '柳湘莲与尤三姐'], a: 'A', note: '"木石前盟"指绛珠仙草（木）与神瑛侍者（石）的前世盟约，即宝玉与黛玉的爱情。' },
+            { type: '选择', q: '薛宝钗的金锁上刻的是什么字？', options: ['莫失莫忘，仙寿恒昌', '不离不弃，芳龄永继', '金玉良缘', '百年好合'], a: 'B', note: '宝钗金锁上刻"不离不弃，芳龄永继"，与宝玉玉上的"莫失莫忘，仙寿恒昌"成对。' },
+            { type: '选择', q: '贾宝玉的通灵宝玉上刻的是什么字？', options: ['莫失莫忘，仙寿恒昌', '不离不弃，芳龄永继', '通灵宝玉', '金玉良缘'], a: 'A', note: '宝玉正面刻"通灵宝玉"，背面刻"莫失莫忘，仙寿恒昌"。' },
+            { type: '选择', q: '《葬花吟》是谁的作品？', options: ['薛宝钗', '林黛玉', '史湘云', '贾探春'], a: 'B', note: '《葬花吟》是林黛玉的代表作，"花谢花飞花满天，红消香断有谁怜"是其中名句。' },
+            { type: '选择', q: '"质本洁来还洁去，强于污淖陷渠沟"出自哪首诗？', options: ['葬花吟', '秋窗风雨夕', '咏白海棠', '咏菊'], a: 'A', note: '此句出自林黛玉的《葬花吟》，表达了黛玉高洁自守、宁折不弯的性格。' },
+            { type: '选择', q: '林黛玉的诗社别号是？', options: ['蘅芜君', '潇湘妃子', '蕉下客', '枕霞旧友'], a: 'B', note: '黛玉因住在潇湘馆，诗社别号"潇湘妃子"。' },
+            { type: '选择', q: '薛宝钗的诗社别号是？', options: ['蘅芜君', '潇湘妃子', '蕉下客', '枕霞旧友'], a: 'A', note: '宝钗因住在蘅芜苑，诗社别号"蘅芜君"。' },
+            { type: '选择', q: '史湘云的诗社别号是？', options: ['蘅芜君', '潇湘妃子', '蕉下客', '枕霞旧友'], a: 'D', note: '湘云的诗社别号是"枕霞旧友"，因她曾住在枕霞阁。' },
+            { type: '选择', q: '贾探春的诗社别号是？', options: ['蘅芜君', '潇湘妃子', '蕉下客', '枕霞旧友'], a: 'C', note: '探春的诗社别号是"蕉下客"，因她喜欢芭蕉。' },
+            { type: '选择', q: '大观园诗社是谁发起的？', options: ['林黛玉', '薛宝钗', '贾探春', '史湘云'], a: 'C', note: '探春发起海棠诗社，首次活动是咏白海棠，黛玉夺魁。' },
+            { type: '选择', q: '林黛玉最擅长的诗体是？', options: ['律诗', '绝句', '词', '古体诗'], a: 'A', note: '黛玉擅长律诗，尤其七言律诗，如《葬花吟》《秋窗风雨夕》等都是七言古诗。' },
+            { type: '选择', q: '"偷来梨蕊三分白，借得梅花一缕魂"描写的是什么花？', options: ['海棠', '菊花', '牡丹', '梅花'], a: 'A', note: '此句出自林黛玉的《咏白海棠》，以梨花之白、梅花之魂比喻海棠。' },
+            { type: '选择', q: '"孤标傲世偕谁隐，一样花开为底迟"描写的是什么花？', options: ['海棠', '菊花', '牡丹', '梅花'], a: 'B', note: '此句出自林黛玉的《咏菊》，以菊花自喻，表达孤高自许的情怀。' },
+            { type: '选择', q: '贾宝玉的贴身丫鬟不包括谁？', options: ['袭人', '晴雯', '麝月', '紫鹃'], a: 'D', note: '紫鹃是林黛玉的贴身丫鬟，不是宝玉的。袭人、晴雯、麝月都是宝玉房中的丫鬟。' },
+            { type: '选择', q: '袭人的本名是？', options: ['花袭人', '珍珠', '晴雯', '麝月'], a: 'B', note: '袭人原名珍珠，是贾母房中的丫鬟，后拨给宝玉，宝玉因"花气袭人知骤暖"改名袭人。' },
+            { type: '选择', q: '晴雯被撵出大观园的直接原因是？', options: ['与宝玉有私情', '得罪王夫人', '偷盗财物', '顶撞贾母'], a: 'B', note: '王夫人认为晴雯"眉眼像林妹妹"，"妖精打扮"，是勾引宝玉的"狐狸精"，将其撵出。' },
+            { type: '选择', q: '晴雯死后，贾宝玉为她写了什么？', options: ['葬花吟', '芙蓉女儿诔', '祭晴雯文', '悼亡诗'], a: 'B', note: '宝玉作《芙蓉女儿诔》祭奠晴雯，这是《红楼梦》中最长的诗文。' },
+            { type: '选择', q: '王熙凤的判词是？', options: ['可叹停机德，堪怜咏絮才', '凡鸟偏从末世来，都知爱慕此生才', '二十年来辨是非', '才自精明志自高'], a: 'B', note: '"凡鸟偏从末世来"是王熙凤的判词，"凡鸟"合起来是"凤"字。' },
+            { type: '选择', q: '林黛玉的判词是？', options: ['可叹停机德，堪怜咏絮才', '玉带林中挂，金簪雪里埋', '二十年来辨是非', '才自精明志自高'], a: 'A', note: '"可叹停机德，堪怜咏絮才"与薛宝钗合用一判词，前句指宝钗，后句指黛玉。' },
+            { type: '选择', q: '"机关算尽太聪明，反误了卿卿性命"说的是谁？', options: ['林黛玉', '薛宝钗', '王熙凤', '贾探春'], a: 'C', note: '这是王熙凤的判词，讽刺她精于算计却最终害了自己。' },
+            { type: '选择', q: '贾元春的结局是？', options: ['病逝', '被废', '难产而死', '自杀'], a: 'C', note: '元春因"圣眷隆重，身体发福"，最终"虎兕相逢大梦归"，一般认为死于难产或政治斗争。' },
+            { type: '选择', q: '贾迎春的丈夫是？', options: ['孙绍祖', '薛蟠', '贾琏', '柳湘莲'], a: 'A', note: '迎春嫁给"中山狼"孙绍祖，婚后受尽虐待，一年后死去。' },
+            { type: '选择', q: '"子系中山狼，得志便猖狂"说的是谁？', options: ['贾赦', '孙绍祖', '薛蟠', '贾珍'], a: 'B', note: '这是迎春的判词，"中山狼"指孙绍祖，讽刺他忘恩负义、得志猖狂。' },
+            { type: '选择', q: '贾探春的结局是？', options: ['病死', '远嫁', '出家', '被休'], a: 'B', note: '探春的判词"千里东风一梦遥"，暗示她远嫁他乡，一去不返。' },
+            { type: '选择', q: '贾惜春的结局是？', options: ['病死', '远嫁', '出家为尼', '被休'], a: 'C', note: '惜春的判词"独卧青灯古佛旁"，暗示她出家为尼。' },
+            { type: '选择', q: '刘姥姥一进荣国府时，王熙凤给了她多少银子？', options: ['十两', '二十两', '五十两', '一百两'], a: 'B', note: '刘姥姥一进荣国府，王熙凤给了她二十两银子，这对刘姥姥来说是一笔巨款。' },
+            { type: '选择', q: '刘姥姥二进荣国府时，贾母带她游了哪里？', options: ['宁国府', '大观园', '荣国府前院', '贾母院'], a: 'B', note: '刘姥姥二进荣国府，贾母带她游大观园，发生了"醉卧怡红院"等趣事。' },
+            { type: '选择', q: '"老刘，老刘，食量大如牛，吃个老母猪，不抬头"是谁说的？', options: ['贾母', '王熙凤', '刘姥姥', '史湘云'], a: 'C', note: '这是刘姥姥在宴席上说的笑话，引得众人哄堂大笑。' },
+            { type: '选择', q: '史湘云醉卧的是什么地方？', options: ['潇湘馆', '蘅芜苑', '芍药裀', '怡红院'], a: 'C', note: '史湘云醉卧芍药裀，是《红楼梦》中的经典场景，"湘云醉卧"成为美谈。' },
+            { type: '选择', q: '薛蟠的绰号是？', options: ['呆霸王', '中山狼', '冷面二郎', '混世魔王'], a: 'A', note: '薛蟠人称"呆霸王"，性格粗鲁莽撞，但并非完全的恶人。' },
+            { type: '选择', q: '贾宝玉的绰号是？', options: ['呆霸王', '中山狼', '冷面二郎', '混世魔王'], a: 'D', note: '贾宝玉被王夫人称为"混世魔王"，因为他不喜读书、专爱在内帏厮混。' },
+            { type: '选择', q: '秦可卿死后，谁协理宁国府？', options: ['王夫人', '王熙凤', '尤氏', '李纨'], a: 'B', note: '秦可卿死后，宁国府无人理事，贾珍请王熙凤协理宁国府，凤姐展现了出色的管理才能。' },
+            { type: '选择', q: '秦可卿给王熙凤托梦，预言了什么？', options: ['贾府将中兴', '贾府将败落', '元春将晋封', '宝玉将中举'], a: 'B', note: '秦可卿托梦凤姐，预言"盛筵必散"，告诫凤姐早做准备，暗示贾府终将败落。' },
+            { type: '选择', q: '贾宝玉挨打的主要原因是什么？', options: ['不爱读书', '与金钏儿调情', '与戏子琪官交往', '以上都是'], a: 'D', note: '宝玉挨打是多重原因：与金钏儿调情致其跳井、与琪官交往得罪忠顺王府、贾环诬告等。' },
+            
+            // 填空题
+            { type: '填空', q: '《红楼梦》的作者是______。', a: '曹雪芹', note: '曹雪芹创作了《红楼梦》前八十回，后四十回一般认为是高鹗所续。' },
+            { type: '填空', q: '贾宝玉的前世是______。', a: '神瑛侍者', note: '贾宝玉前世是赤瑕宫神瑛侍者，通灵宝玉是他携带下凡的灵石。' },
+            { type: '填空', q: '林黛玉的前世是______。', a: '绛珠仙草', note: '林黛玉前世是西方灵河岸边的绛珠仙草，因受神瑛侍者灌溉之恩，下凡还泪。' },
+            { type: '填空', q: '林黛玉的母亲叫______。', a: '贾敏', note: '林黛玉的母亲贾敏是贾母的女儿，贾赦、贾政的妹妹。' },
+            { type: '填空', q: '贾宝玉的父亲是______。', a: '贾政', note: '贾宝玉是贾政与王夫人所生的次子。' },
+            { type: '填空', q: '贾宝玉的母亲是______。', a: '王夫人', note: '王夫人是贾政的正妻，贾宝玉、贾珠、贾元春的生母。' },
+            { type: '填空', q: '王熙凤的丈夫是______。', a: '贾琏', note: '王熙凤是贾琏的正妻，人称"琏二奶奶"。' },
+            { type: '填空', q: '薛宝钗的母亲是______。', a: '薛姨妈', note: '薛姨妈是王夫人的妹妹，因此宝钗与宝玉是表姐弟关系。' },
+            { type: '填空', q: '贾府的"四春"分别是元春、迎春、______、惜春。', a: '探春', note: '"元迎探惜"谐音"原应叹息"，暗示四春的悲剧命运。' },
+            { type: '填空', q: '探春的生母是______。', a: '赵姨娘', note: '探春是贾政与赵姨娘所生，是庶出女儿。' },
+            { type: '填空', q: '贾宝玉住在大观园的______。', a: '怡红院', note: '怡红院是大观园中最华丽的院落，宝玉因院中多海棠而得名。' },
+            { type: '填空', q: '林黛玉住在大观园的______。', a: '潇湘馆', note: '潇湘馆因院中多竹，又称"有凤来仪"。' },
+            { type: '填空', q: '薛宝钗住在大观园的______。', a: '蘅芜苑', note: '蘅芜苑院中多藤萝薜荔，清幽雅致。' },
+            { type: '填空', q: '李纨住在大观园的______。', a: '稻香村', note: '稻香村是大观园中的田园风光，李纨守寡后住在此处。' },
+            { type: '填空', q: '妙玉住在大观园的______。', a: '栊翠庵', note: '栊翠庵是大观园中的佛寺，妙玉在此带发修行。' },
+            { type: '填空', q: '"金玉良缘"指______与贾宝玉的婚姻。', a: '薛宝钗', note: '"金玉良缘"指薛宝钗的金锁与贾宝玉的通灵宝玉相配。' },
+            { type: '填空', q: '"木石前盟"指______与贾宝玉的爱情。', a: '林黛玉', note: '"木石前盟"指绛珠仙草（木）与神瑛侍者（石）的前世盟约。' },
+            { type: '填空', q: '薛宝钗的金锁上刻着"不离不弃，______"。', a: '芳龄永继', note: '宝钗金锁上的字与宝玉玉上的"莫失莫忘，仙寿恒昌"成对。' },
+            { type: '填空', q: '贾宝玉的通灵宝玉上刻着"莫失莫忘，______"。', a: '仙寿恒昌', note: '宝玉正面刻"通灵宝玉"，背面刻"莫失莫忘，仙寿恒昌"。' },
+            { type: '填空', q: '《葬花吟》是______的作品。', a: '林黛玉', note: '《葬花吟》是林黛玉的代表作，"花谢花飞花满天"是其中名句。' },
+            { type: '填空', q: '"质本洁来还洁去"出自《______》。', a: '葬花吟', note: '此句表达了黛玉高洁自守、宁折不弯的性格。' },
+            { type: '填空', q: '林黛玉的诗社别号是______。', a: '潇湘妃子', note: '黛玉因住在潇湘馆，诗社别号"潇湘妃子"。' },
+            { type: '填空', q: '薛宝钗的诗社别号是______。', a: '蘅芜君', note: '宝钗因住在蘅芜苑，诗社别号"蘅芜君"。' },
+            { type: '填空', q: '史湘云的诗社别号是______。', a: '枕霞旧友', note: '湘云的诗社别号是"枕霞旧友"。' },
+            { type: '填空', q: '贾探春的诗社别号是______。', a: '蕉下客', note: '探春的诗社别号是"蕉下客"，因她喜欢芭蕉。' },
+            { type: '填空', q: '大观园诗社是______发起的。', a: '贾探春', note: '探春发起海棠诗社，首次活动是咏白海棠。' },
+            { type: '填空', q: '晴雯被撵出大观园后，宝玉为她写了《______》。', a: '芙蓉女儿诔', note: '《芙蓉女儿诔》是《红楼梦》中最长的诗文。' },
+            { type: '填空', q: '袭人的原名是______。', a: '珍珠', note: '袭人原名珍珠，是贾母房中的丫鬟，后拨给宝玉。' },
+            { type: '填空', q: '紫鹃的原名是______。', a: '鹦哥', note: '紫鹃原名鹦哥，是贾母房中的丫头，后拨给黛玉。' },
+            { type: '填空', q: '香菱的原名是______。', a: '英莲', note: '香菱原名甄英莲，是甄士隐之女，幼年被拐。' },
+            { type: '填空', q: '香菱学诗时，拜______为师。', a: '林黛玉', note: '黛玉教香菱从王维、杜甫、李白的诗入手学诗。' },
+            { type: '填空', q: '"机关算尽太聪明，反误了卿卿性命"说的是______。', a: '王熙凤', note: '这是王熙凤的判词，讽刺她精于算计却最终害了自己。' },
+            { type: '填空', q: '贾迎春的丈夫是______。', a: '孙绍祖', note: '迎春嫁给"中山狼"孙绍祖，婚后受尽虐待。' },
+            { type: '填空', q: '"子系中山狼，得志便猖狂"说的是______。', a: '孙绍祖', note: '这是迎春的判词，讽刺孙绍祖忘恩负义。' },
+            { type: '填空', q: '贾探春的结局是______。', a: '远嫁', note: '探春的判词"千里东风一梦遥"，暗示她远嫁他乡。' },
+            { type: '填空', q: '贾惜春的结局是______。', a: '出家', note: '惜春的判词"独卧青灯古佛旁"，暗示她出家为尼。' },
+            { type: '填空', q: '刘姥姥一进荣国府时，王熙凤给了她______两银子。', a: '二十', note: '二十两银子对刘姥姥来说是一笔巨款。' },
+            { type: '填空', q: '史湘云醉卧______。', a: '芍药裀', note: '"湘云醉卧"是《红楼梦》中的经典场景。' },
+            { type: '填空', q: '薛蟠的绰号是______。', a: '呆霸王', note: '薛蟠人称"呆霸王"，性格粗鲁莽撞。' },
+            { type: '填空', q: '贾宝玉被王夫人称为______。', a: '混世魔王', note: '王夫人称宝玉为"混世魔王"，因为他不喜读书、专爱在内帏厮混。' },
+            { type: '填空', q: '秦可卿死后，______协理宁国府。', a: '王熙凤', note: '凤姐协理宁国府展现了出色的管理才能。' },
+            { type: '填空', q: '抄检大观园的导火索是发现______。', a: '绣春囊', note: '在园中发现绣春囊，王夫人决定抄检大观园。' },
+            { type: '填空', q: '抄检大观园时，______敢于公开抗议。', a: '贾探春', note: '探春说"百足之虫，死而不僵"，预言贾府将从内部败落。' },
+            { type: '填空', q: '"掉包计"是______想出来的。', a: '王熙凤', note: '王熙凤想出"掉包计"，让宝钗冒充黛玉嫁给宝玉。' },
+            { type: '填空', q: '林黛玉临终前说的最后一句话是"宝玉，宝玉，______"。', a: '你好', note: '黛玉话未说完便含恨而终。' },
+            
+            // 简答题
+            { type: '简答', q: '简述林黛玉的性格特点及其悲剧命运的根源。', a: '性格：多愁善感、孤高自许、才华横溢、真诚率直。悲剧根源：封建礼教的压迫、"金玉良缘"的阴谋、自身敏感多疑的性格、寄人篱下的处境。', note: '林黛玉是《红楼梦》中最具灵性的女子，她的悲剧不仅是个人的悲剧，更是封建社会对女性压迫的缩影。她与宝玉的爱情被封建家长以"金玉良缘"的名义强行拆散，最终含恨而终。' },
+            { type: '简答', q: '分析贾宝玉这个人物形象的叛逆性体现在哪些方面。', a: '叛逆性体现：厌恶科举仕途、反感封建礼教、追求自由爱情、尊重女性人格、同情底层人物。', note: '贾宝玉是封建贵族家庭的叛逆者，他厌恶"仕途经济"，反对"男尊女卑"，追求真挚的爱情和平等的人际关系。他的叛逆性是对封建制度的挑战，也是他悲剧命运的根源。' },
+            { type: '简答', q: '《红楼梦》中"假作真时真亦假，无为有处有还无"这副对联有什么深刻含义？', a: '含义：揭示真假难辨的人生哲理、暗示小说虚实相生的艺术手法、点明全书"色空"主题、预示人物命运的虚幻无常。', note: '这副对联出现在太虚幻境，是《红楼梦》的"题眼"。它揭示了人生如梦、真假难辨的哲理，暗示了小说中"真事隐去、假语村言"的艺术手法，也点明了全书"色空"的主题思想。' },
+            { type: '简答', q: '分析王熙凤这个人物形象的性格特点及其悲剧结局。', a: '性格：精明能干、心狠手辣、八面玲珑、贪财好权。悲剧结局：机关算尽太聪明，反误了卿卿性命，最终病死狱中。', note: '王熙凤是《红楼梦》中最能干也最狠毒的女性形象。她精于算计、善于权谋，是荣国府的实际管家。但她贪婪成性、害人无数，最终落得"一从二令三人木，哭向金陵事更哀"的悲剧结局。' },
+            { type: '简答', q: '《红楼梦》的结局"好一似食尽鸟投林，落了片白茫茫大地真干净"有什么深刻寓意？', a: '寓意：暗示贾府繁华落尽的终局、揭示人生虚幻无常的哲理、表达"色空"的主题思想、预示封建社会的必然衰亡。', note: '这是《红楼梦》的结尾诗句，深刻揭示了贾府繁华落尽的终局。曾经的荣华富贵、儿女情长、悲欢离合，最终都化为乌有。这片白茫茫的大地，既是贾府衰落的写照，也是整个人生虚幻的象征，体现了曹雪芹"色空"的思想。' }
+        ];
+
+        const extendQuestions = [
+            // ==================== 一、四大名著作者相关 ====================
+            // （一）曹雪芹家世与生平
+            { type: '选择', q: '曹雪芹的祖父曹寅曾担任什么重要职务？', options: ['江宁织造', '苏州织造', '杭州织造', '两淮盐运使'], a: 'A', note: '曹寅曾任江宁织造长达二十余年，是康熙皇帝的亲信。' },
+            { type: '选择', q: '曹雪芹家族被抄家的直接原因是什么？', options: ['贪污受贿', '政治站队错误', '亏空公款', '谋反'], a: 'C', note: '曹家因长期担任织造职务造成巨额亏空，雍正即位后追查亏空导致抄家。' },
+            { type: '选择', q: '曹雪芹家族的旗籍是？', options: ['正黄旗', '正白旗', '镶黄旗', '镶白旗'], a: 'B', note: '曹家隶属正白旗包衣，是内务府上三旗之一。' },
+            { type: '选择', q: '曹雪芹的曾祖母孙氏曾担任康熙皇帝的什么角色？', options: ['御医', '乳母', '教习嬷嬷', '宫女'], a: 'B', note: '孙氏是康熙的乳母，这层关系使曹家与皇室关系密切。' },
+            { type: '选择', q: '曹雪芹家族被抄家发生在哪位皇帝在位期间？', options: ['康熙', '雍正', '乾隆', '嘉庆'], a: 'B', note: '雍正五年（1727年），曹頫获罪抄家，曹家从此衰落。' },
+            { type: '选择', q: '曹雪芹的祖父曹寅与康熙皇帝的关系是？', options: ['君臣', '发小玩伴', '师生', '姻亲'], a: 'B', note: '曹寅自幼入宫伴读，与康熙关系亲密，被称为"发小"。' },
+            { type: '选择', q: '曹雪芹家族鼎盛时期主要居住在哪个城市？', options: ['北京', '南京', '苏州', '扬州'], a: 'B', note: '曹家在南京（江宁）任职织造多年，南京是曹家的根基所在。' },
+            { type: '选择', q: '曹雪芹的父亲（或叔父）曹頫被革职后，曹家的命运是？', options: ['流放边疆', '抄家回京', '贬为平民', '入狱'], a: 'B', note: '曹頫被革职抄家后，全家被迫迁回北京，家道中落。' },
+            { type: '选择', q: '曹雪芹晚年生活的主要特点是？', options: ['富裕安逸', '穷困潦倒', '隐居山林', '入仕为官'], a: 'B', note: '曹雪芹晚年"举家食粥酒常赊"，生活极为困顿。' },
+            { type: '选择', q: '曹雪芹大约在什么年龄开始创作《红楼梦》？', options: ['20岁左右', '30岁左右', '40岁左右', '50岁左右'], a: 'B', note: '曹雪芹约在三十岁左右开始创作，前后"披阅十载，增删五次"。' },
+            { type: '选择', q: '曹雪芹的号"芹溪居士"中的"芹溪"指的是？', options: ['地名', '书斋名', '蔬菜名', '溪流名'], a: 'A', note: '"芹溪"可能指北京西郊某地，曹雪芹晚年居住于此。' },
+            { type: '选择', q: '曹雪芹家族的衰落与《红楼梦》中哪个家族的命运相似？', options: ['薛家', '贾家', '王家', '史家'], a: 'B', note: '贾府的兴衰史与曹家的真实经历高度吻合，被认为是作者的自传性书写。' },
+            { type: '选择', q: '曹雪芹的祖父曹寅除了担任织造，还以什么闻名？', options: ['书法', '诗词戏曲', '绘画', '医学'], a: 'B', note: '曹寅工诗词、善戏曲，著有《楝亭集》，是著名的文人官员。' },
+            { type: '选择', q: '曹雪芹去世时大约多少岁？', options: ['四十余岁', '五十余岁', '六十余岁', '七十余岁'], a: 'A', note: '曹雪芹约于1763年去世，享年四十余岁，可谓英年早逝。' },
+            { type: '选择', q: '曹雪芹去世的直接原因据记载是？', options: ['病逝', '自杀', '意外', '饿死'], a: 'A', note: '据记载曹雪芹因幼子夭折悲痛成疾，最终病逝。' },
+            { type: '填空', q: '曹雪芹的名"霑"字，取自《诗经》"既霑既足，_________"之意。', a: '生我百谷', note: '寓意恩泽深厚，也暗合曹家曾受皇恩浩荡。' },
+            { type: '填空', q: '曹雪芹家族被抄家后，举家迁回_________，居住在崇文门外蒜市口。', a: '北京', note: '曹家从南京迁回北京后，生活一落千丈。' },
+            { type: '填空', q: '曹雪芹创作《红楼梦》时，自述"披阅十载，增删_________次"。', a: '五', note: '可见作者对作品的反复打磨和精益求精。' },
+            { type: '填空', q: '曹雪芹的祖父曹寅奉旨刊刻了《_________》，这是当时最重要的文化工程之一。', a: '全唐诗', note: '曹寅主持刊刻的《全唐诗》是清代重要的文化盛事。' },
+            { type: '填空', q: '曹雪芹家族世代担任的"织造"一职，主要负责为皇室采购_________。', a: '丝绸', note: '织造是内务府派驻江南的重要肥缺，负责皇室丝绸供应。' },
+            
+            // （二）罗贯中与施耐庵
+            { type: '选择', q: '罗贯中大约生活在哪个历史时期？', options: ['宋末元初', '元末明初', '明中期', '明末清初'], a: 'B', note: '罗贯中约生活在1330-1400年间，经历了元末农民起义。' },
+            { type: '选择', q: '关于罗贯中的籍贯，目前学术界主流观点认为是？', options: ['山西太原', '山东东平', '浙江杭州', '江苏苏州'], a: 'A', note: '罗贯中一般被认为是山西太原人，但也有其他说法。' },
+            { type: '选择', q: '罗贯中据说曾师从于哪位著名文人？', options: ['关汉卿', '施耐庵', '王实甫', '马致远'], a: 'B', note: '有说法称罗贯中曾师从施耐庵，但此说存疑。' },
+            { type: '选择', q: '罗贯中据说曾参与过哪位军阀的起义活动？', options: ['朱元璋', '张士诚', '陈友谅', '方国珍'], a: 'B', note: '传说罗贯中曾入张士诚幕府，后因政治抱负未果而转向文学创作。' },
+            { type: '选择', q: '施耐庵的生平资料极少，一般认为他生活在？', options: ['宋末元初', '元末明初', '明中期', '明末清初'], a: 'B', note: '施耐庵约与罗贯中同时代，生活在元末明初。' },
+            { type: '选择', q: '关于《水浒传》的作者，学术界主流观点是？', options: ['施耐庵独著', '罗贯中独著', '施耐庵著、罗贯中编次', '集体创作'], a: 'C', note: '《水浒传》署名"施耐庵著、罗贯中编次"，可能是二人合作。' },
+            { type: '选择', q: '施耐庵据说曾中过什么功名？', options: ['进士', '举人', '秀才', '未中功名'], a: 'B', note: '传说施耐庵曾中举人，但仕途不顺，后隐居著书。' },
+            { type: '选择', q: '罗贯中除了《三国演义》，还著有哪部小说？', options: ['《水浒传》', '《隋唐演义》', '《封神演义》', '《杨家将》'], a: 'B', note: '罗贯中著有《隋唐志传》等历史演义小说。' },
+            { type: '选择', q: '罗贯中的号是什么？', options: ['湖海散人', '芹溪居士', '射阳山人', '青莲居士'], a: 'A', note: '罗贯中号"湖海散人"，体现其漂泊不羁的人生经历。' },
+            { type: '选择', q: '施耐庵的祖籍据说是？', options: ['山东', '江苏', '浙江', '安徽'], a: 'B', note: '施耐庵据说祖籍江苏苏州，后迁居兴化。' },
+            { type: '填空', q: '罗贯中的代表作《三国演义》全名为《_________》。', a: '三国志通俗演义', note: '《三国演义》最初名为《三国志通俗演义》。' },
+            { type: '填空', q: '《水浒传》的作者署名通常为"施耐庵著，_________编次"。', a: '罗贯中', note: '这表明二人可能在创作上有合作关系。' },
+            { type: '填空', q: '罗贯中号"湖海散人"，体现了他_________的人生经历。', a: '漂泊不定', note: '罗贯中一生漂泊，曾参与政治活动，后转向文学创作。' },
+            { type: '填空', q: '施耐庵据说因不满元朝统治而_________，专心著书。', a: '隐居', note: '施耐庵的隐居经历可能影响了《水浒传》的创作。' },
+            { type: '填空', q: '罗贯中创作《三国演义》时，主要依据的历史著作是《_________》。', a: '三国志', note: '《三国演义》以陈寿《三国志》为历史框架进行艺术加工。' },
+            
+            // （三）吴承恩生平
+            { type: '选择', q: '吴承恩是哪个朝代的人？', options: ['元朝', '明朝', '清朝', '宋朝'], a: 'B', note: '吴承恩（约1500-1582）是明代中期的文学家。' },
+            { type: '选择', q: '吴承恩的籍贯是？', options: ['江苏淮安', '江苏苏州', '浙江杭州', '安徽徽州'], a: 'A', note: '吴承恩是江苏淮安人，淮安至今有吴承恩故居。' },
+            { type: '选择', q: '吴承恩的科举之路如何？', options: ['少年中举', '屡试不第', '进士及第', '从未参加'], a: 'B', note: '吴承恩科举不顺，多次落第，直到中年才补为岁贡生。' },
+            { type: '选择', q: '吴承恩最终担任过什么官职？', options: ['知县', '县丞', '教谕', '未入仕'], a: 'B', note: '吴承恩晚年曾任浙江长兴县丞，官职低微。' },
+            { type: '选择', q: '吴承恩的号是什么？', options: ['射阳山人', '湖海散人', '芹溪居士', '青莲居士'], a: 'A', note: '吴承恩号"射阳山人"，因淮安古称射阳。' },
+            { type: '选择', q: '吴承恩创作《西游记》的时间大约是？', options: ['青年时期', '中年时期', '晚年时期', '少年时期'], a: 'C', note: '吴承恩约在晚年辞官归乡后创作《西游记》。' },
+            { type: '选择', q: '吴承恩的文学才华主要体现在什么方面？', options: ['诗词', '散文', '小说', '以上都是'], a: 'D', note: '吴承恩诗文俱佳，著有《射阳先生存稿》。' },
+            { type: '选择', q: '吴承恩对神话志怪故事的态度是？', options: ['排斥', '喜爱', '无所谓', '反对'], a: 'B', note: '吴承恩自幼喜爱神话志怪，这为《西游记》创作奠定了基础。' },
+            { type: '填空', q: '吴承恩的文集名为《_________》。', a: '射阳先生存稿', note: '这是吴承恩的诗文集，展现了他的文学才华。' },
+            { type: '填空', q: '吴承恩晚年辞官后回到故乡_________，专心创作《西游记》。', a: '淮安', note: '淮安是吴承恩的故乡，也是他创作《西游记》的地方。' },
+            
+            // （四）作者争议
+            { type: '选择', q: '关于《红楼梦》的作者，曾有争议认为后四十回是谁所写？', options: ['曹雪芹', '高鹗', '程伟元', '脂砚斋'], a: 'B', note: '后四十回一般认为是高鹗续写，但此说仍有争议。' },
+            { type: '选择', q: '《红楼梦》前八十回与后四十回的文风差异主要体现在？', options: ['语言风格', '人物性格', '情节走向', '以上都是'], a: 'D', note: '前后文风差异明显，是续书争议的主要依据。' },
+            { type: '选择', q: '关于《三国演义》的作者，是否有争议？', options: ['无争议', '有争议', '争议很大', '未确定'], a: 'A', note: '《三国演义》作者为罗贯中，学术界基本无争议。' },
+            { type: '选择', q: '关于《水浒传》的作者，主要争议是？', options: ['施耐庵是否存在', '罗贯中是否参与', '成书年代', '以上都是'], a: 'D', note: '《水浒传》的作者、成书年代等问题都存在争议。' },
+            { type: '选择', q: '关于《西游记》的作者，曾有观点认为是？', options: ['丘处机', '李春芳', '吴承恩', '以上都曾被提及'], a: 'D', note: '《西游记》作者曾有丘处机、李春芳等说法，现主流认定吴承恩。' },
+            { type: '选择', q: '鲁迅、胡适等学者对《西游记》作者的考证结论是？', options: ['丘处机', '吴承恩', '李春芳', '无法确定'], a: 'B', note: '鲁迅、胡适等通过考证，认定《西游记》作者为吴承恩。' },
+            { type: '填空', q: '《红楼梦》后四十回的整理者之一是_________。', a: '高鹗', note: '高鹗与程伟元共同整理出版了《红楼梦》一百二十回本。' },
+            { type: '填空', q: '《红楼梦》早期抄本中的批语作者"_________"身份成谜，引发诸多猜测。', a: '脂砚斋', note: '脂砚斋是谁至今众说纷纭，有说是曹雪芹亲友，有说是作者本人。' },
+            { type: '简答', q: '简述曹雪芹家族兴衰与《红楼梦》创作的关系。', a: '曹雪芹出身于显赫的织造世家，少年时经历家族被抄、家道中落。这种从繁华到衰落的切身经历，成为《红楼梦》创作的素材来源和情感基础。贾府的兴衰史正是曹家命运的写照，作者通过家族记忆书写了一曲封建贵族的挽歌。', note: '曹家的真实经历为《红楼梦》提供了丰富的素材和深刻的情感体验。' },
+            { type: '简答', q: '分析《红楼梦》后四十回作者争议的焦点。', a: '争议焦点：1.文风差异：后四十回语言、人物性格与前八十回有明显不同；2.情节走向：后四十回的结局安排与作者原意可能不符；3.版本问题：程高本与早期脂评本的差异。主流观点认为后四十回为高鹗续写，但也有学者认为是曹雪芹残稿整理。', note: '后四十回的作者问题至今仍是红学研究的热点。' },
+            { type: '简答', q: '为什么四大名著的作者问题存在争议？', a: '原因：1.古代小说地位低下，作者不愿署名或使用化名；2.小说往往经过长期流传、多人加工，难以确定单一作者；3.史料记载有限，作者生平资料匮乏；4.版本流传复杂，存在多种版本系统。这些因素导致四大名著的作者问题至今仍有争议。', note: '古代小说的成书方式和地位决定了作者问题的复杂性。' },
+            
+            // ==================== 二、四大名著人物原型 ====================
+            // （一）红楼梦人物原型
+            { type: '选择', q: '贾宝玉的原型最可能是谁？', options: ['曹雪芹本人', '曹雪芹的父亲', '曹雪芹的祖父', '虚构人物'], a: 'A', note: '学术界普遍认为贾宝玉有曹雪芹的自传色彩，是作者的自我投射。' },
+            { type: '选择', q: '林黛玉的原型据研究可能与曹雪芹的什么人有关？', options: ['表妹', '妻子', '丫鬟', '邻居'], a: 'A', note: '有研究认为林黛玉原型可能是曹雪芹的表妹或青梅竹马。' },
+            { type: '选择', q: '王熙凤的原型据研究可能与曹家的什么人有关？', options: ['曹雪芹的母亲', '曹雪芹的嫂子', '曹雪芹的婶婶', '虚构人物'], a: 'B', note: '有研究认为王熙凤原型可能是曹雪芹的嫂子或家族中的管家女性。' },
+            { type: '选择', q: '贾母的原型最可能是谁？', options: ['曹雪芹的祖母', '曹雪芹的母亲', '虚构人物', '曹雪芹的姑母'], a: 'A', note: '贾母的原型可能是曹雪芹的祖母李氏，即曹寅的妻子。' },
+            { type: '选择', q: '贾政的原型最可能是谁？', options: ['曹雪芹的父亲', '曹雪芹的叔父', '曹雪芹的祖父', '虚构人物'], a: 'B', note: '贾政的原型可能是曹頫，曹雪芹的叔父兼养父。' },
+            { type: '选择', q: '史湘云的原型据研究可能是？', options: ['曹雪芹的表妹', '曹雪芹的妻子', '虚构人物', '曹雪芹的丫鬟'], a: 'A', note: '史湘云原型可能是曹雪芹的表妹，性格豪爽、才华横溢。' },
+            { type: '选择', q: '《红楼梦》中"大观园"的原型可能是？', options: ['曹家在南京的园林', '北京恭王府', '苏州园林', '虚构'], a: 'A', note: '大观园原型可能是曹家在南京的织造府园林。' },
+            { type: '选择', q: '薛宝钗的原型据研究可能是？', options: ['曹雪芹的妻子', '曹雪芹的表姐', '虚构人物', '曹雪芹的邻居'], a: 'A', note: '有研究认为薛宝钗原型可能是曹雪芹的妻子。' },
+            { type: '选择', q: '元春的原型可能与曹家的什么人有关？', options: ['曹雪芹的姐姐', '曹雪芹的姑姑', '虚构人物', '曹雪芹的妹妹'], a: 'A', note: '元春原型可能是曹雪芹的姐姐，曾入宫为妃。' },
+            { type: '选择', q: '《红楼梦》中"四大家族"的原型是？', options: ['曹家及其姻亲', '虚构家族', '历史真实家族', '无法确定'], a: 'A', note: '四大家族原型可能是曹家及其姻亲家族，如李煦家等。' },
+            { type: '填空', q: '贾宝玉身上有作者_________的自传色彩。', a: '曹雪芹', note: '贾宝玉的经历和性格与曹雪芹高度吻合。' },
+            { type: '填空', q: '《红楼梦》中的贾府原型是_________家。', a: '曹', note: '贾府的兴衰史与曹家的真实经历高度吻合。' },
+            { type: '填空', q: '林黛玉的原型可能是曹雪芹的_________。', a: '表妹', note: '林黛玉与贾宝玉的青梅竹马关系可能源于作者的真实经历。' },
+            { type: '填空', q: '王熙凤的原型可能是曹家的_________。', a: '管家女性', note: '王熙凤精明能干的形象可能来源于曹家的真实人物。' },
+            { type: '填空', q: '《红楼梦》中"金陵十二钗"的原型可能是曹家的_________。', a: '女性亲属', note: '金陵十二钗可能以曹家的女性亲属为原型。' },
+            { type: '简答', q: '分析《红楼梦》人物原型与作者自传的关系。', a: '《红楼梦》具有强烈的自传色彩：贾宝玉是作者的自我投射，贾府是曹家的缩影，金陵十二钗可能以曹家女性为原型。作者通过真实经历的艺术加工，创造了既有真实基础又超越现实的人物形象，使小说具有深刻的情感力量和现实主义精神。', note: '《红楼梦》的自传性是其艺术魅力的重要来源。' },
+            
+            // （二）水浒传人物原型
+            { type: '选择', q: '宋江的历史原型是？', options: ['虚构人物', '北宋农民起义领袖', '南宋将领', '元朝官员'], a: 'B', note: '宋江是北宋末年农民起义领袖，史载其起义后被招安。' },
+            { type: '选择', q: '历史上的宋江起义发生在哪里？', options: ['梁山泊', '河北', '山东', '江浙'], a: 'A', note: '历史上的宋江确实在梁山泊一带活动。' },
+            { type: '选择', q: '历史上的宋江起义规模如何？', options: ['规模很大', '规模较小', '中等规模', '无法确定'], a: 'B', note: '史载宋江起义规模不大，只有三十六人，但战斗力很强。' },
+            { type: '选择', q: '武松的原型可能是？', options: ['虚构人物', '历史上的侠客', '民间传说人物', '作者认识的人'], a: 'C', note: '武松形象可能来源于民间传说中的侠客形象。' },
+            { type: '选择', q: '林冲的原型可能是？', options: ['虚构人物', '历史上的将领', '民间传说人物', '作者认识的人'], a: 'A', note: '林冲可能是小说虚构的人物，无明确历史原型。' },
+            { type: '选择', q: '鲁智深的原型可能是？', options: ['虚构人物', '历史上的僧人', '民间传说人物', '作者认识的人'], a: 'C', note: '鲁智深形象可能来源于民间传说中的侠僧形象。' },
+            { type: '选择', q: '历史上的宋江最终结局是？', options: ['战死', '被招安', '病逝', '不知所终'], a: 'B', note: '史载宋江起义后被招安，参与了征讨方腊。' },
+            { type: '选择', q: '方腊起义与宋江起义的关系是？', options: ['同时发生', '先后发生', '毫无关系', '同一起义'], a: 'A', note: '方腊起义与宋江起义几乎同时发生，都是北宋末年的农民起义。' },
+            { type: '选择', q: '《水浒传》中梁山好汉的原型来源是？', options: ['历史记载', '民间传说', '作者想象', '以上都有'], a: 'D', note: '梁山好汉形象是历史、民间传说和作者想象的结合。' },
+            { type: '选择', q: '历史上的"三十六天罡"是否真实存在？', options: ['真实存在', '虚构', '部分真实', '无法确定'], a: 'C', note: '史载宋江有三十六个头目，但具体姓名多不可考。' },
+            { type: '填空', q: '历史上的宋江是_________末年的农民起义领袖。', a: '北宋', note: '宋江起义发生在北宋末年徽宗时期。' },
+            { type: '填空', q: '历史上的宋江起义后被_________。', a: '招安', note: '宋江起义后被朝廷招安，参与了征讨方腊。' },
+            { type: '填空', q: '《水浒传》中梁山好汉的形象来源于历史记载和_________。', a: '民间传说', note: '民间传说为水浒故事提供了丰富的素材。' },
+            { type: '填空', q: '历史上的宋江起义规模_________，但战斗力很强。', a: '较小', note: '史载宋江只有三十六人，但转战各地，所向披靡。' },
+            { type: '填空', q: '《水浒传》中一百零八将的形象大多是_________的。', a: '虚构', note: '一百零八将中大部分是小说虚构的人物。' },
+            { type: '简答', q: '比较历史上的宋江与《水浒传》中的宋江有何异同。', a: '相同点：都是起义领袖，都被招安。不同点：历史上的宋江规模小（仅三十六人），形象较为模糊；《水浒传》中的宋江被塑造成"及时雨"，领导一百零八将，形象丰满复杂。小说对历史进行了大幅度的艺术加工和想象。', note: '小说中的宋江是历史原型的艺术升华。' },
+            
+            // （三）西游记人物原型
+            { type: '选择', q: '唐僧的历史原型是谁？', options: ['玄奘', '鉴真', '鸠摩罗什', '法显'], a: 'A', note: '唐僧原型是唐代高僧玄奘，曾西行取经。' },
+            { type: '选择', q: '历史上的玄奘西行取经去了哪里？', options: ['天竺', '西域', '波斯', '日本'], a: 'A', note: '玄奘西行至天竺（印度）取经，历时十七年。' },
+            { type: '选择', q: '孙悟空的原型可能来源于？', options: ['印度神话', '中国神话', '民间传说', '以上都有'], a: 'D', note: '孙悟空形象可能融合了印度神猴哈奴曼、中国神话和民间传说。' },
+            { type: '选择', q: '印度神猴哈奴曼出自哪部史诗？', options: ['《摩诃婆罗多》', '《罗摩衍那》', '《吠陀》', '《奥义书》'], a: 'B', note: '哈奴曼是印度史诗《罗摩衍那》中的神猴。' },
+            { type: '选择', q: '猪八戒的原型可能来源于？', options: ['印度神话', '中国神话', '民间传说', '以上都有'], a: 'D', note: '猪八戒形象可能融合了多种文化元素。' },
+            { type: '选择', q: '沙僧的原型可能来源于？', options: ['印度神话', '中国神话', '民间传说', '以上都有'], a: 'C', note: '沙僧形象可能来源于民间传说中的河神形象。' },
+            { type: '选择', q: '历史上的玄奘取经归来后做了什么？', options: ['隐居', '翻译佛经', '传教', '写小说'], a: 'B', note: '玄奘回国后主持翻译了大量佛经，并著有《大唐西域记》。' },
+            { type: '选择', q: '《大唐西域记》的作者是？', options: ['玄奘', '吴承恩', '辩机', '唐太宗'], a: 'A', note: '《大唐西域记》是玄奘口述、辩机笔录的游记。' },
+            { type: '选择', q: '历史上的玄奘取经是否像小说中那样有徒弟保护？', options: ['有众多徒弟', '只有少数随从', '独自一人', '无法确定'], a: 'C', note: '历史上的玄奘是独自一人偷渡出境西行的。' },
+            { type: '选择', q: '《西游记》中的妖魔鬼怪可能象征什么？', options: ['自然障碍', '内心魔障', '社会黑暗', '以上都有'], a: 'D', note: '妖魔鬼怪可以有多重象征意义。' },
+            { type: '填空', q: '唐僧的历史原型是唐代高僧_________。', a: '玄奘', note: '玄奘（602-664）是唐代著名高僧、翻译家。' },
+            { type: '填空', q: '孙悟空的形象可能受到印度神猴_________的影响。', a: '哈奴曼', note: '哈奴曼是印度史诗《罗摩衍那》中的神猴。' },
+            { type: '填空', q: '历史上的玄奘西行取经历时_________年。', a: '十七', note: '玄奘于627年出发，645年回国，历时十七年。' },
+            { type: '填空', q: '玄奘回国后著有《_________》，记录了西域各国的情况。', a: '大唐西域记', note: '《大唐西域记》是研究古代西域的重要史料。' },
+            { type: '填空', q: '历史上的玄奘是_________出境西行的。', a: '偷渡', note: '玄奘未经官方许可，私自出境西行。' },
+            { type: '简答', q: '分析《西游记》人物原型与历史、神话的关系。', a: '《西游记》人物融合了历史与神话：唐僧原型是历史上的玄奘，但小说对其进行了大幅度的艺术加工；孙悟空可能融合了印度神猴哈奴曼和中国神话中的猴精形象；猪八戒、沙僧等则更多来自民间传说和作者想象。小说通过神话化处理，将历史取经故事转化为奇幻冒险。', note: '《西游记》是历史与神话完美结合的典范。' },
+            
+            // （四）三国演义人物原型
+            { type: '选择', q: '《三国演义》中的人物大多有历史原型，其依据的主要史书是？', options: ['《后汉书》', '《三国志》', '《资治通鉴》', '《晋书》'], a: 'B', note: '《三国演义》以陈寿《三国志》为历史框架。' },
+            { type: '选择', q: '历史上的诸葛亮与小说中的诸葛亮最大区别是？', options: ['军事才能', '政治才能', '人格魅力', '法术能力'], a: 'D', note: '历史上的诸葛亮是杰出的政治家，但不会法术。' },
+            { type: '选择', q: '关羽"温酒斩华雄"的故事是？', options: ['历史事实', '小说虚构', '民间传说', '无法确定'], a: 'B', note: '历史上华雄是被孙坚所杀，小说移花接木给关羽。' },
+            { type: '选择', q: '历史上的曹操与小说中的曹操形象差异主要在于？', options: ['军事才能', '政治才能', '道德评价', '文学才华'], a: 'C', note: '小说将曹操塑造成"奸雄"，历史上曹操是杰出的政治家、文学家。' },
+            { type: '选择', q: '"空城计"的故事在历史上？', options: ['真实发生', '虚构', '由他人所为', '无法确定'], a: 'B', note: '历史上诸葛亮未用过空城计，这是小说虚构。' },
+            { type: '选择', q: '历史上的刘备与小说中的刘备形象差异在于？', options: ['仁德程度', '军事才能', '政治才能', '以上都有'], a: 'D', note: '小说将刘备塑造成仁德之君，历史上刘备更为复杂。' },
+            { type: '选择', q: '周瑜在历史上与小说中的形象差异主要在于？', options: ['军事才能', '心胸气度', '政治才能', '年龄'], a: 'B', note: '历史上的周瑜气度恢弘，小说将其塑造成心胸狭隘之人。' },
+            { type: '选择', q: '"三顾茅庐"在历史上？', options: ['真实发生', '虚构', '部分真实', '无法确定'], a: 'A', note: '历史上刘备确实三顾茅庐请诸葛亮出山。' },
+            { type: '选择', q: '历史上的赵云与小说中的赵云形象差异在于？', options: ['武艺高低', '地位高低', '事迹多少', '以上都有'], a: 'D', note: '小说大大美化了赵云的形象和事迹。' },
+            { type: '选择', q: '貂蝉这个人物在历史上？', options: ['真实存在', '虚构', '有原型', '无法确定'], a: 'B', note: '貂蝉是小说虚构的人物，历史上无此人。' },
+            { type: '填空', q: '《三国演义》以陈寿的《_________》为历史框架。', a: '三国志', note: '《三国志》是《三国演义》的主要历史依据。' },
+            { type: '填空', q: '小说中的"草船借箭"在历史上是_________所为。', a: '孙权', note: '历史上孙权曾借箭，小说移花接木给诸葛亮。' },
+            { type: '填空', q: '历史上的周瑜气度_________，与小说形象不同。', a: '恢弘', note: '历史上的周瑜"性度恢廓"，是真正的英雄人物。' },
+            { type: '填空', q: '貂蝉是小说_________的人物，历史上无此人。', a: '虚构', note: '貂蝉是《三国演义》虚构的美女形象。' },
+            { type: '填空', q: '小说将曹操塑造成"_________"形象，与历史评价不同。', a: '奸雄', note: '小说对曹操的负面塑造影响了后世对曹操的评价。' },
+            { type: '简答', q: '分析《三国演义》"七分实事，三分虚构"的特点。', a: '"七分实事"指小说以《三国志》为历史框架，主要人物和重大事件有史可依；"三分虚构"指小说对历史进行了艺术加工，如移花接木（草船借箭、温酒斩华雄）、人物美化（赵云、诸葛亮）、人物丑化（曹操、周瑜）等。这种虚实结合使小说既有历史厚重感，又有艺术感染力。', note: '《三国演义》的虚实结合是其艺术成就的重要体现。' },
+            
+            // ==================== 三、四大名著的前世今生 ====================
+            // （一）民间艺术来源
+            { type: '选择', q: '《三国演义》的故事在成书前主要通过什么形式流传？', options: ['史书', '话本评书', '戏曲', '以上都有'], a: 'D', note: '三国故事在成书前通过史书、话本、戏曲等多种形式流传。' },
+            { type: '选择', q: '宋代"说话"艺术中，专门讲说三国故事的是？', options: ['说经', '讲史', '小说', '说浑话'], a: 'B', note: '宋代"讲史"专门讲说历史故事，三国是重要题材。' },
+            { type: '选择', q: '元代杂剧中，关于三国故事的剧目有多少？', options: ['十几部', '几十部', '上百部', '无法统计'], a: 'B', note: '元代杂剧中有几十部三国题材剧目，如《单刀会》等。' },
+            { type: '选择', q: '关汉卿的《单刀会》讲的是谁的故事？', options: ['刘备', '关羽', '张飞', '诸葛亮'], a: 'B', note: '《单刀会》讲的是关羽单刀赴会的故事。' },
+            { type: '选择', q: '《水浒传》的故事来源主要是？', options: ['史书记载', '民间传说', '话本评书', '以上都有'], a: 'D', note: '水浒故事来源于历史记载、民间传说和话本评书。' },
+            { type: '选择', q: '宋代说话艺术中，《宣和遗事》与哪部名著有关？', options: ['《三国演义》', '《水浒传》', '《西游记》', '《红楼梦》'], a: 'B', note: '《大宋宣和遗事》记载了宋江起义的故事，是《水浒传》的重要来源。' },
+            { type: '选择', q: '《西游记》的故事来源主要是？', options: ['玄奘取经史实', '民间传说', '戏曲话本', '以上都有'], a: 'D', note: '西游记故事来源于历史、民间传说和戏曲话本。' },
+            { type: '选择', q: '《大唐三藏取经诗话》是什么时代的作品？', options: ['唐代', '宋代', '元代', '明代'], a: 'B', note: '《大唐三藏取经取经诗话》是宋代话本，是《西游记》的重要来源。' },
+            { type: '选择', q: '在《大唐三藏取经诗话》中，孙悟空的前身叫什么？', options: ['孙行者', '猴行者', '齐天大圣', '美猴王'], a: 'B', note: '宋代话本中叫"猴行者"，后来演变为孙悟空。' },
+            { type: '选择', q: '元代戏曲中，关于西天取经的剧目叫什么？', options: ['《西游记》', '《唐三藏西天取经》', '《取经记》', '《西游杂剧》'], a: 'B', note: '元代有《唐三藏西天取经》等杂剧，是吴承恩创作的重要参考。' },
+            { type: '选择', q: '《红楼梦》与前三大名著在故事来源上的最大区别是？', options: ['有历史原型', '无民间流传过程', '作者独立创作', '以上都是'], a: 'D', note: '《红楼梦》主要是曹雪芹独立创作，没有长期的民间流传过程。' },
+            { type: '选择', q: '评书艺术对四大名著的传播起到了什么作用？', options: ['扩大影响', '丰富情节', '塑造人物', '以上都有'], a: 'D', note: '评书艺术对四大名著的传播和丰富起到了重要作用。' },
+            { type: '选择', q: '明清时期，四大名著主要通过什么方式在民间传播？', options: ['书籍印刷', '戏曲表演', '评书说唱', '以上都有'], a: 'D', note: '四大名著通过书籍、戏曲、评书等多种方式在民间传播。' },
+            { type: '选择', q: '京剧中的"三国戏"有多少出？', options: ['几十出', '上百出', '几百出', '无法统计'], a: 'B', note: '京剧中有上百出三国题材剧目，如《空城计》《群英会》等。' },
+            { type: '选择', q: '《水浒传》的戏曲改编中最著名的是？', options: ['《武松打虎》', '《林冲夜奔》', '《野猪林》', '以上都著名'], a: 'D', note: '水浒故事被改编成多种戏曲，以上都是经典剧目。' },
+            { type: '填空', q: '宋代"说话"艺术中，专门讲说历史故事的是"_________"。', a: '讲史', note: '讲史是宋代说话艺术的一个重要门类。' },
+            { type: '填空', q: '《大宋宣和遗事》记载了_________起义的故事。', a: '宋江', note: '《大宋宣和遗事》是《水浒传》的重要来源。' },
+            { type: '填空', q: '《大唐三藏取经诗话》中，孙悟空的前身叫"_________"。', a: '猴行者', note: '猴行者是孙悟空形象的雏形。' },
+            { type: '填空', q: '关汉卿的杂剧《_________》讲的是关羽单刀赴会的故事。', a: '单刀会', note: '《单刀会》是元代三国题材杂剧的代表作。' },
+            { type: '填空', q: '四大名著中，《_________》主要是作者独立创作，没有长期的民间流传过程。', a: '红楼梦', note: '《红楼梦》与前三大名著在成书方式上有明显不同。' },
+            { type: '填空', q: '京剧中的"三国戏"有上百出，如《_________》《群英会》等。', a: '空城计', note: '《空城计》是京剧三国戏的经典剧目。' },
+            { type: '填空', q: '评书艺术对四大名著的_________起到了重要作用。', a: '传播', note: '评书使四大名著在民间广泛流传。' },
+            { type: '填空', q: '元代杂剧中有大量三国题材剧目，如关汉卿的《_________》。', a: '单刀会', note: '元代杂剧为《三国演义》的创作提供了丰富的素材。' },
+            { type: '填空', q: '《水浒传》的故事来源于历史记载和_________。', a: '民间传说', note: '民间传说为水浒故事提供了丰富的素材。' },
+            { type: '填空', q: '明清时期，四大名著通过书籍、戏曲、_________等多种方式传播。', a: '评书', note: '多种传播方式使四大名著深入人心。' },
+            
+            // （二）成书过程
+            { type: '选择', q: '《三国演义》大约成书于什么时候？', options: ['宋末元初', '元末明初', '明中期', '明末清初'], a: 'B', note: '《三国演义》约成书于元末明初（14世纪）。' },
+            { type: '选择', q: '《三国演义》最早的刻本是什么？', options: ['嘉靖本', '毛评本', '李卓吾评本', '金圣叹评本'], a: 'A', note: '嘉靖本（《三国志通俗演义》）是最早的刻本。' },
+            { type: '选择', q: '《三国演义》流传最广的版本是？', options: ['嘉靖本', '毛评本', '李卓吾评本', '罗贯中原本'], a: 'B', note: '毛宗岗评本（毛评本）是流传最广的版本。' },
+            { type: '选择', q: '毛宗岗对《三国演义》做了什么工作？', options: ['删改润色', '添加评点', '统一风格', '以上都有'], a: 'D', note: '毛宗岗对《三国演义》进行了全面的整理和评点。' },
+            { type: '选择', q: '《水浒传》大约成书于什么时候？', options: ['宋末元初', '元末明初', '明中期', '明末清初'], a: 'B', note: '《水浒传》约成书于元末明初（14世纪）。' },
+            { type: '选择', q: '《水浒传》的版本系统主要有几种？', options: ['两种', '三种', '四种', '五种'], a: 'A', note: '主要有七十回本和一百二十回本两大系统。' },
+            { type: '选择', q: '金圣叹对《水浒传》做了什么工作？', options: ['删为七十回', '添加评点', '伪造施耐庵序', '以上都有'], a: 'D', note: '金圣叹删改《水浒传》为七十回，并添加了大量评点。' },
+            { type: '选择', q: '《西游记》大约成书于什么时候？', options: ['元末明初', '明中期', '明末', '清初'], a: 'B', note: '《西游记》约成书于明中期（16世纪）。' },
+            { type: '选择', q: '《西游记》最早的刻本是什么？', options: ['世德堂本', '杨致和本', '朱鼎臣本', '以上同时'], a: 'A', note: '明万历年间世德堂本是现存最早的刻本。' },
+            { type: '选择', q: '《红楼梦》大约成书于什么时候？', options: ['明末', '清初', '清中期', '清末'], a: 'C', note: '《红楼梦》约成书于清中期（18世纪）。' },
+            { type: '选择', q: '《红楼梦》的版本系统主要有几种？', options: ['两种', '三种', '四种', '五种'], a: 'A', note: '主要有脂评本（八十回）和程高本（一百二十回）两大系统。' },
+            { type: '选择', q: '《红楼梦》脂评本的特点是？', options: ['只有八十回', '有脂砚斋批语', '接近原稿', '以上都是'], a: 'D', note: '脂评本是早期抄本，有脂砚斋批语，更接近曹雪芹原稿。' },
+            { type: '选择', q: '程高本《红楼梦》是谁整理出版的？', options: ['曹雪芹', '高鹗和程伟元', '脂砚斋', '程甲本'], a: 'B', note: '程伟元和高鹗整理出版了《红楼梦》一百二十回本。' },
+            { type: '选择', q: '四大名著中，成书时间最早的是？', options: ['《三国演义》', '《水浒传》', '《西游记》', '《红楼梦》'], a: 'A', note: '《三国演义》约成书于元末明初，是四大名著中最早的。' },
+            { type: '选择', q: '四大名著中，成书时间最晚的是？', options: ['《三国演义》', '《水浒传》', '《西游记》', '《红楼梦》'], a: 'D', note: '《红楼梦》成书于清中期，是四大名著中最晚的。' },
+            { type: '填空', q: '《三国演义》流传最广的版本是_________评本。', a: '毛宗岗', note: '毛评本是《三国演义》最流行的版本。' },
+            { type: '填空', q: '金圣叹将《水浒传》删改为_________回本。', a: '七十', note: '金圣叹删改的七十回本是《水浒传》的重要版本。' },
+            { type: '填空', q: '《红楼梦》的版本主要有脂评本和_________两大系统。', a: '程高本', note: '程高本是《红楼梦》一百二十回本的代表。' },
+            { type: '填空', q: '《西游记》现存最早的刻本是_________本。', a: '世德堂', note: '明万历年间世德堂本是《西游记》最早的刻本。' },
+            { type: '填空', q: '四大名著中成书最早的是《_________》。', a: '三国演义', note: '《三国演义》约成书于元末明初。' },
+            { type: '填空', q: '四大名著中成书最晚的是《_________》。', a: '红楼梦', note: '《红楼梦》成书于清中期。' },
+            { type: '填空', q: '《红楼梦》脂评本有_________的批语，更接近原稿。', a: '脂砚斋', note: '脂砚斋批语是研究《红楼梦》的重要资料。' },
+            { type: '填空', q: '程伟元和_________整理出版了《红楼梦》一百二十回本。', a: '高鹗', note: '程高本使《红楼梦》得以完整流传。' },
+            { type: '填空', q: '毛宗岗对《三国演义》进行了全面的整理和_________。', a: '评点', note: '毛评本对《三国演义》的传播影响深远。' },
+            { type: '填空', q: '《水浒传》主要有七十回本和_________回本两大版本系统。', a: '一百二十', note: '一百二十回本包含征田虎、王庆等内容。' },
+            
+            // （三）版本演变
+            { type: '选择', q: '《三国演义》毛评本与嘉靖本的主要区别是？', options: ['回目不同', '文字润色', '尊刘贬曹倾向加强', '以上都是'], a: 'D', note: '毛评本对嘉靖本进行了全面修改，加强了尊刘贬曹倾向。' },
+            { type: '选择', q: '《水浒传》七十回本与一百二十回本的主要区别是？', options: ['结局不同', '内容多少', '人物命运', '以上都是'], a: 'D', note: '七十回本到大聚义为止，一百二十回本包含征辽、征方腊等内容。' },
+            { type: '选择', q: '《红楼梦》前八十回与后四十回的主要区别是？', options: ['作者不同', '文风不同', '情节走向', '以上都是'], a: 'D', note: '前后差异明显，是红学研究的重要问题。' },
+            { type: '选择', q: '《西游记》不同版本的主要区别是？', options: ['回目数量', '文字繁简', '情节细节', '以上都是'], a: 'D', note: '《西游记》各版本在回目、文字、情节上都有差异。' },
+            { type: '选择', q: '金圣叹评点的《水浒传》被称为什么本？', options: ['金本', '贯华堂本', '七十回本', '以上都是'], a: 'D', note: '金圣叹评点的《水浒传》又称贯华堂本、七十回本。' },
+            { type: '选择', q: '《红楼梦》甲戌本、庚辰本等指的是什么？', options: ['出版年份', '收藏者', '版本类型', '以上都是'], a: 'A', note: '甲戌本、庚辰本等是以年份命名的脂评本版本。' },
+            { type: '选择', q: '《三国演义》"尊刘贬曹"的倾向在哪个版本中最为明显？', options: ['嘉靖本', '毛评本', '李卓吾评本', '罗贯中原本'], a: 'B', note: '毛评本大大加强了尊刘贬曹的倾向。' },
+            { type: '选择', q: '《水浒传》一百二十回本中增加了什么内容？', options: ['征辽', '征田虎', '征王庆', '以上都有'], a: 'D', note: '一百二十回本增加了征辽、征田虎、征王庆等内容。' },
+            { type: '填空', q: '《红楼梦》的版本研究中，甲戌本、庚辰本等属于_________系统。', a: '脂评本', note: '脂评本是研究《红楼梦》原貌的重要依据。' },
+            { type: '填空', q: '《三国演义》毛评本加强了_________的倾向。', a: '尊刘贬曹', note: '毛评本对刘备集团的正面塑造更加突出。' },
+            { type: '填空', q: '金圣叹评点的《水浒传》以_________为界截断。', a: '大聚义', note: '金圣叹认为大聚义后是续作，故删去。' },
+            { type: '填空', q: '《红楼梦》后四十回一般认为是_________续写。', a: '高鹗', note: '后四十回作者问题至今仍有争议。' },
+            { type: '填空', q: '《西游记》世德堂本是现存_________的刻本。', a: '最早', note: '世德堂本对研究《西游记》成书过程有重要价值。' },
+            { type: '填空', q: '《水浒传》七十回本又称_________本。', a: '贯华堂', note: '贯华堂是金圣叹评点本的刻书堂号。' },
+            { type: '填空', q: '版本演变研究是四大名著研究的_________内容。', a: '重要', note: '版本研究有助于理解名著的成书过程和艺术成就。' },
+            
+            // （四）文化影响
+            { type: '选择', q: '四大名著对中国文学的最大影响是？', options: ['开创小说体裁', '提高小说地位', '影响后世创作', '以上都是'], a: 'D', note: '四大名著对中国文学产生了全方位的影响。' },
+            { type: '选择', q: '《三国演义》对后世的影响主要体现在？', options: ['历史小说创作', '戏曲改编', '民间信仰', '以上都是'], a: 'D', note: '《三国演义》对历史小说、戏曲、民间信仰都有深远影响。' },
+            { type: '选择', q: '关羽被后世尊为"武圣"与哪部名著有关？', options: ['《水浒传》', '《三国演义》', '《西游记》', '《红楼梦》'], a: 'B', note: '《三国演义》塑造了关羽忠义形象，影响了后世对关羽的崇拜。' },
+            { type: '选择', q: '《水浒传》对后世的影响主要体现在？', options: ['英雄小说创作', '反抗精神', '戏曲改编', '以上都是'], a: 'D', note: '《水浒传》对英雄小说、反抗精神、戏曲都有深远影响。' },
+            { type: '选择', q: '《西游记》对后世的影响主要体现在？', options: ['神魔小说创作', '影视改编', '民间信仰', '以上都是'], a: 'D', note: '《西游记》对神魔小说、影视、民间信仰都有深远影响。' },
+            { type: '选择', q: '孙悟空形象对后世文化的影响是？', options: ['影视形象', '动漫形象', '文化符号', '以上都是'], a: 'D', note: '孙悟空成为中国文化的标志性符号。' },
+            { type: '选择', q: '《红楼梦》对后世的影响主要体现在？', options: ['文学创作', '红学研究', '文化现象', '以上都是'], a: 'D', note: '《红楼梦》催生了红学，影响了文学创作和文化研究。' },
+            { type: '选择', q: '"红学"专门研究哪部名著？', options: ['《三国演义》', '《水浒传》', '《西游记》', '《红楼梦》'], a: 'D', note: '红学是专门研究《红楼梦》的学问。' },
+            { type: '选择', q: '四大名著对戏曲的影响是？', options: ['提供题材', '塑造人物', '丰富情节', '以上都是'], a: 'D', note: '四大名著是戏曲创作的重要题材来源。' },
+            { type: '选择', q: '四大名著对影视的影响是？', options: ['提供题材', '塑造经典形象', '影响审美', '以上都是'], a: 'D', note: '四大名著被多次改编为影视作品，影响深远。' },
+            { type: '填空', q: '关羽被后世尊为"_________"，与《三国演义》的塑造有关。', a: '武圣', note: '《三国演义》塑造了关羽忠义形象。' },
+            { type: '填空', q: '"_________"是专门研究《红楼梦》的学问。', a: '红学', note: '红学是研究《红楼梦》的专门学问。' },
+            { type: '填空', q: '孙悟空成为中国文化的_________符号。', a: '标志性', note: '孙悟空形象深入人心，成为文化符号。' },
+            { type: '填空', q: '四大名著是_________创作的重要题材来源。', a: '戏曲', note: '戏曲中有大量四大名著题材的剧目。' },
+            { type: '填空', q: '四大名著被多次改编为_________作品。', a: '影视', note: '影视改编使四大名著更加深入人心。' },
+            { type: '简答', q: '简述四大名著的成书过程有何共同特点。', a: '共同特点：1.都经历了从民间流传到文人创作的过程（除《红楼梦》外）；2.都有多个版本系统，经过后人整理加工；3.都融合了历史、传说和作者想象；4.都经过长期的积累和完善。这些特点使四大名著具有深厚的文化底蕴和艺术价值。', note: '四大名著的成书过程体现了中国古典小说发展的典型路径。' },
+            { type: '简答', q: '分析四大名著对后世文化的深远影响。', a: '影响：1.文学方面：开创了历史演义、英雄传奇、神魔小说、世情小说等体裁；2.戏曲方面：提供了丰富的题材和人物形象；3.民间信仰：关羽、孙悟空等成为民间崇拜对象；4.影视改编：多次被改编，影响了几代人；5.学术研究：催生了红学等专门学问。四大名著已成为中华文化的重要组成部分。', note: '四大名著的影响渗透到中国文化的方方面面。' },
+            { type: '简答', q: '比较四大名著在成书方式上的异同。', a: '相同点：都是章回体长篇小说，都经过作者的艺术加工。不同点：《三国演义》《水浒传》《西游记》都有长期的民间流传过程，是在话本、戏曲基础上创作；《红楼梦》主要是曹雪芹独立创作，没有民间流传基础。这种差异使《红楼梦》具有更强的个人风格和原创性。', note: '成书方式的差异影响了四大名著的艺术风格。' },
+            
+            // ==================== 四、综合拓展题目 ====================
+            // （一）四大名著比较
+            { type: '选择', q: '四大名著中，篇幅最长的是？', options: ['《三国演义》', '《水浒传》', '《西游记》', '《红楼梦》'], a: 'D', note: '《红楼梦》约一百二十回，是四大名著中篇幅最长的。' },
+            { type: '选择', q: '四大名著中，人物最多的是？', options: ['《三国演义》', '《水浒传》', '《西游记》', '《红楼梦》'], a: 'D', note: '《红楼梦》人物多达数百人，是四大名著中人物最多的。' },
+            { type: '选择', q: '四大名著中，属于历史演义的是？', options: ['《三国演义》', '《水浒传》', '《西游记》', '《红楼梦》'], a: 'A', note: '《三国演义》是历史演义小说的代表作。' },
+            { type: '选择', q: '四大名著中，属于英雄传奇的是？', options: ['《三国演义》', '《水浒传》', '《西游记》', '《红楼梦》'], a: 'B', note: '《水浒传》是英雄传奇小说的代表作。' },
+            { type: '选择', q: '四大名著中，属于神魔小说的是？', options: ['《三国演义》', '《水浒传》', '《西游记》', '《红楼梦》'], a: 'C', note: '《西游记》是神魔小说的代表作。' },
+            { type: '选择', q: '四大名著中，属于世情小说的是？', options: ['《三国演义》', '《水浒传》', '《西游记》', '《红楼梦》'], a: 'D', note: '《红楼梦》是世情小说的巅峰之作。' },
+            { type: '选择', q: '四大名著中，以悲剧结局为主的是？', options: ['《三国演义》', '《水浒传》', '《西游记》', '《红楼梦》'], a: 'D', note: '《红楼梦》以悲剧结局为主，展现了封建家族的衰落。' },
+            { type: '选择', q: '四大名著中，以喜剧结局为主的是？', options: ['《三国演义》', '《水浒传》', '《西游记》', '《红楼梦》'], a: 'C', note: '《西游记》以取经成功、修成正果的喜剧结局为主。' },
+            { type: '选择', q: '四大名著中，文学成就最高的是？', options: ['《三国演义》', '《水浒传》', '《西游记》', '《红楼梦》'], a: 'D', note: '《红楼梦》被公认为中国古典小说的巅峰之作。' },
+            { type: '选择', q: '四大名著中，对封建社会批判最深刻的是？', options: ['《三国演义》', '《水浒传》', '《西游记》', '《红楼梦》'], a: 'D', note: '《红楼梦》对封建社会的批判最为深刻和全面。' },
+            { type: '填空', q: '四大名著中，《_________》是历史演义小说的代表作。', a: '三国演义', note: '历史演义以历史事件为框架进行艺术创作。' },
+            { type: '填空', q: '四大名著中，《_________》是英雄传奇小说的代表作。', a: '水浒传', note: '英雄传奇以英雄人物为中心展开故事。' },
+            { type: '填空', q: '四大名著中，《_________》是神魔小说的代表作。', a: '西游记', note: '神魔小说以神仙妖魔为题材。' },
+            { type: '填空', q: '四大名著中，《_________》是世情小说的巅峰之作。', a: '红楼梦', note: '世情小说以日常生活和人情世态为题材。' },
+            { type: '填空', q: '四大名著中，文学成就最高的是《_________》。', a: '红楼梦', note: '《红楼梦》被誉为中国古典小说的巅峰。' },
+            
+            // （二）四大名著中的经典人物
+            { type: '选择', q: '四大名著中，被称为"智绝"的人物是？', options: ['诸葛亮', '吴用', '孙悟空', '王熙凤'], a: 'A', note: '诸葛亮被《三国演义》塑造为智慧的化身，被称为"智绝"。' },
+            { type: '选择', q: '四大名著中，被称为"义绝"的人物是？', options: ['刘备', '宋江', '关羽', '林冲'], a: 'C', note: '关羽被《三国演义》塑造为忠义的化身，被称为"义绝"。' },
+            { type: '选择', q: '四大名著中，被称为"奸绝"的人物是？', options: ['董卓', '高俅', '曹操', '贾雨村'], a: 'C', note: '曹操被《三国演义》塑造为奸诈的化身，被称为"奸绝"。' },
+            { type: '选择', q: '四大名著中，最具反抗精神的人物是？', options: ['李逵', '孙悟空', '林黛玉', '武松'], a: 'B', note: '孙悟空大闹天宫，是最具反抗精神的人物形象。' },
+            { type: '选择', q: '四大名著中，最具悲剧色彩的人物是？', options: ['林冲', '林黛玉', '诸葛亮', '宋江'], a: 'B', note: '林黛玉是《红楼梦》中最具悲剧色彩的人物。' },
+            { type: '选择', q: '四大名著中，最具喜剧色彩的人物是？', options: ['猪八戒', '李逵', '刘姥姥', '张飞'], a: 'A', note: '猪八戒是《西游记》中的喜剧人物，形象生动有趣。' },
+            { type: '选择', q: '四大名著中，最具理想主义色彩的人物是？', options: ['刘备', '宋江', '唐僧', '贾宝玉'], a: 'C', note: '唐僧一心向佛，是理想主义的代表。' },
+            { type: '选择', q: '四大名著中，最具现实主义色彩的人物是？', options: ['曹操', '宋江', '王熙凤', '孙悟空'], a: 'C', note: '王熙凤精明能干，是现实主义的代表。' },
+            { type: '填空', q: '诸葛亮被称为"_________"，是智慧的化身。', a: '智绝', note: '《三国演义》塑造了诸葛亮的智慧形象。' },
+            { type: '填空', q: '关羽被称为"_________"，是忠义的化身。', a: '义绝', note: '《三国演义》塑造了关羽的忠义形象。' },
+            { type: '填空', q: '曹操被称为"_________"，是奸诈的化身。', a: '奸绝', note: '《三国演义》塑造了曹操的奸雄形象。' },
+            { type: '填空', q: '孙悟空大闹天宫，是最具_________精神的人物。', a: '反抗', note: '孙悟空的反抗精神深入人心。' },
+            { type: '填空', q: '林黛玉是《红楼梦》中最具_________色彩的人物。', a: '悲剧', note: '林黛玉的悲剧命运令人唏嘘。' },
+            { type: '填空', q: '猪八戒是《西游记》中的_________人物。', a: '喜剧', note: '猪八戒的形象生动有趣，充满喜剧色彩。' },
+            
+            // （三）四大名著中的经典情节
+            { type: '选择', q: '《三国演义》中最著名的战役是？', options: ['官渡之战', '赤壁之战', '夷陵之战', '汉中之战'], a: 'B', note: '赤壁之战是《三国演义》中最著名的战役。' },
+            { type: '选择', q: '《水浒传》中最著名的情节是？', options: ['武松打虎', '智取生辰纲', '三打祝家庄', '林冲风雪山神庙'], a: 'B', note: '智取生辰纲是《水浒传》中最著名的情节。' },
+            { type: '选择', q: '《西游记》中最著名的情节是？', options: ['大闹天宫', '三打白骨精', '真假美猴王', '火焰山'], a: 'A', note: '大闹天宫是《西游记》中最著名的情节。' },
+            { type: '选择', q: '《红楼梦》中最著名的情节是？', options: ['黛玉葬花', '宝玉挨打', '元春省亲', '黛玉焚稿'], a: 'A', note: '黛玉葬花是《红楼梦》中最著名的情节。' },
+            { type: '选择', q: '四大名著中，最体现智慧的是哪个情节？', options: ['空城计', '智取生辰纲', '三打白骨精', '黛玉葬花'], a: 'A', note: '空城计体现了诸葛亮的智慧。' },
+            { type: '选择', q: '四大名著中，最体现忠义的是哪个情节？', options: ['千里走单骑', '宋江招安', '唐僧取经', '宝玉出家'], a: 'A', note: '千里走单骑体现了关羽的忠义。' },
+            { type: '选择', q: '四大名著中，最体现反抗精神的是哪个情节？', options: ['大闹天宫', '武松打虎', '林冲风雪山神庙', '黛玉焚稿'], a: 'A', note: '大闹天宫体现了孙悟空的反抗精神。' },
+            { type: '选择', q: '四大名著中，最体现悲剧色彩的是哪个情节？', options: ['五丈原', '宋江饮毒酒', '三打白骨精', '黛玉焚稿'], a: 'D', note: '黛玉焚稿是《红楼梦》中最具悲剧色彩的情节。' },
+            { type: '填空', q: '《三国演义》中最著名的战役是_________之战。', a: '赤壁', note: '赤壁之战奠定了三国鼎立的格局。' },
+            { type: '填空', q: '《水浒传》中最著名的情节是智取_________。', a: '生辰纲', note: '智取生辰纲是《水浒传》的经典情节。' },
+            { type: '填空', q: '《西游记》中最著名的情节是大闹_________。', a: '天宫', note: '大闹天宫展现了孙悟空的反抗精神。' },
+            { type: '填空', q: '《红楼梦》中最著名的情节是黛玉_________。', a: '葬花', note: '黛玉葬花是《红楼梦》的经典意象。' },
+            { type: '填空', q: '空城计体现了_________的智慧。', a: '诸葛亮', note: '空城计是诸葛亮的经典智谋。' },
+            { type: '填空', q: '千里走单骑体现了_________的忠义。', a: '关羽', note: '千里走单骑是关羽忠义精神的体现。' },
+            
+            // （四）四大名著的艺术特色
+            { type: '选择', q: '《三国演义》最突出的艺术特色是？', options: ['战争描写', '人物塑造', '语言风格', '结构布局'], a: 'A', note: '《三国演义》以战争描写见长。' },
+            { type: '选择', q: '《水浒传》最突出的艺术特色是？', options: ['人物塑造', '情节安排', '语言风格', '结构布局'], a: 'A', note: '《水浒传》以人物塑造见长，塑造了众多鲜活的人物形象。' },
+            { type: '选择', q: '《西游记》最突出的艺术特色是？', options: ['想象奇特', '人物塑造', '语言风格', '结构布局'], a: 'A', note: '《西游记》以想象奇特见长，创造了奇幻的神魔世界。' },
+            { type: '选择', q: '《红楼梦》最突出的艺术特色是？', options: ['人物塑造', '语言风格', '结构布局', '以上都是'], a: 'D', note: '《红楼梦》在人物塑造、语言风格、结构布局等方面都达到了高峰。' },
+            { type: '选择', q: '四大名著中，语言最通俗的是？', options: ['《三国演义》', '《水浒传》', '《西游记》', '《红楼梦》'], a: 'B', note: '《水浒传》语言通俗生动，接近口语。' },
+            { type: '选择', q: '四大名著中，语言最典雅的是？', options: ['《三国演义》', '《水浒传》', '《西游记》', '《红楼梦》'], a: 'D', note: '《红楼梦》语言典雅优美，诗词歌赋俱佳。' },
+            { type: '选择', q: '四大名著中，结构最复杂的是？', options: ['《三国演义》', '《水浒传》', '《西游记》', '《红楼梦》'], a: 'D', note: '《红楼梦》结构复杂，草蛇灰线，伏笔千里。' },
+            { type: '选择', q: '四大名著中，人物塑造最成功的是？', options: ['《三国演义》', '《水浒传》', '《西游记》', '《红楼梦》'], a: 'D', note: '《红楼梦》人物塑造最为成功，人物性格丰满复杂。' },
+            { type: '填空', q: '《三国演义》以_________描写见长。', a: '战争', note: '《三国演义》描写了众多精彩的战争场面。' },
+            { type: '填空', q: '《水浒传》以_________塑造见长。', a: '人物', note: '《水浒传》塑造了众多鲜活的人物形象。' },
+            { type: '填空', q: '《西游记》以_________奇特见长。', a: '想象', note: '《西游记》创造了奇幻的神魔世界。' },
+            { type: '填空', q: '《红楼梦》在人物塑造、语言风格、结构布局等方面都达到了_________。', a: '高峰', note: '《红楼梦》是中国古典小说的艺术高峰。' },
+            { type: '填空', q: '《水浒传》语言通俗生动，接近_________。', a: '口语', note: '《水浒传》的语言风格影响了后世小说。' },
+            { type: '填空', q: '《红楼梦》语言典雅优美，_________俱佳。', a: '诗词歌赋', note: '《红楼梦》中的诗词具有很高的文学价值。' },
+            
+            // （五）四大名著的思想内涵
+            { type: '选择', q: '《三国演义》的核心思想是？', options: ['忠义', '仁政', '智谋', '以上都是'], a: 'D', note: '《三国演义》体现了忠义、仁政、智谋等多种思想。' },
+            { type: '选择', q: '《水浒传》的核心思想是？', options: ['忠义', '反抗', '招安', '以上都是'], a: 'D', note: '《水浒传》体现了忠义、反抗、招安等复杂思想。' },
+            { type: '选择', q: '《西游记》的核心思想是？', options: ['修行', '反抗', '取经', '以上都是'], a: 'D', note: '《西游记》体现了修行、反抗、取经等多种思想。' },
+            { type: '选择', q: '《红楼梦》的核心思想是？', options: ['爱情', '悲剧', '批判', '以上都是'], a: 'D', note: '《红楼梦》体现了爱情、悲剧、批判等多种思想。' },
+            { type: '选择', q: '四大名著中，最体现儒家思想的是？', options: ['《三国演义》', '《水浒传》', '《西游记》', '《红楼梦》'], a: 'A', note: '《三国演义》体现了儒家的忠义、仁政思想。' },
+            { type: '选择', q: '四大名著中，最体现佛教思想的是？', options: ['《三国演义》', '《水浒传》', '《西游记》', '《红楼梦》'], a: 'C', note: '《西游记》以取经为主线，体现了佛教思想。' },
+            { type: '选择', q: '四大名著中，最体现道家思想的是？', options: ['《三国演义》', '《水浒传》', '《西游记》', '《红楼梦》'], a: 'D', note: '《红楼梦》的"色空"观念体现了道家思想。' },
+            { type: '选择', q: '四大名著中，对封建社会批判最深刻的是？', options: ['《三国演义》', '《水浒传》', '《西游记》', '《红楼梦》'], a: 'D', note: '《红楼梦》对封建社会的批判最为深刻。' },
+            { type: '填空', q: '《三国演义》体现了_________、仁政、智谋等多种思想。', a: '忠义', note: '忠义是《三国演义》的核心思想之一。' },
+            { type: '填空', q: '《水浒传》体现了忠义、反抗、_________等复杂思想。', a: '招安', note: '招安是《水浒传》思想内涵的复杂之处。' },
+            { type: '填空', q: '《西游记》以_________为主线，体现了佛教思想。', a: '取经', note: '取经是《西游记》的核心情节。' },
+            { type: '填空', q: '《红楼梦》的"_________"观念体现了道家思想。', a: '色空', note: '色空观念是《红楼梦》的重要思想。' },
+            { type: '填空', q: '四大名著中，对封建社会批判最深刻的是《_________》。', a: '红楼梦', note: '《红楼梦》深刻揭示了封建社会的腐朽。' },
+            { type: '填空', q: '四大名著的思想内涵_________，值得深入探讨。', a: '丰富', note: '四大名著的思想内涵是文学研究的重要课题。' },
+            { type: '简答', q: '比较四大名著在思想内涵上的异同。', a: '相同点：都体现了中国传统文化的核心价值观，如忠义、仁爱等。不同点：《三国演义》侧重政治理想和忠义精神；《水浒传》体现反抗与招安的矛盾；《西游记》融合儒释道，强调修行；《红楼梦》深刻批判封建社会，体现悲剧意识。四大名著从不同角度反映了中国社会的复杂面貌。', note: '四大名著的思想内涵各有侧重，共同构成了中国古典文学的丰富图景。' },
+            { type: '简答', q: '分析四大名著在中国文学史上的地位。', a: '地位：1.开创性：《三国演义》开创历史演义，《水浒传》开创英雄传奇，《西游记》开创神魔小说，《红楼梦》达到世情小说巅峰；2.艺术成就：代表了章回体小说的最高成就；3.文化影响：深刻影响了中国人的价值观和审美观；4.世界意义：是世界文学宝库的重要组成部分。四大名著是中国文学的瑰宝。', note: '四大名著是中国古典文学的巅峰之作。' }
+        ];
+
+        let settings = {
+            mode: 'review',
+            count: 25
+        };
+
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let answered = false;
+        let skippedIndices = new Set();
+        let questionStates = {};
+        let autoShowAnalysis = false;
+        let smartQuiz = false;
+        let isWrongBookMode = false;
+        let currentFilter = 'all';
+
+        // 错题本管理器
+        const WrongBookManager = {
+            STORAGE_KEY: 'quiz_wrong_book_v1',
+            
+            getAll() {
+                try {
+                    const data = localStorage.getItem(this.STORAGE_KEY);
+                    return data ? JSON.parse(data) : [];
+                } catch (e) {
+                    console.error('读取错题本失败:', e);
+                    return [];
+                }
+            },
+            
+            save(data) {
+                try {
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+                } catch (e) {
+                    console.error('保存错题本失败:', e);
+                }
+            },
+            
+            generateId(question) {
+                let str = question.q;
+                if (question.options) {
+                    str += question.options.join('');
+                }
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) {
+                    const char = str.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + char;
+                    hash = hash & hash;
+                }
+                return Math.abs(hash).toString(36);
+            },
+            
+            add(question, mode, type, userAnswer) {
+                const data = this.getAll();
+                const id = this.generateId(question);
+                const existingIndex = data.findIndex(item => item.id === id);
+                
+                if (existingIndex >= 0) {
+                    data[existingIndex].count = (data[existingIndex].count || 1) + 1;
+                    data[existingIndex].timestamp = Date.now();
+                    data[existingIndex].userAnswer = userAnswer;
+                    if (type === 'wrong') {
+                        data[existingIndex].type = 'wrong';
+                    }
+                } else {
+                    data.push({
+                        id: id,
+                        question: question,
+                        mode: mode,
+                        type: type,
+                        userAnswer: userAnswer,
+                        timestamp: Date.now(),
+                        count: 1
+                    });
+                }
+                
+                this.save(data);
+                return id;
+            },
+            
+            remove(id) {
+                const data = this.getAll();
+                const filtered = data.filter(item => item.id !== id);
+                this.save(filtered);
+            },
+            
+            removeByQuestion(question) {
+                const id = this.generateId(question);
+                this.remove(id);
+            },
+            
+            clear() {
+                this.save([]);
+            },
+            
+            getStats() {
+                const data = this.getAll();
+                return {
+                    total: data.length,
+                    wrong: data.filter(item => item.type === 'wrong').length,
+                    skipped: data.filter(item => item.type === 'skipped').length
+                };
+            },
+            
+            getFiltered(filter) {
+                const data = this.getAll();
+                if (filter === 'all') return data;
+                return data.filter(item => item.type === filter);
+            }
+        };
+
+        const QuestionHistoryManager = {
+            STORAGE_KEY: 'quiz_history_v1',
+            
+            getAll() {
+                try {
+                    const data = localStorage.getItem(this.STORAGE_KEY);
+                    return data ? JSON.parse(data) : {};
+                } catch (e) {
+                    console.error('读取答题历史失败:', e);
+                    return {};
+                }
+            },
+            
+            save(data) {
+                try {
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+                } catch (e) {
+                    console.error('保存答题历史失败:', e);
+                }
+            },
+            
+            generateId(question) {
+                return WrongBookManager.generateId(question);
+            },
+            
+            recordAttempt(question, isCorrect) {
+                const data = this.getAll();
+                const id = this.generateId(question);
+                
+                if (!data[id]) {
+                    data[id] = {
+                        totalAttempts: 0,
+                        correctCount: 0,
+                        wrongCount: 0,
+                        lastAttemptTime: 0
+                    };
+                }
+                
+                data[id].totalAttempts++;
+                data[id].lastAttemptTime = Date.now();
+                
+                if (isCorrect) {
+                    data[id].correctCount++;
+                } else {
+                    data[id].wrongCount++;
+                }
+                
+                this.save(data);
+                
+                this.updateCategoryMastery(question, isCorrect);
+            },
+            
+            getQuestionCategory(question) {
+                const q = question.q || '';
+                const keywords = {
+                    honglou_character: ['贾宝玉', '林黛玉', '薛宝钗', '王熙凤', '史湘云', '贾探春', '贾迎春', '贾惜春', '李纨', '秦可卿', '妙玉', '巧姐', '金陵十二钗', '晴雯', '袭人', '紫鹃', '鸳鸯', '平儿', '香菱', '尤二姐', '尤三姐', '贾母', '王夫人', '贾政', '贾赦', '贾琏', '贾环', '赵姨娘', '薛姨妈', '薛蟠', '贾元春', '贾兰', '贾蓉', '贾珍', '尤氏', '龄官', '藕官', '芳官', '麝月', '秋纹', '碧痕', '小红', '司棋', '入画', '侍书', '抱琴', '坠儿', '佳蕙', '坠儿', '五儿'],
+                    sanguo_strategist: ['诸葛亮', '孔明', '周瑜', '鲁肃', '荀彧', '荀攸', '郭嘉', '贾诩', '程昱', '司马懿', '庞统', '法正', '徐庶', '陆逊', '吕蒙', '诸葛瑾', '诸葛恪', '姜维', '邓艾', '钟会', '陈宫', '田丰', '沮授', '许攸', '审配', '逢纪', '李儒', '董昭', '刘晔', '满宠', '杨修', '蒋干', '蒯越', '蒯良', '马良', '马谡', '费祎', '董允', '蒋琬', '杨仪', '魏延', '十胜十败', '隆中对', '空城计', '苦肉计', '连环计', '反间计'],
+                    shuihu_character: ['宋江', '卢俊义', '吴用', '公孙胜', '关胜', '林冲', '秦明', '呼延灼', '花荣', '柴进', '李应', '朱仝', '鲁智深', '武松', '董平', '张清', '杨志', '徐宁', '索超', '戴宗', '刘唐', '李逵', '史进', '穆弘', '雷横', '李俊', '阮小二', '张横', '阮小五', '张顺', '阮小七', '杨雄', '石秀', '解珍', '解宝', '燕青', '朱武', '黄信', '孙立', '宣赞', '郝思文', '韩滔', '彭玘', '单廷珪', '魏定国', '萧让', '裴宣', '欧鹏', '邓飞', '燕顺', '杨林', '凌振', '蒋敬', '吕方', '郭盛', '安道全', '皇甫端', '王英', '扈三娘', '鲍旭', '樊瑞', '孔明', '孔亮', '项充', '李衮', '金大坚', '马麟', '童威', '童猛', '孟康', '侯健', '陈达', '杨春', '郑天寿', '陶宗旺', '宋清', '乐和', '龚旺', '丁得孙', '穆春', '曹正', '宋万', '杜迁', '薛永', '施恩', '李忠', '周通', '汤隆', '杜兴', '邹渊', '邹润', '朱贵', '朱富', '蔡福', '蔡庆', '李立', '李云', '焦挺', '石勇', '孙新', '顾大嫂', '张青', '孙二娘', '王定六', '郁保四', '白胜', '时迁', '段景住', '晁盖', '高俅', '蔡京', '童贯', '杨戬', '王伦', '史文恭', '曾头市', '祝家庄', '扈家庄', '李家庄', '一百零八将', '一百零八人', '108将'],
+                    xiyou_plot: ['大闹天宫', '五行山', '高老庄', '流沙河', '白骨精', '三打白骨精', '火焰山', '芭蕉扇', '铁扇公主', '牛魔王', '红孩儿', '女儿国', '真假美猴王', '六耳猕猴', '盘丝洞', '蜘蛛精', '狮驼岭', '狮驼洞', '金角大王', '银角大王', '黄风怪', '黑熊精', '白龙马', '通天河', '人参果', '镇元大仙', '五庄观', '蟠桃', '瑶池', '凌霄殿', '玉帝', '王母娘娘', '太上老君', '观音菩萨', '如来佛祖', '唐僧', '孙悟空', '猪八戒', '沙和尚', '沙僧', '取经', '九九八十一难', '八十一难', '七十二变', '筋斗云', '金箍棒', '九齿钉耙', '降妖宝杖', '紧箍咒', '雷音寺', '灵山', '西天', '东土', '长安', '花果山', '水帘洞'],
+                    poetry: ['葬花吟', '咏白海棠', '咏菊', '秋窗风雨夕', '飞鸟各投林', '诗词', '诗句', '下一句', '上一句', '填空', '诗中', '词中', '对联', '判词', '曲子', '满江红', '念奴娇', '水调歌头', '沁园春', '蝶恋花', '虞美人', '菩萨蛮', '清平乐', '浣溪沙', '西江月', '临江仙', '蝶恋花', '鹧鸪天', '踏莎行', '青玉案', '摸鱼儿', '贺新郎', '永遇乐', '南乡子', '破阵子', '江城子', '定风波', '蝶恋花', '蝶恋花', '一剪梅', '声声慢', '醉花阴', '如梦令', '点绛唇', '浣溪沙', '菩萨蛮', '减字木兰花', '蝶恋花', '渔家傲', '苏幕遮', '蝶恋花', '蝶恋花', '蝶恋花']
+                };
+                
+                for (const [category, words] of Object.entries(keywords)) {
+                    for (const word of words) {
+                        if (q.includes(word)) {
+                            return category;
+                        }
+                    }
+                }
+                
+                if (q.includes('红楼梦') || q.includes('贾府') || q.includes('大观园') || q.includes('怡红院') || q.includes('潇湘馆') || q.includes('蘅芜苑')) {
+                    return 'honglou_character';
+                }
+                if (q.includes('三国') || q.includes('曹操') || q.includes('刘备') || q.includes('孙权') || q.includes('关羽') || q.includes('张飞') || q.includes('赵云') || q.includes('黄忠') || q.includes('马超') || q.includes('魏延')) {
+                    return 'sanguo_strategist';
+                }
+                if (q.includes('水浒') || q.includes('梁山') || q.includes('好汉') || q.includes('水浒传')) {
+                    return 'shuihu_character';
+                }
+                if (q.includes('西游') || q.includes('西游记') || q.includes('取经') || q.includes('妖怪') || q.includes('妖精')) {
+                    return 'xiyou_plot';
+                }
+                
+                return null;
+            },
+            
+            updateCategoryMastery(question, isCorrect) {
+                const category = this.getQuestionCategory(question);
+                if (!category) return;
+                
+                const MASTERY_KEY = 'category_mastery_v1';
+                const CATEGORY_STATS_KEY = 'category_stats_v1';
+                
+                try {
+                    let stats = {};
+                    const statsData = localStorage.getItem(CATEGORY_STATS_KEY);
+                    if (statsData) {
+                        stats = JSON.parse(statsData);
+                    }
+                    
+                    if (!stats[category]) {
+                        stats[category] = { total: 0, correct: 0 };
+                    }
+                    
+                    stats[category].total++;
+                    if (isCorrect) {
+                        stats[category].correct++;
+                    }
+                    
+                    localStorage.setItem(CATEGORY_STATS_KEY, JSON.stringify(stats));
+                    
+                    const mastery = stats[category].total > 0 
+                        ? stats[category].correct / stats[category].total 
+                        : 0;
+                    
+                    let masteryData = {};
+                    const masterySaved = localStorage.getItem(MASTERY_KEY);
+                    if (masterySaved) {
+                        masteryData = JSON.parse(masterySaved);
+                    }
+                    masteryData[category] = mastery;
+                    localStorage.setItem(MASTERY_KEY, JSON.stringify(masteryData));
+                } catch (e) {
+                    console.error('更新分类掌握度失败:', e);
+                }
+            },
+            
+            getHistory(question) {
+                const data = this.getAll();
+                const id = this.generateId(question);
+                return data[id] || null;
+            },
+            
+            getStats(allQuestions) {
+                const data = this.getAll();
+                let completed = 0;
+                let totalAttempts = 0;
+                let totalCorrect = 0;
+                
+                allQuestions.forEach(q => {
+                    const id = this.generateId(q);
+                    if (data[id]) {
+                        completed++;
+                        totalAttempts += data[id].totalAttempts;
+                        totalCorrect += data[id].correctCount;
+                    }
+                });
+                
+                return {
+                    completed,
+                    total: allQuestions.length,
+                    totalAttempts,
+                    totalCorrect,
+                    accuracy: totalAttempts > 0 ? Math.round((totalCorrect / totalAttempts) * 100) : 0
+                };
+            },
+            
+            clear() {
+                this.save({});
+            }
+        };
+
+        function updateHistoryStats() {
+            const allQuestions = [...reviewQuestions, ...extendQuestions];
+            const stats = QuestionHistoryManager.getStats(allQuestions);
+            document.getElementById('historyCompleted').textContent = stats.completed;
+            document.getElementById('historyTotal').textContent = stats.total;
+            document.getElementById('historyAccuracy').textContent = stats.accuracy + '%';
+        }
+
+        function selectMode(btn) {
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            settings.mode = btn.dataset.mode;
+        }
+
+        function openWrongBook() {
+            isWrongBookMode = false;
+            currentFilter = 'all';
+            updateWrongBookUI();
+            document.getElementById('wrongBookModal').classList.add('active');
+        }
+
+        function closeWrongBook() {
+            document.getElementById('wrongBookModal').classList.remove('active');
+        }
+
+        function updateWrongBookUI() {
+            const stats = WrongBookManager.getStats();
+            document.getElementById('totalWrongCount').textContent = stats.total;
+            document.getElementById('wrongCount').textContent = stats.wrong;
+            document.getElementById('skippedCount').textContent = stats.skipped;
+            
+            const startBtn = document.getElementById('startWrongBookQuizBtn');
+            startBtn.disabled = stats.total === 0;
+            
+            renderWrongBookList(currentFilter);
+        }
+
+        function renderWrongBookList(filter) {
+            const list = document.getElementById('wrongBookList');
+            const data = WrongBookManager.getFiltered(filter);
+            
+            if (data.length === 0) {
+                list.innerHTML = `
+                    <div class="wrong-book-empty">
+                        <div class="emoji">📚</div>
+                        <p>${filter === 'all' ? '暂时没有错题，继续保持这份严谨吧。' : '没有此类错题'}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = data.map(item => {
+                const question = item.question;
+                let answerDisplay = '';
+                
+                if (question.type === '选择') {
+                    const labels = ['A', 'B', 'C', 'D'];
+                    const correctIndex = question.a.charCodeAt(0) - 65;
+                    answerDisplay = `正确答案：${labels[correctIndex]}. ${question.options[correctIndex]}`;
+                } else {
+                    answerDisplay = `正确答案：${question.a}`;
+                }
+                
+                const modeText = item.mode === 'review' ? '复习模式' : '拓展模式';
+                const typeText = item.type === 'wrong' ? '答错' : '跳过';
+                const date = new Date(item.timestamp).toLocaleDateString('zh-CN');
+                
+                return `
+                    <div class="wrong-item ${item.type}" data-id="${item.id}">
+                        <div class="wrong-item-header">
+                            <span class="wrong-item-type ${item.type}">${typeText}</span>
+                            <span class="wrong-item-mode">${modeText} · ${date}</span>
+                        </div>
+                        <div class="wrong-item-question">${question.q}</div>
+                        <div class="wrong-item-answer">${answerDisplay}</div>
+                        <div class="wrong-item-meta">
+                            <span>错误次数：${item.count || 1}</span>
+                            <button class="wrong-item-delete" onclick="deleteWrongItem('${item.id}')">移除</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterWrongBook(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.wrong-book-filters .filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === filter);
+            });
+            renderWrongBookList(filter);
+        }
+
+        function deleteWrongItem(id) {
+            WrongBookManager.remove(id);
+            updateWrongBookUI();
+        }
+
+        function confirmClearWrongBook() {
+            if (confirm('确定要清空错题本吗？此操作不可恢复。')) {
+                WrongBookManager.clear();
+                updateWrongBookUI();
+            }
+        }
+
+        function startWrongBookQuiz() {
+            const data = WrongBookManager.getAll();
+            if (data.length === 0) {
+                alert('错题本是空的！');
+                return;
+            }
+            
+            isWrongBookMode = true;
+            currentQuestions = data.map(item => item.question);
+            currentIndex = 0;
+            score = 0;
+            answered = false;
+            skippedIndices = new Set();
+            questionStates = {};
+            
+            closeWrongBook();
+            document.querySelector('.settings-card').classList.add('hidden');
+            document.getElementById('resultContainer').classList.remove('active');
+            document.getElementById('quizContainer').classList.add('active');
+            
+            showQuestion();
+        }
+
+        function toggleAutoAnalysis() {
+            autoShowAnalysis = !autoShowAnalysis;
+            const btn = document.getElementById('autoAnalysisBtn');
+            if (autoShowAnalysis) {
+                btn.classList.add('selected');
+            } else {
+                btn.classList.remove('selected');
+            }
+        }
+
+        function toggleSmartQuiz() {
+            smartQuiz = !smartQuiz;
+            const btn = document.getElementById('smartQuizBtn');
+            if (smartQuiz) {
+                btn.classList.add('selected');
+            } else {
+                btn.classList.remove('selected');
+            }
+        }
+
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function startQuiz() {
+            const allQuestions = settings.mode === 'review' ? reviewQuestions : extendQuestions;
+            
+            if (allQuestions.length === 0) {
+                const modeName = settings.mode === 'review' ? '复习模式' : '拓展模式';
+                alert(`${modeName}题库暂无题目，敬请期待！`);
+                return;
+            }
+            
+            isWrongBookMode = false;
+            
+            if (smartQuiz) {
+                const wrongBookQuestions = WrongBookManager.getAll().map(item => item.question);
+                const wrongIds = new Set(wrongBookQuestions.map(q => QuestionHistoryManager.generateId(q)));
+                
+                const newQuestions = [];
+                const weakQuestions = [];
+                const otherQuestions = [];
+                
+                allQuestions.forEach(q => {
+                    const id = QuestionHistoryManager.generateId(q);
+                    if (wrongIds.has(id)) {
+                        return;
+                    }
+                    
+                    const history = QuestionHistoryManager.getHistory(q);
+                    if (!history) {
+                        newQuestions.push(q);
+                    } else {
+                        const accuracy = history.correctCount / history.totalAttempts;
+                        if (accuracy < 0.7) {
+                            weakQuestions.push({ q, accuracy });
+                        } else {
+                            otherQuestions.push(q);
+                        }
+                    }
+                });
+                
+                weakQuestions.sort((a, b) => a.accuracy - b.accuracy);
+                
+                const prioritized = [
+                    ...shuffleArray(wrongBookQuestions),
+                    ...shuffleArray(newQuestions),
+                    ...weakQuestions.map(item => item.q),
+                    ...shuffleArray(otherQuestions)
+                ];
+                
+                currentQuestions = prioritized.slice(0, Math.min(settings.count, prioritized.length));
+            } else {
+                currentQuestions = shuffleArray(allQuestions).slice(0, Math.min(settings.count, allQuestions.length));
+            }
+            
+            currentIndex = 0;
+            score = 0;
+            answered = false;
+            skippedIndices = new Set();
+            questionStates = {};
+            
+            document.querySelector('.settings-card').classList.add('hidden');
+            document.getElementById('resultContainer').classList.remove('active');
+            document.getElementById('quizContainer').classList.add('active');
+            
+            showQuestion();
+        }
+
+        function getTypeName(type) {
+            switch(type) {
+                case '选择': return '选择题';
+                case '填空': return '填空题';
+                case '简答': return '简答题';
+                default: return type;
+            }
+        }
+
+        function showQuestion() {
+            const question = currentQuestions[currentIndex];
+            const state = questionStates[currentIndex];
+            
+            let skippedText = '';
+            if (skippedIndices.size > 0) {
+                skippedText = `<span class="skipped-count">（已跳过 ${skippedIndices.size} 题）</span>`;
+            }
+            
+            let historyTag = '';
+            const history = QuestionHistoryManager.getHistory(question);
+            if (history) {
+                const accuracy = Math.round((history.correctCount / history.totalAttempts) * 100);
+                historyTag = `<span class="question-history-tag done">已做${history.totalAttempts}次 ${accuracy}%</span>`;
+            } else {
+                historyTag = `<span class="question-history-tag new">新</span>`;
+            }
+            
+            document.getElementById('questionNumber').innerHTML = `第 ${currentIndex + 1} 题 / 共 ${currentQuestions.length} 题 ${skippedText}<span class="question-type-tag">${getTypeName(question.type)}</span>${historyTag}`;
+            document.getElementById('questionMode').textContent = isWrongBookMode ? '错题复习' : (settings.mode === 'review' ? '复习模式' : '拓展模式');
+            document.getElementById('questionText').textContent = question.q;
+            
+            const progress = ((currentIndex) / currentQuestions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            
+            const optionsList = document.getElementById('optionsList');
+            optionsList.innerHTML = '';
+            
+            if (question.type === '选择') {
+                const labels = ['A', 'B', 'C', 'D'];
+                const correctIndex = question.a.charCodeAt(0) - 65;
+                question.options.forEach((option, index) => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option-item';
+                    optionDiv.textContent = `${labels[index]}. ${option}`;
+                    
+                    if (state && state.answered) {
+                        optionDiv.classList.add('disabled');
+                        if (index === correctIndex) {
+                            optionDiv.classList.add('correct');
+                        }
+                        if (index === state.selectedIndex && index !== correctIndex) {
+                            optionDiv.classList.add('wrong');
+                        }
+                    } else {
+                        optionDiv.onclick = () => selectOption(index, optionDiv);
+                    }
+                    
+                    optionsList.appendChild(optionDiv);
+                });
+            } else if (question.type === '填空') {
+                optionsList.innerHTML = `
+                    <input type="text" class="fill-input" id="fillInput" placeholder="请输入答案...">
+                    <button class="submit-btn" onclick="submitFill()">提交答案</button>
+                `;
+                
+                if (state && state.answered) {
+                    const input = document.getElementById('fillInput');
+                    input.value = state.userAnswer || '';
+                    input.disabled = true;
+                    if (state.isCorrect) {
+                        input.classList.add('correct');
+                    } else {
+                        input.classList.add('wrong');
+                    }
+                    document.querySelector('.submit-btn').disabled = true;
+                    
+                    const answerReveal = document.createElement('div');
+                    answerReveal.className = 'answer-reveal';
+                    answerReveal.innerHTML = `
+                        <div class="label">正确答案：${question.a}</div>
+                    `;
+                    optionsList.appendChild(answerReveal);
+                }
+            } else if (question.type === '简答') {
+                optionsList.innerHTML = `
+                    <textarea class="brief-textarea" id="briefInput" placeholder="请输入你的答案..."></textarea>
+                    <button class="submit-btn" onclick="submitBrief()">完成作答</button>
+                `;
+                
+                if (state && state.answered) {
+                    const textarea = document.getElementById('briefInput');
+                    textarea.value = state.userAnswer || '';
+                    textarea.disabled = true;
+                    document.querySelector('.submit-btn').disabled = true;
+                    
+                    const answerReveal = document.createElement('div');
+                    answerReveal.className = 'answer-reveal';
+                    answerReveal.innerHTML = `
+                        <div class="label">参考答案：</div>
+                        <div>${question.a}</div>
+                    `;
+                    optionsList.appendChild(answerReveal);
+                }
+            }
+            
+            if (state && state.answered) {
+                if (autoShowAnalysis) {
+                    document.getElementById('analysisText').textContent = question.note || '暂无解析';
+                    document.getElementById('analysisBox').classList.add('show');
+                }
+                answered = true;
+            } else {
+                document.getElementById('analysisBox').classList.remove('show');
+                answered = false;
+            }
+            
+            updateButtons();
+        }
+
+        function updateButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = currentIndex === 0;
+            
+            if (currentIndex === currentQuestions.length - 1) {
+                nextBtn.textContent = '查看结果';
+            } else {
+                nextBtn.textContent = '下一题';
+            }
+            
+            nextBtn.disabled = !answered;
+        }
+
+        function selectOption(index, element) {
+            if (answered) return;
+            answered = true;
+            
+            const question = currentQuestions[currentIndex];
+            const options = document.querySelectorAll('.option-item');
+            const correctIndex = question.a.charCodeAt(0) - 65;
+            const isCorrect = index === correctIndex;
+            const labels = ['A', 'B', 'C', 'D'];
+            
+            options.forEach((opt, i) => {
+                opt.classList.add('disabled');
+                if (i === correctIndex) {
+                    opt.classList.add('correct');
+                }
+            });
+            
+            if (!isCorrect) {
+                element.classList.add('wrong');
+                if (!isWrongBookMode) {
+                    WrongBookManager.add(question, settings.mode, 'wrong', labels[index]);
+                }
+            } else {
+                score++;
+                WrongBookManager.removeByQuestion(question);
+            }
+            
+            if (!isWrongBookMode) {
+                QuestionHistoryManager.recordAttempt(question, isCorrect);
+            }
+            
+            questionStates[currentIndex] = {
+                answered: true,
+                selectedIndex: index,
+                isCorrect: isCorrect
+            };
+            
+            skippedIndices.delete(currentIndex);
+            
+            if (autoShowAnalysis) {
+                document.getElementById('analysisText').textContent = question.note || '暂无解析';
+                document.getElementById('analysisBox').classList.add('show');
+            }
+            
+            updateButtons();
+            updateSkippedCount();
+        }
+
+        function submitFill() {
+            if (answered) return;
+            answered = true;
+            
+            const question = currentQuestions[currentIndex];
+            const input = document.getElementById('fillInput');
+            const userAnswer = input.value.trim();
+            const correctAnswer = question.a;
+            
+            const isCorrect = userAnswer === correctAnswer;
+            
+            if (isCorrect) {
+                score++;
+                input.classList.add('correct');
+                WrongBookManager.removeByQuestion(question);
+            } else {
+                input.classList.add('wrong');
+                if (!isWrongBookMode) {
+                    WrongBookManager.add(question, settings.mode, 'wrong', userAnswer);
+                }
+            }
+            
+            if (!isWrongBookMode) {
+                QuestionHistoryManager.recordAttempt(question, isCorrect);
+            }
+            
+            questionStates[currentIndex] = {
+                answered: true,
+                userAnswer: userAnswer,
+                isCorrect: isCorrect
+            };
+            
+            skippedIndices.delete(currentIndex);
+            
+            document.querySelector('.submit-btn').disabled = true;
+            
+            const answerReveal = document.createElement('div');
+            answerReveal.className = 'answer-reveal';
+            answerReveal.innerHTML = `
+                <div class="label">正确答案：${correctAnswer}</div>
+            `;
+            document.getElementById('optionsList').appendChild(answerReveal);
+            
+            if (autoShowAnalysis) {
+                document.getElementById('analysisText').textContent = question.note || '暂无解析';
+                document.getElementById('analysisBox').classList.add('show');
+            }
+            
+            updateButtons();
+            updateSkippedCount();
+        }
+
+        function submitBrief() {
+            if (answered) return;
+            answered = true;
+            
+            const question = currentQuestions[currentIndex];
+            const textarea = document.getElementById('briefInput');
+            const userAnswer = textarea.value.trim();
+            
+            questionStates[currentIndex] = {
+                answered: true,
+                userAnswer: userAnswer
+            };
+            
+            skippedIndices.delete(currentIndex);
+            
+            document.querySelector('.submit-btn').disabled = true;
+            
+            const answerReveal = document.createElement('div');
+            answerReveal.className = 'answer-reveal';
+            answerReveal.innerHTML = `
+                <div class="label">参考答案：</div>
+                <div>${question.a}</div>
+            `;
+            document.getElementById('optionsList').appendChild(answerReveal);
+            
+            if (autoShowAnalysis) {
+                document.getElementById('analysisText').textContent = question.note || '暂无解析';
+                document.getElementById('analysisBox').classList.add('show');
+            }
+            
+            updateButtons();
+            updateSkippedCount();
+        }
+
+        function updateSkippedCount() {
+            const question = currentQuestions[currentIndex];
+            let skippedText = '';
+            if (skippedIndices.size > 0) {
+                skippedText = `<span class="skipped-count">（已跳过 ${skippedIndices.size} 题）</span>`;
+            }
+            
+            let historyTag = '';
+            const history = QuestionHistoryManager.getHistory(question);
+            if (history) {
+                const accuracy = Math.round((history.correctCount / history.totalAttempts) * 100);
+                historyTag = `<span class="question-history-tag done">已做${history.totalAttempts}次 ${accuracy}%</span>`;
+            } else {
+                historyTag = `<span class="question-history-tag new">新</span>`;
+            }
+            
+            document.getElementById('questionNumber').innerHTML = `第 ${currentIndex + 1} 题 / 共 ${currentQuestions.length} 题 ${skippedText}<span class="question-type-tag">${getTypeName(question.type)}</span>${historyTag}`;
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                showQuestion();
+            }
+        }
+
+        function skipQuestion() {
+            if (!questionStates[currentIndex] || !questionStates[currentIndex].answered) {
+                skippedIndices.add(currentIndex);
+                const question = currentQuestions[currentIndex];
+                if (!isWrongBookMode) {
+                    WrongBookManager.add(question, settings.mode, 'skipped', '');
+                }
+            }
+            
+            if (currentIndex < currentQuestions.length - 1) {
+                currentIndex++;
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            
+            if (currentIndex >= currentQuestions.length) {
+                showResult();
+            } else {
+                showQuestion();
+            }
+        }
+
+        function showResult() {
+            document.getElementById('quizContainer').classList.remove('active');
+            document.getElementById('resultContainer').classList.add('active');
+            
+            const percentage = Math.round((score / currentQuestions.length) * 100);
+            document.getElementById('resultScore').textContent = `${score}/${currentQuestions.length}`;
+            document.getElementById('resultText').textContent = `正确率：${percentage}%`;
+            
+            document.getElementById('progressFill').style.width = '100%';
+            
+            checkAndNotifyBadges();
+        }
+
+        function restartQuiz() {
+            startQuiz();
+        }
+
+        function backToSettings() {
+            document.getElementById('quizContainer').classList.remove('active');
+            document.getElementById('resultContainer').classList.remove('active');
+            document.querySelector('.settings-card').classList.remove('hidden');
+            updateHistoryStats();
+        }
+
+        (function() {
+            const track = document.getElementById('sliderTrack');
+            const thumb = document.getElementById('sliderThumb');
+            const min = 5;
+            const max = 50;
+            const step = 5;
+            const steps = (max - min) / step + 1;
+            let isDragging = false;
+
+            function valueToPercent(value) {
+                return ((value - min) / (max - min)) * 100;
+            }
+
+            function percentToValue(percent) {
+                let rawValue = min + (percent / 100) * (max - min);
+                let steppedValue = Math.round(rawValue / step) * step;
+                return Math.max(min, Math.min(max, steppedValue));
+            }
+
+            function updateThumb(value) {
+                const percent = valueToPercent(value);
+                thumb.style.left = percent + '%';
+                settings.count = value;
+            }
+
+            function handleMove(clientX) {
+                const rect = track.getBoundingClientRect();
+                let percent = ((clientX - rect.left) / rect.width) * 100;
+                percent = Math.max(0, Math.min(100, percent));
+                const value = percentToValue(percent);
+                updateThumb(value);
+            }
+
+            thumb.addEventListener('mousedown', function(e) {
+                isDragging = true;
+                thumb.style.cursor = 'grabbing';
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousemove', function(e) {
+                if (isDragging) {
+                    handleMove(e.clientX);
+                }
+            });
+
+            document.addEventListener('mouseup', function() {
+                if (isDragging) {
+                    isDragging = false;
+                    thumb.style.cursor = 'grab';
+                }
+            });
+
+            thumb.addEventListener('touchstart', function(e) {
+                isDragging = true;
+                e.preventDefault();
+            });
+
+            document.addEventListener('touchmove', function(e) {
+                if (isDragging && e.touches.length > 0) {
+                    handleMove(e.touches[0].clientX);
+                }
+            });
+
+            document.addEventListener('touchend', function() {
+                isDragging = false;
+            });
+
+            track.addEventListener('click', function(e) {
+                if (e.target !== thumb) {
+                    handleMove(e.clientX);
+                }
+            });
+
+            updateThumb(settings.count);
+        })();
+
+        const BadgeChecker = {
+            BADGES: [
+                { id: '100_questions', name: '初试锋芒', desc: '累计答题100道', rarity: 'common', type: 'quiz', target: 100 },
+                { id: '500_questions', name: '勤学不辍', desc: '累计答题500道', rarity: 'common', type: 'quiz', target: 500 },
+                { id: '1000_questions', name: '博闻强识', desc: '累计答题1000道', rarity: 'rare', type: 'quiz', target: 1000 },
+                { id: '2000_questions', name: '学海无涯', desc: '累计答题2000道', rarity: 'epic', type: 'quiz', target: 2000 },
+                { id: 'honglou_characters', name: '金陵十二钗', desc: '红楼梦人物题全掌握', rarity: 'rare', type: 'mastery', category: 'honglou_character', target: 0.8 },
+                { id: 'sanguo_strategists', name: '卧龙凤雏', desc: '三国谋士题全掌握', rarity: 'rare', type: 'mastery', category: 'sanguo_strategist', target: 0.8 },
+                { id: 'shuihu_heroes', name: '一百零八将', desc: '水浒人物题全掌握', rarity: 'rare', type: 'mastery', category: 'shuihu_character', target: 0.8 },
+                { id: 'xiyou_plot', name: '九九八十一难', desc: '西游情节题全掌握', rarity: 'rare', type: 'mastery', category: 'xiyou_plot', target: 0.8 },
+                { id: 'poetry_master', name: '诗词雅士', desc: '诗词填空题全掌握', rarity: 'epic', type: 'mastery', category: 'poetry', target: 0.8 }
+            ],
+            
+            STORAGE_KEY: 'badge_data_v1',
+            HISTORY_KEY: 'quiz_history_v1',
+            MASTERY_KEY: 'category_mastery_v1',
+            
+            getData() {
+                try {
+                    const data = localStorage.getItem(this.STORAGE_KEY);
+                    return data ? JSON.parse(data) : {
+                        unlockedBadges: [],
+                        badgeUnlockTime: {},
+                        readingProgress: {
+                            xiyou: { stage1: false, stage2: false, stage3: false },
+                            sanguo: { stage1: false, stage2: false, stage3: false },
+                            shuihu: { stage1: false, stage2: false, stage3: false },
+                            honglou: { stage1: false, stage2: false, stage3: false }
+                        }
+                    };
+                } catch (e) {
+                    return {
+                        unlockedBadges: [],
+                        badgeUnlockTime: {},
+                        readingProgress: {
+                            xiyou: { stage1: false, stage2: false, stage3: false },
+                            sanguo: { stage1: false, stage2: false, stage3: false },
+                            shuihu: { stage1: false, stage2: false, stage3: false },
+                            honglou: { stage1: false, stage2: false, stage3: false }
+                        }
+                    };
+                }
+            },
+            
+            saveData(data) {
+                try {
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+                } catch (e) {
+                    console.error('保存勋章数据失败:', e);
+                }
+            },
+            
+            getTotalQuizCount() {
+                try {
+                    const data = localStorage.getItem(this.HISTORY_KEY);
+                    const history = data ? JSON.parse(data) : {};
+                    let total = 0;
+                    Object.values(history).forEach(item => {
+                        total += item.totalAttempts || 0;
+                    });
+                    return total;
+                } catch (e) {
+                    return 0;
+                }
+            },
+            
+            getCategoryMastery(category) {
+                try {
+                    const statsData = localStorage.getItem('category_stats_v1');
+                    if (statsData) {
+                        const stats = JSON.parse(statsData);
+                        if (stats[category] && stats[category].total > 0) {
+                            return stats[category].correct / stats[category].total;
+                        }
+                    }
+                    const data = localStorage.getItem(this.MASTERY_KEY);
+                    if (data) {
+                        const mastery = JSON.parse(data);
+                        return mastery[category] || 0;
+                    }
+                } catch (e) {}
+                return 0;
+            },
+            
+            setCategoryMastery(category, value) {
+                try {
+                    let mastery = {};
+                    const data = localStorage.getItem(this.MASTERY_KEY);
+                    if (data) {
+                        mastery = JSON.parse(data);
+                    }
+                    mastery[category] = value;
+                    localStorage.setItem(this.MASTERY_KEY, JSON.stringify(mastery));
+                } catch (e) {}
+            },
+            
+            checkAndUnlockBadges() {
+                const data = this.getData();
+                const newlyUnlocked = [];
+                
+                this.BADGES.forEach(badge => {
+                    if (data.unlockedBadges.includes(badge.id)) return;
+                    
+                    let shouldUnlock = false;
+                    
+                    if (badge.type === 'quiz') {
+                        const count = this.getTotalQuizCount();
+                        shouldUnlock = count >= badge.target;
+                    } else if (badge.type === 'mastery') {
+                        const mastery = this.getCategoryMastery(badge.category);
+                        shouldUnlock = mastery >= badge.target;
+                    }
+                    
+                    if (shouldUnlock) {
+                        data.unlockedBadges.push(badge.id);
+                        data.badgeUnlockTime[badge.id] = Date.now();
+                        newlyUnlocked.push(badge);
+                    }
+                });
+                
+                if (newlyUnlocked.length > 0) {
+                    this.saveData(data);
+                }
+                
+                return newlyUnlocked;
+            }
+        };
+
+        function checkAndNotifyBadges() {
+            const newlyUnlocked = BadgeChecker.checkAndUnlockBadges();
+            
+            if (newlyUnlocked.length > 0) {
+                localStorage.setItem('pending_badge_notification', newlyUnlocked[0].id);
+                showBadgeNotification(newlyUnlocked[0]);
+            }
+        }
+
+        function showBadgeNotification(badge) {
+            const existing = document.getElementById('badgeNotificationOverlay');
+            if (existing) existing.remove();
+            
+            const overlay = document.createElement('div');
+            overlay.id = 'badgeNotificationOverlay';
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.6);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+                opacity: 0;
+                transition: opacity 0.3s;
+            `;
+            
+            const rarityColors = {
+                common: { border: '#d4af37', shadow: 'rgba(212, 175, 55, 0.5)' },
+                rare: { border: '#9c27b0', shadow: 'rgba(156, 39, 176, 0.5)' },
+                epic: { border: '#ff6b35', shadow: 'rgba(255, 107, 53, 0.5)' }
+            };
+            const colors = rarityColors[badge.rarity] || rarityColors.common;
+            
+            overlay.innerHTML = `
+                <div style="
+                    background: linear-gradient(135deg, #fff9e6, #fff);
+                    border-radius: 20px;
+                    padding: 40px 50px;
+                    text-align: center;
+                    max-width: 350px;
+                    border: 4px solid ${colors.border};
+                    box-shadow: 0 10px 40px ${colors.shadow};
+                    transform: scale(0.8);
+                    transition: transform 0.3s;
+                ">
+                    <div style="font-size: 1.5rem; color: #8b4513; margin-bottom: 20px;">🎉 恭喜获得勋章！</div>
+                    <div style="font-size: 2.5rem; margin-bottom: 15px;">🎖️</div>
+                    <div style="font-size: 1.8rem; font-weight: bold; margin-bottom: 10px; color: ${colors.border};">${badge.name}</div>
+                    <div style="color: #666; margin-bottom: 20px;">${badge.desc}</div>
+                    <button onclick="closeBadgeNotification()" style="
+                        background: #8b4513;
+                        color: #fff;
+                        border: none;
+                        padding: 10px 30px;
+                        border-radius: 20px;
+                        font-size: 1rem;
+                        cursor: pointer;
+                    ">太棒了！</button>
+                </div>
+            `;
+            
+            document.body.appendChild(overlay);
+            
+            setTimeout(() => {
+                overlay.style.opacity = '1';
+                overlay.querySelector('div').style.transform = 'scale(1)';
+            }, 10);
+        }
+
+        function closeBadgeNotification() {
+            const overlay = document.getElementById('badgeNotificationOverlay');
+            if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.remove(), 300);
+            }
+        }
+
+        updateHistoryStats();
+    </script>
+</body>
+</html>

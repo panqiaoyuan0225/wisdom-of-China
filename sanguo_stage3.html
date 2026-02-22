@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>思辨人生 - 专题导览</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            font-family: "STKaiti", "Microsoft YaHei", serif;
+            background-color: #e8e2d0;
+        }
+
+        /* 左侧大纲栏 - 色调已调浅，保持庄重感 */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(180deg, #8b1a1a 0%, #5c0a0a 100%); /* 红色调已调浅 */
+            color: #f0e68c;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.3);
+            border-right: 2px solid #d4af37;
+            z-index: 10;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            font-size: 1.6rem;
+            margin: 0;
+            padding: 40px 0;
+            background: rgba(0,0,0,0.3);
+            letter-spacing: 4px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            color: #f0e68c;
+        }
+
+        .nav-item {
+            padding: 22px 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            color: #f0e68c;
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            background: rgba(212, 175, 55, 0.2);
+            padding-left: 45px;
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background: #d4af37;
+            color: #4a0e0e;
+            font-weight: bold;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        /* 右侧内容区 */
+        .main-content {
+            flex: 1;
+            padding: 50px;
+            overflow-y: auto;
+            background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+        }
+
+        .content-box {
+            background: rgba(255, 255, 255, 0.9);
+            max-width: 950px;
+            margin: 0 auto;
+            padding: 60px;
+            border: 1px solid #d2c5a7;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+            position: relative;
+            min-height: 85vh;
+        }
+
+        h1 {
+            color: #8b1a1a;
+            border-left: 10px solid #8b1a1a;
+            padding-left: 15px;
+            font-size: 2.2rem;
+            margin-top: 0;
+        }
+
+        h2 { color: #8b1a1a; border-bottom: 2px solid #d2c5a7; padding-bottom: 8px; margin-top: 30px; }
+        p {
+            line-height: 1.8;
+            text-indent: 2em;
+            font-size: 1.2rem;
+        }
+        
+        .topic-card {
+            background: #fdfaf2;
+            padding: 20px;
+            border: 1px dashed #8b1a1a;
+            margin: 20px 0;
+        }
+
+        .back-link {
+            position: fixed; top: 20px; right: 40px;
+            text-decoration: none; color: #fff;
+            font-weight: bold; background: #8b1a1a;
+            padding: 10px 20px; border-radius: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+
+        .badge-notification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .badge-notification-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .badge-notification-card {
+            background: linear-gradient(135deg, #fff9e6, #fff);
+            border-radius: 20px;
+            padding: 40px 50px;
+            text-align: center;
+            max-width: 350px;
+            transform: scale(0.8);
+            transition: transform 0.3s;
+        }
+
+        .badge-notification-overlay.show .badge-notification-card {
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>思辨人生</h2>
+        <div class="nav-item active" onclick="changeTab(this, '拾叁 · 义利之辩')">拾叁 · 义利之辩</div>
+        <div class="nav-item" onclick="changeTab(this, '拾肆 · 人性幽微')">拾肆 · 人性幽微</div>
+        <div class="nav-item" onclick="changeTab(this, '拾伍 · 命运之问')">拾伍 · 命运之问</div>
+        <div class="nav-item" onclick="changeTab(this, '拾陆 · 何为英雄')">拾陆 · 何为英雄</div>
+        <div class="nav-item" onclick="changeTab(this, '拾柒 · 进退之智')">拾柒 · 进退之智</div>
+        <div class="nav-item" onclick="changeTab(this, '拾捌 · 时光长河')">拾捌 · 时光长河</div>
+        <div class="nav-item" onclick="changeTab(this, '拾玖 · 必背古诗')">拾玖 · 必背古诗</div>
+    </div>
+
+    <div class="main-content">
+        <a href="sanguo.html" class="back-link">← 返回首页</a>
+        <div class="content-box" id="content-display">
+            </div>
+    </div>
+
+    <div class="badge-notification-overlay" id="badgeNotification">
+        <div class="badge-notification-card" id="badgeCard">
+            <div style="font-size: 1.5rem; color: #8b4513; margin-bottom: 20px;">🎉 恭喜获得勋章！</div>
+            <div style="font-size: 2.5rem; margin-bottom: 15px;">🎖️</div>
+            <div style="font-size: 1.8rem; font-weight: bold; margin-bottom: 10px;" id="badgeName"></div>
+            <div style="color: #666; margin-bottom: 20px;" id="badgeDesc"></div>
+            <button onclick="closeBadgeNotification()" style="background: #8b4513; color: #fff; border: none; padding: 10px 30px; border-radius: 20px; font-size: 1rem; cursor: pointer;">太棒了！</button>
+        </div>
+    </div>
+
+<script>
+    const contentData = {
+'拾叁 · 义利之辩': `
+            <h1>拾三 · 义利之辩</h1>
+            <h2>一、核心命题：乱世中的价值两难</h2>
+            <p>《三国演义》构建了一个道德秩序崩解的时代实验室，“义”与“利”的冲突不再是抽象哲理，而是每个集团、每个人物都必须直面的生存选择题。这一命题贯穿全书，形成了多层次、多维度的思辨场域。</p>
+            
+            <div class="topic-card">
+                <h2>二、三种典型范式：义利关系的坐标光谱</h2>
+                <h3>1. 义高于利：关羽的绝对主义范式</h3>
+                <ul>
+                    <li><b>华容道义释曹操：</b>在军令状（个人生死之“利”）与昔日恩义（道德原则之“义”）之间，关羽选择了后者。这一选择超越了阵营立场，展现了普世性道德律令的优先性。</li>
+                    <li><b>封金挂印：</b>面对曹操的“上马金、下马银”（极致物质之利）与汉寿亭侯的爵位（政治地位之利），关羽以“忠臣不事二主”的原则性义理作出回应，其行为构成对功利计算的彻底否定。</li>
+                    <li><b>悲剧性升华：</b>关羽最终因“义”而被东吴所害，其死亡成为道德理想主义在现实政治中必然受挫的隐喻。</li>
+                </ul>
+                
+                <h3>2. 利驱义从：吕布的功利主义范式</h3>
+                <ul>
+                    <li><b>三次弑主：</b>杀丁原（为赤兔马）、诛董卓（为貂蝉与政治野心）、叛刘备（夺徐州之利），每一次背叛都是短期利益压倒长期信义的典型。</li>
+                    <li><b>工具化的人际关系：</b>将“义父”“盟友”等关系纯粹视为利益交换的媒介，当更大的利益出现时，既有关系立即被抛弃。</li>
+                    <li><b>最终结局的警示：</b>白门楼殒命时，刘备一句“公不见丁建阳、董卓之事乎？”揭示了纯粹功利主义者的终极困境——失去信任基础后无人敢用，终成孤岛。</li>
+                </ul>
+
+                <h3>3. 义利相权：曹操的实用主义范式</h3>
+                <ul>
+                    <li><b>对关羽的复杂态度：</b>既用厚利（金钱、爵位、美女）笼络，又以大义（汉帝名义、讨伐国贼）感召，体现了义利作为双重工具的运用智慧。</li>
+                    <li><b>“宁我负人，毋人负我”：</b>杀吕伯奢事件中，将自我保全之利置于恩义道德之上，但同时终身背负道德谴责，展现了实用主义者的精神代价。</li>
+                    <li><b>政治表演中的义利平衡：</b>割发代首、哭祭袁绍等行为，实质是以最小的利益牺牲换取最大的道义资本，是精心计算的道德表演。</li>
+                </ul>
+            </div>
+
+            <div class="topic-card">
+                <h2>三、深层结构：义利冲突的四个维度</h2>
+                <h3>1. 时间维度：短期之利 vs 长期之义</h3>
+                <p>刘备携民渡江：牺牲军事机动性（短期战略之利），换取民心归附（长期政治之“义”的资本）。诸葛亮七擒孟获：耗费资源与时间（短期成本），实现南中长治久安（长期统治之义的实现）。</p>
+                <h3>2. 空间维度：局部之利 vs 整体之义</h3>
+                <p>孙权借荆州给刘备：损失一城一地之利，换取抗曹联盟的整体道义基础与战略缓冲。曹操“挟天子以令诸侯”：牺牲部分行动自主权（局部之利），获得政治合法性的整体优势（大义名分）。</p>
+                <h3>3. 主体维度：个人之利 vs 集团之义</h3>
+                <p>赵云长坂坡救阿斗：置个人生死于度外（弃个人之利），践行“为主尽忠”的臣子之义。徐庶进曹营：为保全母亲（尽孝之个人义）而离开刘备（背弃君臣集团之义），陷入两难困境。</p>
+                <h3>4. 话语维度：名义之义 vs 实质之利</h3>
+                <p>曹操“奉诏讨逆”：借汉室名义（话语层面的“义”）行扩张实质（政治军事的“利”）。刘备“兴复汉室”：将政治野心包装为道义使命，形成理想主义话语与现实主义行动的复杂共生。</p>
+            </div>
+
+            <div class="topic-card">
+                <h2>四、终极困境：没有完美答案的永恒命题</h2>
+                <p><b>1. 义的相对性困境：</b>关羽的“义”对刘备集团是忠诚，对曹操却是背叛；诸葛亮的“鞠躬尽瘁”对蜀汉是尽忠，对天下统一却可能构成阻碍。</p>
+                <p><b>2. 利的层级性困境：</b>生存之利 → 发展之利 → 理想之利，不同层级的利益之间本身就可能相互冲突。</p>
+                <p><b>3. 义利共生现象：</b>刘备的“仁政”既是道德追求（义），也是吸引人才、巩固统治的有效手段（利）。曹操的《求贤令》“唯才是举”看似重利轻义，实则构建了新的人才道德观——才能本身成为新的“义”的标准。</p>
+            </div>
+        `,
+'拾肆 · 人性幽微': `
+            <h1>拾四 · 人性幽微</h1>
+            
+            <div class="topic-card">
+                <h2>一、 核心人物：面具与真相</h2>
+                <table style="width:100%; border-collapse: collapse; margin: 20px 0; background: #fff;">
+                    <tr style="background: #a52a2a; color: #f0e68c;">
+                        <th style="padding: 12px; border: 1px solid #d4af37; width: 150px;">人物</th>
+                        <th style="padding: 12px; border: 1px solid #d4af37;">人性深度剖析</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7; font-weight: bold; text-align: center;">刘备</td>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7;">
+                            <b>仁德之下的权谋与脆弱</b><br>
+                            其“携民渡江”既是仁德理想的践行，也是乱世中凝聚民心、保存实力的必要策略，展现理想主义与现实主义的高度交融。<br>
+                            “白帝城托孤”时“若嗣子可辅则辅之，如其不才，君可自取”一语，既可解读为至诚信任，亦可能暗藏对诸葛亮的最后试探，折射出信任与权谋交织的复杂心境。
+                        </td>
+                    </tr>
+                    <tr style="background: #fdfaf2;">
+                        <td style="padding: 12px; border: 1px solid #d2c5a7; font-weight: bold; text-align: center;">曹操</td>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7;">
+                            <b>奸雄面具下的诗人与凡人</b><br>
+                            “宁我负人，毋人负我”的冷酷决断，与横槊赋诗、对酒当歌的慷慨苍凉并存，揭示其多疑性格与诗人情怀的内在矛盾。<br>
+                            临终“分香卖履”的琐碎嘱咐，褪去霸主光环，显露出常人般的家庭眷恋与生命留恋，凸显权力巅峰者亦难逃凡人之情。
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7; font-weight: bold; text-align: center;">诸葛亮</td>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7;">
+                            <b>神机妙算背后的焦虑与执着</b><br>
+                            《出师表》中“夙夜忧叹，恐托付不效”，远超臣子奏章的格式，流露出完美主义者对失败近乎恐惧的沉重负担。<br>
+                            “挥泪斩马谡”场景中，军法无情与知人失误的自责痛苦交织，展现其理性与情感的激烈冲突。
+                        </td>
+                    </tr>
+                    <tr style="background: #fdfaf2;">
+                        <td style="padding: 12px; border: 1px solid #d2c5a7; font-weight: bold; text-align: center;">司马懿</td>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7;">
+                            <b>隐忍之下的野心与压抑</b><br>
+                            从装病拒召到高平陵之变，其数十年的隐忍不仅是策略，更是人格在长期压抑中的渐变与异化。<br>
+                            忍辱负重与一击致命的极端反差，刻画出一个为家族命运而将真实自我彻底隐藏的复杂形象。
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            
+
+            <div class="topic-card">
+                <h2>二、 性格的局限与悲剧</h2>
+                <h3>关羽：义绝背后的傲慢与局限</h3>
+                <p>华容道义释曹操，体现了其个人恩义观对集团政治利益的超越，也暴露了其价值观的“私义”属性。</p>
+                <p>“虎女安能配犬子”的傲慢回应，直接导致荆州战略联盟破裂，显示其道德光环下存在的致命性格缺陷。</p>
+
+                <h3>周瑜：风流都督的骄傲与脆弱</h3>
+                <p>“既生瑜，何生亮”的慨叹，本质是毕生自信赖以建立的才华标准遭遇颠覆后，精英尊严的彻底崩塌。</p>
+                <p>赤壁辉煌与三气而死的反差，凸显了其心理承受力与军事才华的不匹配，展现天才人物的内在脆弱性。</p>
+            </div>
+        <div style="background: #fff3f3; padding: 15px; border-left: 5px solid #ff4d4d; margin-top: 20px;">
+            <strong>💡 思考：</strong> 当英雄的神性外壳被剥落，露出其凡人的焦虑、傲慢与挣扎时，你认为这是对英雄形象的消解，还是对历史真实深度的重构？
+        </div>
+        `,
+'拾伍 · 命运之问': `
+            <h1>拾五 · 命运之问</h1>
+
+            <div class="topic-card">
+                <h2>一、 强者与大势的终极博弈</h2>
+                <table style="width:100%; border-collapse: collapse; margin: 20px 0; background: #fff;">
+                    <tr style="background: #a52a2a; color: #f0e68c;">
+                        <th style="padding: 12px; border: 1px solid #d4af37; width: 150px;">人物</th>
+                        <th style="padding: 12px; border: 1px solid #d4af37;">命运命题剖析</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7; font-weight: bold; text-align: center;">诸葛亮</td>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7;">
+                            <b>明知不可为的悲壮</b><br>
+                            六出祁山既是“鞠躬尽瘁”的个人意志展现，更是“汉室气数已尽”历史趋势下的顽强抗争。《后出师表》中“至于成败利钝，非臣之明所能逆睹也”一语，道尽人谋与天命间的深刻张力。<br>
+                            五丈原七星灯续命失败与“悠悠苍天，何薄于我”的长叹，将个人生命的终结与政治理想的未竟彻底交织，塑造了“知其不可而为之”的永恒悲剧形象。
+                        </td>
+                    </tr>
+                    <tr style="background: #fdfaf2;">
+                        <td style="padding: 12px; border: 1px solid #d2c5a7; font-weight: bold; text-align: center;">曹操</td>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7;">
+                            <b>天命在我与历史嘲讽</b><br>
+                            “设使天下无有孤，不知当几人称帝，几人称王”的自信宣言，彰显其以人力扭转乾坤的强者心态。<br>
+                            然而赤壁大火、汉中失利、乃至曹魏基业终归司马氏，其一生功业恰成“天命无常”的注脚，生前“周文王”的自喻与死后子孙迅速失势形成微妙反讽。
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7; font-weight: bold; text-align: center;">刘备</td>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7;">
+                            <b>从织席贩履到三分天下的逆袭与局限</b><br>
+                            前半生屡败屡战，以“人和”优势在乱世中实现阶层跨越，堪称个人奋斗改变命运的典范。<br>
+                            但关羽失荆州后，夷陵之战惨败彻底粉碎其兴复汉室的现实可能，揭示出个人努力在历史结构性矛盾（荆益矛盾、国力差距）前的最终限度。
+                        </td>
+                    </tr>
+                    <tr style="background: #fdfaf2;">
+                        <td style="padding: 12px; border: 1px solid #d2c5a7; font-weight: bold; text-align: center;">孙权</td>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7;">
+                            <b>偏安者的历史宿命</b><br>
+                            凭借长江天险与灵活外交成就鼎立之势，展现“借势而为”的生存智慧。<br>
+                            但晚年“二宫之争”的内耗与江东政权始终无法突破的地理政治格局，暗示了割据政权在统一历史趋势下的必然命运，其“守成”本质亦是一种历史选择的结果。
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            
+
+            <div class="topic-card">
+                <h2>二、 英雄神话的必然与偶然</h2>
+                <h3>关羽：英雄神话的偶然与必然</h3>
+                <p>从“温酒斩华雄”的传奇到“威震华夏”的巅峰，个人勇武与机遇造就了战神神话。</p>
+                <p>但“大意失荆州”的败亡，既是其性格缺陷所致，更是吴蜀联盟脆弱性、荆州四战之地战略困境等历史结构性因素的必然结果，个人命运深深嵌入集团博弈的洪流。</p>
+                <div style="text-align: center; margin: 20px 0;">
+    <img src="images/yijing.jpg" alt="关羽败走麦城" style="max-width: 100%; border: 2px solid #d4af37; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+    <p style="font-size: 0.9rem; color: #8b1a1a; font-style: italic;">关羽败走麦城</p>
+</div>
+                </div>
+
+                    <div style="background: #fff3f3; padding: 15px; border-left: 5px solid #ff4d4d; margin-top: 20px;">
+            <strong>💡 思考：</strong> 在三国这个剧烈的棋局中，究竟是“人谋”在定义英雄，还是“大势”在玩弄棋子？当诸葛亮在五丈原最后一次回望成都时，他是遗憾于自己的失败，还是释然于自己已经完整地对抗了天命？
+        </div>
+        `,
+'拾陆 · 何为英雄': `
+            <h1>拾六 · 何为英雄</h1>
+            <p>本章打破“成王败寇”的单一逻辑，从道德、能力、生存与人格四个维度，重构乱世背景下的英雄谱系。</p>
+
+            <div class="topic-card">
+                <h2>⚔️ 理想与现实的交锋</h2>
+                
+                <h3>1.曹操：复杂性的胜利者</h3>
+                <p>他展现的是无道德约束的极致能力。</p>
+                <p>“治世之能臣，乱世之奸雄”的评语，精准点出其才能与道德的分离。他唯才是举、屯田安民、统一北方的功业是实实在在的，但其“宁我负人”的哲学、屠城胁君的暴行又践踏了传统道德底线。</p>
+                <p><b>启示：</b>曹操将“英雄”的定义从道德领域拉回现实领域——一个能结束乱世、建立秩序的人，即便手段阴暗，是否仍堪称英雄？他迫使后世思考：在评价历史人物时，“功业”与“道德”的天平究竟该如何摆放。</p>
+
+                <h3>2.刘备：道德理想主义的感召者</h3>
+                <p>他树立的是以德服人的政治典范。</p>
+                <p>其“仁义”并非虚伪，而是一种高明的政治资本和人格感召。从吸引关羽、张飞终身相随，到让诸葛亮“鞠躬尽瘁”，再到携民渡江赢得民心，他证明了道德本身可以成为一种强大的现实力量。</p>
+                <p><b>启示：</b>刘备的成功（哪怕有限）为“英雄”注入了强烈的伦理内涵。他代表着一种信念：权力的合法性不仅源于武力征服，更源于道德认同。在成王败寇的历史书写中，他提供了一种不同的成功可能。</p>
+            </div>
+
+            <div class="topic-card">
+                <h2>📊 孙权诸葛亮多维对比表</h2>
+                <table style="width:100%; border-collapse: collapse; margin: 20px 0; background: #fff;">
+                    <tr style="background: #a52a2a; color: #f0e68c;">
+                        <th style="padding: 12px; border: 1px solid #d4af37;">英雄类型</th>
+                        <th style="padding: 12px; border: 1px solid #d4af37;">代表人物</th>
+                        <th style="padding: 12px; border: 1px solid #d4af37;">核心诠释</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7; text-align: center;"><b>生存大师</b></td>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7; text-align: center;">孙权</td>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7;">诠释了审时度势的领袖智慧。在两大强敌间找到生存空间，并维持江东三代基业。</td>
+                    </tr>
+                    <tr style="background: #fdfaf2;">
+                        <td style="padding: 12px; border: 1px solid #d2c5a7; text-align: center;"><b>悲剧化身</b></td>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7; text-align: center;">诸葛亮</td>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7;">代表了英雄的圣化与神化。其精神与品格超越成败，成为永恒的文化符号。</td>
+                    </tr>
+                </table>
+    
+                <h3>孙权：现实主义的生存大师</h3>
+                <p>孙权没有曹操的雄才大略，也无刘备的宗室光环，其核心能力在于“忍”与“断”的平衡：能屈身事曹丕，亦敢联刘抗曹于赤壁；能放手周瑜、陆逊，亦在晚年酿成二宫之争。</p>
+                <p><b>启示：</b>孙权定义了另一种英雄——不追求统一天下的宏大叙事，而以保卫和发展既有基业为最高使命。他的“英雄”在于在两大强敌间找到生存空间，并维持江东三代基业，这本身是一种极高明的政治成就。</p>
+
+                <h3>诸葛亮：完美人格的悲剧化身</h3>
+                <p>诸葛亮几乎集齐了所有传统英雄美德：智慧、忠诚、勤勉、公正。但他最大的悲剧性在于，个人品德与能力的完美，最终无法逆转历史趋势。他的“英雄”形象，是在“知其不可而为之”的悲壮中得以升华的。</p>
+                <p><b>启示：</b>诸葛亮的存在，将英雄的评判标准从“是否成功”转向了“是否值得尊敬”。他证明了英雄可以是失败的，但只要其精神与品格足够崇高，就足以超越成败，成为永恒的文化符号。</p>
+            </div>
+            </div>
+
+            <div class="topic-card">
+                <h2>非典型英雄：赵云与司马懿</h2>
+                <p><b>赵云：代表了英雄的“纯度”。</b>他武勇、忠诚、谨慎、顾全大局，几乎毫无人格瑕疵，是传统英雄观的完美实践者。但他的地位始终未达巅峰，恰恰说明在现实政治中，纯粹的品德与才能，若缺乏权变与野心，往往难以成为时代的核心。</p>
+                <p><b>司马懿：则代表了英雄的“暗面”。</b>他的“英雄”特质——隐忍、机诈、冷酷、家族主义——完全服务于实用目的，最终取得成功。他撕下了英雄主义的浪漫外衣，揭示了历史进程中冷静算计与生存本能的强大力量。</p>
+            </div>
+
+                    <div style="background: #fff3f3; padding: 15px; border-left: 5px solid #ff4d4d; margin-top: 20px;">
+            <strong>💡 思考：</strong> 在历史的长河中，你是向往诸葛亮那般如流星划破长夜的崇高，还是认可司马懿那般如深渊潜伏终获成果的现实？
+        </div>
+        `,
+'拾柒 · 进退之智': `
+            <h1>拾七 · 进退之智</h1>
+            <p>天下大势，如潮汐往复。真正的智者，不在于永不停歇的进攻，而在于对“进”与“退”节奏的极致掌控。</p>
+
+            <div class="topic-card">
+                <h2>战略守望者：隐忍与爆发</h2>
+                
+                <h3>刘备——以退为进的战略忍耐</h3>
+                <p><b>核心策略：</b>将每一次战术退却转化为战略积累。</p>
+                <p><b>具体表现：</b></p>
+                <ul>
+                    <li>早年辗转依附公孙瓒、曹操、袁绍、刘表，表面上是势力弱小时无奈的“退”，实则为保存实力、积累名望和政治资本。</li>
+                    <li>善于“待时”：在曹操势大时隐忍蛰伏，在刘表势衰时徐图荆州，在益州内乱时果断入川，每一次“进”都踩在关键的时机节点上。</li>
+                    <li>以道德旗帜掩护现实行动：所有进退始终高举“兴复汉室”的旗帜，使夺取荆州、益州等现实战略获得道义合法性。</li>
+                </ul>
+                <p><b>📢 经典案例：</b>长坂坡败退时携民渡江。</p>
+            </div>
+
+                <h2>📊 进退逻辑对比</h2>
+                <table style="width:100%; border-collapse: collapse; margin: 20px 0; background: #fff;">
+                    <tr style="background: #8b1a1a; color: #f0e68c;">
+                        <th style="padding: 12px; border: 1px solid #d4af37;">人物</th>
+                        <th style="padding: 12px; border: 1px solid #d4af37;">进退核心</th>
+                        <th style="padding: 12px; border: 1px solid #d4af37;">核心表现</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7; text-align: center;"><b>诸葛亮</b></td>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7; text-align: center;"><b>攻守平衡</b></td>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7;">隆中对规划蓝图，北伐稳扎稳打，退避街亭保全主力。</td>
+                    </tr>
+                    <tr style="background: #fdfaf2;">
+                        <td style="padding: 12px; border: 1px solid #d2c5a7; text-align: center;"><b>孙权</b></td>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7; text-align: center;"><b>利益转向</b></td>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7;">从抗曹到袭刘，再到复盟蜀汉，以现实利害为唯一准则。</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7; text-align: center;"><b>曹操</b></td>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7; text-align: center;"><b>掌控节奏</b></td>
+                        <td style="padding: 12px; border: 1px solid #d2c5a7;">挟天子以令诸侯，在政治与道义制高点主动创造节奏。</td>
+                    </tr>
+                </table>
+            </div>
+
+            
+
+            <div class="topic-card">
+                <h2>⚖️ 动态平衡与现实主义</h2>
+                
+                <h3>1：诸葛亮——规划清晰的攻守平衡</h3>
+                <p><b>核心策略：</b>在长远战略蓝图下实现攻守的动态平衡。</p>
+                <p><b>具体表现：</b></p>
+                <ul>
+                    <li>隆中对本身即是一份完整的国家进退路线图：取荆州为前进基地，占益州为退守根本，外联孙权创造战略缓冲，待天下有变则两路北伐。</li>
+                    <li>北伐中的精妙进退：首次北伐因街亭之失果断退兵，是为保全主力；后续北伐稳扎稳打，不求速胜，但求实利。</li>
+                    <li>始终确保根基：即便在最激进的军事行动阶段（如五出祁山），仍坚持在汉中实行屯田，确保军事行动有可靠的后勤支撑和退守根基。</li>
+                </ul>
+                     <img src="images/longzhong.jpg" alt="马谡失街亭" style="max-width: 100%; border: 2px solid #d4af37; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                         <p style="font-size: 0.9rem; color: #8b1a1a; font-style: italic;">马谡失街亭</p>
+                    </div>
+                </div>
+            <div class="topic-card">
+                <h3>2：孙权——基于利益的灵活转向</h3>
+                <p><b>核心策略：</b>摒弃固定原则，以现实利害为唯一行动准则。</p>
+                <p><b>具体表现：</b></p>
+                <ul>
+                    <li>赤壁前夕：从群臣议“降曹”到决断“抗曹”，是基于“曹操独大则江东必亡”的生存算计。</li>
+                    <li>荆州问题上：从长期“联刘”到突然“袭刘”，是基于“全据长江”的战略价值超越了联盟信用的利益重估。</li>
+                    <li>夷陵战后：立即与刚交战的蜀汉复盟，是基于制衡强大曹魏的地缘政治需要。</li>
+                </ul>
+
+                <h3>3：曹操——掌控节奏的主动进退</h3>
+                <p><b>核心策略：</b>主动创造并驾驭进退的节奏，营造有利态势。</p>
+                <p><b>具体表现：</b></p>
+                <ul>
+                    <li>官渡战后：不急于一举扫平河北，而是逐步消化胜利果实，体现“进中有控”，巩固根基。</li>
+                    <li>赤壁败后：迅速回头巩固北方，暂停南征步伐，体现“败中有守”，稳住基本盘。</li>
+                    <li>挟天子以令诸侯：此战略本身即是最高级的进退之道——以朝廷名义征讨四方是“进”，以臣子身份自居是“退”，始终占据政治与道义的制高点。</li>
+                </ul>
+                <p><b>🎯 独特之处：</b>擅长在战略层面营造“进退皆宜”的主动权，让对手陷入被动。</p>
+            </div>
+
+            <div class="topic-card" style="border-left: 5px solid #4a0404;">
+                <h2>⚠️ 反面镜鉴——失败者的教训</h2>
+                <p><b>袁绍：</b>在官渡之战中，该谨慎时冒进（拒绝持久战建议），该坚持时溃退（战败后一蹶不振，未能组织有效抵抗），进退完全失序。</p>
+                <p><b>关羽：</b>在北伐中，孤军深入不知止步，后方空虚却未留退路，导致“进”无可继，“退”无可守，最终覆灭。</p>
+                <p style="color: #8b1a1a;"><b>⚡ 共同教训：</b>不明天下大势，不度自身实力，仅凭一时意气或短视利益进行进退决策，终将招致毁灭。</p>
+            </div>
+        `,
+'拾捌 · 时光长河': `
+            <h1>拾八 · 时光长河</h1>
+
+            <style>
+                .timeline-container {
+                    position: relative;
+                    padding: 20px 0;
+                    margin-top: 30px;
+                }
+                /* 中间的垂直线 */
+                .timeline-line {
+                    position: absolute;
+                    left: 100px;
+                    top: 0;
+                    bottom: 0;
+                    width: 2px;
+                    background: linear-gradient(180deg, #d4af37 0%, #8b1a1a 100%);
+                    opacity: 0.6;
+                }
+                .timeline-event {
+                    position: relative;
+                    margin-bottom: 35px;
+                    display: flex;
+                    align-items: flex-start;
+                }
+                .event-year {
+                    width: 100px;
+                    text-align: right;
+                    padding-right: 25px;
+                    font-weight: bold;
+                    color: #8b1a1a;
+                    font-size: 1.2rem;
+                    flex-shrink: 0;
+                }
+                .event-dot {
+                    position: absolute;
+                    left: 96px;
+                    top: 8px;
+                    width: 10px;
+                    height: 10px;
+                    background: #d4af37;
+                    border-radius: 50%;
+                    box-shadow: 0 0 8px #d4af37;
+                    z-index: 2;
+                }
+                .event-content {
+                    padding-left: 35px;
+                    padding-bottom: 10px;
+                    border-bottom: 1px dashed #d2c5a7;
+                }
+                .event-title {
+                    font-weight: bold;
+                    color: #4a0404;
+                    font-size: 1.1rem;
+                    margin-bottom: 5px;
+                }
+                .event-desc {
+                    margin: 0;
+                    line-height: 1.6;
+                    color: #333;
+                }
+            </style>
+
+            <div class="timeline-container">
+                <div class="timeline-line"></div>
+
+                <div class="timeline-event">
+                    <div class="event-year">184年</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content">
+                        <div class="event-title">黄巾起义</div>
+                        <p class="event-desc">张角兄弟以“苍天已死，黄天当立”起事，刘备、关羽、张飞于涿郡结义，参与镇压。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-event">
+                    <div class="event-year">189年</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content">
+                        <div class="event-title">董卓乱政</div>
+                        <p class="event-desc">外戚宦官火并，董卓进京废少帝立献帝，专权暴虐。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-event">
+                    <div class="event-year">190年</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content">
+                        <div class="event-title">诸侯讨董</div>
+                        <p class="event-desc">曹操发檄文，十八路诸侯会盟，关羽温酒斩华雄，三英战吕布，董卓焚洛阳迁都长安。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-event">
+                    <div class="event-year">191年</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content">
+                        <div class="event-title">孙坚得玉玺</div>
+                        <p class="event-desc">孙坚攻入洛阳获传国玉玺，后遭刘表袭击身亡。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-event">
+                    <div class="event-year">196年</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content">
+                        <div class="event-title">曹操迎献帝</div>
+                        <p class="event-desc">曹操迁献帝于许昌，“挟天子以令诸侯”。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-event">
+                    <div class="event-year">200年</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content">
+                        <div class="event-title">官渡之战</div>
+                        <p class="event-desc">曹操以少胜多大败袁绍，奠定北方统一基础。<br>同年：关羽斩颜良诛文丑，过五关斩六将寻刘备。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-event">
+                    <div class="event-year">207年</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content">
+                        <div class="event-title">三顾茅庐</div>
+                        <p class="event-desc">刘备请诸葛亮出山，提出《隆中对》战略</p>
+                    </div>
+                </div>
+
+                
+
+                <div class="timeline-event">
+                    <div class="event-year">208年</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content">
+                        <div class="event-title">赤壁之战</div>
+                        <p class="event-desc">孙刘联军火攻破曹，曹操北撤，天下三分雏形初现。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-event">
+                    <div class="event-year">211-214年</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content">
+                        <div class="event-title">刘备取益州</div>
+                        <p class="event-desc">刘备依庞统、诸葛亮计，取代刘璋占据益州。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-event">
+                    <div class="event-year">215年</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content">
+                        <div class="event-title">孙权争荆州</div>
+                        <p class="event-desc">孙刘平分荆州，但矛盾激化。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-event">
+                    <div class="event-year">219年</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content">
+                        <div class="event-title">关羽北伐与败亡</div>
+                        <p class="event-desc">关羽水淹七军威震华夏，但孙权遣吕蒙袭取荆州，关羽败走麦城被杀。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-event">
+                    <div class="event-year">220年</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content">
+                        <div class="event-title">曹丕篡汉</div>
+                        <p class="event-desc">曹操病逝，曹丕废献帝建魏国，东汉灭亡。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-event">
+                    <div class="event-year">221年</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content">
+                        <div class="event-title">刘备称帝伐吴</div>
+                        <p class="event-desc">刘备于成都建蜀汉，为报关羽之仇倾国伐吴。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-event">
+                    <div class="event-year">222年</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content">
+                        <div class="event-title">夷陵之战</div>
+                        <p class="event-desc">陆逊火烧连营，刘备败退白帝城，次年托孤诸葛亮。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-event">
+                    <div class="event-year">223-234年</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content">
+                        <div class="event-title">诸葛亮北伐</div>
+                        <p class="event-desc">六出祁山，屡战魏国，病逝五丈原。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-event">
+                    <div class="event-year">234年</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content">
+                        <div class="event-title">五丈原陨星</div>
+                        <p class="event-desc">诸葛亮病逝，蜀汉转向守势</p>
+                    </div>
+                </div>
+
+                <div class="timeline-event">
+                    <div class="event-year">249年</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content">
+                        <div class="event-title">高平陵之变</div>
+                        <p class="event-desc">司马懿诛曹爽，掌控魏国大权。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-event">
+                    <div class="event-year">263年</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content">
+                        <div class="event-title">蜀汉灭亡</div>
+                        <p class="event-desc">邓艾偷渡阴平，刘禅出降，蜀汉亡。<br>同年：姜维假降殉国。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-event">
+                    <div class="event-year">265年</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content">
+                        <div class="event-title">司马炎建晋</div>
+                        <p class="event-desc">司马炎废魏元帝，建立西晋。</p>
+                    </div>
+                </div>
+
+                <div class="timeline-event">
+                    <div class="event-year">280年</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content">
+                        <div class="event-title">西晋灭吴</div>
+                        <p class="event-desc">晋军水陆并进攻破建业，孙皓投降，三国时代终结</p>
+                    </div>
+                </div>
+            </div>
+        `,
+'拾玖 · 必背古诗': `
+    <h1>拾九 · 必背古诗</h1>
+    <style>
+        .poem-card { background: rgba(255, 255, 255, 0.7); padding: 20px; border: 1px solid #d2c5a7; border-radius: 8px; margin-bottom: 30px; position: relative; }
+        .poem-content { line-height: 1.8; text-align: center; white-space: pre-wrap; color: #333; font-size: 1.1rem; margin-bottom: 15px; }
+        .prose-style { text-align: justify; text-indent: 2em; }
+        .dictation-box { display: none; background: #fdfaf2; padding: 15px; border-radius: 6px; border: 1px inset #d2c5a7; }
+        .dictation-input { width: 100%; height: 120px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; margin-bottom: 10px; resize: vertical; }
+        .result-display { 
+            margin-top: 15px; padding: 15px; border-top: 2px solid #8b1a1a; 
+            display: none; word-break: break-all; white-space: normal; /* 解决超出一行的问题 */
+            max-height: 400px; overflow-y: auto; 
+        }
+        .correct { color: #228b22; }
+        .wrong { color: #ff0000; font-weight: bold; text-decoration: underline; }
+        .btn-group { display: flex; gap: 10px; justify-content: center; margin-top: 10px; }
+    </style>
+
+    <div class="topic-card">
+        <h2>一、小学必背</h2>
+        <div class="poem-card">
+            <div class="poem-grade-title">六年级下册</div>
+            <div style="text-align:center; font-weight:bold; font-size:1.3rem;">《七步诗》</div>
+            <div id="orig-qibu" class="poem-content">煮豆持作羹，漉菽以为汁。
+萁在釜下燃，豆在釜中泣。
+本自同根生，相煎何太急？</div>
+            <div class="btn-group" id="btn-read-qibu">
+                <button class="topic-btn" onclick="openDict('qibu')">📝 开启默写</button>
+            </div>
+            <div id="box-qibu" class="dictation-box">
+                <textarea id="in-qibu" class="dictation-input" placeholder="请默写..."></textarea>
+                <div class="btn-group">
+                    <button class="topic-btn" style="background:#228b22" onclick="checkPoem('qibu')">✅ 提交批改</button>
+                    <button class="topic-btn" style="background:#666" onclick="closeDict('qibu')">↩️ 返回阅读</button>
+                </div>
+                <div id="res-qibu" class="result-display"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="topic-card">
+        <h2>二、初中必背</h2>
+        <div class="poem-card">
+            <div class="poem-grade-title">七年级上册</div>
+            <div style="text-align:center; font-weight:bold;">《观沧海》</div>
+            <div id="orig-gch" class="poem-content">东临碣石，以观沧海。
+水何澹澹，山岛竦峙。
+树木丛生，百草丰茂。
+秋风萧瑟，洪波涌起。
+日月之行，若出其中；
+星汉灿烂，若出其里。
+幸甚至哉，歌以咏志。</div>
+            <div class="btn-group" id="btn-read-gch"><button class="topic-btn" onclick="openDict('gch')">📝 开启默写</button></div>
+            <div id="box-gch" class="dictation-box">
+                <textarea id="in-gch" class="dictation-input"></textarea>
+                <div class="btn-group">
+                    <button class="topic-btn" style="background:#228b22" onclick="checkPoem('gch')">✅ 提交批改</button>
+                    <button class="topic-btn" style="background:#666" onclick="closeDict('gch')">↩️ 返回阅读</button>
+                </div>
+                <div id="res-gch" class="result-display"></div>
+            </div>
+        </div>
+<div class="poem-card">
+    <div class="poem-grade-title">八年级上册</div>
+    <div style="text-align:center; font-weight:bold; font-size:1.3rem;">《龟虽寿》</div>
+    <div id="orig-gss" class="poem-content">神龟虽寿，犹有竟时。
+腾蛇乘雾，终为土灰。
+老骥伏枥，志在千里；
+烈士暮年，壮心不已。
+盈缩之期，不但在天；
+养怡之福，可得永年。
+幸甚至哉，歌以咏志。</div>
+    <div class="btn-group" id="btn-read-gss">
+        <button class="topic-btn" onclick="openDict('gss')">📝 开启默写</button>
+    </div>
+    <div id="box-gss" class="dictation-box">
+        <textarea id="in-gss" class="dictation-input" placeholder="请默写..."></textarea>
+        <div class="btn-group">
+            <button class="topic-btn" style="background:#228b22" onclick="checkPoem('gss')">✅ 提交批改</button>
+            <button class="topic-btn" style="background:#666" onclick="closeDict('gss')">↩️ 返回阅读</button>
+        </div>
+        <div id="res-gss" class="result-display"></div>
+    </div>
+</div>
+        
+        <div class="poem-card">
+            <div class="poem-grade-title">七年级上册</div>
+            <div style="text-align:center; font-weight:bold;">《诫子书》</div>
+            <div id="orig-jzs" class="poem-content prose-style">夫君子之行，静以修身，俭以养德。非淡泊无以明志，非宁静无以致远。
+夫学须静也，才须学也，非学无以广才，非志无以成学。淫慢则不能励精，险躁则不能治性。
+年与时驰，意与日去，遂成枯落，多不接世，悲守穷庐，将复何及！</div>
+            <div class="btn-group" id="btn-read-jzs"><button class="topic-btn" onclick="openDict('jzs')">📝 开启默写</button></div>
+            <div id="box-jzs" class="dictation-box">
+                <textarea id="in-jzs" class="dictation-input"></textarea>
+                <div class="btn-group">
+                    <button class="topic-btn" style="background:#228b22" onclick="checkPoem('jzs')">✅ 提交批改</button>
+                    <button class="topic-btn" style="background:#666" onclick="closeDict('jzs')">↩️ 返回阅读</button>
+                </div>
+                <div id="res-jzs" class="result-display"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="topic-card">
+        <h2>三、高中必背</h2>
+        <div class="poem-card">
+            <div class="poem-grade-title">九年级下册</div>
+            <div style="text-align:center; font-weight:bold;">《出师表》</div>
+            <div id="orig-csb" class="poem-content prose-style" style="max-height:300px; overflow-y:auto; font-size:0.95rem;">
+臣亮言：先帝创业未半而中道崩殂，今天下三分，益州疲弊，此诚危急存亡之秋也。然侍卫之臣不懈于内，忠志之士忘身于外者，盖追先帝之殊遇，欲报之于陛下也。诚宜开张圣听，以光先帝遗德，恢弘志士之气，不宜妄自菲薄，引喻失义，以塞忠谏之路也。
+
+宫中府中，俱为一体，陟罚臧否，不宜异同。若有作奸犯科及为忠善者，宜付有司论其刑赏，以昭陛下平明之理，不宜偏私，使内外异法也。
+
+侍中、侍郎郭攸之、费祎、董允等，此皆良实，志虑忠纯，是以先帝简拔以遗陛下。愚以为宫中之事，事无大小，悉以咨之，然后施行，必能裨补阙漏，有所广益。
+
+将军向宠，性行淑均，晓畅军事，试用于昔日，先帝称之曰能，是以众议举宠为督。愚以为营中之事，悉以咨之，必能使行阵和睦，优劣得所。
+
+亲贤臣，远小人，此先汉所以兴隆也；亲小人，远贤臣，此后汉所以倾颓也。先帝在时，每与臣论此事，未尝不叹息痛恨于桓、灵也。侍中、尚书、长史、参军，此悉贞良死节之臣，愿陛下亲之信之，则汉室之隆，可计日而待也。
+
+臣本布衣，躬耕于南阳，苟全性命于乱世，不求闻达于诸侯。先帝不以臣卑鄙，猥自枉屈，三顾臣于草庐之中，咨臣以当世之事，由是感激，遂许先帝以驱驰。后值倾覆，受任于败军之际，奉命于危难之间，尔来二十有一年矣。
+
+先帝知臣谨慎，故临崩寄臣以大事也。受命以来，夙夜忧叹，恐托付不效，以伤先帝之明，故五月渡泸，深入不毛。今南方已定，兵甲已足，当奖率三军，北定中原，庶竭驽钝，攘除奸凶，兴复汉室，还于旧都。此臣所以报先帝而忠陛下之职分也。至于斟酌损益，进尽忠言，则攸之、祎、允之任也。
+
+愿陛下托臣以讨贼兴复之效，不效，则治臣之罪，以告先帝之灵。若无兴德之言，则责攸之、祎、允等之慢，以彰其咎；陛下亦宜自谋，以咨诹善道，察纳雅言，深追先帝遗诏。臣不胜受恩感激。
+
+今当远离，临表涕零，不知所言。</div>
+            <div class="btn-group" id="btn-read-csb"><button class="topic-btn" onclick="openDict('csb')">📝 开启全篇默写</button></div>
+            <div id="box-csb" class="dictation-box">
+                <textarea id="in-csb" class="dictation-input" style="height:200px;"></textarea>
+                <div class="btn-group">
+                    <button class="topic-btn" style="background:#228b22" onclick="checkPoem('csb')">✅ 提交批改</button>
+                    <button class="topic-btn" style="background:#666" onclick="closeDict('csb')">↩️ 返回阅读</button>
+                </div>
+                <div id="res-csb" class="result-display"></div>
+            </div>
+        </div>
+<div class="poem-card">
+    <div class="poem-grade-title">必修上册</div>
+    <div style="text-align:center; font-weight:bold; font-size:1.3rem;">《短歌行》</div>
+    <div id="orig-dgx" class="poem-content">
+对酒当歌，人生几何！譬如朝露，去日苦多。
+慨当以慷，忧思难忘。何以解忧？唯有杜康。
+青青子衿，悠悠我心。但为君故，沉吟至今。
+呦呦鹿鸣，食野之苹。我有嘉宾，鼓瑟吹笙。
+明明如月，何时可掇？忧从中来，不可断绝。
+越陌度阡，枉用相存。契阔谈讌，心念旧恩。
+月明星稀，乌鹊南飞。绕树三匝，何枝可依？
+山不厌高，海不厌深。周公吐哺，天下归心。
+</div>
+    <div class="btn-group" id="btn-read-dgx">
+        <button class="topic-btn" onclick="openDict('dgx')">📝 开启默写</button>
+    </div>
+    <div id="box-dgx" class="dictation-box">
+        <textarea id="in-dgx" class="dictation-input" placeholder="请默写..."></textarea>
+        <div class="btn-group">
+            <button class="topic-btn" style="background:#228b22" onclick="checkPoem('dgx')">✅ 提交批改</button>
+            <button class="topic-btn" style="background:#666" onclick="closeDict('dgx')">↩️ 返回阅读</button>
+        </div>
+        <div id="res-dgx" class="result-display"></div>
+    </div>
+</div>
+<div class="poem-card">
+            <div class="poem-grade-title">选择性必修中册</div>
+            <div style="text-align:center; font-weight:bold; font-size:1.3rem;">《白马篇》</div>
+            <div id="orig-bmp" class="poem-content">白马饰金羁，连翩西北驰。
+借问谁家子，幽并游侠儿。
+少小去乡邑，扬声沙漠垂。
+宿昔秉良弓，楛矢何参差。
+控弦破左的，右发摧月支。
+仰手接飞猱，俯身散马蹄。
+狡捷过猴猿，勇剽若豹螭。
+边城多警急，虏骑数迁移。
+羽檄从北来，厉马登高堤。
+长驱蹈匈奴，左顾凌鲜卑。
+弃身锋刃端，性命安可怀？
+父母且不顾，何言子与妻！
+名编壮士籍，不得中顾私。
+捐躯赴国难，视死忽如归！</div>
+            <div class="btn-group" id="btn-read-bmp">
+                <button class="topic-btn" onclick="openDict('bmp')">📝 开启默写</button>
+            </div>
+            <div id="box-bmp" class="dictation-box">
+                <textarea id="in-bmp" class="dictation-input" placeholder="请默写..."></textarea>
+                <div class="btn-group">
+                    <button class="topic-btn" style="background:#228b22" onclick="checkPoem('bmp')">✅ 提交批改</button>
+                    <button class="topic-btn" style="background:#666" onclick="closeDict('bmp')">↩️ 返回阅读</button>
+                </div>
+                <div id="res-bmp" class="result-display"></div>
+            </div>
+        </div>
+    </div>
+`,
+    };
+
+    function changeTab(element, title) {
+        // 1. 切换 active 状态
+        const items = document.querySelectorAll('.nav-item');
+        items.forEach(item => item.classList.remove('active'));
+        element.classList.add('active');
+
+        // 2. 渲染内容
+        const display = document.getElementById('content-display');
+        display.innerHTML = contentData[title];
+
+        // 3. 滚动回顶部
+        const mainContent = document.querySelector('.main-content');
+        mainContent.scrollTop = 0;
+    }
+
+    // 页面加载时默认显示第一个
+    window.onload = () => {
+        const firstItem = document.querySelector('.nav-item');
+        changeTab(firstItem, '拾叁 · 义利之辩');
+    };
+
+const poemLibrary = {
+    qibu: "煮豆持作羹，漉菽以为汁。\n萁在釜下燃，豆在釜中泣。\n本自同根生，相煎何太急？",
+
+    gch: "东临碣石，以观沧海。\n水何澹澹，山岛竦峙。\n树木丛生，百草丰茂。\n秋风萧瑟，洪波涌起。\n日月之行，若出其中；\n星汉灿烂，若出其里。\n幸甚至哉，歌以咏志。",
+
+    gss: "神龟虽寿，犹有竟时。\n腾蛇乘雾，终为土灰。\n老骥伏枥，志在千里；\n烈士暮年，壮心不已。\n盈缩之期，不但在天；\n养怡之福，可得永年。\n幸甚至哉，歌以咏志。",
+
+    dgx: "对酒当歌，人生几何！\n譬如朝露，去日苦多。\n慨当以慷，忧思难忘。\n何以解忧？唯有杜康。\n青青子衿，悠悠我心。\n但为君故，沉吟至今。\n呦呦鹿鸣，食野之苹。\n我有嘉宾，鼓瑟吹笙。\n明明如月，何时可掇？\n忧从中来，不可断绝。\n越陌度阡，枉用相存。\n契阔谈讌，心念旧恩。\n月明星稀，乌鹊南飞。\n绕树三匝，何枝可依？\n山不厌高，海不厌深。\n周公吐哺，天下归心。",
+
+    jzs: "夫君子之行，静以修身，俭以养德。\n非淡泊无以明志，非宁静无以致远。\n夫学须静也，才须学也，非学无以广才，非志无以成学。\n淫慢则不能励精，险躁则不能治性。\n年与时驰，意与日去，遂成枯落，多不接世，悲守穷庐，将复何及！",
+
+    csb: "臣亮言：先帝创业未半而中道崩殂，今天下三分，益州疲弊，此诚危急存亡之秋也。然侍卫之臣不懈于内，忠志之士忘身于外者，盖追先帝之殊遇，欲报之于陛下也。诚宜开张圣听，以光先帝遗德，恢弘志士之气，不宜妄自菲薄，引喻失义，以塞忠谏之路也。\n\n宫中府中，俱为一体，陟罚臧否，不宜异同。若有作奸犯科及为忠善者，宜付有司论其刑赏，以昭陛下平明之理，不宜偏私，使内外异法也。\n\n侍中、侍郎郭攸之、费祎、董允等，此皆良实，志虑忠纯，是以先帝简拔以遗陛下。愚以为宫中之事，事无大小，悉以咨之，然后施行，必能裨补阙漏，有所广益。\n\n将军向宠，性行淑均，晓畅军事，试用于昔日，先帝称之曰能，是以众议举宠为督。愚以为营中之事，悉以咨之，必能使行阵和睦，优劣得所。\n\n亲贤臣，远小人，此先汉所以兴隆也；亲小人，远贤臣，此后汉所以倾颓也。先帝在时，每与臣论此事，未尝不叹息痛恨于桓、灵也。侍中、尚书、长史、参军，此悉贞良死节之臣，愿陛下亲之信之，则汉室之隆，可计日而待也。\n\n臣本布衣，躬耕于南阳，苟全性命于乱世，不求闻达于诸侯。先帝不以臣卑鄙，猥自枉屈，三顾臣于草庐之中，咨臣以当世之事，由是感激，遂许先帝以驱驰。后值倾覆，受任于败军之际，奉命于危难之间，尔来二十有一年矣。\n\n先帝知臣谨慎，故临崩寄臣以大事也。受命以来，夙夜忧叹，恐托付不效，以伤先帝之明，故五月渡泸，深入不毛。今南方已定，兵甲已足，当奖率三军，北定中原，庶竭驽钝，攘除奸凶，兴复室，还于旧都。此臣所以报先帝而忠陛下之职分也。至于斟酌损益，进尽忠言，则攸之、祎、允之任也。\n\n愿陛下托臣以讨贼兴复之效，不效，则治臣之罪，以告先帝之灵。若无兴德之言，则责攸之、祎、允等之慢，以彰其咎；陛下亦宜自谋，以咨诹善道，察纳雅言，深追先帝遗诏。臣不胜受恩感激。\n\n今当远离，临表涕零，不知所言。",
+
+    bmp: "白马饰金羁，连翩西北驰。\n借问谁家子，幽并游侠儿。\n少小去乡邑，扬声沙漠垂。\n宿昔秉良弓，楛矢何参差。\n控弦破左的，右发摧月支。\n仰手接飞猱，俯身散马蹄。\n狡捷过猴猿，勇剽若豹螭。\n边城多警急，虏骑数迁移。\n羽檄从北来，厉马登高堤。\n长驱蹈匈奴，左顾凌鲜卑。\n弃身锋刃端，性命安可怀？\n父母且不顾，何言子与妻！\n名编壮士籍，不得中顾私。\n捐躯赴国难，视死忽如归！"
+};
+
+// 2. 交互函数：开启默写
+function openDict(id) {
+    const box = document.getElementById('box-' + id);
+    const orig = document.getElementById('orig-' + id);
+    const btnRead = document.getElementById('btn-read-' + id);
+    
+    if(box) box.style.display = 'block';
+    if(orig) orig.style.display = 'none'; // 彻底隐藏原文，防止偷看
+    if(btnRead) btnRead.style.display = 'none'; // 隐藏入口按钮
+}
+
+// 3. 交互函数：返回阅读（重置）
+function closeDict(id) {
+    const box = document.getElementById('box-' + id);
+    const orig = document.getElementById('orig-' + id);
+    const btnRead = document.getElementById('btn-read-' + id);
+    const res = document.getElementById('res-' + id);
+    const input = document.getElementById('in-' + id);
+    
+    if(box) box.style.display = 'none';
+    if(orig) orig.style.display = 'block'; // 恢复原文显示
+    if(btnRead) btnRead.style.display = 'flex'; // 恢复入口按钮
+    if(res) {
+        res.style.display = 'none';
+        res.innerHTML = '';
+    }
+    if(input) input.value = ''; // 清空已输入的文字
+}
+
+function checkPoem(id) {
+    const userRaw = document.getElementById('in-' + id).value;
+    // 过滤掉用户输入中的所有标点和空白，只留纯汉字用于比对
+    const userClean = userRaw.replace(/[\s\n\r，。？！；：、\.,\?!\uff0c\u3002]/g, '');
+    const targetFull = poemLibrary[id]; // 带有标点和换行的原文
+    const resBox = document.getElementById('res-' + id);
+    
+    let htmlResult = "<b style='color:#4a0404;'>💡 批改详情：</b><br>";
+    htmlResult += "<div style='word-break: break-all; line-height:2; letter-spacing:1px; background:#fff; padding:15px; border-radius:4px; border:1px solid #e0e0e0; white-space: pre-wrap; text-align:left;'>";
+    
+    let userIdx = 0;
+    // 遍历带有标点的【标准原文】
+    for (let i = 0; i < targetFull.length; i++) {
+        const char = targetFull[i];
+        
+        // 如果是标点、空格或换行符，直接原样显示，不计入用户对比索引
+        if (/[\s\n\r，。？！；：、\.,\?!\uff0c\u3002]/.test(char)) {
+            htmlResult += `<span style="color:#999;">${char}</span>`;
+            continue;
+        }
+
+        // 如果是汉字，则拿用户当前的字来比对
+        const userChar = userClean[userIdx] || '';
+        if (userChar === char) {
+            htmlResult += `<span style="color:green;">${char}</span>`;
+        } else {
+            // 如果写错了或者没写到，显示红色。如果没有输入，显示 ○
+            htmlResult += `<span style="color:red; font-weight:bold; text-decoration:underline;">${userChar || '○'}</span>`;
+        }
+        userIdx++; // 移动用户文字的指针
+    }
+    
+    htmlResult += "</div>";
+    htmlResult += "<p style='font-size:0.85rem; color:#666; margin-top:5px;'>注：系统已自动跳过标点符号进行文字比对。</p>";
+    
+    resBox.innerHTML = htmlResult;
+    resBox.style.display = 'block';
+}
+
+function toggleMode(id) {
+    openDict(id);
+}
+
+const BadgeManager = {
+    STORAGE_KEY: 'badge_data_v1',
+    
+    getData() {
+        try {
+            const data = localStorage.getItem(this.STORAGE_KEY);
+            return data ? JSON.parse(data) : {
+                unlockedBadges: [],
+                badgeUnlockTime: {},
+                readingProgress: {
+                    xiyou: { stage1: false, stage2: false, stage3: false },
+                    sanguo: { stage1: false, stage2: false, stage3: false },
+                    shuihu: { stage1: false, stage2: false, stage3: false },
+                    honglou: { stage1: false, stage2: false, stage3: false }
+                }
+            };
+        } catch (e) {
+            return {
+                unlockedBadges: [],
+                badgeUnlockTime: {},
+                readingProgress: {
+                    xiyou: { stage1: false, stage2: false, stage3: false },
+                    sanguo: { stage1: false, stage2: false, stage3: false },
+                    shuihu: { stage1: false, stage2: false, stage3: false },
+                    honglou: { stage1: false, stage2: false, stage3: false }
+                }
+            };
+        }
+    },
+    
+    saveData(data) {
+        try {
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+        } catch (e) {
+            console.error('保存勋章数据失败:', e);
+        }
+    },
+    
+    isStageRead(book, stage) {
+        const data = this.getData();
+        return data.readingProgress[book] && data.readingProgress[book]['stage' + stage];
+    },
+    
+    markStageRead(book, stage) {
+        const data = this.getData();
+        if (!data.readingProgress[book]) {
+            data.readingProgress[book] = { stage1: false, stage2: false, stage3: false };
+        }
+        data.readingProgress[book]['stage' + stage] = true;
+        this.saveData(data);
+        return this.checkAndUnlockBadges();
+    },
+    
+    isBookCompleted(book) {
+        const data = this.getData();
+        const progress = data.readingProgress[book];
+        return progress && progress.stage1 && progress.stage2 && progress.stage3;
+    },
+    
+    getCompletedBooksCount() {
+        let count = 0;
+        ['xiyou', 'sanguo', 'shuihu', 'honglou'].forEach(book => {
+            if (this.isBookCompleted(book)) count++;
+        });
+        return count;
+    },
+    
+    checkAndUnlockBadges() {
+        const data = this.getData();
+        const newlyUnlocked = [];
+        
+        const bookBadges = [
+            { id: 'xiyou_reader', name: '西游行者', desc: '完成西游记阅读', book: 'xiyou' },
+            { id: 'sanguo_reader', name: '三国通览', desc: '完成三国演义阅读', book: 'sanguo' },
+            { id: 'shuihu_reader', name: '水浒知音', desc: '完成水浒传阅读', book: 'shuihu' },
+            { id: 'honglou_reader', name: '红楼初探', desc: '完成红楼梦阅读', book: 'honglou' },
+            { id: 'all_books_reader', name: '四大名著通', desc: '完成全部名著阅读', book: 'all' }
+        ];
+        
+        bookBadges.forEach(badge => {
+            if (data.unlockedBadges.includes(badge.id)) return;
+            
+            let shouldUnlock = false;
+            if (badge.book === 'all') {
+                shouldUnlock = this.getCompletedBooksCount() >= 4;
+            } else {
+                shouldUnlock = this.isBookCompleted(badge.book);
+            }
+            
+            if (shouldUnlock) {
+                data.unlockedBadges.push(badge.id);
+                data.badgeUnlockTime[badge.id] = Date.now();
+                newlyUnlocked.push(badge);
+            }
+        });
+        
+        if (newlyUnlocked.length > 0) {
+            this.saveData(data);
+        }
+        
+        return newlyUnlocked;
+    }
+};
+
+let autoReadStartTime = Date.now();
+let hasScrolledEnough = false;
+const MIN_READ_TIME = 30000;
+const SCROLL_THRESHOLD = 0.8;
+let autoReadMarked = false;
+
+function initAutoReadTracking() {
+    if (BadgeManager.isStageRead('sanguo', 3)) {
+        autoReadMarked = true;
+        return;
+    }
+    
+    const mainContent = document.querySelector('.main-content');
+    
+    mainContent.addEventListener('scroll', function() {
+        if (autoReadMarked) return;
+        
+        const scrollPercent = (mainContent.scrollTop + mainContent.clientHeight) / mainContent.scrollHeight;
+        if (scrollPercent >= SCROLL_THRESHOLD) {
+            hasScrolledEnough = true;
+            checkAndMarkAutoRead();
+        }
+    });
+    
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden && !autoReadMarked) {
+            checkAndMarkAutoRead();
+        }
+    });
+    
+    window.addEventListener('beforeunload', function() {
+        if (!autoReadMarked) {
+            checkAndMarkAutoRead();
+        }
+    });
+}
+
+function checkAndMarkAutoRead() {
+    if (autoReadMarked) return;
+    
+    const readTime = Date.now() - autoReadStartTime;
+    if (readTime >= MIN_READ_TIME && hasScrolledEnough) {
+        const newlyUnlocked = BadgeManager.markStageRead('sanguo', 3);
+        autoReadMarked = true;
+        
+        if (newlyUnlocked.length > 0) {
+            localStorage.setItem('pending_badge_notification', newlyUnlocked[0].id);
+        }
+    }
+}
+
+function showBadgeNotification(badge) {
+    document.getElementById('badgeName').textContent = badge.name;
+    document.getElementById('badgeDesc').textContent = badge.desc;
+    
+    const card = document.getElementById('badgeCard');
+    const rarityColors = {
+        common: '#d4af37',
+        rare: '#9c27b0',
+        epic: '#ff6b35'
+    };
+    const color = rarityColors[badge.rarity] || rarityColors.common;
+    card.style.border = '4px solid ' + color;
+    card.style.boxShadow = '0 10px 40px ' + color + '80';
+    document.getElementById('badgeName').style.color = color;
+    
+    document.getElementById('badgeNotification').classList.add('show');
+}
+
+function closeBadgeNotification() {
+    document.getElementById('badgeNotification').classList.remove('show');
+}
+
+window.addEventListener('load', function() {
+    initAutoReadTracking();
+});
+</script>
+</body>
+</html>

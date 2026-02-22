@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>反抗与妥协 - 水浒专题导览</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            font-family: "STKaiti", "Microsoft YaHei", serif;
+            background-color: #d8d3c3;
+        }
+
+        /* 左侧大纲栏 - 深青墨色调 */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(180deg, #2d3a3a 0%, #1a2424 100%);
+            color: #d4af37;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.3);
+            border-right: 2px solid #8b1a1a;
+            z-index: 10;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            font-size: 1.6rem;
+            margin: 0;
+            padding: 40px 0;
+            background: rgba(0,0,0,0.3);
+            letter-spacing: 4px;
+            border-bottom: 1px solid rgba(139, 26, 26, 0.4);
+            color: #e2c08d;
+        }
+
+        .nav-item {
+            padding: 22px 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            color: #b8a99a;
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            background: rgba(139, 26, 26, 0.2);
+            padding-left: 45px;
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background: #8b1a1a;
+            color: #fff;
+            font-weight: bold;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.4);
+        }
+
+        /* 右侧内容区 */
+        .main-content {
+            flex: 1;
+            padding: 50px;
+            overflow-y: auto;
+            background-image: url('https://www.transparenttextures.com/patterns/papyrus.png');
+        }
+
+        .content-box {
+            background: rgba(255, 255, 255, 0.9);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px;
+            border: 1px solid #a6937c;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+            position: relative;
+            min-height: 80vh;
+        }
+
+        h1 {
+            color: #8b1a1a;
+            border-left: 8px solid #2d3a3a;
+            padding-left: 15px;
+            font-size: 2.2rem;
+            margin-top: 0;
+        }
+
+        h2 { color: #1a2424; border-bottom: 1px solid #d2c5a7; padding-bottom: 5px; margin-top: 30px; }
+        p {
+            line-height: 1.8;
+            text-indent: 2em;
+            font-size: 1.2rem;
+        }
+        
+        .back-link {
+            position: fixed;
+            top: 20px;
+            right: 40px;
+            text-decoration: none;
+            color: #8b1a1a;
+            font-weight: bold;
+            background: #fff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        /* 测试题样式 */
+        .quiz-card { border: 2px double #8b1a1a; padding: 25px; background: #fffcf5; margin-top: 20px; }
+        .q-input { width: 85%; border:none; border-bottom:1px solid #8b1a1a; background:transparent; outline:none; padding: 2px 5px; }
+
+        .badge-notification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .badge-notification-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .badge-notification-card {
+            background: linear-gradient(135deg, #fff9e6, #fff);
+            border-radius: 20px;
+            padding: 40px 50px;
+            text-align: center;
+            max-width: 350px;
+            transform: scale(0.8);
+            transition: transform 0.3s;
+        }
+
+        .badge-notification-overlay.show .badge-notification-card {
+            transform: scale(1);
+        }
+
+/* 确保主内容区域不限制溢出 */
+#content-body {
+    padding: 0 !important;
+    background: #fff;
+}
+
+/* 视口容器：必须有明确高度，背景纯白 */
+#mindmap-viewport {
+    width: 100%;
+    height: 75vh; /* 占据屏幕高度的75% */
+    background: #ffffff;
+    position: relative;
+    overflow: hidden;
+    cursor: grab;
+    touch-action: none; /* 防止手机端干扰 */
+}
+
+/* 控制按钮美化 */
+.zoom-controls {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    flex-direction: column; /* 垂直排列更有 NotebookLM 感觉 */
+    gap: 12px;
+    z-index: 1000;
+}
+
+.zoom-btn {
+    width: 45px;
+    height: 45px;
+    background: #ffffff;
+    color: #8b1a1a;
+    border: 2px solid #8b1a1a;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.2s;
+}
+
+.zoom-btn:hover {
+    background: #8b1a1a;
+    color: white;
+}
+    </style>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>反抗与妥协</h2>
+        <div class="nav-item active" onclick="changeTab(this, '柒 · 三打祝家庄')">柒·三打祝家庄</div>
+        <div class="nav-item" onclick="changeTab(this, '捌 · 厅变忠义')">捌·厅变忠义</div>
+        <div class="nav-item" onclick="changeTab(this, '玖 · 石碣天文')">玖·石碣天文</div>
+        <div class="nav-item" onclick="changeTab(this, '拾 · 闹东京城')">拾·闹东京城</div>
+        <div class="nav-item" onclick="changeTab(this, '拾壹 · 招安之辩')">拾壹·招安之辩</div>
+        <div class="nav-item" onclick="changeTab(this, '拾贰 · 思维导图')">拾贰 · 思维导图</div>
+    </div>
+
+    <div class="main-content">
+        <a href="shuihu.html" class="back-link">← 返回主页</a>
+        <div class="content-box" id="content-display">
+            <h1 id="content-title">柒 · 三打祝家庄</h1>
+            <div id="content-body">
+                </div>
+        </div>
+    </div>
+
+    <div class="badge-notification-overlay" id="badgeNotification">
+        <div class="badge-notification-card" id="badgeCard">
+            <div style="font-size: 1.5rem; color: #8b4513; margin-bottom: 20px;">🎉 恭喜获得勋章！</div>
+            <div style="font-size: 2.5rem; margin-bottom: 15px;">🎖️</div>
+            <div style="font-size: 1.8rem; font-weight: bold; margin-bottom: 10px;" id="badgeName"></div>
+            <div style="color: #666; margin-bottom: 20px;" id="badgeDesc"></div>
+            <button onclick="closeBadgeNotification()" style="background: #8b4513; color: #fff; border: none; padding: 10px 30px; border-radius: 20px; font-size: 1rem; cursor: pointer;">太棒了！</button>
+        </div>
+    </div>
+
+    <script>
+        const contentData = {
+'柒 · 三打祝家庄': `
+ <h2 style="color:#8b1a1a; border-bottom: 2px solid #8b1a1a; padding-bottom:10px;">⚔️ 战役复盘：祝家庄之战</h2>
+<h3>1. 背景起因：时迁惹祸</h3>
+<p>梁山好汉杨雄、石秀与时迁投奔梁山途中，在祝家庄酒店投宿。时迁偷杀报晓公鸡，与店伙冲突后烧毁酒店，逃亡途中被祝家庄庄客用绊马索擒获。</p>
+<h3>2. 梁山立场</h3>
+<p>杨雄、石秀上梁山求援，晁盖以时迁偷鸡辱没梁山名声欲斩二人，宋江劝阻并主动请战，强调“山寨号令严明”的同时，提出三利：</p>
+<ul>
+ <li>为山寨报仇立威；</li>
+<li>得钱粮供山寨使用；</li>
+<li>请李应入伙。</li>
+</ul>
+<hr style="border-top: 1px dashed #a6937c; margin: 20px 0;">
+ <h3>一打祝家庄：冒进中计</h3>
+ <ul>
+ <li><b>轻敌探路：</b>宋江率军至独龙山下，派杨林、石秀探路。石秀从钟离老人处获知祝家庄盘陀路“见白杨树转弯”的秘诀，杨林却被俘。</li>
+ <li><b>仓促进攻：</b>宋江未见回报便夜袭祝家庄，陷入迷宫般的盘陀路。祝家庄亮起红灯指挥伏兵，梁山军遭围剿。
+ <ul>
+<li>关键时刻石秀赶到，指引军队按白杨树标记突围。</li>
+<li>秦明、邓飞被绊马索擒获，宋江得李应部将杜兴暗示，转攻西南方（实为祝家庄主力所在），遭遇扈三娘追击。</li>
+<li>林冲擒获扈三娘，但梁山损兵折将，首次失利。</li>
+ </ul>
+ </li>
+ </ul>
+ <h3>二打祝家庄：僵局与转机</h3>
+ <ul>
+ <li><b>外部联盟破裂：</b>宋江试图联合李应，遭拒；又修书扈家庄求和，扈成绑祝彪未果反遭李逵滥杀（扈家庄满门被灭，仅扈成逃脱）。</li>
+ <li><b>强攻受挫：</b>宋江分兵四路强攻，祝家庄吊桥高悬、壁垒森严。梁山军遭遇：
+ <ul>
+ <li>乱箭、滚木礌石压制；</li>
+ <li>祝彪暗箭伤宋江；</li>
+ <li>解珍、解宝被擒。</li>
+ </ul>
+ </li>
+<li><b>孙立献计：</b>登州兵马提辖孙立携邹渊、邹润等八人诈降祝家庄，利用与祝家庄教师栾廷玉的师兄弟关系取得信任，为第三次攻打埋下伏笔。</li>
+ </ul>
+ <h3>三打祝家庄：里应外合</h3>
+ <ul>
+ <li><b>卧底布局：</b>孙立入驻祝家庄后，以擒获石秀为名展示武艺，进一步获取信任。</li>
+ <li><b>总攻配合：</b>
+ <ol>
+ <li><b>调虎离山：</b>梁山军分四路佯攻，祝家庄主力出庄迎战。</li>
+ <li><b>内应发难：</b>孙立、解珍等人在庄内纵火，打开庄门。</li>
+ <li><b>内外夹击：</b>梁山军冲入庄内，祝朝奉被杀，祝龙、祝彪逃亡途中被李逵、花荣所斩，栾廷玉被乱军所杀（一说逃亡）。</li>
+ </ol>
+ </li>
+ <li><b>战后清算：</b>
+ <ul>
+ <li><b>钱财粮草：</b>梁山获祝家庄五千万石粮食及大量财帛，实力大增。</li>
+ <li><b>人事处置：</b>扈三娘被宋江认作义妹，强配王英；李应、杜兴被梁山设计逼上山寨。</li>
+ </ul>
+ </li>
+ </ul>
+ <hr style="border-top: 1px dashed #a6937c; margin: 30px 0;">
+ <h3>📊 战略意义与文学价值</h3>
+ <table style="width:100%; border-collapse: collapse; background:#fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
+ <thead>
+ <tr style="background:#8b1a1a; color:#fff;">
+ <th style="padding:12px; border:1px solid #5a1212; width:25%;">核心维度</th>
+ <th style="padding:12px; border:1px solid #5a1212;">具体内容</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+ <td style="padding:10px; border:1px solid #ddd; font-weight:bold; color:#2d3a3a;">1. 战术转折点</td>
+ <td style="padding:10px; border:1px solid #ddd;">从蛮干到智取，标志梁山从流寇向正规军事组织转型。</td>
+ </tr>
+ <tr style="background:#f9f9f9;">
+ <td style="padding:10px; border:1px solid #ddd; font-weight:bold; color:#2d3a3a;">2. 宋江权威确立</td>
+ <td style="padding:10px; border:1px solid #ddd;">此战后宋江威望超越晁盖，为日后梁山领导权更迭铺垫。</td>
+ </tr>
+ <tr>
+ <td style="padding:10px; border:1px solid #ddd; font-weight:bold; color:#2d3a3a;">3. 人物塑造</td>
+ <td style="padding:10px; border:1px solid #ddd;">石秀的机智、孙立的谋略、李逵的莽撞、宋江的权术在此战中淋漓尽致。</td>
+ </tr>
+ <tr style="background:#f9f9f9;">
+ <td style="padding:10px; border:1px solid #ddd; font-weight:bold; color:#2d3a3a;">4. 社会隐喻</td>
+ <td style="padding:10px; border:1px solid #ddd;">展现宗族势力（祝、扈、李三庄联盟）与起义军的冲突，暗喻农民起义对地方秩序的冲击。</td>
+</tr>
+ </tbody>
+ </table>
+ <h3>🔍 细节深析</h3>
+ <ul>
+ <li><b>盘陀路象征：</b>象征封建统治的顽固与复杂，破路需依靠人民智慧（钟离老人）。</li>
+ <li><b>扈家庄悲剧：</b>反映战争中对中立者的残酷，以及梁山“替天行道”旗帜下的暴力本质。</li>
+ <li><b>孙立角色争议：</b>作为卧底出卖同门栾廷玉，成为其道德污点，后世评点常论其“义利之辩”。</li>
+ </ul>
+ <div style="margin-top: 40px; padding: 20px; background-color: #fffcf0; border-left: 5px solid #d4af37; border-radius: 5px;">
+ <h3 style="margin-top: 0; color: #8b1a1a;">💡 专题思考：义气与权谋的博弈</h3>
+ <p><b>🤔 思考一：宋江为什么要打这一仗？</b><br>
+ 表面上是为偷鸡的时迁出头，实则是宋江上山后的<b>立威之战</b>。晁盖想杀人立规矩，宋江偏要救人买人心。打下祝家庄，钱粮有了，威信立了，晁盖的“山寨之主”地位实质上已被架空。</p>        
+ <p><b>😰 思考二：扈三娘的命运是“妥协”的极致吗？</b><br>
+ 全家被李逵灭门，自己却被迫认贼作父（认宋江为义兄），还要嫁给品行低劣的王英。这是《水浒传》中最残酷的<b>政治联姻</b>。在“大义”的旗号下，个人的仇恨和尊严被彻底抹杀，这是否预示了后来梁山招安时，兄弟们命运被皇权随意摆布的结局？🥀</p>        
+ <p><b>🧐 思考三：孙立为何排不进天罡？</b><br>
+ 孙立武艺高强且立下破庄首功，却仅列地煞第3位（总39位）。除了因为他是“后来者”，是否也因为他<b>出卖师兄栾廷玉</b>的行为违背了江湖最看重的“义”？为了梁山的“大义”牺牲私人的“小信”，这种价值观的冲突，正是“反抗与妥协”阶段最耐人寻味的地方。</p>
+ </div>
+`,
+'捌 · 厅变忠义': `
+    <h2 style="color:#8b1a1a; border-bottom: 2px solid #8b1a1a; padding-bottom:10px;">路线之争：从聚义厅到忠义堂</h2>
+    
+    <div style="text-align: center; margin: 20px 0;">
+        <img src="images/zhongyitang.jpg" alt="忠义堂匾额更换" style="width:100%; max-width:600px; border: 5px solid #2d3a3a; border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+        <p style="font-size: 0.9rem; color: #666; margin-top: 5px;">图：替天行道（98版水浒）</p>
+    </div>
+
+    <h3>一、事件核心：牌匾的变更</h3>
+    <ul>
+        <li><b>变更时间：</b>在第七十一回“忠义堂石碣受天文 梁山泊英雄排座次”中，宋江在完成108将大聚义、树立“替天行道”杏黄旗后，正式将梁山泊议事中枢的匾额从“聚义厅”换为“忠义堂”。</li>
+        <li><b>仪式场景：</b>这一改动与“石碣天书”排名事件紧密相连，赋予了其“天命所归”的神圣色彩，使得反对者难以公开质疑。</li>
+    </ul>
+
+    <hr style="border-top: 1px dashed #a6937c; margin: 20px 0;">
+
+    <h3>二、变更的深层背景与长期铺垫</h3>
+    <p>牌匾的更改是宋江路线长期运作的结果，其铺垫贯穿宋江上山后的全过程：</p>
+    
+    <h4>1. 晁盖时期的“聚义”精神（前六十回）</h4>
+    <ul>
+        <li><b>核心内涵：</b>强调“四海之内，皆兄弟也”的平等江湖义气，以“论秤分金银，异样穿绸锦”为经济纲领，目标多是“一同快活”、“对抗官府”。</li>
+        <li><b>载体象征：</b>“聚义厅”是梁山初创期精神的物化，代表的是自下而上、打破秩序的草莽反抗。</li>
+    </ul>
+
+    <h4>2. 宋江的“忠义”双轨策略（宋江上山后）</h4>
+    <ul>
+        <li><b>言行铺垫：</b>宋江自上山始，便常在“兄弟义气”中夹带“忠君”私货。其典型言论如：
+            <ul>
+                <li>“专待朝廷招安，尽忠竭力报国”</li>
+                <li>“望天王降诏早招安，心方足”</li>
+            </ul>
+        </li>
+        <li><b>关键事件：</b>
+            <ul>
+                <li><b>收纳降将：</b>每有朝廷将领被俘，宋江必亲解其缚，述说“暂居水泊，专待招安”的苦衷，将秦明、呼延灼、关胜等一批“忠君”思想浓厚的军官引入领导层，改变了梁山的人员构成与思想基础。</li>
+                <li><b>统领权转移：</b>通过一系列战役（如三打祝家庄、攻打高唐州等），宋江逐步取代晁盖成为实际军事领袖，其路线影响力日益扩大。</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h4>3. 晁盖之死与权力真空</h4>
+    <ul>
+        <li>晁盖中毒箭身亡，临终留下“若哪个捉得射死我的，便叫他做梁山泊主”的模糊遗言，客观上为宋江上位制造了障碍，但也加速了路线之争的解决。</li>
+        <li>宋江凭借卢俊义擒史文恭之事，通过“让位”表演巩固地位，最终完成权力交接，为更名扫清了最高障碍。</li>
+    </ul>
+
+    <h3>三、“忠义”内涵的矛盾与统一</h3>
+    <p>宋江所推行的“忠义”是一个精心构建的、服务于其政治目标的概念体系：</p>
+    <table style="width:100%; border-collapse: collapse; margin: 20px 0; background:#fff; box-shadow: 0 0 10px rgba(0,0,0,0.05);">
+        <thead>
+            <tr style="background:#2d3a3a; color:#d4af37;">
+                <th style="padding:15px; text-align:left; border:1px solid #555; width: 20%;">维度</th>
+                <th style="padding:15px; text-align:left; border:1px solid #555;">深度解析</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding:15px; border:1px solid #ddd; font-weight:bold; color:#8b1a1a;">“忠”的指向</td>
+                <td style="padding:15px; border:1px solid #ddd;">特指对皇帝（宋徽宗）的忠诚，而非对腐败的朝廷（蔡京、高俅等）或现行法度的服从。这为梁山的反抗行为找到了合法借口——“只反贪官，不反皇帝”。</td>
+            </tr>
+            <tr style="background:#fcfcfc;">
+                <td style="padding:15px; border:1px solid #ddd; font-weight:bold; color:#8b1a1a;">“义”的改造</td>
+                <td style="padding:15px; border:1px solid #ddd;">将原本平等的兄弟情义，改造为服从于“忠”这一更高目标的、具有等级色彩的“大义”。兄弟之义必须服务于“尽忠报国”的终极目标。</td>
+            </tr>
+            <tr>
+                <td style="padding:15px; border:1px solid #ddd; font-weight:bold; color:#8b1a1a;">矛盾与统一</td>
+                <td style="padding:15px; border:1px solid #ddd;">
+                    <b>矛盾：</b>真正的“忠”（无条件服从朝廷）与梁山好汉快意恩仇的“义”存在根本冲突。<br><br>
+                    <b>统一：</b>宋江通过将“招安”定义为“为国家臣子，建功立业，青史留名”的最高“义举”，强行统一了两者。反对招安者（如李逵、武松、鲁智深）便成了“不识大义”。
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>四、更名后的直接影响与组织重构</h3>
+    <ol>
+        <li><b>政治纲领确立：</b>“忠义堂”成为梁山公开的、正式的政治宣言，标志着从“反抗官府”到“曲线尽忠”的转型完成。</li>
+        <li><b>组织仪式化：</b>在忠义堂下，宋江设立了“祈禳天寿”的醮坛，引出“石碣天书”，将108人排名神圣化。这一套“天命—忠义”的组合，极大地强化了宋江路线的权威性和不可挑战性。</li>
+        <li><b>军事行动转向：</b>此后梁山的大型军事行动（两赢童贯、三败高俅）目的从“生存扩张”变为“以战促和”（展示实力以便在招安中获取更好条件）。</li>
+    </ol>
+
+    <div style="margin-top: 40px; padding: 20px; background-color: #fffcf0; border-left: 5px solid #d4af37; border-radius: 5px;">
+        <h3 style="margin-top: 0; color: #8b1a1a;">💡 专题思考：</h3>
+
+        <p><b>🤐 思考一：为什么晁盖的名字在“忠义堂”时期被迅速淡化？</b><br>
+        “聚义厅”是晁盖的灵魂归宿，那里讲究的是大碗喝酒、不论出身。而“忠义堂”是宋江的政治舞台，讲究的是座次分明、天命皇权。改名不仅是改招牌，更是一次<b>精神上的“清洗”</b>。从那一刻起，那个哪怕是小喽啰也能畅所欲言的梁山，死去了。👻</p>
+
+        <p><b>💔 思考二：“只反贪官，不反皇帝”是最大的谎言吗？</b><br>
+        宋江深知，如果不把皇帝和贪官切割开来，梁山就是彻底的叛逆，永远没有回头的路。但这其实是一个悖论：贪官正是皇权的延伸，皇帝正是贪官的保护伞。这种<b>自我欺骗式的妥协</b>，注定了梁山好汉们最终只能成为皇权用完即弃的棋子。♟️</p>
+
+        <p><b>🤯 思考三：如果李逵当了老大，会叫什么堂？</b><br>
+        大概会叫“快活堂”或者“杀去东京堂”吧！😂 虽然听着荒诞，但那才是真正彻底的、不妥协的反抗。宋江的“忠义”，到底是升华了梁山，还是阉割了梁山？这是一个永远值得争论的话题。</p>
+    </div>
+`,
+'玖 · 石碣天文': `
+    <h2 style="color:#8b1a1a; border-bottom: 2px solid #8b1a1a; padding-bottom:10px;">🔮 天命神话：石碣受天文</h2>
+
+    <h3>一、事件背景：排座次的现实困境</h3>
+    <p>在晁盖死后，宋江虽已是梁山实际领袖，但108位好汉齐聚后，如何排定座次成为一个巨大难题：</p>
+    <ul>
+        <li><b>成分复杂：</b>山头林立（原晁盖系、宋江系、二龙山系、降将系、元老系等）。</li>
+        <li><b>功劳不一：</b>资历、武艺、贡献难以量化比较。</li>
+        <li><b>人心浮动：</b>若按亲疏或武力强行排名，极易引发内部分裂。</li>
+    </ul>
+    <p>宋江需要一个超越人力、无可争议的权威方案来一劳永逸地解决这个问题。“石碣天文”便应运而生。</p>
+
+    <hr style="border-top: 1px dashed #a6937c; margin: 20px 0;">
+
+    <h3>二、事件全过程：精心策划的“天启”仪式</h3>
+    
+    <h4>1. 醮坛祈愿，天降异象</h4>
+    <ul>
+        <li>宋江在忠义堂前建罗天大醮，祈求“上天护佑，兄弟和睦，共保国安民”。</li>
+        <li>仪式进行到第七日三更时分，“天上一声巨响，一道毫光射入地下”。</li>
+        <li>在宋江指挥下，众人于地下掘出一块“龙章凤篆、人皆不识”的石碣。</li>
+    </ul>
+
+    <h4>2. 翻译天书，神定座次</h4>
+    <ul>
+        <li>经道士何玄通（名字暗含“何以通玄”之意）辨认翻译，石碣两侧分别为“替天行道”与“忠义双全”。</li>
+        <li>石碣背面刻有三十六天罡星与七十二地煞星的名号、排序，恰好对应梁山108位好汉。</li>
+        <li><b>排名结果完全符合宋江的政治需要：</b>
+            <ul>
+                <li><b>顶端固化：</b>宋江（天魁星）、卢俊义（天罡星）分列一、二，吴用、公孙胜等核心决策层紧随其后。</li>
+                <li><b>派系平衡：</b>各山头首领均进入天罡星序列，降将关胜、呼延灼等排名压过武松、鲁智深等元老。</li>
+                <li><b>神化秩序：</b>将基于现实考量的政治安排，包装为“天地之意，物理数定”的天命。</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h4>3. 众人反应：“拜受”天命</h4>
+    <ul>
+        <li>书中写“众人皆道：‘天地之意，物理数定，谁敢违拗？’” 再无一人提出异议。</li>
+        <li>宋江即刻依据石碣天文，于忠义堂正式排定座位，并宣布纪律：“各人务要竭力同心，共聚大义。”</li>
+    </ul>
+
+    <h3>📜 三、事件的深层解读：政治神话的构建</h3>
+    <table style="width:100%; border-collapse: collapse; margin: 20px 0; background:#fff; box-shadow: 0 0 10px rgba(0,0,0,0.05);">
+        <thead>
+            <tr style="background:#2d3a3a; color:#d4af37;">
+                <th style="padding:12px; border:1px solid #555; width:25%;">维度</th>
+                <th style="padding:12px; border:1px solid #555;">解读与分析</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding:12px; border:1px solid #ddd; font-weight:bold; color:#8b1a1a;">1. 宋江路线的终极确立</td>
+                <td style="padding:12px; border:1px solid #ddd;">
+                    <b>神化领导权：</b>将宋江的领袖地位归于“天魁星”下凡，使其权威不再源于晁盖遗言或兄弟推举，而是“天命所归”。<br>
+                    <b>固化招安路线：</b>“替天行道”与“忠义双全”并刻，将梁山的暴力反抗合法化（替天），并指向最终归宿（忠义即效忠皇帝）。从此，招安不再是宋江的个人主张，而是上天赋予梁山集体的神圣使命。
+                </td>
+            </tr>
+            <tr style="background:#fcfcfc;">
+                <td style="padding:12px; border:1px solid #ddd; font-weight:bold; color:#8b1a1a;">2. 解决组织难题的“天才”设计</td>
+                <td style="padding:12px; border:1px solid #ddd;">
+                    <b>化解矛盾：</b>用“天意”消除了人为排座次可能引发的巨大争议和内耗。<br>
+                    <b>建立等级：</b>将平等色彩的“兄弟聚义”，转化为有固定次序的星宿序列，为梁山这个军事组织注入了严明的等级秩序。
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:12px; border:1px solid #ddd; font-weight:bold; color:#8b1a1a;">3. 对“义”的偷换与收编</td>
+                <td style="padding:12px; border:1px solid #ddd;">
+                    此前梁山之“义”是江湖兄弟的朴素情义。石碣天文后，“义”必须服从于“天”所规定的“忠”与“道”。个人的“义”被纳入集体天命，质疑宋江就是违逆天意。
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>四、文学手法与象征意义</h3>
+    <ul>
+        <li><b>“天人感应”的传统笔法：</b>继承了中国古代史书与小说中“君权神授”、“祥瑞谶纬”的叙事传统，为草莽英雄的故事披上了史诗与天命的外衣。</li>
+        <li><b>石碣的双重象征：</b>
+            <ul>
+                <li><b>神圣性：</b>作为“天书”，它是不可违抗的最高律令。</li>
+                <li><b>禁锢性：</b>它也是一块沉重的碑石，锁定了108人的身份与命运。他们从此不再是自由的个体，而是履行天命的“星宿”，其悲剧结局在此已埋下伏笔。</li>
+            </ul>
+        </li>
+        <li><b>何道士的角色：权力的共谋者：</b>翻译者何玄通是此神话链条中唯一的人为环节。他的出现暗示了整个事件可能是一场精心策划的政治表演。道士身份赋予其沟通天人的权威，而他的“翻译”实则为宋江的意志提供了“天启”的包装。</li>
+    </ul>
+
+    <h3>五、在全书结构中的枢纽作用</h3>
+    <ol>
+        <li><b>叙事高潮：</b>标志着梁山事业从“崛起-扩张”进入到“鼎盛-定型”阶段，是全书前半部分收束性的高潮。</li>
+        <li><b>命运转折点：</b>此后，梁山再无内部纷争，全力转向对外战争（两赢童贯、三败高俅）以谋求招安。众人的集体命运被彻底绑定在宋江-天命的战车上，驶向招安后的悲剧终局。</li>
+        <li><b>主题深化：</b>将“官逼民反”的世俗故事，提升至“星宿历劫、回归天道”的宿命论层次，加深了故事的悲壮感与虚无色彩。</li>
+    </ol>
+
+    <div style="margin-top: 40px; padding: 20px; background-color: #fffcf0; border-left: 5px solid #d4af37; border-radius: 5px;">
+        <h3 style="margin-top: 0; color: #8b1a1a;">💡总结 ：</h3>
+
+        <p><b>“石碣天文”事件是宋江政治智慧的巅峰体现，也是一次经典的政治神学构建。它通过创造一个无可置疑的“天启”神话，一举解决了梁山泊的领导权威、组织秩序和未来路线三大根本问题。然而，这种以“天命”压制“人情”、以“星宿”替代“好汉”的操作，在赋予梁山强大凝聚力的同时，也抽离了其最初的革命性与生命力，使其最终成为实现“忠义”理念的悲剧工具。因此，石碣既是梁山的封神榜，也是其命运判决书。</p>
+    </div>
+`,
+'拾 · 闹东京城': `
+    <h2 style="color:#8b1a1a; border-bottom: 2px solid #8b1a1a; padding-bottom:10px;">🎆 繁华与暴力的交响：元宵夜闹东京</h2>
+
+    <h3>一、事件背景：招安僵局与宋江的“捷径”构想</h3>
+    <ol>
+        <li><b>形势所迫：</b>梁山虽两赢童贯、三败高俅，但军事胜利并未直接换来朝廷诚心招安。高俅被放回后背信弃义，招安进程陷入僵局。</li>
+        <li><b>宋江的新策略：</b>为打破僵局，宋江决定绕过奸臣集团（高俅、蔡京等），直接向最高权威——宋徽宗本人传递梁山“渴望招安、忠君爱国”的诚意。他选择了特殊渠道：通过宋徽宗宠幸的名妓李师师。</li>
+    </ol>
+
+    <hr style="border-top: 1px dashed #a6937c; margin: 25px 0;">
+
+    <h3>👥 二、核心团队与分工</h3>
+    <p>宋江此行挑选了最精干、最信任的班底，各司其职：</p>
+    
+    <table style="width:100%; border-collapse: collapse; background:#fff; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <thead>
+            <tr style="background-color: #2d3a3a; color: #d4af37;">
+                <th style="padding: 12px; border: 1px solid #1a2424; width: 20%;">人物</th>
+                <th style="padding: 12px; border: 1px solid #1a2424;">角色定位与具体职责</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding: 12px; border: 1px solid #ccc; font-weight: bold; text-align: center; color: #8b1a1a;">宋江</td>
+                <td style="padding: 12px; border: 1px solid #ccc;">总指挥与外交主角，扮演“山东富商”张员外。</td>
+            </tr>
+            <tr style="background-color: #f9f9f9;">
+                <td style="padding: 12px; border: 1px solid #ccc; font-weight: bold; text-align: center; color: #2d3a3a;">柴进</td>
+                <td style="padding: 12px; border: 1px solid #ccc;">贵族气质，熟悉宫廷礼仪，负责探路与情报。</td>
+            </tr>
+            <tr>
+                <td style="padding: 12px; border: 1px solid #ccc; font-weight: bold; text-align: center; color: #2d3a3a;">燕青</td>
+                <td style="padding: 12px; border: 1px solid #ccc;">关键人物。凭借才艺、机智与情商，负责打通李师师关节。</td>
+            </tr>
+            <tr style="background-color: #f9f9f9;">
+                <td style="padding: 12px; border: 1px solid #ccc; font-weight: bold; text-align: center; color: #2d3a3a;">戴宗</td>
+                <td style="padding: 12px; border: 1px solid #ccc;">通讯联络与应变。</td>
+            </tr>
+            <tr>
+                <td style="padding: 12px; border: 1px solid #ccc; font-weight: bold; text-align: center; color: #d32f2f;">李逵</td>
+                <td style="padding: 12px; border: 1px solid #ccc;">贴身护卫。宋江带他既是信任，也埋下巨大风险——李逵对“见妓女、求招安”极度反感。</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>🔥 三、事件全过程：从“暗通款曲”到“烈火焚城”</h3>
+    
+    <h4>第一阶段：潜入与铺路（元宵节前）</h4>
+    <ul>
+        <li><b>柴进冒险：</b>柴进混入皇家禁苑“睿思殿”，从屏风上刮下御书“山东宋江”四字，证明皇帝已知梁山，坚定了宋江走“李师师路线”的决心。</li>
+        <li><b>燕青公关：</b>燕青以俊朗外貌、吹箫唱曲之才打动李师师，并拜其为“姐姐”，建立亲密信任关系。</li>
+    </ul>
+
+    <h4>第二阶段：元宵夜会（高潮迭起）</h4>
+    <ul>
+        <li><b>初次会面：</b>宋江、柴进、戴宗、李逵四人扮做客商进入李师师行院。宋江献金珠，酒席间赋词明志（“借得山东烟水寨，六六雁行连八九”），试图表露身份与诉求。</li>
+        <li><b>意外中断：</b>宋徽宗突然从地道临幸李师师，宋江等人只得回避，计划功败垂成。</li>
+    </ul>
+
+    <h4>第三阶段：李逵引爆混乱（“闹”的起点）</h4>
+    <ul>
+        <li><b>怒火中烧：</b>李逵在门外目睹宋江、柴进与李师师饮酒，又见皇帝来到，对“哥哥”卑躬屈膝的姿态愤慨至极。</li>
+        <li><b>直接触发：</b>杨太尉（高俅亲信）闯入撞见宋江等人，厉声呵斥。李逵长期对贪官的仇恨瞬间爆发，扯下书画，抡椅打翻杨太尉，行院大乱。</li>
+        <li><b>火焚东京：</b>李逵夺条棍子，冲出街市，抢夺火把，放火烧房。东京城最繁华的元宵夜陷入火海与恐慌。</li>
+    </ul>
+
+    <h4>第四阶段：全城逃亡与城外接应</h4>
+    <ul>
+        <li><b>分头突围：</b>
+            <ul>
+                <li>城内：宋江等四人趁乱混出城门。</li>
+                <li>城外：梁山五路兵马（关胜、林冲、秦明等率领）按预定计划接应，击退追兵。</li>
+            </ul>
+        </li>
+        <li><b>李逵独行：</b>李逵杀得性起，脱队后遇浪子燕青。燕青以智勇制服李逵，二人结伴绕道回山。</li>
+    </ul>
+
+    <hr style="border-top: 1px dashed #a6937c; margin: 25px 0;">
+
+    <h3>四、事件的直接后果与次要情节</h3>
+    <p><b>“四寇”名单的隐喻：</b>柴进在睿思殿看到的四大寇名单——“山东宋江、淮西王庆、河北田虎、江南方腊”，暗示了梁山未来的悲剧命运：被招安后，将作为朝廷工具去征剿其他三股势力。</p>
+
+    <div style="text-align: center; margin: 20px 0;">
+        <img src="images/naodongjing.jpg" alt="李逵元宵闹东京" style="width:100%; max-width:650px; border: 4px double #5a1212; box-shadow: 5px 5px 15px rgba(0,0,0,0.4);">
+        <p style="font-size: 0.9rem; color: #555; font-style: italic;"></p>
+    </div>
+
+    <div style="margin-top: 40px; padding: 20px; background-color: #fffcf0; border-left: 5px solid #d4af37; border-radius: 5px;">
+        <h3 style="margin-top: 0; color: #8b1a1a;">💡 深度思考</h3>
+        
+        <p><b>思考一：最荒诞的求职现场</b><br>
+        宋江带着梁山最能打的兄弟，冒着掉脑袋的风险潜入京城，不是为了刺杀暴君，而是为了在皇帝嫖妓的间隙，卑微地递上一份简历。这是《水浒传》中最具讽刺意味的一幕：所谓的“替天行道”，最终竟沦为“走夫人（妓女）路线”的政治投机。这究竟是权宜之计，还是人格的崩塌？</p>
+
+        <p><b>思考二：李逵为什么一定要“闹”？</b><br>
+        很多人觉得李逵是惹祸精，但在这里，<b>李逵是唯一清醒的人</b>。在宋江眼里，那是至高无上的圣上；在李逵眼里，那只是一个逛窑子的嫖客。李逵的愤怒，源于他朴素的直觉：我们造反是因为皇帝昏庸，现在哥哥却要向这个昏庸的嫖客下跪？他的那把火，烧的不仅是东京城，更是对宋江投降路线的本能抗议。🔥</p>
+
+        <p><b>思考三：螳螂捕蝉，黄雀在后</b><br>
+        柴进在皇宫看到的“四大寇”名单，就像一张<b>死亡通知单</b>。朝廷把宋江和方腊并列，说明在统治者眼中，他们都是必须要消灭的隐患。招安，不过是“以寇制寇”的手段。宋江以为自己找到了通往朝堂的捷径，殊不知只是踏上了一条通往坟墓的单行道。</p>
+    </div>
+`,
+'拾壹 · 招安之辩': `
+    <h2 style="color:#8b1a1a; border-bottom: 2px solid #8b1a1a; padding-bottom:10px;">理想的撕裂：招安路线大辩论</h2>
+
+    <h3>一、辩论阵营与代表人物</h3>
+    <div style="display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 250px; background: #f0f4f4; padding: 15px; border-left: 5px solid #2d3a3a;">
+            <h4 style="margin-top:0; color:#2d3a3a;">🟥 招安主导派</h4>
+            <ul>
+                <li><b>核心：</b>宋江</li>
+                <li><b>主力：</b>多数朝廷降将（呼延灼、关胜等）、部分重视名分的豪杰（卢俊义）</li>
+                <li><b>军师：</b>吴用（策略上支持，但态度更现实）</li>
+            </ul>
+        </div>
+        <div style="flex: 1; min-width: 250px; background: #fff5f5; padding: 15px; border-left: 5px solid #8b1a1a;">
+            <h4 style="margin-top:0; color:#8b1a1a;">⬛ 招安反对派</h4>
+            <ul>
+                <li><b>激烈反抗派：</b>李逵（本能反对）</li>
+                <li><b>清醒怀疑派：</b>武松、鲁智深（基于对朝廷的深刻不信任）</li>
+                <li><b>草莽享乐派：</b>阮氏三雄等部分元老（留恋自由快活的山寨生活）</li>
+            </ul>
+        </div>
+    </div>
+
+    <h3>二、三次核心辩论现场</h3>
+    
+    <h4>1. 第一辩：菊花大会 · 理想与现实的正面冲撞</h4>
+    <ul>
+        <li><b>导火索：</b>宋江作《满江红》词，乐和唱至“望天王降诏，早招安”。</li>
+        <li><b>反对派声音：</b>
+            <ul>
+                <li><b>武松（率先发难）：</b>“今日也要招安，明日也要招安去，冷了弟兄们的心！” —— 质疑此举伤害兄弟感情。</li>
+                <li><b>李逵（激烈反应）：</b>“招安，招安，招甚鸟安！” —— 本能反抗一切束缚。</li>
+                <li><b>鲁智深（最具洞见）：</b>“只今满朝文武，俱是奸邪……招安不济事！便拜辞了，明日一个个各去寻趁罢。” —— 直指问题的核心：招安后腐败的体制能否容得下梁山兄弟？</li>
+            </ul>
+        </li>
+        <li><b>宋江的辩驳与压制：</b>
+            <ul>
+                <li><b>道德理想：</b>招安是为“改邪归正，为国家臣子”。</li>
+                <li><b>功名诱惑：</b>“日后去边上一枪一刀博得个封妻荫子，久后青史上留一个好名”。</li>
+                <li><b>权威镇压：</b>怒斥李逵“这黑厮怎敢如此无礼”，并令斩首（后假意饶过），以此震慑全场。</li>
+            </ul>
+        </li>
+        <li><b>辩论结果：</b>表面争议被压下，但思想裂痕公开化，反对派被迫沉默。</li>
+    </ul>
+
+    <hr style="border-top: 1px dashed #a6937c; margin: 20px 0;">
+
+    <h4>2. 第二辩：条件之争 · “卑顺”与“尊严”的路线之辩</h4>
+    <ul>
+        <li><b>背景：</b>面对朝廷前来招安的使臣和陈宗善太尉。</li>
+        <li><b>交锋焦点：</b>应以何种姿态接受招安？</li>
+        <li><b>宋江、卢俊义观点：</b>极尽谦恭，接受朝廷一切安排（包括带有侮辱性言辞的诏书），以示忠诚无二。</li>
+        <li><b>吴用、林冲等人观点：</b>“此番招安，兄长得心疑。我看这来的使臣面色，我看倒把梁山的义气看得轻了。不如杀得他们人亡马倒，梦里也怕，那时方受招安，才有气度。” —— 主张以武力威慑换取有尊严的招安条件，是现实主义的“以战促和”路线。</li>
+        <li><b>李逵行动：</b>直接撕毁诏书，殴打钦差，用行动彻底否定招安本身。</li>
+        <li><b>辩论结果：</b>吴用的现实主义路线占据上风，梁山通过两赢童贯、三败高俅的军事胜利，赢得了后续谈判的资本。</li>
+    </ul>
+
+    <hr style="border-top: 1px dashed #a6937c; margin: 20px 0;">
+
+    <h4>3. 第三辩：陈桥驿风波 · “兄弟之义”与“朝廷法度”的终极抉择</h4>
+    <ul>
+        <li><b>背景：</b>招安已成，梁山军奉命出征辽国前，朝廷官员克赏赐酒肉。</li>
+        <li><b>事件：</b>一军校因酒肉被贪官克扣、辱骂，怒杀该官。</li>
+        <li><b>核心辩题：</b>在招安后的新秩序下，当“兄弟情义/个人尊严”与“朝廷法度/大局稳定”发生不可调和的冲突时，如何选择？</li>
+        <li><b>宋江的裁决与悲辩：</b>
+            <ul>
+                <li><b>依法处决：</b>为保全军，含泪令军校自缢。</li>
+                <li><b>公开宣示：</b>“今日一身入官，事不由我。” —— 承认招安后个人与集体意志必须屈从于体制规则。</li>
+                <li><b>安抚与警告：</b>“尔等自此以后，不得有违。”</li>
+            </ul>
+        </li>
+        <li><b>辩论性质：</b>这已非言语之辩，而是用血写就的残酷答案。它标志着梁山内部的“义”必须彻底让位于对朝廷的“忠”，任何个人冤屈在“大局”面前皆可牺牲。反对派至此已完全失去辩论的空间。</li>
+    </ul>
+
+    <h3>💡 三、辩论的核心逻辑与话术分析</h3>
+    <table style="width:100%; border-collapse: collapse; background:#fff; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <thead>
+            <tr style="background-color: #2d3a3a; color: #d4af37;">
+                <th style="padding: 12px; border: 1px solid #1a2424; width: 30%;">阵营</th>
+                <th style="padding: 12px; border: 1px solid #1a2424;">核心逻辑与话术体系</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding: 15px; border: 1px solid #ccc; font-weight: bold; color: #8b1a1a; vertical-align: top;">
+                    宋江派的话术体系
+                </td>
+                <td style="padding: 15px; border: 1px solid #ccc;">
+                    <ul>
+                        <li><b>忠君报国：</b>将招安塑造为唯一的政治正确和道德出路。</li>
+                        <li><b>功名青史：</b>用封建时代最高的个人价值（封妻荫子、青史留名）进行诱惑。</li>
+                        <li><b>兄弟前程：</b>将招安包装为“为众兄弟谋个长远前程”的负责任之举。</li>
+                        <li><b>天命所归：</b>借助“石碣天文”等神话，将招安路线神圣化、天命化。</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr style="background-color: #f9f9f9;">
+                <td style="padding: 15px; border: 1px solid #ccc; font-weight: bold; color: #2d3a3a; vertical-align: top;">
+                    反对派的逻辑根源
+                </td>
+                <td style="padding: 15px; border: 1px solid #ccc;">
+                    <ul>
+                        <li><b>经验主义（鲁智深、武松）：</b>基于对朝廷腐败的深刻认知，断定招安是幻想。</li>
+                        <li><b>本能主义（李逵）：</b>追求绝对自由与平等，反抗任何形式的压迫和屈膝。</li>
+                        <li><b>享乐主义（部分元老）：</b>满足于现状，不愿用自由换取未知的体制风险。</li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="background-color: #eee; padding: 20px; border-left: 5px solid #555; font-style: italic; margin-bottom: 30px;">
+        <h4 style="margin-top:0;">总结：辩论的实质与结局</h4>
+        <p>这场大辩论，实质是 “江湖道义”与“封建秩序” 、 “兄弟平等”与“君臣纲常” 之间不可调和的冲突。宋江凭借其无可动摇的领袖权威、“忠义”话语的道德制高点以及对多数人功名心理的掌握，在每一次辩论中都取得了表面的胜利。</p>
+        <p>然而，辩论的结局并非真理越辩越明，而是：</p>
+        <ul>
+            <li>反对派被逐步压制、分化或噤声。</li>
+            <li>梁山的灵魂从“多元、抗争的义气共同体”被改造为“目标单一、等级森严的准军事组织”。</li>
+            <li>为梁山接受招安后的集体命运铺平了道路，也埋下了内部精神死亡的伏笔。</li>
+        </ul>
+    </div>
+
+    <div style="margin-top: 40px; padding: 20px; background-color: #fffcf0; border: 1px solid #d4af37; border-radius: 8px; position: relative;">
+        <h3 style="margin-top: 0; color: #8b1a1a;">💡 深度思考：谁看清了结局？</h3>
+        
+        <p><b>“冷了弟兄们的心”：</b><br>
+        武松这句话，是全书最令人心碎的预言。他敏锐地感觉到，招安不仅是政治路线的变更，更是<b>情感契约的撕毁</b>。以前大家是“生死之交”，招安后大家成了“同僚”。那种在风雪山神庙、在鸳鸯楼建立起来的绝对信任，在官场的利益算计面前荡然无存。💔</p>
+
+        <p><b>鲁智深的慧眼：</b><br>
+        为什么说鲁智深是水浒第一智者？因为他跳出了“忠义”的逻辑陷阱，看透了<b>体制的本质</b>。他知道，“满朝文武俱是奸邪”不是换个皇帝就能解决的。洗白上岸并不能洗掉身上的纹身，只会让你成为案板上的鱼肉。他的“不济事”，是对宋江政治幻想的最冷酷判决。</p>
+
+        <p><b>陈桥驿的那个士兵：</b><br>
+        那个因为杀贪官而被宋江逼死的小校，是梁山精神死亡的<b>墓碑</b>。以前梁山好汉杀贪官是“替天行道”，现在杀贪官是“违抗军令”。宋江流着泪逼死兄弟，那一刻，他终于不仅杀死了反对派的声音，也杀死了过去的自己。从今往后，他不再是呼保义，他只是大宋的一条忠犬。🐕</p>
+    </div>
+`,
+'拾贰 · 思维导图': `
+<div id="mindmap-viewport" style="width:100%; min-height:1300px; background:#ffffff; position:relative;cursor:grab; border:none;">
+    <div class="zoom-controls" style="position: absolute; top: 20px; right: 20px; z-index: 1000; display:flex; flex-direction:column; gap:10px;">
+        <button onclick="doZoom(1.1)" style="width:40px; height:40px; border:1px solid #8b1a1a; background:white; color:#8b1a1a; cursor:pointer; font-weight:bold; border-radius:4px;">+</button>
+        <button onclick="doZoom(0.9)" style="width:40px; height:40px; border:1px solid #8b1a1a; background:white; color:#8b1a1a; cursor:pointer; font-weight:bold; border-radius:4px;">-</button>
+        <button onclick="resetZoom()" style="width:40px; height:40px; border:1px solid #8b1a1a; background:white; color:#8b1a1a; cursor:pointer; font-size:12px; border-radius:4px;">重置</button>
+    </div>
+    <div class="mermaid">
+graph LR
+    Root((梁山命运共同体))
+    
+    %% 样式定义
+    classDef stage fill:#ffcccc,stroke:#8b1a1a,stroke-width:2px,color:#000;
+    classDef person fill:#e6f3ff,stroke:#004080,stroke-width:2px,color:#000;
+    classDef logic fill:#fff4dd,stroke:#d4af37,stroke-width:2px,color:#000;
+    classDef rootClass fill:#8b1a1a,stroke:#333,color:#fff,font-weight:bold;
+
+    %% 逻辑连接
+    Root --> S["1. 发展阶段"]
+    Root --> P["2. 人物分类"]
+    Root --> M["3. 矛盾核心"]
+
+    S --> S1("草创期:王伦")
+    S --> S2("扩张期:晁盖")
+    S --> S3("鼎盛期:宋江")
+    S --> S4("衰亡期:招安")
+
+    P --> P1("朝廷降将:关胜")
+    P --> P2("地方豪强:卢俊义")
+    P --> P3("底层平民:鲁智深")
+    P --> P4("技术人才:安道全")
+
+    M --> M1{"宋江之忠"}
+    M --> M2{"林鲁之恨"}
+    M --> M3{"李逵之真"}
+
+    class Root rootClass;
+    class S,S1,S2,S3,S4 stage;
+    class P,P1,P2,P3,P4 person;
+    class M,M1,M2,M3 logic;
+    </div>
+</div>
+`
+        };
+
+
+    // 2. 立即初始化配置
+    mermaid.initialize({ 
+        startOnLoad: false, 
+        theme: 'base',
+        securityLevel: 'loose'
+    });
+
+    // 3. 先定义全局变量（确保在所有函数调用前就存在）
+    let scale = 1;
+    let translateX = 0;
+    let translateY = 0;
+
+    // 4. 定义全局缩放函数（确保按钮能找到）
+    window.doZoom = function(factor) {
+        const viewport = document.getElementById('mindmap-viewport');
+        const svg = viewport ? viewport.querySelector('svg') : null;
+        if (!svg) return;
+        scale *= factor;
+        svg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    };
+
+    window.resetZoom = function() {
+        const viewport = document.getElementById('mindmap-viewport');
+        const svg = viewport ? viewport.querySelector('svg') : null;
+        if (!svg) return;
+        scale = 1; translateX = 0; translateY = 0;
+        svg.style.transform = `translate(0px, 0px) scale(1)`;
+    };
+
+    // 5. 交互逻辑
+    function initMindmapInteractions() {
+        const viewport = document.getElementById('mindmap-viewport');
+        const svg = viewport ? viewport.querySelector('svg') : null;
+        if (!svg) return;
+
+        // 设置缩放中心和过渡
+        svg.style.transition = "transform 0.1s ease-out";
+        svg.style.transformOrigin = "50% 50%";
+
+        let isDragging = false;
+        let startX, startY;
+
+        viewport.onmousedown = (e) => {
+            isDragging = true;
+            viewport.style.cursor = 'grabbing';
+            startX = e.pageX - translateX;
+            startY = e.pageY - translateY;
+        };
+
+        window.onmousemove = (e) => {
+            if (!isDragging) return;
+            translateX = e.pageX - startX;
+            translateY = e.pageY - startY;
+            svg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+        };
+
+        window.onmouseup = () => {
+            isDragging = false;
+            viewport.style.cursor = 'grab';
+        };
+    }
+
+    // 6. 切换 Tab 逻辑
+    function changeTab(element, title) {
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        if(element) element.classList.add('active');
+        
+        document.getElementById('content-title').innerText = title;
+        // 假设内容数据已定义
+        document.getElementById('content-body').innerHTML = contentData[title] || "加载中...";
+
+        if (title.includes('思维导图')) {
+
+            setTimeout(() => {
+                mermaid.run().then(() => {
+                    initMindmapInteractions();
+                });
+            }, 100);
+        }
+    }
+
+    window.onload = () => {
+        const firstItem = document.querySelector('.nav-item');
+        if(firstItem) changeTab(firstItem, '柒 · 三打祝家庄');
+    };
+
+    const BadgeManager = {
+        STORAGE_KEY: 'badge_data_v1',
+        
+        getData() {
+            try {
+                const data = localStorage.getItem(this.STORAGE_KEY);
+                return data ? JSON.parse(data) : {
+                    unlockedBadges: [],
+                    badgeUnlockTime: {},
+                    readingProgress: {
+                        xiyou: { stage1: false, stage2: false, stage3: false },
+                        sanguo: { stage1: false, stage2: false, stage3: false },
+                        shuihu: { stage1: false, stage2: false, stage3: false },
+                        honglou: { stage1: false, stage2: false, stage3: false }
+                    }
+                };
+            } catch (e) {
+                return {
+                    unlockedBadges: [],
+                    badgeUnlockTime: {},
+                    readingProgress: {
+                        xiyou: { stage1: false, stage2: false, stage3: false },
+                        sanguo: { stage1: false, stage2: false, stage3: false },
+                        shuihu: { stage1: false, stage2: false, stage3: false },
+                        honglou: { stage1: false, stage2: false, stage3: false }
+                    }
+                };
+            }
+        },
+        
+        saveData(data) {
+            try {
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+            } catch (e) {
+                console.error('保存勋章数据失败:', e);
+            }
+        },
+        
+        isStageRead(book, stage) {
+            const data = this.getData();
+            return data.readingProgress[book] && data.readingProgress[book]['stage' + stage];
+        },
+        
+        markStageRead(book, stage) {
+            const data = this.getData();
+            if (!data.readingProgress[book]) {
+                data.readingProgress[book] = { stage1: false, stage2: false, stage3: false };
+            }
+            data.readingProgress[book]['stage' + stage] = true;
+            this.saveData(data);
+            return this.checkAndUnlockBadges();
+        },
+        
+        isBookCompleted(book) {
+            const data = this.getData();
+            const progress = data.readingProgress[book];
+            return progress && progress.stage1 && progress.stage2 && progress.stage3;
+        },
+        
+        getCompletedBooksCount() {
+            let count = 0;
+            ['xiyou', 'sanguo', 'shuihu', 'honglou'].forEach(book => {
+                if (this.isBookCompleted(book)) count++;
+            });
+            return count;
+        },
+        
+        checkAndUnlockBadges() {
+            const data = this.getData();
+            const newlyUnlocked = [];
+            
+            const bookBadges = [
+                { id: 'xiyou_reader', name: '西游行者', desc: '完成西游记阅读', book: 'xiyou' },
+                { id: 'sanguo_reader', name: '三国通览', desc: '完成三国演义阅读', book: 'sanguo' },
+                { id: 'shuihu_reader', name: '水浒知音', desc: '完成水浒传阅读', book: 'shuihu' },
+                { id: 'honglou_reader', name: '红楼初探', desc: '完成红楼梦阅读', book: 'honglou' },
+                { id: 'all_books_reader', name: '四大名著通', desc: '完成全部名著阅读', book: 'all' }
+            ];
+            
+            bookBadges.forEach(badge => {
+                if (data.unlockedBadges.includes(badge.id)) return;
+                
+                let shouldUnlock = false;
+                if (badge.book === 'all') {
+                    shouldUnlock = this.getCompletedBooksCount() >= 4;
+                } else {
+                    shouldUnlock = this.isBookCompleted(badge.book);
+                }
+                
+                if (shouldUnlock) {
+                    data.unlockedBadges.push(badge.id);
+                    data.badgeUnlockTime[badge.id] = Date.now();
+                    newlyUnlocked.push(badge);
+                }
+            });
+            
+            if (newlyUnlocked.length > 0) {
+                this.saveData(data);
+            }
+            
+            return newlyUnlocked;
+        }
+    };
+
+    let autoReadStartTime = Date.now();
+    let hasScrolledEnough = false;
+    const MIN_READ_TIME = 30000;
+    const SCROLL_THRESHOLD = 0.8;
+    let autoReadMarked = false;
+
+    function initAutoReadTracking() {
+        if (BadgeManager.isStageRead('shuihu', 2)) {
+            autoReadMarked = true;
+            return;
+        }
+        
+        const mainContent = document.querySelector('.main-content');
+        
+        mainContent.addEventListener('scroll', function() {
+            if (autoReadMarked) return;
+            
+            const scrollPercent = (mainContent.scrollTop + mainContent.clientHeight) / mainContent.scrollHeight;
+            if (scrollPercent >= SCROLL_THRESHOLD) {
+                hasScrolledEnough = true;
+                checkAndMarkAutoRead();
+            }
+        });
+        
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && !autoReadMarked) {
+                checkAndMarkAutoRead();
+            }
+        });
+        
+        window.addEventListener('beforeunload', function() {
+            if (!autoReadMarked) {
+                checkAndMarkAutoRead();
+            }
+        });
+    }
+
+    function checkAndMarkAutoRead() {
+        if (autoReadMarked) return;
+        
+        const readTime = Date.now() - autoReadStartTime;
+        if (readTime >= MIN_READ_TIME && hasScrolledEnough) {
+            const newlyUnlocked = BadgeManager.markStageRead('shuihu', 2);
+            autoReadMarked = true;
+            
+            if (newlyUnlocked.length > 0) {
+                localStorage.setItem('pending_badge_notification', newlyUnlocked[0].id);
+            }
+        }
+    }
+
+    function showBadgeNotification(badge) {
+        document.getElementById('badgeName').textContent = badge.name;
+        document.getElementById('badgeDesc').textContent = badge.desc;
+        
+        const card = document.getElementById('badgeCard');
+        const rarityColors = {
+            common: '#d4af37',
+            rare: '#9c27b0',
+            epic: '#ff6b35'
+        };
+        const color = rarityColors[badge.rarity] || rarityColors.common;
+        card.style.border = '4px solid ' + color;
+        card.style.boxShadow = '0 10px 40px ' + color + '80';
+        document.getElementById('badgeName').style.color = color;
+        
+        document.getElementById('badgeNotification').classList.add('show');
+    }
+
+    function closeBadgeNotification() {
+        document.getElementById('badgeNotification').classList.remove('show');
+    }
+
+    window.addEventListener('load', function() {
+        initAutoReadTracking();
+    });
+</script>
+</body>
+</html>

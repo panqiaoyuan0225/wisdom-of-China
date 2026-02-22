@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快意恩仇 - 水浒专题导览</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            font-family: "STKaiti", "Microsoft YaHei", serif;
+            background-color: #d8d3c3;
+        }
+
+        /* 左侧大纲栏 - 采用你选定的深青墨色调 */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(180deg, #2d3a3a 0%, #1a2424 100%);
+            color: #d4af37;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.3);
+            border-right: 2px solid #8b1a1a;
+            z-index: 10;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            font-size: 1.6rem;
+            margin: 0;
+            padding: 40px 0;
+            background: rgba(0,0,0,0.3);
+            letter-spacing: 4px;
+            border-bottom: 1px solid rgba(139, 26, 26, 0.4);
+            color: #e2c08d;
+        }
+
+        .nav-item {
+            padding: 22px 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            color: #b8a99a;
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            background: rgba(139, 26, 26, 0.2);
+            padding-left: 45px;
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background: #8b1a1a;
+            color: #fff;
+            font-weight: bold;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.4);
+        }
+
+        /* 右侧内容区 */
+        .main-content {
+            flex: 1;
+            padding: 50px;
+            overflow-y: auto;
+            background-image: url('https://www.transparenttextures.com/patterns/papyrus.png');
+        }
+
+        .content-box {
+            background: rgba(255, 255, 255, 0.9);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px;
+            border: 1px solid #a6937c;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+            position: relative;
+            min-height: 80vh;
+        }
+
+        h1 {
+            color: #8b1a1a;
+            border-left: 8px solid #2d3a3a;
+            padding-left: 15px;
+            font-size: 2.2rem;
+            margin-top: 0;
+        }
+
+        h2 { color: #1a2424; border-bottom: 1px solid #d2c5a7; padding-bottom: 5px; margin-top: 30px; }
+        p {
+            line-height: 1.8;
+            text-indent: 2em;
+            font-size: 1.2rem;
+        }
+        
+        .back-link {
+            position: fixed;
+            top: 20px;
+            right: 40px;
+            text-decoration: none;
+            color: #8b1a1a;
+            font-weight: bold;
+            background: #fff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: white; }
+        th, td { padding: 12px; border: 1px solid #ccc; text-align: left; }
+        th { background: #efefef; color: #1a2424; }
+
+        .badge-notification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .badge-notification-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .badge-notification-card {
+            background: linear-gradient(135deg, #fff9e6, #fff);
+            border-radius: 20px;
+            padding: 40px 50px;
+            text-align: center;
+            max-width: 350px;
+            transform: scale(0.8);
+            transition: transform 0.3s;
+        }
+
+        .badge-notification-overlay.show .badge-notification-card {
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>快意恩仇</h2>
+        <div class="nav-item active" onclick="changeTab(this, '壹 · 官逼民反')">壹·官逼民反</div>
+        <div class="nav-item" onclick="changeTab(this, '贰 · 鲁院禅心')">贰·鲁院禅心</div>
+        <div class="nav-item" onclick="changeTab(this, '叁 · 林冲夜奔')">叁·林冲夜奔</div>
+        <div class="nav-item" onclick="changeTab(this, '肆 · 智取生辰')">肆·智取生辰</div>
+        <div class="nav-item" onclick="changeTab(this, '伍 · 景阳除害')">伍·景阳除害</div>
+        <div class="nav-item" onclick="changeTab(this, '陆 · 英雄测试')">陆·英雄测试</div>
+    </div>
+
+    <div class="main-content">
+        <a href="shuihu.html" class="back-link">← 返回主页</a>
+        <div class="content-box" id="content-display">
+            <h1 id="content-title">壹 · 官逼民反</h1>
+            <div id="content-body">
+                </div>
+        </div>
+    </div>
+
+    <div class="badge-notification-overlay" id="badgeNotification">
+        <div class="badge-notification-card" id="badgeCard">
+            <div style="font-size: 1.5rem; color: #8b4513; margin-bottom: 20px;">🎉 恭喜获得勋章！</div>
+            <div style="font-size: 2.5rem; margin-bottom: 15px;">🎖️</div>
+            <div style="font-size: 1.8rem; font-weight: bold; margin-bottom: 10px;" id="badgeName"></div>
+            <div style="color: #666; margin-bottom: 20px;" id="badgeDesc"></div>
+            <button onclick="closeBadgeNotification()" style="background: #8b4513; color: #fff; border: none; padding: 10px 30px; border-radius: 20px; font-size: 1rem; cursor: pointer;">太棒了！</button>
+        </div>
+    </div>
+
+    <script>
+        const contentData = {
+'壹 · 官逼民反': `
+                <p style="line-height: 1.8; text-indent: 2em;">
+                    《水浒传》中的“官逼民反”，是中国古典文学对封建时代社会矛盾最深刻的揭示之一。这一主题并非简单的官民对立，而是一个层层压迫、步步紧逼的体系性悲剧。让我们通过具体的人物与事件，深入剖析这一黑暗链条如何将普通人逼上梁山。
+                </p>
+
+                <h2>一、 压迫的三重金字塔</h2>
+                <p>梁山好汉中真正出身农民的极少，被迫造反者大多来自中下层官吏、军官、小商人等原本的“体制内”或“良民”。他们的遭遇构成了一个自上而下的压迫体系：</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">压迫层级</th>
+                            <th>核心表现与典型人物</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1. 朝廷顶层：<br>昏君与奸臣的共谋</strong></td>
+                            <td>
+                                <ul>
+                                    <li><strong>高俅发迹：</strong>本是地痞无赖，因蹴鞠得宠，官至太尉。他的存在本身就是对“贤能治国”的讽刺。</li>
+                                    <li><strong>赏罚颠倒：</strong>如王进因其父曾打败高俅，上任第一天便遭报复追杀，忠良之后尚不能自保，普通人更无公道可言。</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>2. 地方中层：<br>官僚网络的黑暗</strong></td>
+                            <td>
+                                <ul>
+                                    <li><strong>梁中书（大名府留守）：</strong>蔡京女婿，每年搜刮十万贯生辰纲，财富“无一不是害民诈得来的”。</li>
+                                    <li><strong>高廉（高唐州知府）：</strong>高俅兄弟，纵容妻弟殷天锡强占柴皇城花园，气死皇城后竟要抓捕柴进。</li>
+                                    <li><strong>蔡得章（江州知府）：</strong>蔡京第九子，著名的“蔡九知府”，无才无德，唯父命是从。</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>3. 基层执行：<br>胥吏与恶霸的狂欢</strong></td>
+                            <td>
+                                <ul>
+                                    <li><strong>郑屠（镇关西）：</strong>虚钱实契强占金翠莲，背后必有官府纵容。</li>
+                                    <li><strong>西门庆：</strong>毒杀武大郎后贿赂知县，使武松的合法申诉完全失效。</li>
+                                    <li><strong>董超、薛霸：</strong>公差成为权贵爪牙，沿途折磨囚犯，意图暗杀。</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>二、 系统性的制度腐败</h2>
+                <h3>1. 司法体系的全面溃败</h3>
+                <p>• <strong>刑事诉讼：</strong>几乎每起冤案都有官员受贿（如西门庆案、解珍案）。<br>
+                • <strong>监狱管理：</strong>牢城营成为榨取犯人价值的场所。差拨公开索贿（对林冲：“满脸都是饿纹，一世也不发迹”），不送钱便是“一百杀威棒”。<br>
+                • <strong>刑法执行：</strong>刺配本为替代死刑，实则成为合法谋杀。董超薛霸说：“便多走得几日，也是死数。”</p>
+
+                <h3>2. 经济掠夺的合法化外衣</h3>
+                <p>• <strong>生辰纲：</strong>梁中书公开宣称是“贺礼”，实为系统性摊派。<br>
+                • <strong>祝家庄、曾头市：</strong>地方武装与官府勾结，成为独立王国。<br>
+                • <strong>花石纲：</strong>书中背景，方腊起义的直接原因，显示压迫的全国性。</p>
+
+                <h3>3. 人才上升通道的阻塞</h3>
+                <p>• <strong>文途：</strong>蔡京把持科举。<br>
+                • <strong>武途：</strong>王进被逼走，林冲被陷害，杨志空有武艺和忠心（三代将门之后）却只能卖刀。<br>
+                • <strong>吏途：</strong>宋江不过小押司，难有真正前途。</p>
+
+                <div style="margin-top: 40px; padding: 25px; background: #2d3a3a; color: #e2c08d; border-radius: 4px;">
+                    <h2 style="margin-top: 0; color: #d4af37; border-bottom-color: rgba(212,175,55,0.3);">💡思考</h2>
+                        当一个社会的人才不再通过品德与才干晋升，当司法成为权贵的私具，当合法的申诉渠道被彻底堵死，暴力便成了弱者维护自身尊严的最后手段。“逼”字，不仅是高俅对林冲的个体迫害，更是整套封建机器对良民的集体绞杀。
+                </div>
+            `,
+'贰 · 鲁院禅心': `
+                <h2>一、 缘起：天生佛性，杀生成仁</h2>
+                <p>鲁智深的出场并非高僧大德，而是一个粗豪的军官。然而，其最初的“义举”便暗含了佛教“护生”与“惩恶”的深刻辩证：</p>
+                <ul>
+                    <li><strong>拳打镇关西：</strong>为救素不相识的金翠莲父女，三拳打死恶霸。此事关键在于动机——并非私愤，而是“路见不平”，且失手后立即谎称郑屠“诈死”以从容脱身。这是以霹雳手段，显菩萨心肠。其暴怒的根源是至纯的慈悲。</li>
+                    <li><strong>剃度文殊院：</strong>他的出家并非看破红尘，而是避难。但智真长老一见便道：“此人上应天星，心地刚直。虽然时下凶顽，命中驳杂，久后却得清净，正果非凡。”长老看到了他浊世中的一点不昧灵光，这奠定了其命运的佛缘根基。</li>
+                </ul>
+
+                <h2>二、 修行：身在伽蓝，心在红尘——不羁中的证悟</h2>
+                <p>鲁智深的寺院生活，是对形式主义修行的彻底颠覆，其“禅心”在冲突中砥砺：</p>
+                <p>• <strong>毁像破戒：</strong>坐禅时“塌了亭子”，打坏金刚，在佛殿后撒尿。这些行为表面是亵渎，实则是对僵化宗教形式的本能反抗。他的佛性不在清规戒律中，而在赤子般的真性情里。<br>
+                • <strong>大闹五台山：</strong>两次醉酒闹寺，其深层矛盾在于：一个以“真”为生命底色的人，无法适应虚伪的秩序。然而，智真长老始终护他，并赠他至关重要的偈子：“遇林而起，遇山而富，遇水而兴，遇江而止。”这预示他的修行不在寺院，而在广阔的人世与江湖。</p>
+
+                <h2>三、 转境：行脚江湖，菩提刀锋</h2>
+                <p>离开寺院，鲁智深并未还俗，而是以行脚僧之身，在世间继续他的“修行”。他的禅心，体现在一次次“斩断缠缚”的义举中：</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">核心事件</th>
+                            <th>禅意解析：以武入禅</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>大闹桃花村</strong></td>
+                            <td>假扮新娘，痛打强娶民女的周通。是以“嗔”行“慈”，以“妄”止“妄”，手段荒诞却目的纯正。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>火烧瓦罐寺</strong></td>
+                            <td>诛杀恶道崔道成、丘小乙。感叹“杀人须见血，救人须救彻”，体现了大乘佛教“勇猛精进”的世俗化。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>倒拔垂杨柳</strong></td>
+                            <td>以降魔之力，慑服外道（泼皮），转化众生。力量与心性的双重展示。</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>四、 深交：与林冲——照见本心的镜子</h2>
+                <p>与林冲的相遇相知，是鲁智深禅心成长的关键：</p>
+                <p>• <strong>野猪林救友：</strong>一路暗中保护，千钧一发时救下林冲，并一路护送到沧州。他对朋友之“义”，已升华为不惜与强大体制对立的“无畏布施”。<br>
+                • <strong>对比见真性：</strong>林冲的隐忍妥协与鲁智深的快意恩仇形成鲜明对比。鲁智深无法理解林冲的“忍”，这反衬出他心无挂碍、不滞于物的本性。他后来因救林冲而无法在东京立足，却毫无怨言，正是“无我”的体现。</p>
+
+<div style="text-align: center; margin: 30px 0;">
+    <img src="images/zhishen.jpg" alt="鲁智深" style="max-width: 100%; height: auto; border: 5px solid #8b1a1a; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+    <p style="color: #8b1a1a; font-style: italic; margin-top: 10px; font-size: 0.9rem;">图：鲁智深</p>
+</div>
+
+                <h2>五、 顿悟：钱塘潮信，今日方知我是我</h2>
+                <p>鲁智深的开悟，于自然的感召下刹那洞明：</p>
+                <ol>
+                    <li><strong>生擒方腊：</strong>立下战功却毫无喜色，看透了“圆满”的虚幻与代价。</li>
+                    <li><strong>拒绝封赏：</strong>对宋江言“只得个囫囵尸首，便是强了”，看透名利皆为空幻。</li>
+                    <li><strong>六和寺闻潮：</strong>半夜潮信如战鼓，悟得智真长老偈语：“听潮而圆，见信而寂。”</li>
+                    <li><strong>圆寂颂辞：</strong>“平生不修善果，只爱杀人放火。忽地顿开金枷，这里扯断玉锁。咦！钱塘江上潮信来，今日方知我是我。”</li>
+                </ol>
+
+                <div style="margin-top: 40px; padding: 25px; background: #2d3a3a; color: #e2c08d; border-radius: 4px;">
+                    <h2 style="margin-top: 0; color: #d4af37; border-bottom-color: rgba(212,175,55,0.3);">💡思考</h2>
+                    <p>鲁智深是水浒中唯一超凡入圣者，其精神核心在于：</p>
+                    <p><strong>• 真性即佛性：</strong>他不持戒而守心，不读经而悟道。他的修行在于“事上磨”，在路见不平中践行慈悲，在肝胆相照中体现无我。<br>
+                    <strong>• 除恶即是行善：</strong>在沉沦的世界里，他的“怒目金刚”相，是对“菩萨低眉”的必要补充。他以屠刀为法器，斩断人间的恶业缠缚。<br>
+                    <strong>• 最终的圆满：</strong>他是梁山好汉中唯一得到预言、印证并自我实现圆满的人物。其圆寂不是悲剧，而是从“好汉”到“罗汉”的升华，彻底挣脱了“逼上梁山”的集体宿命。</p>
+                </div>
+            `,
+'叁 · 林冲夜奔': `
+                <h2>一、阴谋已定，绝境铸成</h2>
+                <p>夜奔并非偶发，而是高俅集团“斩草除根”计划的最后一环。</p>
+                <ul>
+                    <li><strong>沧州营的算计：</strong>林冲被发配至沧州，凭借柴进的书信和金钱，得到看守天王堂的轻差。但高俅并未罢休，其爪牙陆谦、富安追至沧州，买通管营、差拨。</li>
+                    <li><strong>调任绝地：</strong>林冲被莫名调往大军草料场。老军交接时提及“火盆、锅子、碗碟”，这寻常的善意，反衬出随后阴谋的极端阴毒。</li>
+                    <li><strong>风雪埋杀机：</strong>赴草料场当日，“彤云密布，朔风渐起，却早纷纷扬扬卷下一天大雪来”。风雪不仅是环境，更是命运的象征——它既暂时庇护了林冲（压塌草厅），也最终将阴谋暴露在他眼前。</li>
+                </ul>
+
+                <h2>二、风雪山神庙</h2>
+                <p>林冲的转变在风雪夜中，经历了三个层层递进的阶段：</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">演变阶段</th>
+                            <th>心理状态与核心情节</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>第一阶段：<br>忍辱求存</strong></td>
+                            <td>见草屋损坏，想“待雪晴了，去唤泥水匠修理”。表明他仍在<strong>体制内思维</strong>，试图在绝境中构建一个临时性的“家”，对回归正常生活尚存幻想。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>第二阶段：<br>隔庙听真</strong></td>
+                            <td>地狱真相直接灌入耳中：陆谦、富安、差拨亲口吐露火烧草料场、陷害、以及逼死妻子的真相。<strong>信仰在此刻彻底崩塌</strong>，林冲在绝对安全的物理状态下，经历了一次精神公开处决。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>第三阶段：<br>血溅雪原</strong></td>
+                            <td>庙门轰然洞开，林冲全书第一次主动怒吼。他将人头发结一处，摆在山神供桌前。<strong>山神庙，成了他新生的祭坛。</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <p style="font-size: 2.5rem; margin: 0;"></p>
+                    <p style="color: #8b1a1a; font-size: 0.85rem; letter-spacing: 2px;"></p>
+                </div>
+
+                <h2>三、风雪中的流亡与新生</h2>
+                <p>杀戮之后，真正的“夜奔”才开始。</p>
+                <p>• <strong>无路可走：</strong>他本欲去柴进庄上，但深知“官司必然搜捕”，不能连累恩人。天地之大，已无合法容身之所。<br>
+                • <strong>投名状的挣扎：</strong>雪夜上梁山，却遭王伦刁难，要求“投名状”。林冲内心极度痛苦：“只为杀了三个人，逃出命来，撞来在此……这般却怎地好？” 刚为求生杀人，又要为入门杀人，这将他逼入更深的精神炼狱。<br>
+                • <strong>“豹子头”的真正觉醒：</strong>夜奔后的林冲，眼中那“豹头环眼”的威猛，才真正注入了灵魂。他不再犹豫，火并王伦时果决狠辣，成为梁山基石。夜奔，是他从“八十万禁军教头”蜕变为“梁山豹子头”的成人礼。</p>
+
+                <h2>四、 文学与思想的光辉</h2>
+                <p>“林冲夜奔”之所以不朽，在于它超越情节，成为多重意义的象征：</p>
+                <p><strong>• 环境与心理的融合：</strong>风雪、火光、破庙、鲜血，共同构成一幅动荡、冰冷、危机四伏的内心图景。</p>
+                <p><strong>• “门”的意象：</strong>草料场的门（被雪压塌，是庇护的丧失）、山神庙的门（隔开真相与幻象，推开即是决裂）、梁山的门（需要投名状才能进入，是新世界的残酷准入）。每一道门，都是一次生死抉择。</p>
+                <p><strong>• 中国文学中最经典的“觉醒”时刻：</strong>比之哈姆雷特的独白，林冲的觉醒更彻底、更血腥、也更绝望。他不是思考“生存还是毁灭”，而是在毁灭中被迫生存。</p>
+            `,
+            '肆 · 智取生辰': `
+                <h2>一、 事件的重量：十万贯背后的腐败世界</h2>
+                <p>“生辰纲”指梁中书搜刮民脂民膏，为岳父蔡京贺寿的十万贯金珠宝贝。其背景揭示了全书基调：</p>
+                <ul>
+                    <li><strong>系统性腐败：</strong>这笔巨资是梁中书“一年一度”的惯例，来自“害民诈得”，是北宋末年官场贪腐的缩影。</li>
+                    <li><strong>合法化的掠夺：</strong>它披着“贺礼”外衣，实则是权力网络输送利益的工具。劫取它，具有天然的正义性。</li>
+                    <li><strong>命运的杠杆：</strong>这“一套富贵”彻底改变了杨志（押送者）和晁盖（劫取者）两批人的命运，将他们共同逼向梁山。</li>
+                </ul>
+
+                <h2>二、 双方核心人物：猎手与困兽的博弈</h2>
+                <h3>1. 劫取方：七星聚义，各显神通</h3>
+                <p>• <strong>晁盖：</strong>托塔天王，仗义疏财，是行动的精神领袖与合法性旗帜。<br>
+                • <strong>吴用：</strong>智多星，乡村教师出身，是行动的总设计师与导演，深谙人心。<br>
+                • <strong>公孙胜：</strong>入云龙，提供关键情报，并强化行动“天意所归”的色彩。<br>
+                • <strong>刘唐 & 三阮：</strong>赤发鬼与阮氏三雄，是行动的武力执行层，代表被压迫的底层力量。<br>
+                • <strong>白胜：</strong>白日鼠，看似不起眼的闲汉，却是计策成败的关键棋子。</p>
+
+                <h3>2. 押送方：杨志的悲剧性挣扎</h3>
+                <p>• <strong>杨志：</strong>名门之后，一心求官。他精明强干，深知风险，提出了伪装客商、悄行早歇的正确策略。<br>
+                • <strong>内部崩溃：</strong>老都管和两个虞候代表腐朽的体制惯性。他们贪图安逸，质疑杨志，最终阶级权力压倒了专业判断。杨志的悲剧在于，他看透了外部的险恶，却败给了内部的溃烂。</p>
+
+                <h2>三、 计策的精密：“智取”的八重奏</h2>
+                <p>吴用的计策，是一场针对人性、天气、地理、心理的复合型操控：</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 20%;">环扣</th>
+                            <th>计策核心内容</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1. 情报先知</strong></td>
+                            <td>公孙胜、刘唐报信，精准锁定目标、路线，做到“知彼”。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2. 天时地利</strong></td>
+                            <td>选在六月初四最酷热之时，于黄泥冈松林——行人心理最脆弱地设伏。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3. 角色伪装</strong></td>
+                            <td>七人假扮“贩枣客商”，以普通商人形象极大降低杨志警惕。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>4. 诱饵设计</strong></td>
+                            <td>白胜挑酒唱山歌进行“精神攻击”，加深焦渴感，且故意不卖以示无毒。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>5. 心理博弈</strong></td>
+                            <td>通过“示范喝一桶”、“当面吃枣”、“抢瓢争执”等一系列表演彻底祛疑。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>6. 偷梁换柱</strong></td>
+                            <td>吴用借争执之机，在林中下药并舀入桶中，动作自然，众目睽睽下掉包。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>7. 药物生效</strong></td>
+                            <td>蒙汗药发作，十五个人软倒。时机精准，确保无人伤亡。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>8. 事后撤离</strong></td>
+                            <td>推枣车下冈，全员无伤撤退，标志着“智取”精髓的圆满。</td>
+                        </tr>
+                    </tbody>
+                </table>
+<div style="margin: 30px auto; max-width: 90%; text-align: center;">
+    <div style="padding: 10px; background: #fff; border: 1px solid #a6937c; box-shadow: 0 8px 20px rgba(0,0,0,0.15);">
+        <img src="images/shengchen.jpg" 
+             alt="智取生辰纲" 
+             style="width: 100%; height: auto; display: block; filter: grayscale(20%);">
+        
+        <div style="background: #fdfaf2; padding: 12px; border-top: 1px solid #eee;">
+            <p style="color: #8b1a1a; font-family: 'STKaiti', '楷体'; font-weight: bold; margin: 0; font-size: 1rem;">
+                杨志
+            </p>
+            <p style="color: #666; font-size: 0.85rem; margin: 5px 0 0 0; line-height: 1.4;">
+            </p>
+        </div>
+    </div>
+</div>
+
+                
+
+                <h2>四、 深远影响：拉开梁山时代的序幕</h2>
+                <p><strong>• 对晁盖集团：</strong>获得第一桶金，奠定梁山经济基础；开启了梁山的“晁盖时代”。</p>
+                <p><strong>• 对杨志：</strong>人生最后一条体制内道路被断绝。他是被腐败体制从内部吞噬的典型。</p>
+                <p><strong>• 对宋江：</strong>因私放要犯被卷入漩涡，命运发生根本转折。</p>
+                <p><strong>• 对全书主题：</strong>这是第一次有组织、有预谋、以“取不义之财”为旗号的集体行动。它宣告了反抗不再是个人复仇，而是对腐败系统的精准打击，标志着《水浒传》故事从个人传奇转向集团创业。</p>
+            `,
+'伍 · 景阳除害': `
+            <h2>一、 除害前的序幕</h2>
+            <p>在打虎之前，武松正处在一个短暂、虚假的“体制回归”期。</p>
+            <ul>
+                <li><strong>阶段性和解：</strong>他刚刚在柴进庄上与宋江结拜，了结了因误会而产生的漂泊感，回乡寻找哥哥武大郎。此时的他，对法律与社会秩序仍抱有基本的信任（与后来为兄复仇时的态度形成对比）。</li>
+                <li><strong>“三碗不过岗”的隐喻：</strong>酒家招牌，不仅是酒力之证，更是规则与警告的象征。武松连饮十八碗，其行为本身便是对既有规则（酒家的、世俗的）的首次傲慢挑战，暗示了他骨子里不受约束的烈性。</li>
+                <li><strong>官府告示的真假之辨：</strong>看到印信榜文，确知有虎后，武松的第一反应是回转。这证明 he 并非一味莽撞，仍有理性权衡。但“我回去时，须吃他耻笑，不是好汉”的念头，最终驱动他前进。这里的“好汉”面子，战胜了对官文（体制警告）的遵从，个人荣誉感开始凌驾于对权威的敬畏之上。</li>
+            </ul>
+
+            <h2>二、 除害过程</h2>
+            <p>施耐庵笔下的打虎，毫无浪漫色彩，而是充满恐惧、失误与极限挣扎的写实记录，这恰恰是武松“人性”的证明。</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">搏杀细节</th>
+                        <th>人性视角下的深度解析</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>恐惧降临</strong></td>
+                        <td>见到老虎，“啊呀”一声，惊出冷汗，酒都做冷汗出了。“英雄”的第一反应亦是恐惧，这与常人无异。这是凡人的犹豫。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>武器失效</strong></td>
+                        <td>唯一的武器哨棒折断。这极具象征意义：在绝境中，文明社会的延伸物（工具）靠不住，人能依靠的只有最原始的肉身与本能。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>肉体相搏</strong></td>
+                        <td>整个过程笨拙、凶险、毫无观赏性：死死按定、只顾乱踢、最后撅死。这是力量、恐惧与求生欲的混合爆发。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>胜利虚脱</strong></td>
+                        <td>打死虎后“手脚都酥软了”。看到假虎惊呼：“我今番罢了！”。这些细节让英雄形象血肉丰满，神性建立在人性之上。</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div style="margin: 40px auto; width: 100%; max-width: 850px;">
+                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border: 1px solid #a6937c; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                    <img src="images/dahu.jpg" alt="武松打虎景阳冈全景图" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <p style="text-align: center; color: #8b1a1a; font-size: 0.9rem; margin-top: 12px; font-family: 'STKaiti';">
+                    武松打虎
+                </p>
+            </div>
+
+            <h2>⚖️ 三、 “除害”的双重寓意：猛虎与苛政</h2>
+            <p>“除害”之“害”，在景阳冈上明指猛虎，但在《水浒传》的语境中，更暗喻着比虎更凶残的“官害”。</p>
+            <p>• <strong>猛虎为“明害”：</strong>它吞噬了阳谷县无数生命，令道路断绝，是自然界的暴力象征。武松以个人勇力除之，获得了进入阳谷县社会体系的“通行证”——被抬举为都头。这似乎是个人能力被体制接纳的经典路径。<br>
+            • <strong>官场为“暗害”：</strong>武松获得的都头一职，看似荣耀，实则将他更深地卷入权力网络。他很快将发现，真正的“虎患”在县衙之内：西门庆与知县勾结，王婆设计害命，整个司法体系腐败不堪。打虎的哨棒会折断，但权力的“网”却坚韧无比。当他为兄报仇，提着更确凿的人头与证据（潘金莲、西门庆的头，王婆的口供）去见官时，得到的却是法律的背弃。此时他才彻底明白，自己当初在景阳冈上击败的，不过是皮毛之患；而盘踞在人世间的“制度之虎”，才是更难撼动的恶魔。</p>
+
+            <h2>四、 从“打虎英雄”到“复仇天神”：个人主义的觉醒与幻灭</h2>
+            <p>景阳冈打虎，是武松命运的 “高点”与“转折点”。</p>
+            <p><strong>• 高光时刻：</strong>他被阳谷县百姓奉为英雄，与兄长团聚，得到官职，达到了 “体制内个人奋斗”的梦幻顶峰。</p>
+            <p><strong>• 残酷转折：</strong>紧接着的“潘金莲-西门庆”事件，瞬间将他从顶峰拽入深渊。他用私刑手刃仇人，实则是对以“打虎”为代表的、依靠体制解决问题的方式的彻底否定。</p>
+            <p><strong>• 行为逻辑的延续与升级：</strong>景阳冈上，他依靠的是个人的力量与勇气；为兄报仇时，他依靠的依然是个人的智慧与决绝。只是对象从“自然之虎”变成了“社会之虎”。打虎的“除害”精神，在此升华为更悲壮、更彻底的“复仇”正义。</p>
+
+                <div style="margin-top: 40px; padding: 25px; background: #2d3a3a; color: #e2c08d; border-radius: 4px;">
+                    <h2 style="margin-top: 0; color: #d4af37; border-bottom-color: rgba(212,175,55,0.3);">💡思考</h2>
+                                            武松一生都在除害：在冈上除自然之害，在县衙除奸邪之害，在孟州除霸道之害。然而，当一个人的正义只能通过“以暴制暴”来实现时，这个社会本身是否才是那只最巨大的“害”？
+                </div>
+        `,
+'陆 · 英雄测试': `
+<section id="shuihu-quiz-special" style="max-width: 900px; margin: 20px auto; border: 3px double #8b1a1a; background: #fffcf5; padding: 30px;">
+    
+    <div style="text-align: center; border-bottom: 2px dashed #8b1a1a; padding-bottom: 20px; margin-bottom: 20px;">
+        <h2 style="color: #8b1a1a; font-size: 1.8rem;">✍️梁山英雄名号填空</h2>
+        <p style="color: #555;">你能默写出多少位好汉的姓名与绰号？</p>
+        <button id="start-btn" onclick="buildSplitQuiz()" style="padding: 10px 30px; background: #8b1a1a; color: #fff; border: none; cursor: pointer; border-radius: 5px;">
+            点击展开 108 道考题 ↓
+        </button>
+    </div>
+
+    <div id="tiangang-wrap" style="display: none; margin-bottom: 30px;">
+        <h3 style="color: #8b1a1a; border-left: 5px solid #8b1a1a; padding-left: 10px; margin-bottom: 15px;">🔹 天罡（三十六员）</h3>
+        <div id="tiangang-list" style="column-count: 2; column-gap: 30px;"></div>
+    </div>
+
+    <hr id="quiz-divider" style="display: none; border: none; border-top: 1px dashed #8b1a1a; margin: 30px 0;">
+
+    <div id="disha-wrap" style="display: none;">
+        <h3 style="color: #8b1a1a; border-left: 5px solid #8b1a1a; padding-left: 10px; margin-bottom: 15px;">🔸 地煞（七十二员）</h3>
+        <div id="disha-list" style="column-count: 2; column-gap: 30px;"></div>
+    </div>
+
+    <div id="quiz-footer" style="display: none; text-align: center; margin-top: 30px;">
+        <button onclick="checkAllAnswers()" style="padding: 15px 60px; background: #d32f2f; color: #fff; border: none; font-size: 1.2rem; cursor: pointer; border-radius: 50px; font-weight: bold;">
+            封卷交题
+        </button>
+        <p id="score-display" style="margin-top: 15px; font-size: 1.2rem; font-weight: bold; color: #8b1a1a;"></p>
+    </div>
+</section>
+`
+        };
+
+
+        function changeTab(element, title) {
+            const items = document.querySelectorAll('.nav-item');
+            items.forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+
+            // 更新标题和内容
+            document.getElementById('content-title').innerText = title;
+            const body = document.getElementById('content-body');
+            
+            // 匹配键值（兼容侧边栏显示的紧凑格式）
+            const dataKey = title.includes('·') ? title : title.replace('·', ' · ');
+            body.innerHTML = contentData[dataKey] || `<h2>内容详述</h2><p>关于 ${title} 的考据内容正在整理中...</p>`;
+        }
+
+const heroes = [
+    {s:"天魁星", n:"宋江", t:"及时雨"}, {s:"天罡星", n:"卢俊义", t:"玉麒麟"}, {s:"天机星", n:"吴用", t:"智多星"}, {s:"天闲星", n:"公孙胜", t:"入云龙"}, {s:"天勇星", n:"关胜", t:"大刀"}, {s:"天雄星", n:"林冲", t:"豹子头"}, {s:"天猛星", n:"秦明", t:"霹雳火"}, {s:"天威星", n:"呼延灼", t:"双鞭"}, {s:"天英星", n:"花荣", t:"小李广"}, {s:"天贵星", n:"柴进", t:"小旋风"}, {s:"天富星", n:"李应", t:"扑天雕"}, {s:"天满星", n:"朱仝", t:"美髯公"}, {s:"天孤星", n:"鲁智深", t:"花和尚"}, {s:"天伤星", n:"武松", t:"行者"}, {s:"天立星", n:"董平", t:"双枪将"}, {s:"天捷星", n:"张清", t:"没羽箭"}, {s:"天暗星", n:"杨志", t:"青面兽"}, {s:"天祐星", n:"徐宁", t:"金枪手"}, {s:"天空星", n:"索超", t:"急先锋"}, {s:"天速星", n:"戴宗", t:"神行太保"}, {s:"天异星", n:"刘唐", t:"赤发鬼"}, {s:"天杀星", n:"李逵", t:"黑旋风"}, {s:"天微星", n:"史进", t:"九纹龙"}, {s:"天究星", n:"穆弘", t:"没遮拦"}, {s:"天退星", n:"雷横", t:"插翅虎"}, {s:"天寿星", n:"李俊", t:"混江龙"}, {s:"天剑星", n:"阮小二", t:"立地太岁"}, {s:"天平星", n:"张横", t:"船火儿"}, {s:"天罪星", n:"阮小五", t:"短命二郎"}, {s:"天损星", n:"张顺", t:"浪里白条"}, {s:"天败星", n:"阮小七", t:"活阎罗"}, {s:"天牢星", n:"杨雄", t:"病关索"}, {s:"天慧星", n:"石秀", t:"拼命三郎"}, {s:"天暴星", n:"解珍", t:"两头蛇"}, {s:"天哭星", n:"解宝", t:"双尾蝎"}, {s:"天巧星", n:"燕青", t:"浪子"},
+    {s:"地魁星", n:"朱武", t:"神机军师"}, {s:"地煞星", n:"黄信", t:"镇三山"}, {s:"地勇星", n:"孙立", t:"病尉迟"}, {s:"地杰星", n:"宣赞", t:"丑郡马"}, {s:"地雄星", n:"郝思文", t:"井木犴"}, {s:"地威星", n:"韩滔", t:"百胜将"}, {s:"地英星", n:"彭玘", t:"天目将"}, {s:"地奇星", n:"单廷圭", t:"圣水将"}, {s:"地猛星", n:"魏定国", t:"神火将"}, {s:"地文星", n:"萧让", t:"圣手书生"}, {s:"地正星", n:"裴宣", t:"铁面孔目"}, {s:"地阔星", n:"欧鹏", t:"摩云金翅"}, {s:"地阖星", n:"邓飞", t:"火眼狻猊"}, {s:"地强星", n:"燕顺", t:"锦毛虎"}, {s:"地暗星", n:"杨林", t:"锦豹子"}, {s:"地轴星", n:"凌振", t:"轰天雷"}, {s:"地会星", n:"蒋敬", t:"神算子"}, {s:"地佐星", n:"吕方", t:"小温侯"}, {s:"地祐星", n:"郭盛", t:"赛仁贵"}, {s:"地灵星", n:"安道全", t:"神医"}, {s:"地兽星", n:"皇甫端", t:"紫髯伯"}, {s:"地微星", n:"王英", t:"矮脚虎"}, {s:"地慧星", n:"扈三娘", t:"一丈青"}, {s:"地暴星", n:"鲍旭", t:"丧门神"}, {s:"地然星", n:"樊瑞", t:"混世魔王"}, {s:"地猖星", n:"孔明", t:"毛头星"}, {s:"地狂星", n:"孔亮", t:"独火星"}, {s:"地飞星", n:"项充", t:"八臂哪吒"}, {s:"地走星", n:"李衮", t:"飞天大圣"}, {s:"地巧星", n:"金大坚", t:"玉臂匠"}, {s:"地明星", n:"马麟", t:"铁笛仙"}, {s:"地进星", n:"童威", t:"出洞蛟"}, {s:"地退星", n:"童猛", t:"翻江蜃"}, {s:"地满星", n:"孟康", t:"玉幡竿"}, {s:"地遂星", n:"侯健", t:"通臂猿"}, {s:"地周星", n:"陈达", t:"跳涧虎"}, {s:"地隐星", n:"杨春", t:"白花蛇"}, {s:"地异星", n:"郑天寿", t:"白面郎君"}, {s:"地理星", n:"陶宗旺", t:"九尾龟"}, {s:"地俊星", n:"宋清", t:"铁扇子"}, {s:"地乐星", n:"乐和", t:"铁叫子"}, {s:"地捷星", n:"龚旺", t:"花项虎"}, {s:"地速星", n:"丁得孙", t:"中箭虎"}, {s:"地镇星", n:"穆春", t:"小遮拦"}, {s:"地嵇星", n:"曹正", t:"操刀鬼"}, {s:"地魔星", n:"宋万", t:"云里金刚"}, {s:"地妖星", n:"杜迁", t:"摸着天"}, {s:"地幽星", n:"薛永", t:"病大虫"}, {s:"地伏星", n:"施恩", t:"金眼彪"}, {s:"地僻星", n:"李忠", t:"打虎将"}, {s:"地空星", n:"周通", t:"小霸王"}, {s:"地孤星", n:"汤隆", t:"金钱豹子"}, {s:"地全星", n:"杜兴", t:"鬼脸儿"}, {s:"地短星", n:"邹渊", t:"出林龙"}, {s:"地角星", n:"邹润", t:"独角龙"}, {s:"地囚星", n:"朱贵", t:"旱地忽律"}, {s:"地藏星", n:"朱富", t:"笑面虎"}, {s:"地平星", n:"蔡福", t:"铁臂膊"}, {s:"地损星", n:"蔡庆", t:"一枝花"}, {s:"地奴星", n:"李立", t:"催命判官"}, {s:"地察星", n:"李云", t:"青眼虎"}, {s:"地恶星", n:"焦挺", t:"没面目"}, {s:"地丑星", n:"石勇", t:"石将军"}, {s:"地数星", n:"孙新", t:"小尉迟"}, {s:"地阴星", n:"顾大嫂", t:"母大虫"}, {s:"地刑星", n:"张青", t:"菜园子"}, {s:"地壮星", n:"孙二娘", t:"母夜叉"}, {s:"地劣星", n:"王定六", t:"活闪婆"}, {s:"地健星", n:"郁保四", t:"险道神"}, {s:"地耗星", n:"白胜", t:"白日鼠"}, {s:"地贼星", n:"时迁", t:"鼓上蚤"}, {s:"地狗星", n:"段景住", t:"金毛犬"}
+];
+
+// 渲染题目
+function buildSplitQuiz() {
+    const tgList = document.getElementById('tiangang-list');
+    const dsList = document.getElementById('disha-list');
+    
+    if (!tgList || !dsList) return;
+
+    tgList.innerHTML = '';
+    dsList.innerHTML = '';
+
+    heroes.forEach((h, index) => {
+        const isNaming = Math.random() > 0.5;
+        const ans = isNaming ? h.n : h.t;
+        const qText = isNaming ? `<b>${h.s}</b> · ${h.t}` : `<b>${h.s}</b> · ${h.n}`;
+
+        const div = document.createElement('div');
+        div.style.cssText = "break-inside: avoid; margin-bottom: 12px; border-bottom: 1px dashed #dcd; padding-bottom: 5px;";
+        div.innerHTML = `
+            <div style="font-size:0.9rem;">${index + 1}. ${qText}</div>
+            <input type="text" class="q-input" data-ans="${ans}" placeholder="${isNaming ? '填姓名' : '填绰号'}" 
+                   style="width: 85%; border:none; border-bottom:1px solid #8b1a1a; background:transparent; outline:none;">
+            <div class="res-info" style="font-size:0.8rem; min-height:1.2em;"></div>
+        `;
+
+        // 前36名分流到天罡，之后到地煞
+        if (index < 36) {
+            tgList.appendChild(div);
+        } else {
+            dsList.appendChild(div);
+        }
+    });
+
+    // 显示所有隐藏的容器
+    document.getElementById('tiangang-wrap').style.display = 'block';
+    document.getElementById('disha-wrap').style.display = 'block';
+    document.getElementById('quiz-divider').style.display = 'block';
+    document.getElementById('quiz-footer').style.display = 'block';
+    document.getElementById('start-btn').style.display = 'none';
+}
+
+// 校对题目（保持不变，它会自动抓取所有的 .q-input）
+function checkAllAnswers() {
+    let score = 0;
+    const inputs = document.querySelectorAll('.q-input');
+    inputs.forEach(input => {
+        const userVal = input.value.trim();
+        const realVal = input.getAttribute('data-ans');
+        const info = input.nextElementSibling;
+        if (userVal === realVal) {
+            info.innerText = "✅ 正确";
+            info.style.color = "green";
+            score++;
+        } else {
+            info.innerText = "❌ 正解: " + realVal;
+            info.style.color = "#d32f2f";
+        }
+        input.disabled = true;
+    });
+    document.getElementById('score-display').innerText = `最终成绩：${score} / 108`;
+};
+
+        // 初始化显示第一项
+        window.onload = function() {
+            changeTab(document.querySelector('.nav-item'), '壹 · 官逼民反');
+        };
+
+        const BadgeManager = {
+            STORAGE_KEY: 'badge_data_v1',
+            
+            getData() {
+                try {
+                    const data = localStorage.getItem(this.STORAGE_KEY);
+                    return data ? JSON.parse(data) : {
+                        unlockedBadges: [],
+                        badgeUnlockTime: {},
+                        readingProgress: {
+                            xiyou: { stage1: false, stage2: false, stage3: false },
+                            sanguo: { stage1: false, stage2: false, stage3: false },
+                            shuihu: { stage1: false, stage2: false, stage3: false },
+                            honglou: { stage1: false, stage2: false, stage3: false }
+                        }
+                    };
+                } catch (e) {
+                    return {
+                        unlockedBadges: [],
+                        badgeUnlockTime: {},
+                        readingProgress: {
+                            xiyou: { stage1: false, stage2: false, stage3: false },
+                            sanguo: { stage1: false, stage2: false, stage3: false },
+                            shuihu: { stage1: false, stage2: false, stage3: false },
+                            honglou: { stage1: false, stage2: false, stage3: false }
+                        }
+                    };
+                }
+            },
+            
+            saveData(data) {
+                try {
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+                } catch (e) {
+                    console.error('保存勋章数据失败:', e);
+                }
+            },
+            
+            isStageRead(book, stage) {
+                const data = this.getData();
+                return data.readingProgress[book] && data.readingProgress[book]['stage' + stage];
+            },
+            
+            markStageRead(book, stage) {
+                const data = this.getData();
+                if (!data.readingProgress[book]) {
+                    data.readingProgress[book] = { stage1: false, stage2: false, stage3: false };
+                }
+                data.readingProgress[book]['stage' + stage] = true;
+                this.saveData(data);
+                return this.checkAndUnlockBadges();
+            },
+            
+            isBookCompleted(book) {
+                const data = this.getData();
+                const progress = data.readingProgress[book];
+                return progress && progress.stage1 && progress.stage2 && progress.stage3;
+            },
+            
+            getCompletedBooksCount() {
+                let count = 0;
+                ['xiyou', 'sanguo', 'shuihu', 'honglou'].forEach(book => {
+                    if (this.isBookCompleted(book)) count++;
+                });
+                return count;
+            },
+            
+            checkAndUnlockBadges() {
+                const data = this.getData();
+                const newlyUnlocked = [];
+                
+                const bookBadges = [
+                    { id: 'xiyou_reader', name: '西游行者', desc: '完成西游记阅读', book: 'xiyou' },
+                    { id: 'sanguo_reader', name: '三国通览', desc: '完成三国演义阅读', book: 'sanguo' },
+                    { id: 'shuihu_reader', name: '水浒知音', desc: '完成水浒传阅读', book: 'shuihu' },
+                    { id: 'honglou_reader', name: '红楼初探', desc: '完成红楼梦阅读', book: 'honglou' },
+                    { id: 'all_books_reader', name: '四大名著通', desc: '完成全部名著阅读', book: 'all' }
+                ];
+                
+                bookBadges.forEach(badge => {
+                    if (data.unlockedBadges.includes(badge.id)) return;
+                    
+                    let shouldUnlock = false;
+                    if (badge.book === 'all') {
+                        shouldUnlock = this.getCompletedBooksCount() >= 4;
+                    } else {
+                        shouldUnlock = this.isBookCompleted(badge.book);
+                    }
+                    
+                    if (shouldUnlock) {
+                        data.unlockedBadges.push(badge.id);
+                        data.badgeUnlockTime[badge.id] = Date.now();
+                        newlyUnlocked.push(badge);
+                    }
+                });
+                
+                if (newlyUnlocked.length > 0) {
+                    this.saveData(data);
+                }
+                
+                return newlyUnlocked;
+            }
+        };
+
+        let autoReadStartTime = Date.now();
+        let hasScrolledEnough = false;
+        const MIN_READ_TIME = 30000;
+        const SCROLL_THRESHOLD = 0.8;
+        let autoReadMarked = false;
+
+        function initAutoReadTracking() {
+            if (BadgeManager.isStageRead('shuihu', 1)) {
+                autoReadMarked = true;
+                return;
+            }
+            
+            const mainContent = document.querySelector('.main-content');
+            
+            mainContent.addEventListener('scroll', function() {
+                if (autoReadMarked) return;
+                
+                const scrollPercent = (mainContent.scrollTop + mainContent.clientHeight) / mainContent.scrollHeight;
+                if (scrollPercent >= SCROLL_THRESHOLD) {
+                    hasScrolledEnough = true;
+                    checkAndMarkAutoRead();
+                }
+            });
+            
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden && !autoReadMarked) {
+                    checkAndMarkAutoRead();
+                }
+            });
+            
+            window.addEventListener('beforeunload', function() {
+                if (!autoReadMarked) {
+                    checkAndMarkAutoRead();
+                }
+            });
+        }
+
+        function checkAndMarkAutoRead() {
+            if (autoReadMarked) return;
+            
+            const readTime = Date.now() - autoReadStartTime;
+            if (readTime >= MIN_READ_TIME && hasScrolledEnough) {
+                const newlyUnlocked = BadgeManager.markStageRead('shuihu', 1);
+                autoReadMarked = true;
+                
+                if (newlyUnlocked.length > 0) {
+                    localStorage.setItem('pending_badge_notification', newlyUnlocked[0].id);
+                }
+            }
+        }
+
+        function showBadgeNotification(badge) {
+            document.getElementById('badgeName').textContent = badge.name;
+            document.getElementById('badgeDesc').textContent = badge.desc;
+            
+            const card = document.getElementById('badgeCard');
+            const rarityColors = {
+                common: '#d4af37',
+                rare: '#9c27b0',
+                epic: '#ff6b35'
+            };
+            const color = rarityColors[badge.rarity] || rarityColors.common;
+            card.style.border = '4px solid ' + color;
+            card.style.boxShadow = '0 10px 40px ' + color + '80';
+            document.getElementById('badgeName').style.color = color;
+            
+            document.getElementById('badgeNotification').classList.add('show');
+        }
+
+        function closeBadgeNotification() {
+            document.getElementById('badgeNotification').classList.remove('show');
+        }
+
+        window.addEventListener('load', function() {
+            initAutoReadTracking();
+        });
+    </script>
+</body>
+</html>

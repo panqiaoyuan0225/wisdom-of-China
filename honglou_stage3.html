@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>万艳同悲 - 红楼梦专题导览</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    display: flex;
+    height: 100vh;
+    font-family: "STKaiti", "Microsoft YaHei", serif;
+    background: linear-gradient(135deg, #fff5f6, #fef6e8);
+}
+
+.sidebar {
+    width: 300px;
+    background: linear-gradient(180deg, #d4708a 0%, #b03060 100%);
+    color: #d4af37;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 5px 0 18px rgba(0,0,0,0.25);
+    border-right: 2px solid #d4af37;
+}
+
+.sidebar h2 {
+    text-align: center;
+    font-size: 1.6rem;
+    margin: 0;
+    padding: 40px 0;
+    background: rgba(0,0,0,0.15);
+    letter-spacing: 4px;
+    color: #d4af37;
+}
+
+.nav-item {
+    padding: 22px 30px;
+    cursor: pointer;
+    transition: 0.3s;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    font-size: 1.1rem;
+    color: #ffe89a;
+}
+
+.nav-item:hover {
+    background: rgba(212,112,138,0.3);
+    padding-left: 45px;
+    color: #fff8e1;
+}
+
+.nav-item.active {
+    background: linear-gradient(90deg, #d4af37, #c9a227);
+    color: #8b1a4a;
+    font-weight: bold;
+}
+
+.main-content {
+    flex: 1;
+    padding: 50px;
+    overflow-y: auto;
+    background-image: url('https://www.transparenttextures.com/patterns/papyrus.png');
+}
+
+.content-box {
+    background: rgba(255, 250, 250, 0.95);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px;
+    border: 1px solid #d4af37;
+    box-shadow: 0 0 25px rgba(0,0,0,0.15);
+    min-height: 80vh;
+}
+
+h1 {
+    color: #b03060;
+    border-left: 8px solid #d4af37;
+    padding-left: 15px;
+}
+
+h2 {
+    color: #b03060;
+    border-bottom: 1px solid #d4af37;
+    padding-bottom: 5px;
+    margin-top: 30px;
+}
+
+h3 {
+    color: #8b1a4a;
+    margin-top: 24px;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed rgba(176,48,96,0.35);
+}
+
+p {
+    line-height: 1.8;
+    text-indent: 2em;
+    font-size: 1.2rem;
+}
+
+.back-link {
+    position: fixed;
+    top: 20px;
+    right: 40px;
+    text-decoration: none;
+    color: #b03060;
+    font-weight: bold;
+    background: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.badge-notification-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.badge-notification-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.badge-notification-card {
+    background: linear-gradient(135deg, #fff9e6, #fff);
+    border-radius: 20px;
+    padding: 40px 50px;
+    text-align: center;
+    max-width: 350px;
+    transform: scale(0.8);
+    transition: transform 0.3s;
+}
+
+.badge-notification-overlay.show .badge-notification-card {
+    transform: scale(1);
+}
+
+.coming-soon {
+    text-align: center;
+    padding: 100px 20px;
+    color: #b03060;
+}
+
+.coming-soon h2 {
+    border: none;
+    font-size: 2rem;
+}
+
+.coming-soon p {
+    font-size: 1.2rem;
+    color: #8b1a4a;
+    line-height: 1.8;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.question-box { margin-bottom: 20px; padding: 15px; border-bottom: 1px inset #eee; }
+.answer-text { margin-top: 10px; padding: 12px; background: #f0fdf4; color: #16a34a; border-radius: 5px; font-weight: bold; border: 1px dashed #16a34a; }
+summary { color: #b03060; cursor: pointer; font-weight: bold; outline: none; }
+summary:hover { text-decoration: underline; }
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <h2>万艳同悲</h2>
+    <div class="nav-item active" onclick="changeTab(this, '拾叁 · 抄检大观园')">拾叁·抄检大观园</div>
+    <div class="nav-item" onclick="changeTab(this, '拾肆 · 黛玉焚稿')">拾肆·黛玉焚稿</div>
+    <div class="nav-item" onclick="changeTab(this, '拾伍 · 宝钗出闺')">拾伍·宝钗出闺</div>
+    <div class="nav-item" onclick="changeTab(this, '拾陆 · 黛玉归天')">拾陆·黛玉归天</div>
+    <div class="nav-item" onclick="changeTab(this, '拾柒 · 归彼大荒')">拾柒·归彼大荒</div>
+    <div class="nav-item" onclick="changeTab(this, '拾捌 · 红楼纪年')">拾捌·红楼纪年</div>
+    <div class="nav-item" onclick="changeTab(this, '拾玖 · 百题挑战')">拾玖·百题挑战 🏆</div>
+</div>
+
+<div class="main-content">
+    <a href="honglou.html" class="back-link">← 返回主页</a>
+
+    <div class="content-box">
+        <h1 id="content-title">拾叁 · 抄检大观园</h1>
+        <div id="content-body">
+            <div class="coming-soon">
+                <h2>🍂 敬请期待 🍂</h2>
+                <p>此专题内容正在编写中</p>
+                <p>「好一似食尽鸟投林，落了片白茫茫大地真干净」</p>
+                <p>—— 贾府败落之时</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="badge-notification-overlay" id="badgeNotification">
+    <div class="badge-notification-card" id="badgeCard">
+        <div style="font-size: 1.5rem; color: #8b4513; margin-bottom: 20px;">🎉 恭喜获得勋章！</div>
+        <div style="font-size: 2.5rem; margin-bottom: 15px;">🎖️</div>
+        <div style="font-size: 1.8rem; font-weight: bold; margin-bottom: 10px;" id="badgeName"></div>
+        <div style="color: #666; margin-bottom: 20px;" id="badgeDesc"></div>
+        <button onclick="closeBadgeNotification()" style="background: #8b4513; color: #fff; border: none; padding: 10px 30px; border-radius: 20px; font-size: 1rem; cursor: pointer;">太棒了！</button>
+    </div>
+</div>
+
+<script>
+const contentData = {
+    "拾叁 · 抄检大观园": `
+<h2>一、绣春囊事件：大观园的劫难开端</h2>
+<p>
+抄检大观园是《红楼梦》中贾府由盛转衰的重要转折点。事件的起因是一个绣春囊——一个绣着男女欢爱图案的香囊，在园中被发现。这个看似微不足道的物件，却引发了轩然大波，成为王夫人整顿大观园的导火索。
+</p>
+
+<p>
+绣春囊的发现，让王夫人既震惊又愤怒。她认为这是大观园道德沦丧的证据，必须彻查到底。于是，她决定对大观园进行抄检，搜查每个丫鬟的房间，找出"罪魁祸首"。这场抄检，不仅是对大观园的一次清洗，更是对园中所有人的一次羞辱。
+</p>
+
+<h3>二、抄检过程：人人自危的恐怖</h3>
+<p>
+抄检大观园的过程充满了紧张与恐怖。王熙凤带领一群人，逐个搜查每个丫鬟的房间。她们翻箱倒柜，搜查每一件物品，让每个丫鬟都感到屈辱和恐惧。在这场抄检中，许多无辜的人被牵连，许多隐私被曝光。
+</p>
+
+<p>
+抄检中，晴雯、司棋等人的房间都被搜查。晴雯因性格刚烈，与王夫人早有嫌隙，在抄检中更是被重点"关照"。而司棋则因与表弟潘又安的私情被发现，成为这场抄检的最大受害者。她的私人物品被翻出，她的隐私被曝光，她的人格被践踏。
+</p>
+
+<h3>三、探春之怒：对抄检的强烈抗议</h3>
+<p>
+在抄检过程中，只有探春敢于公开抗议。当王熙凤等人来到她的房间时，探春勃然大怒，说出了那段著名的话："你们别忙，自然连你们抄的日子有呢！你们今日早起不曾议论甄家，自己家里好好的抄家，果然今日真抄了。咱们也渐渐的来了。可知这样大族人家，若从外头杀来，一时是杀不死的，这是古人曾说的'百足之虫，死而不僵'，必须先从家里自杀自灭起来，才能一败涂地！"
+</p>
+
+<div style="background: #fef9e6; padding: 25px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #d4af37;">
+<h4 style="color: #d4af37;">探春的预言</h4>
+<p style="font-style: italic; line-height: 1.8; text-indent: 0;">
+"你们别忙，自然连你们抄的日子有呢！……必须先从家里自杀自灭起来，才能一败涂地！"
+</p>
+</div>
+
+<p>
+探春的这番话，不仅是对抄检大观园的强烈抗议，更是对贾府命运的深刻预言。她看到了贾府内部的腐朽与分裂，看到了"自杀自灭"的危险。然而，她的警告并没有被重视，贾府最终还是走向了衰亡。
+</p>
+
+<h3>📊 抄检大观园主要受害者</h3>
+<table style="width:100%; border-collapse: collapse; background:#fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
+<thead>
+<tr style="background:#b03060; color:#fff;">
+<th style="padding:12px; border:1px solid #8b1a4a; width:20%;">人物</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">罪名</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">结局</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">晴雯</td>
+<td style="padding:10px; border:1px solid #ddd;">勾引宝玉、行为不端</td>
+<td style="padding:10px; border:1px solid #ddd;">被撵出园，含恨而死</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">司棋</td>
+<td style="padding:10px; border:1px solid #ddd;">与表弟私通</td>
+<td style="padding:10px; border:1px solid #ddd;">被撵出园，撞墙殉情</td>
+</tr>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">入画</td>
+<td style="padding:10px; border:1px solid #ddd;">私藏哥哥的财物</td>
+<td style="padding:10px; border:1px solid #ddd;">被撵出园</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">芳官等</td>
+<td style="padding:10px; border:1px solid #ddd;">被诬陷不守规矩</td>
+<td style="padding:10px; border:1px solid #ddd;">被撵出园，出家为尼</td>
+</tr>
+</tbody>
+</table>
+
+<h3>思考</h3>
+<div style="background:#fff5f5; padding:20px; border-left:6px solid #b03060; border-radius:8px; margin-top:20px;">
+<p>
+抄检大观园是贾府由盛转衰的重要标志。这场抄检，表面上是整顿园中风气，实则是内部矛盾的爆发与清洗。探春的预言"必须先从家里自杀自灭起来，才能一败涂地"，深刻揭示了贾府衰落的根本原因——内部的腐朽与分裂。大观园曾是青春的乐园，如今却成了人人自危的牢笼。这场抄检，不仅摧毁了许多无辜者的命运，更预示着贾府即将到来的全面崩溃。
+</p>
+</div>
+`,
+
+    "拾肆 · 黛玉焚稿": `
+<h2>一、焚稿缘起：绝望中的最后抉择</h2>
+<p>
+黛玉焚稿是《红楼梦》中最令人心碎的场景之一。当黛玉得知宝玉即将迎娶宝钗的消息后，她的世界彻底崩塌了。她知道，自己与宝玉的爱情已经没有希望，自己的生命也即将走到尽头。在绝望中，她做出了焚稿的决定——将自己一生的心血，那些记录着她与宝玉爱情的诗稿，全部付之一炬。
+</p>
+
+<p>
+焚稿对黛玉来说，既是与过去的告别，也是对命运的控诉。那些诗稿，是她一生情感的寄托，是她灵魂的写照。如今，她要将它们全部烧毁，就像烧毁自己的一生。这是一种极端的绝望，也是一种最后的解脱。
+</p>
+
+<h3>二、焚稿过程：一字一泪的诀别</h3>
+<p>
+焚稿的过程，是黛玉生命中最悲凉的时刻。她让紫鹃将诗稿拿来，一页一页地翻看，一页一页地烧掉。每一首诗，都承载着她与宝玉的回忆；每一个字，都浸透着她的心血与泪水。她一边烧，一边哭，一边回忆着往昔的点点滴滴。
+</p>
+
+<div style="background: #fef6f6; padding: 25px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #b03060;">
+<h4 style="color: #b03060;">黛玉焚稿原文</h4>
+<p style="font-style: italic; line-height: 1.8; text-indent: 0;">
+"黛玉听了，怔怔的半天，方说道：'这话从那里听来的？'紫鹃道：'是从那边太太屋里听来的。'黛玉听了，也不言语，只将身子一歪，便倒在床上，呜呜咽咽的哭起来了。……黛玉将诗稿拿起，又看了看，又放下，又拿起，又放下，如此几次，方才狠心将诗稿往火盆里一掷。"
+</p>
+</div>
+
+<p>
+黛玉焚毁的不仅是诗稿，还有宝玉送给她的题诗旧帕。那块旧帕，是宝玉与她爱情的见证，如今也要化为灰烬。黛玉一边烧，一边说："宝玉，宝玉，你好……"这句话没有说完，却包含了无尽的怨恨与不舍。
+</p>
+
+<h3>三、焚稿的意义：对封建婚姻的控诉</h3>
+<p>
+黛玉焚稿，表面上是个人情感的宣泄，实则是对封建婚姻制度的深刻控诉。黛玉与宝玉的爱情，本应是两情相悦的美好姻缘，却被封建家长以"金玉良缘"的名义强行拆散。黛玉的悲剧，不是她个人的悲剧，而是整个封建社会对女性压迫的缩影。
+</p>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0;">
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #b03060;">
+<h4 style="color: #b03060;">焚毁之物</h4>
+<p>• 诗稿：一生心血</p>
+<p>• 旧帕：爱情见证</p>
+<p>• 题诗：往昔回忆</p>
+</div>
+
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #d4af37;">
+<h4 style="color: #d4af37;">焚稿象征</h4>
+<p>• 与过去的诀别</p>
+<p>• 对命运的控诉</p>
+<p>• 灵魂的最后解脱</p>
+</div>
+</div>
+
+<h3>思考</h3>
+<div style="background:#fff5f5; padding:20px; border-left:6px solid #b03060; border-radius:8px; margin-top:20px;">
+<p>
+黛玉焚稿是《红楼梦》中最令人心碎的场景之一。在生命的最后时刻，黛玉选择将自己一生的心血付之一炬，这是对封建婚姻制度最深刻的控诉。她与宝玉的爱情，本应是两情相悦的美好姻缘，却被"金玉良缘"的谎言所摧毁。黛玉的悲剧，不仅是个人的悲剧，更是整个封建社会对女性压迫的缩影。她的焚稿，是对这个不公世界的最后抗议，也是对自己灵魂的最后解脱。
+</p>
+</div>
+`,
+
+    "拾伍 · 宝钗出闺": `
+<h2>一、金玉良缘：一场精心策划的骗局</h2>
+<p>
+宝钗出闺，是《红楼梦》中最具讽刺意味的情节之一。贾府上下以"金玉良缘"为由，强行将宝钗嫁给宝玉。然而，这场婚姻从一开始就是一场骗局——宝玉以为娶的是黛玉，直到揭开盖头的那一刻，才发现新娘竟是宝钗。
+</p>
+
+<p>
+这场骗局的策划者，是贾母、王夫人、王熙凤等人。他们认为宝玉的病需要"冲喜"，而"金玉良缘"是最好的选择。为了促成这场婚姻，他们不惜欺骗宝玉，让他以为娶的是黛玉。这种欺骗，不仅伤害了宝玉，也伤害了宝钗，更让黛玉含恨而终。
+</p>
+
+<h3>二、掉包计：王熙凤的"妙计"</h3>
+<p>
+为了骗过宝玉，王熙凤想出了"掉包计"——让宝钗冒充黛玉，在婚礼上蒙混过关。这个计策虽然"巧妙"，却极其残忍。它利用了宝玉对黛玉的深情，也利用了宝钗的无奈。当宝玉发现真相时，一切都已无法挽回。
+</p>
+
+<div style="background: #fef9e6; padding: 25px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #d4af37;">
+<h4 style="color: #d4af37;">掉包计原文</h4>
+<p style="font-style: italic; line-height: 1.8; text-indent: 0;">
+"凤姐道：'依我想，这件事只有一个掉包儿的法儿。……只说老爷做主，将林妹妹配了他，他瞧瞧林妹妹，心也开了，病也好了。就是娶过来，也是林妹妹的模样儿，他见了自然欢喜。'"
+</p>
+</div>
+
+<h3>三、宝钗的无奈：被动的参与者</h3>
+<p>
+在这场骗局中，宝钗也是一个受害者。她虽然知道宝玉爱的是黛玉，却无法拒绝这门婚事。在封建社会中，女子的婚姻由父母做主，她没有选择的权利。她只能被动地接受这个安排，成为这场骗局的工具。
+</p>
+
+<p>
+宝钗的悲剧在于，她明明知道宝玉不爱自己，却还要嫁给他。她明明知道黛玉与宝玉的感情，却要成为拆散他们的"第三者"。这种无奈，是封建社会对女性的压迫，也是宝钗个人命运的悲剧。
+</p>
+
+<h3>📊 宝钗与黛玉对比</h3>
+<table style="width:100%; border-collapse: collapse; background:#fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
+<thead>
+<tr style="background:#b03060; color:#fff;">
+<th style="padding:12px; border:1px solid #8b1a4a; width:20%;">人物</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">与宝玉关系</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">婚姻结局</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">林黛玉</td>
+<td style="padding:10px; border:1px solid #ddd;">两情相悦，灵魂伴侣</td>
+<td style="padding:10px; border:1px solid #ddd;">含恨而终，未能成婚</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">薛宝钗</td>
+<td style="padding:10px; border:1px solid #ddd;">单方情愿，缺乏感情</td>
+<td style="padding:10px; border:1px solid #ddd;">被骗成婚，独守空房</td>
+</tr>
+</tbody>
+</table>
+`,
+
+    "拾陆 · 黛玉归天": `
+<h2>一、黛玉之死：最悲凉的告别</h2>
+<p>
+黛玉之死是《红楼梦》中最令人心碎的场景。在宝玉与宝钗成亲的那一晚，黛玉在潇湘馆中孤独地离开了人世。她死时身边只有紫鹃一人，没有亲人，没有朋友，没有爱人。她带着对宝玉的怨恨与不舍，带着对命运的无奈与绝望，永远地闭上了眼睛。
+</p>
+
+<p>
+黛玉之死的悲凉，不仅在于她死时的孤独，更在于她死时的情境。一边是宝玉与宝钗的热闹婚礼，一边是黛玉的凄凉离世。这种强烈的对比，让黛玉的死亡更加令人心痛。她一生追求的爱情，最终化为泡影；她一生珍视的知己，最终与她阴阳两隔。
+</p>
+
+<h3>二、临终遗言：对宝玉的最后控诉</h3>
+<p>
+黛玉临终前，留下了那句令人心碎的遗言："宝玉，宝玉，你好……"这句话没有说完，却包含了无尽的情感——有怨恨，有不舍，有无奈，有绝望。她怨恨宝玉"负心"，不舍与宝玉的过往，无奈于命运的安排，绝望于未来的无望。
+</p>
+
+<div style="background: #fef6f6; padding: 25px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #b03060;">
+<h4 style="color: #b03060;">黛玉临终原文</h4>
+<p style="font-style: italic; line-height: 1.8; text-indent: 0;">
+"黛玉微微睁眼，此时只有紫鹃一人，李纨也刚来了。黛玉伸手，要了那块题诗的旧帕，拿到手里，狠命的撕那帕子，却是只有打颤的分儿，那里撕得动。紫鹃早已知他恨宝玉，却也不敢说破，只说：'姑娘，何苦自己又生气！'黛玉点点头儿，掖在袖里，便说：'点灯。'……黛玉听了，猛然咳嗽两声，便是一口血吐出来。紫鹃吓得忙上来扶着，那血便一口一口的吐个不住。……黛玉微微睁眼，喘了口气，道：'宝玉，宝玉，你好……'说到'好'字，便浑身冷汗，不作声了。"
+</p>
+</div>
+
+<div style="text-align: center; margin: 30px 0;">
+    <img src="images/daiyu.jpg" style="max-width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border: 3px solid #d4af37;">
+    <p style="text-align: center; margin-top: 12px; color: #8b1a4a; font-style: italic; text-indent: 0;">黛玉临终前与李纨相见</p>
+</div>
+
+<h3>三、黛玉之死的象征意义</h3>
+<p>
+黛玉之死，不仅是个人生命的终结，更是整个大观园青春时代的终结。黛玉是大观园中最具灵性的女子，她的死亡，象征着大观园美好事物的消亡。她与宝玉的爱情，是《红楼梦》中最动人的情感，她的死亡，也标志着这段爱情的彻底终结。
+</p>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0;">
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #b03060;">
+<h4 style="color: #b03060;">黛玉之死</h4>
+<p>• 孤独离世，身边仅有紫鹃</p>
+<p>• 与宝玉婚礼同时发生</p>
+<p>• 带着怨恨与不舍离开</p>
+</div>
+
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #d4af37;">
+<h4 style="color: #d4af37;">象征意义</h4>
+<p>• 大观园青春时代的终结</p>
+<p>• 美好事物的消亡</p>
+<p>• 封建社会的残酷写照</p>
+</div>
+</div>
+
+<h3>📊 黛玉一生重要节点</h3>
+<table style="width:100%; border-collapse: collapse; background:#fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
+<thead>
+<tr style="background:#b03060; color:#fff;">
+<th style="padding:12px; border:1px solid #8b1a4a; width:25%;">阶段</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">事件</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">意义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">初入贾府</td>
+<td style="padding:10px; border:1px solid #ddd;">与宝玉初见</td>
+<td style="padding:10px; border:1px solid #ddd;">似曾相识，命中注定</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">共读西厢</td>
+<td style="padding:10px; border:1px solid #ddd;">与宝玉定情</td>
+<td style="padding:10px; border:1px solid #ddd;">感情升温，明确心意</td>
+</tr>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">葬花吟诗</td>
+<td style="padding:10px; border:1px solid #ddd;">作《葬花吟》</td>
+<td style="padding:10px; border:1px solid #ddd;">对命运的悲叹</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">焚稿断情</td>
+<td style="padding:10px; border:1px solid #ddd;">烧毁诗稿</td>
+<td style="padding:10px; border:1px solid #ddd;">与过去的诀别</td>
+</tr>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">香消玉殒</td>
+<td style="padding:10px; border:1px solid #ddd;">含恨而终</td>
+<td style="padding:10px; border:1px solid #ddd;">悲剧命运的终结</td>
+</tr>
+</tbody>
+</table>
+
+<h3>思考</h3>
+<div style="background:#fff5f5; padding:20px; border-left:6px solid #b03060; border-radius:8px; margin-top:20px;">
+<p>
+黛玉之死是《红楼梦》中最悲凉的场景。她一生追求爱情，却最终含恨而终；她一生珍视知己，却最终阴阳两隔。她的死亡，不仅是个人的悲剧，更是整个封建社会对女性压迫的缩影。在封建社会中，女子的命运由他人掌控，即使如黛玉般才华横溢、情深意重，也无法逃脱悲剧的结局。她的死亡，是对封建婚姻制度最深刻的控诉，也是对那个时代最悲凉的告别。
+</p>
+</div>
+`,
+
+    "拾柒 · 归彼大荒": `
+<h2>一、贾府被抄：繁华落尽的终局</h2>
+<p>
+贾府被抄，是《红楼梦》中贾府由盛转衰的最终结局。曾经"烈火烹油，鲜花着锦"的贾府，如今落得个被抄家的下场。那些曾经的荣华富贵，那些曾经的权势地位，在一夜之间化为乌有。贾府的衰落，既是个人命运的悲剧，也是整个封建家族制度的必然结局。
+</p>
+
+<p>
+抄家的原因，既有政治上的失势，也有经济上的亏空。贾府多年来挥霍无度，早已入不敷出；加上元春去世，失去了宫中的靠山，贾府的覆灭只是时间问题。当抄家的圣旨下达时，贾府上下乱作一团，昔日的繁华瞬间化为泡影。
+</p>
+
+<h3>二、宝玉出家：看破红尘的抉择</h3>
+<p>
+在经历了黛玉之死、家族败落等一系列打击后，宝玉最终选择了出家。他看透了世间的虚幻，看破了红尘的纷扰，决定远离尘世，归隐山林。这是他对封建社会的最后反抗，也是他对自己灵魂的最后救赎。
+</p>
+
+<div style="background: #fef9e6; padding: 25px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #d4af37;">
+<h4 style="color: #d4af37;">宝玉出家原文</h4>
+<p style="font-style: italic; line-height: 1.8; text-indent: 0;">
+"宝玉却也不甚留心，只想着：'我如今是出了家的人了，这些事都不必计较。'……只见宝玉光着头，赤着脚，身上披着大红猩猩毡的斗篷，向贾政倒身下拜。……贾政还欲前走，只见白茫茫一片旷野，并无一人，不知宝玉往那里去了。"
+</p>
+</div>
+
+<h3>三、白茫茫大地真干净：繁华的终结</h3>
+<p>
+《红楼梦》以"好一似食尽鸟投林，落了片白茫茫大地真干净"作结，深刻揭示了贾府繁华落尽的终局。曾经的荣华富贵，曾经的儿女情长，曾经的悲欢离合，最终都化为乌有。这片白茫茫的大地，既是贾府衰落的写照，也是整个人生虚幻的象征。
+</p>
+
+<h3>📊 贾府主要人物结局</h3>
+<table style="width:100%; border-collapse: collapse; background:#fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
+<thead>
+<tr style="background:#b03060; color:#fff;">
+<th style="padding:12px; border:1px solid #8b1a4a; width:20%;">人物</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">结局</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">象征意义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">贾宝玉</td>
+<td style="padding:10px; border:1px solid #ddd;">出家为僧</td>
+<td style="padding:10px; border:1px solid #ddd;">看破红尘，远离尘世</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">林黛玉</td>
+<td style="padding:10px; border:1px solid #ddd;">含恨而终</td>
+<td style="padding:10px; border:1px solid #ddd;">爱情悲剧，命运无常</td>
+</tr>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">薛宝钗</td>
+<td style="padding:10px; border:1px solid #ddd;">独守空房</td>
+<td style="padding:10px; border:1px solid #ddd;">婚姻悲剧，孤独终老</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">王熙凤</td>
+<td style="padding:10px; border:1px solid #ddd;">病死狱中</td>
+<td style="padding:10px; border:1px solid #ddd;">机关算尽，终害自己</td>
+</tr>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">贾母</td>
+<td style="padding:10px; border:1px solid #ddd;">寿终正寝</td>
+<td style="padding:10px; border:1px solid #ddd;">繁华见证者，含笑而终</td>
+</tr>
+</tbody>
+</table>
+
+<h3>思考</h3>
+<div style="background:#fff5f5; padding:20px; border-left:6px solid #b03060; border-radius:8px; margin-top:20px;">
+<p>
+"归彼大荒"是《红楼梦》的终章，也是贾府繁华落尽的写照。曾经"烈火烹油，鲜花着锦"的贾府，最终落得个"白茫茫大地真干净"的结局。这个结局，既是对贾府衰落的真实写照，也是对整个人生虚幻的深刻揭示。曹雪芹通过贾府的兴衰，告诉我们：繁华终将落尽，荣华终成泡影，唯有看破红尘，才能获得真正的解脱。宝玉的出家，正是对这一人生真谛的最好诠释。
+</p>
+</div>
+`,
+
+    "拾捌 · 红楼纪年": `
+<style>
+    .timeline-container {
+        position: relative;
+        padding: 20px 0;
+        margin-top: 30px;
+    }
+    .timeline-line {
+        position: absolute;
+        left: 120px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(180deg, #d4af37 0%, #b03060 100%);
+        opacity: 0.6;
+    }
+    .timeline-event {
+        position: relative;
+        margin-bottom: 35px;
+        display: flex;
+        align-items: flex-start;
+    }
+    .event-year {
+        width: 120px;
+        text-align: right;
+        padding-right: 25px;
+        font-weight: bold;
+        color: #b03060;
+        font-size: 1rem;
+        flex-shrink: 0;
+        padding-top: 5px;
+    }
+    .event-dot {
+        position: absolute;
+        left: 116px;
+        top: 10px;
+        width: 10px;
+        height: 10px;
+        background: #d4af37;
+        border-radius: 50%;
+        box-shadow: 0 0 8px #d4af37;
+        z-index: 2;
+    }
+    .event-content {
+        padding-left: 35px;
+        padding-bottom: 15px;
+        border-bottom: 1px dashed rgba(176,48,96,0.3);
+        width: 100%;
+    }
+    .event-title {
+        font-weight: bold;
+        color: #b03060;
+        font-size: 1.1rem;
+        margin-bottom: 5px;
+    }
+    .event-desc {
+        margin: 0;
+        line-height: 1.6;
+        color: #333;
+        font-size: 14px;
+    }
+    .event-highlight {
+        color: #d4af37;
+        font-weight: bold;
+    }
+</style>
+
+<div class="timeline-container">
+    <div class="timeline-line"></div>
+
+    <div class="timeline-event">
+        <div class="event-year">红楼元年</div>
+        <div class="event-dot"></div>
+        <div class="event-content">
+            <div class="event-title">甄士隐梦识通灵宝玉</div>
+            <p class="event-desc"><b>事件：</b>姑苏城内乡宦甄士隐，于梦中见到一僧一道携通灵宝玉下凡。僧道告知此玉乃女娲补天所遗，今欲随神瑛侍者下凡历劫。</p>
+            <p class="event-desc"><b>事件：</b>中秋佳节，甄士隐资助落魄书生贾雨村银两衣物，助其进京赶考。</p>
+        </div>
+    </div>
+
+    <div class="timeline-event">
+        <div class="event-year">红楼二年至三年</div>
+        <div class="event-dot"></div>
+        <div class="event-content">
+            <div class="event-title">甄家败落</div>
+            <p class="event-desc"><b>事件：</b>元宵佳节，甄士隐之女英莲（三岁）被拐子拐走。</p>
+            <p class="event-desc"><b>事件：</b>葫芦庙失火，延及甄家，甄士隐家产尽毁。贫病交加之际，甄士隐听《好了歌》顿悟，随跛足道人出家而去。</p>
+        </div>
+    </div>
+
+    <div class="timeline-event">
+        <div class="event-year">红楼六年至七年</div>
+        <div class="event-dot"></div>
+        <div class="event-content">
+            <div class="event-title">黛玉进府，宝黛初会</div>
+            <p class="event-desc"><b>事件：</b>林黛玉之母贾敏病逝，黛玉时年五岁。贾雨村护送黛玉进京，投奔外祖母贾母。</p>
+            <p class="event-desc"><b>事件：</b>黛玉初入荣国府，与宝玉初次相见。宝玉见黛玉便觉"这个妹妹我曾见过的"，二人似曾相识，命中注定。</p>
+        </div>
+    </div>
+
+    <div class="timeline-event">
+        <div class="event-year">红楼八年</div>
+        <div class="event-dot"></div>
+        <div class="event-content">
+            <div class="event-title">薛家进京，金玉良缘</div>
+            <p class="event-desc"><b>事件：</b>贾雨村补授应天府，乱判葫芦案，薛蟠因争买英莲打死冯渊，却逍遥法外。</p>
+            <p class="event-desc"><b>事件：</b>薛姨妈携薛蟠、薛宝钗进京，入住荣国府梨香院。"金玉良缘"之说登场，宝钗项上金锁与宝玉通灵宝玉相配。</p>
+        </div>
+    </div>
+
+    <div class="timeline-event">
+        <div class="event-year">红楼九年</div>
+        <div class="event-dot"></div>
+        <div class="event-content">
+            <div class="event-title">刘姥姥初进荣国府</div>
+            <p class="event-desc"><b>事件：</b>刘姥姥一进荣国府，向王熙凤打秋风，得银二十两。</p>
+            <p class="event-desc"><b>事件：</b>宝玉入家塾读书，与秦钟交好，闹出学堂风波。</p>
+            <p class="event-desc"><b>事件：</b>宝玉往梨香院探宝钗，黛玉随后而至，因"金玉"之说含酸。</p>
+        </div>
+    </div>
+
+    <div class="timeline-event">
+        <div class="event-year">红楼十年</div>
+        <div class="event-dot"></div>
+        <div class="event-content">
+            <div class="event-title">凤姐设局，黛玉离京</div>
+            <p class="event-desc"><b>事件：</b>王熙凤毒设相思局，贾瑞因觊觎凤姐美色，被骗后病重，照风月宝鉴而亡。</p>
+            <p class="event-desc"><b>事件：</b>林如海病重，黛玉离京回扬州探父。</p>
+        </div>
+    </div>
+
+    <div class="timeline-event">
+        <div class="event-year">红楼十一年</div>
+        <div class="event-dot"></div>
+        <div class="event-content">
+            <div class="event-title">秦可卿病亡，元春晋封</div>
+            <p class="event-desc"><b>事件：</b>秦可卿病亡，临终托梦凤姐，预言贾府"盛筵必散"。</p>
+            <p class="event-desc"><b>事件：</b>凤姐协理宁国府，弄权铁槛寺，贪财害命。</p>
+            <p class="event-desc"><b>事件：</b>元春晋封贤德妃，贾府上下欢庆。</p>
+            <p class="event-desc"><b>事件：</b>秦钟夭逝，宝玉痛失知己。</p>
+        </div>
+    </div>
+
+    <div class="timeline-event">
+        <div class="event-year"><span class="event-highlight">红楼十三年</span></div>
+        <div class="event-dot"></div>
+        <div class="event-content">
+            <div class="event-title">核心高潮之年</div>
+            <p class="event-desc"><b>正月十五：</b>元妃省亲，大观园鼎盛。贾府极尽奢华，元春却泪洒省亲。</p>
+            <p class="event-desc"><b>二月廿二：</b>宝玉及众钗入住大观园，青春乐园开启。</p>
+            <p class="event-desc"><b>三月：</b>宝黛共读《西厢记》，黛玉葬花，作《葬花吟》。</p>
+            <p class="event-desc"><b>五月：</b>清虚观打醮，宝黛因"金玉"之说闹别扭；宝玉挨打，黛玉哭肿双眼。</p>
+            <p class="event-desc"><b>八月：</b>探春结海棠社，黛玉夺魁菊花诗。</p>
+            <p class="event-desc"><b>九月：</b>刘姥姥二进荣国府，游大观园，醉卧怡红院。</p>
+            <p class="event-desc"><b>十月：</b>香菱学诗，拜黛玉为师。</p>
+            <p class="event-desc"><b>除夕：</b>祭宗祠，开夜宴，贾府繁华至极。</p>
+        </div>
+    </div>
+
+    <div class="timeline-event">
+        <div class="event-year">红楼十四年</div>
+        <div class="event-dot"></div>
+        <div class="event-content">
+            <div class="event-title">探春理家，二尤登场</div>
+            <p class="event-desc"><b>事件：</b>凤姐病重，探春理家，兴利除弊，整顿大观园。</p>
+            <p class="event-desc"><b>事件：</b>宝玉寿宴，群芳夜抽花签，黛玉抽得芙蓉签。</p>
+            <p class="event-desc"><b>事件：</b>贾敬暴毙，尤氏姐妹登场，尤二姐、尤三姐卷入宁府风波。</p>
+        </div>
+    </div>
+
+    <div class="timeline-event">
+        <div class="event-year">红楼十五年</div>
+        <div class="event-dot"></div>
+        <div class="event-content">
+            <div class="event-title">二尤悲剧</div>
+            <p class="event-desc"><b>事件：</b>尤三姐自刎，以死明志，柳湘莲出家。</p>
+            <p class="event-desc"><b>事件：</b>尤二姐被凤姐骗入荣府，受尽折磨，吞金自尽。</p>
+        </div>
+    </div>
+
+    <div class="timeline-event">
+        <div class="event-year"><span class="event-highlight">红楼十六年</span></div>
+        <div class="event-dot"></div>
+        <div class="event-content">
+            <div class="event-title">大观园败落</div>
+            <p class="event-desc"><b>八月初三：</b>贾母八旬大寿，宁荣二府大摆宴席。</p>
+            <p class="event-desc"><b>中秋前后：</b>绣春囊事件，抄检大观园，晴雯、司棋被撵。</p>
+            <p class="event-desc"><b>中秋夜：</b>黛玉、湘云凹晶馆联诗，"冷月葬花魂"成谶语。</p>
+            <p class="event-desc"><b>之后：</b>晴雯夭亡，宝玉作《芙蓉女儿诔》祭奠。</p>
+        </div>
+    </div>
+</div>
+
+<h3>思考</h3>
+<div style="background:#fff5f5; padding:20px; border-left:6px solid #b03060; border-radius:8px; margin-top:20px;">
+<p>
+《红楼梦》的时间线从甄士隐梦识通灵宝玉开始，到贾府败落结束，前后约十六年。红楼十三年是全书的"核心高潮之年"，元妃省亲、宝黛共读西厢、黛玉葬花、宝玉挨打、刘姥姥二进荣国府等经典情节皆发生于此年。此后，贾府由盛转衰，大观园的美好时光逐渐消逝，最终落得"白茫茫大地真干净"的结局。
+</p>
+</div>
+`,
+
+    "拾玖 · 百题挑战": `
+    <div id="quiz-cover" style="text-align:center; padding: 60px 20px; background: linear-gradient(135deg, #fff5f6, #fef6e8); border: 2px solid #d4af37; border-radius: 15px; margin: 20px;">
+        <h1 style="color: #b03060; margin-bottom: 20px;">🏆 红楼梦 · 百题挑战</h1>
+        <p style="font-size:1.2rem; color: #555; line-height: 1.6;">
+            满纸荒唐言，一把辛酸泪。<br>
+            都云作者痴，谁解其中味？<br><br>
+            你已阅遍红楼、深谙情缘，是否敢接下这百题战书？
+        </p>
+        <button onclick="startQuiz()" style="padding:15px 50px; background:linear-gradient(135deg, #b03060, #d4708a); color:white; border:none; cursor:pointer; font-size:1.3rem; border-radius:30px; margin-top:30px; box-shadow: 0 4px 15px rgba(176,48,96,0.3); transition: 0.3s;">
+            开启挑战
+        </button>
+    </div>
+
+    <div id="quiz-content" style="display:none; animation: fadeIn 1s;">
+        <p style="background: #fef9e6; padding: 15px; border-left: 5px solid #d4af37; margin: 20px;">
+            <strong>寄语：</strong> 假作真时真亦假，无为有处有还无。点击题目下方的"查看解析"来检验你的成果。
+        </p>
+        <div id="quiz-app" style="background: white; padding: 0 20px;"></div>
+    </div>
+`
+};
+
+function changeTab(element, title) {
+    const items = document.querySelectorAll('.nav-item');
+    items.forEach(item => item.classList.remove('active'));
+    element.classList.add('active');
+
+    document.getElementById('content-title').innerText = title;
+    document.getElementById('content-body').innerHTML = contentData[title];
+}
+
+const GLOBAL_QUIZ_DATA = [
+    { type: '选择', q: '《红楼梦》的作者是谁？', options: 'A.曹雪芹 | B.高鹗 | C.吴承恩 | D.罗贯中', a: 'A', note: '曹雪芹创作了《红楼梦》前八十回，后四十回一般认为是高鹗所续。' },
+    { type: '选择', q: '贾宝玉的前世身份是？', options: 'A.神瑛侍者 | B.通灵宝玉 | C.绛珠仙草 | D.石头', a: 'A', note: '贾宝玉前世是赤瑕宫神瑛侍者，通灵宝玉是他携带下凡的灵石。' },
+    { type: '选择', q: '林黛玉的前世身份是？', options: 'A.神瑛侍者 | B.通灵宝玉 | C.绛珠仙草 | D.警幻仙姑', a: 'C', note: '林黛玉前世是西方灵河岸边的绛珠仙草，因受神瑛侍者灌溉之恩，下凡还泪。' },
+    { type: '选择', q: '"金陵十二钗"正册中排名第一的是？', options: 'A.林黛玉 | B.薛宝钗 | C.贾元春 | D.林黛玉与薛宝钗并列', a: 'D', note: '正册首页画着一株桂花、一株雪梅，判词合写黛玉、宝钗二人，暗示二人并列第一。' },
+    { type: '选择', q: '贾宝玉与林黛玉的关系是？', options: 'A.亲兄妹 | B.表兄妹 | C.堂兄妹 | D.无血缘关系', a: 'B', note: '黛玉之母贾敏是宝玉的姑母，因此二人是表兄妹关系。' },
+    { type: '选择', q: '贾宝玉与薛宝钗的关系是？', options: 'A.亲兄妹 | B.表姐弟 | C.堂姐弟 | D.无血缘关系', a: 'B', note: '宝钗之母薛姨妈是宝玉的姨母，因此二人是表姐弟关系。' },
+    { type: '选择', q: '王熙凤是贾宝玉的什么人？', options: 'A.亲嫂子 | B.堂嫂 | C.表嫂 | D.婶母', a: 'C', note: '王熙凤是贾琏之妻，贾琏是宝玉的堂兄，因此凤姐是宝玉的堂嫂。但凤姐也是王夫人的内侄女，从母系论又是表嫂。' },
+    { type: '选择', q: '贾府的"四春"按年龄从大到小排列是？', options: 'A.元迎探惜 | B.元探迎惜 | C.迎元探惜 | D.惜探迎元', a: 'A', note: '元春最长，迎春次之，探春第三，惜春最小。"元迎探惜"谐音"原应叹息"。' },
+    { type: '选择', q: '探春的生母是？', options: 'A.王夫人 | B.赵姨娘 | C.邢夫人 | D.尤氏', a: 'B', note: '探春是贾政与赵姨娘所生，是庶出女儿，但她由王夫人抚养，自视为主子小姐。' },
+    { type: '选择', q: '贾母有几个儿子？', options: 'A.一个 | B.两个 | C.三个 | D.四个', a: 'B', note: '贾母有贾赦、贾政两个儿子，贾赦是长房承袭荣国公，贾政是次房。' },
+    { type: '选择', q: '林黛玉初入贾府时住在什么地方？', options: 'A.潇湘馆 | B.碧纱橱 | C.蘅芜苑 | D.怡红院', a: 'B', note: '黛玉初入贾府时住在贾母房中的碧纱橱内，后来大观园建成才入住潇湘馆。' },
+    { type: '选择', q: '大观园是为谁而建？', options: 'A.贾母 | B.王夫人 | C.贾元春 | D.贾宝玉', a: 'C', note: '大观园是为元妃省亲而建，元春省亲后，宝玉和众姐妹才入住园中。' },
+    { type: '选择', q: '贾宝玉住在大观园的什么地方？', options: 'A.潇湘馆 | B.蘅芜苑 | C.怡红院 | D.稻香村', a: 'C', note: '宝玉住在怡红院，这是大观园中最华丽的院落。' },
+    { type: '选择', q: '林黛玉住在大观园的什么地方？', options: 'A.潇湘馆 | B.蘅芜苑 | C.怡红院 | D.稻香村', a: 'A', note: '黛玉住在潇湘馆，因院中多竹，又称"有凤来仪"。' },
+    { type: '选择', q: '薛宝钗住在大观园的什么地方？', options: 'A.潇湘馆 | B.蘅芜苑 | C.怡红院 | D.稻香村', a: 'B', note: '宝钗住在蘅芜苑，院中多藤萝薜荔，清幽雅致。' },
+    { type: '选择', q: '"金玉良缘"指的是谁与谁的婚姻？', options: 'A.宝玉与黛玉 | B.宝玉与宝钗 | C.贾琏与凤姐 | D.贾珠与李纨', a: 'B', note: '"金玉良缘"指薛宝钗的金锁与贾宝玉的通灵宝玉相配，是贾府长辈认可的姻缘。' },
+    { type: '选择', q: '"木石前盟"指的是谁与谁的爱情？', options: 'A.宝玉与黛玉 | B.宝玉与宝钗 | C.贾琏与凤姐 | D.柳湘莲与尤三姐', a: 'A', note: '"木石前盟"指绛珠仙草（木）与神瑛侍者（石）的前世盟约，即宝玉与黛玉的爱情。' },
+    { type: '选择', q: '薛宝钗的金锁上刻的是什么字？', options: 'A.莫失莫忘，仙寿恒昌 | B.不离不弃，芳龄永继 | C.金玉良缘 | D.百年好合', a: 'B', note: '宝钗金锁上刻"不离不弃，芳龄永继"，与宝玉玉上的"莫失莫忘，仙寿恒昌"成对。' },
+    { type: '选择', q: '贾宝玉的通灵宝玉上刻的是什么字？', options: 'A.莫失莫忘，仙寿恒昌 | B.不离不弃，芳龄永继 | C.通灵宝玉 | D.金玉良缘', a: 'A', note: '宝玉正面刻"通灵宝玉"，背面刻"莫失莫忘，仙寿恒昌"。' },
+    { type: '选择', q: '《葬花吟》是谁的作品？', options: 'A.薛宝钗 | B.林黛玉 | C.史湘云 | D.贾探春', a: 'B', note: '《葬花吟》是林黛玉的代表作，"花谢花飞花满天，红消香断有谁怜"是其中名句。' },
+    { type: '选择', q: '"质本洁来还洁去，强于污淖陷渠沟"出自哪首诗？', options: 'A.葬花吟 | B.秋窗风雨夕 | C.咏白海棠 | D.咏菊', a: 'A', note: '此句出自林黛玉的《葬花吟》，表达了黛玉高洁自守、宁折不弯的性格。' },
+    { type: '选择', q: '林黛玉的诗社别号是？', options: 'A.蘅芜君 | B.潇湘妃子 | C.蕉下客 | D.枕霞旧友', a: 'B', note: '黛玉因住在潇湘馆，诗社别号"潇湘妃子"。' },
+    { type: '选择', q: '薛宝钗的诗社别号是？', options: 'A.蘅芜君 | B.潇湘妃子 | C.蕉下客 | D.枕霞旧友', a: 'A', note: '宝钗因住在蘅芜苑，诗社别号"蘅芜君"。' },
+    { type: '选择', q: '史湘云的诗社别号是？', options: 'A.蘅芜君 | B.潇湘妃子 | C.蕉下客 | D.枕霞旧友', a: 'D', note: '湘云的诗社别号是"枕霞旧友"，因她曾住在枕霞阁。' },
+    { type: '选择', q: '贾探春的诗社别号是？', options: 'A.蘅芜君 | B.潇湘妃子 | C.蕉下客 | D.枕霞旧友', a: 'C', note: '探春的诗社别号是"蕉下客"，因她喜欢芭蕉。' },
+    { type: '选择', q: '大观园诗社是谁发起的？', options: 'A.林黛玉 | B.薛宝钗 | C.贾探春 | D.史湘云', a: 'C', note: '探春发起海棠诗社，首次活动是咏白海棠，黛玉夺魁。' },
+    { type: '选择', q: '林黛玉最擅长的诗体是？', options: 'A.律诗 | B.绝句 | C.词 | D.古体诗', a: 'A', note: '黛玉擅长律诗，尤其七言律诗，如《葬花吟》《秋窗风雨夕》等都是七言古诗。' },
+    { type: '选择', q: '"偷来梨蕊三分白，借得梅花一缕魂"描写的是什么花？', options: 'A.海棠 | B.菊花 | C.牡丹 | D.梅花', a: 'A', note: '此句出自林黛玉的《咏白海棠》，以梨花之白、梅花之魂比喻海棠。' },
+    { type: '选择', q: '"孤标傲世偕谁隐，一样花开为底迟"描写的是什么花？', options: 'A.海棠 | B.菊花 | C.牡丹 | D.梅花', a: 'B', note: '此句出自林黛玉的《咏菊》，以菊花自喻，表达孤高自许的情怀。' },
+    { type: '选择', q: '贾宝玉的贴身丫鬟不包括谁？', options: 'A.袭人 | B.晴雯 | C.麝月 | D.紫鹃', a: 'D', note: '紫鹃是林黛玉的贴身丫鬟，不是宝玉的。袭人、晴雯、麝月都是宝玉房中的丫鬟。' },
+    { type: '选择', q: '袭人的本名是？', options: 'A.花袭人 | B.珍珠 | C.晴雯 | D.麝月', a: 'B', note: '袭人原名珍珠，是贾母房中的丫鬟，后拨给宝玉，宝玉因"花气袭人知骤暖"改名袭人。' },
+    { type: '选择', q: '晴雯被撵出大观园的直接原因是？', options: 'A.与宝玉有私情 | B.得罪王夫人 | C.偷盗财物 | D.顶撞贾母', a: 'B', note: '王夫人认为晴雯"眉眼像林妹妹"，"妖精打扮"，是勾引宝玉的"狐狸精"，将其撵出。' },
+    { type: '选择', q: '晴雯死后，贾宝玉为她写了什么？', options: 'A.葬花吟 | B.芙蓉女儿诔 | C.祭晴雯文 | D.悼亡诗', a: 'B', note: '宝玉作《芙蓉女儿诔》祭奠晴雯，这是《红楼梦》中最长的诗文。' },
+    { type: '选择', q: '王熙凤的判词是？', options: 'A.可叹停机德，堪怜咏絮才 | B.凡鸟偏从末世来，都知爱慕此生才 | C.二十年来辨是非 | D.才自精明志自高', a: 'B', note: '"凡鸟偏从末世来"是王熙凤的判词，"凡鸟"合起来是"凤"字。' },
+    { type: '选择', q: '林黛玉的判词是？', options: 'A.可叹停机德，堪怜咏絮才 | B.玉带林中挂，金簪雪里埋 | C.二十年来辨是非 | D.才自精明志自高', a: 'A', note: '"可叹停机德，堪怜咏絮才"与薛宝钗合用一判词，前句指宝钗，后句指黛玉。' },
+    { type: '选择', q: '"机关算尽太聪明，反误了卿卿性命"说的是谁？', options: 'A.林黛玉 | B.薛宝钗 | C.王熙凤 | D.贾探春', a: 'C', note: '这是王熙凤的判词，讽刺她精于算计却最终害了自己。' },
+    { type: '选择', q: '贾元春的结局是？', options: 'A.病逝 | B.被废 | C.难产而死 | D.自杀', a: 'C', note: '元春因"圣眷隆重，身体发福"，最终"虎兕相逢大梦归"，一般认为死于难产或政治斗争。' },
+    { type: '选择', q: '贾迎春的丈夫是？', options: 'A.孙绍祖 | B.薛蟠 | C.贾琏 | D.柳湘莲', a: 'A', note: '迎春嫁给"中山狼"孙绍祖，婚后受尽虐待，一年后死去。' },
+    { type: '选择', q: '"子系中山狼，得志便猖狂"说的是谁？', options: 'A.贾赦 | B.孙绍祖 | C.薛蟠 | D.贾珍', a: 'B', note: '这是迎春的判词，"中山狼"指孙绍祖，讽刺他忘恩负义、得志猖狂。' },
+    { type: '选择', q: '贾探春的结局是？', options: 'A.病死 | B.远嫁 | C.出家 | D.被休', a: 'B', note: '探春的判词"千里东风一梦遥"，暗示她远嫁他乡，一去不返。' },
+    { type: '选择', q: '贾惜春的结局是？', options: 'A.病死 | B.远嫁 | C.出家为尼 | D.被休', a: 'C', note: '惜春的判词"独卧青灯古佛旁"，暗示她出家为尼。' },
+    { type: '选择', q: '刘姥姥一进荣国府时，王熙凤给了她多少银子？', options: 'A.十两 | B.二十两 | C.五十两 | D.一百两', a: 'B', note: '刘姥姥一进荣国府，王熙凤给了她二十两银子，这对刘姥姥来说是一笔巨款。' },
+    { type: '选择', q: '刘姥姥二进荣国府时，贾母带她游了哪里？', options: 'A.宁国府 | B.大观园 | C.荣国府前院 | D.贾母院', a: 'B', note: '刘姥姥二进荣国府，贾母带她游大观园，发生了"醉卧怡红院"等趣事。' },
+    { type: '选择', q: '"老刘，老刘，食量大如牛，吃个老母猪，不抬头"是谁说的？', options: 'A.贾母 | B.王熙凤 | C.刘姥姥 | D.史湘云', a: 'C', note: '这是刘姥姥在宴席上说的笑话，引得众人哄堂大笑。' },
+    { type: '选择', q: '史湘云醉卧的是什么地方？', options: 'A.潇湘馆 | B.蘅芜苑 | C.芍药裀 | D.怡红院', a: 'C', note: '史湘云醉卧芍药裀，是《红楼梦》中的经典场景，"湘云醉卧"成为美谈。' },
+    { type: '选择', q: '薛蟠的绰号是？', options: 'A.呆霸王 | B.中山狼 | C.冷面二郎 | D.混世魔王', a: 'A', note: '薛蟠人称"呆霸王"，性格粗鲁莽撞，但并非完全的恶人。' },
+    { type: '选择', q: '贾宝玉的绰号是？', options: 'A.呆霸王 | B.中山狼 | C.冷面二郎 | D.混世魔王', a: 'D', note: '贾宝玉被王夫人称为"混世魔王"，因为他不喜读书、专爱在内帏厮混。' },
+    { type: '选择', q: '秦可卿死后，谁协理宁国府？', options: 'A.王夫人 | B.王熙凤 | C.尤氏 | D.李纨', a: 'B', note: '秦可卿死后，宁国府无人理事，贾珍请王熙凤协理宁国府，凤姐展现了出色的管理才能。' },
+    { type: '选择', q: '秦可卿给王熙凤托梦，预言了什么？', options: 'A.贾府将中兴 | B.贾府将败落 | C.元春将晋封 | D.宝玉将中举', a: 'B', note: '秦可卿托梦凤姐，预言"盛筵必散"，告诫凤姐早做准备，暗示贾府终将败落。' },
+    { type: '选择', q: '贾宝玉挨打的主要原因是什么？', options: 'A.不爱读书 | B.与金钏儿调情 | C.与戏子琪官交往 | D.以上都是', a: 'D', note: '宝玉挨打是多重原因：与金钏儿调情致其跳井、与琪官交往得罪忠顺王府、贾环诬告等。' },
+
+    { type: '填空', q: '《红楼梦》的作者是______。', a: '曹雪芹', note: '曹雪芹创作了《红楼梦》前八十回，后四十回一般认为是高鹗所续。' },
+    { type: '填空', q: '贾宝玉的前世是______。', a: '神瑛侍者', note: '贾宝玉前世是赤瑕宫神瑛侍者，通灵宝玉是他携带下凡的灵石。' },
+    { type: '填空', q: '林黛玉的前世是______。', a: '绛珠仙草', note: '林黛玉前世是西方灵河岸边的绛珠仙草，因受神瑛侍者灌溉之恩，下凡还泪。' },
+    { type: '填空', q: '林黛玉的母亲叫______。', a: '贾敏', note: '林黛玉的母亲贾敏是贾母的女儿，贾赦、贾政的妹妹。' },
+    { type: '填空', q: '贾宝玉的父亲是______。', a: '贾政', note: '贾宝玉是贾政与王夫人所生的次子。' },
+    { type: '填空', q: '贾宝玉的母亲是______。', a: '王夫人', note: '王夫人是贾政的正妻，贾宝玉、贾珠、贾元春的生母。' },
+    { type: '填空', q: '王熙凤的丈夫是______。', a: '贾琏', note: '王熙凤是贾琏的正妻，人称"琏二奶奶"。' },
+    { type: '填空', q: '薛宝钗的母亲是______。', a: '薛姨妈', note: '薛姨妈是王夫人的妹妹，因此宝钗与宝玉是表姐弟关系。' },
+    { type: '填空', q: '贾府的"四春"分别是元春、迎春、______、惜春。', a: '探春', note: '"元迎探惜"谐音"原应叹息"，暗示四春的悲剧命运。' },
+    { type: '填空', q: '探春的生母是______。', a: '赵姨娘', note: '探春是贾政与赵姨娘所生，是庶出女儿。' },
+    { type: '填空', q: '贾宝玉住在大观园的______。', a: '怡红院', note: '怡红院是大观园中最华丽的院落，宝玉因院中多海棠而得名。' },
+    { type: '填空', q: '林黛玉住在大观园的______。', a: '潇湘馆', note: '潇湘馆因院中多竹，又称"有凤来仪"。' },
+    { type: '填空', q: '薛宝钗住在大观园的______。', a: '蘅芜苑', note: '蘅芜苑院中多藤萝薜荔，清幽雅致。' },
+    { type: '填空', q: '李纨住在大观园的______。', a: '稻香村', note: '稻香村是大观园中的田园风光，李纨守寡后住在此处。' },
+    { type: '填空', q: '妙玉住在大观园的______。', a: '栊翠庵', note: '栊翠庵是大观园中的佛寺，妙玉在此带发修行。' },
+    { type: '填空', q: '"金玉良缘"指______与贾宝玉的婚姻。', a: '薛宝钗', note: '"金玉良缘"指薛宝钗的金锁与贾宝玉的通灵宝玉相配。' },
+    { type: '填空', q: '"木石前盟"指______与贾宝玉的爱情。', a: '林黛玉', note: '"木石前盟"指绛珠仙草（木）与神瑛侍者（石）的前世盟约。' },
+    { type: '填空', q: '薛宝钗的金锁上刻着"不离不弃，______"。', a: '芳龄永继', note: '宝钗金锁上的字与宝玉玉上的"莫失莫忘，仙寿恒昌"成对。' },
+    { type: '填空', q: '贾宝玉的通灵宝玉上刻着"莫失莫忘，______"。', a: '仙寿恒昌', note: '宝玉正面刻"通灵宝玉"，背面刻"莫失莫忘，仙寿恒昌"。' },
+    { type: '填空', q: '《葬花吟》是______的作品。', a: '林黛玉', note: '《葬花吟》是林黛玉的代表作，"花谢花飞花满天"是其中名句。' },
+    { type: '填空', q: '"质本洁来还洁去"出自《______》。', a: '葬花吟', note: '此句表达了黛玉高洁自守、宁折不弯的性格。' },
+    { type: '填空', q: '林黛玉的诗社别号是______。', a: '潇湘妃子', note: '黛玉因住在潇湘馆，诗社别号"潇湘妃子"。' },
+    { type: '填空', q: '薛宝钗的诗社别号是______。', a: '蘅芜君', note: '宝钗因住在蘅芜苑，诗社别号"蘅芜君"。' },
+    { type: '填空', q: '史湘云的诗社别号是______。', a: '枕霞旧友', note: '湘云的诗社别号是"枕霞旧友"。' },
+    { type: '填空', q: '贾探春的诗社别号是______。', a: '蕉下客', note: '探春的诗社别号是"蕉下客"，因她喜欢芭蕉。' },
+    { type: '填空', q: '大观园诗社是______发起的。', a: '贾探春', note: '探春发起海棠诗社，首次活动是咏白海棠。' },
+    { type: '填空', q: '晴雯被撵出大观园后，宝玉为她写了《______》。', a: '芙蓉女儿诔', note: '《芙蓉女儿诔》是《红楼梦》中最长的诗文。' },
+    { type: '填空', q: '袭人的原名是______。', a: '珍珠', note: '袭人原名珍珠，是贾母房中的丫鬟，后拨给宝玉。' },
+    { type: '填空', q: '紫鹃的原名是______。', a: '鹦哥', note: '紫鹃原名鹦哥，是贾母房中的丫头，后拨给黛玉。' },
+    { type: '填空', q: '香菱的原名是______。', a: '英莲', note: '香菱原名甄英莲，是甄士隐之女，幼年被拐。' },
+    { type: '填空', q: '香菱学诗时，拜______为师。', a: '林黛玉', note: '黛玉教香菱从王维、杜甫、李白的诗入手学诗。' },
+    { type: '填空', q: '"机关算尽太聪明，反误了卿卿性命"说的是______。', a: '王熙凤', note: '这是王熙凤的判词，讽刺她精于算计却最终害了自己。' },
+    { type: '填空', q: '贾迎春的丈夫是______。', a: '孙绍祖', note: '迎春嫁给"中山狼"孙绍祖，婚后受尽虐待。' },
+    { type: '填空', q: '"子系中山狼，得志便猖狂"说的是______。', a: '孙绍祖', note: '这是迎春的判词，讽刺孙绍祖忘恩负义。' },
+    { type: '填空', q: '贾探春的结局是______。', a: '远嫁', note: '探春的判词"千里东风一梦遥"，暗示她远嫁他乡。' },
+    { type: '填空', q: '贾惜春的结局是______。', a: '出家', note: '惜春的判词"独卧青灯古佛旁"，暗示她出家为尼。' },
+    { type: '填空', q: '刘姥姥一进荣国府时，王熙凤给了她______两银子。', a: '二十', note: '二十两银子对刘姥姥来说是一笔巨款。' },
+    { type: '填空', q: '史湘云醉卧______。', a: '芍药裀', note: '"湘云醉卧"是《红楼梦》中的经典场景。' },
+    { type: '填空', q: '薛蟠的绰号是______。', a: '呆霸王', note: '薛蟠人称"呆霸王"，性格粗鲁莽撞。' },
+    { type: '填空', q: '贾宝玉被王夫人称为______。', a: '混世魔王', note: '王夫人称宝玉为"混世魔王"，因为他不喜读书、专爱在内帏厮混。' },
+    { type: '填空', q: '秦可卿死后，______协理宁国府。', a: '王熙凤', note: '凤姐协理宁国府展现了出色的管理才能。' },
+    { type: '填空', q: '抄检大观园的导火索是发现______。', a: '绣春囊', note: '在园中发现绣春囊，王夫人决定抄检大观园。' },
+    { type: '填空', q: '抄检大观园时，______敢于公开抗议。', a: '贾探春', note: '探春说"百足之虫，死而不僵"，预言贾府将从内部败落。' },
+    { type: '填空', q: '"掉包计"是______想出来的。', a: '王熙凤', note: '王熙凤想出"掉包计"，让宝钗冒充黛玉嫁给宝玉。' },
+    { type: '填空', q: '林黛玉临终前说的最后一句话是"宝玉，宝玉，______"。', a: '你好', note: '黛玉话未说完便含恨而终。' },
+
+    { type: '简答', q: '简述林黛玉的性格特点及其悲剧命运的根源。', a: '性格：多愁善感、孤高自许、才华横溢、真诚率直。悲剧根源：封建礼教的压迫、"金玉良缘"的阴谋、自身敏感多疑的性格、寄人篱下的处境。', note: '林黛玉是《红楼梦》中最具灵性的女子，她的悲剧不仅是个人的悲剧，更是封建社会对女性压迫的缩影。她与宝玉的爱情被封建家长以"金玉良缘"的名义强行拆散，最终含恨而终。' },
+    { type: '简答', q: '分析贾宝玉这个人物形象的叛逆性体现在哪些方面。', a: '叛逆性体现：厌恶科举仕途、反感封建礼教、追求自由爱情、尊重女性人格、同情底层人物。', note: '贾宝玉是封建贵族家庭的叛逆者，他厌恶"仕途经济"，反对"男尊女卑"，追求真挚的爱情和平等的人际关系。他的叛逆性是对封建制度的挑战，也是他悲剧命运的根源。' },
+    { type: '简答', q: '《红楼梦》中"假作真时真亦假，无为有处有还无"这副对联有什么深刻含义？', a: '含义：揭示真假难辨的人生哲理、暗示小说虚实相生的艺术手法、点明全书"色空"主题、预示人物命运的虚幻无常。', note: '这副对联出现在太虚幻境，是《红楼梦》的"题眼"。它揭示了人生如梦、真假难辨的哲理，暗示了小说中"真事隐去、假语村言"的艺术手法，也点明了全书"色空"的主题思想。' },
+    { type: '简答', q: '分析王熙凤这个人物形象的性格特点及其悲剧结局。', a: '性格：精明能干、心狠手辣、八面玲珑、贪财好权。悲剧结局：机关算尽太聪明，反误了卿卿性命，最终病死狱中。', note: '王熙凤是《红楼梦》中最能干也最狠毒的女性形象。她精于算计、善于权谋，是荣国府的实际管家。但她贪婪成性、害人无数，最终落得"一从二令三人木，哭向金陵事更哀"的悲剧结局。' },
+    { type: '简答', q: '《红楼梦》的结局"好一似食尽鸟投林，落了片白茫茫大地真干净"有什么深刻寓意？', a: '寓意：暗示贾府繁华落尽的终局、揭示人生虚幻无常的哲理、表达"色空"的主题思想、预示封建社会的必然衰亡。', note: '这是《红楼梦》的结尾诗句，深刻揭示了贾府繁华落尽的终局。曾经的荣华富贵、儿女情长、悲欢离合，最终都化为乌有。这片白茫茫的大地，既是贾府衰落的写照，也是整个人生虚幻的象征，体现了曹雪芹"色空"的思想。' }
+];
+
+function startQuiz() {
+    document.getElementById('quiz-cover').style.display = 'none';
+    document.getElementById('quiz-content').style.display = 'block';
+    renderQuestions();
+}
+
+function renderQuestions() {
+    const container = document.getElementById('quiz-app');
+    const questions = GLOBAL_QUIZ_DATA;
+    if(!container || container.innerHTML !== "") return;
+
+    const sections = [
+        { title: '第一部分：选择题(共50题)', type: '选择' },
+        { title: '第二部分：填空题(共45题)', type: '填空' },
+        { title: '第三部分：简答题(共5题)', type: '简答' }
+    ];
+
+    sections.forEach(sec => {
+        const filtered = questions.filter(item => item.type === sec.type);
+        if (filtered.length > 0) {
+            const header = document.createElement('h2');
+            header.style.cssText = "color:#b03060; border-bottom:2px solid #d4af37; margin-top:40px; padding-bottom:10px;";
+            header.innerText = sec.title;
+            container.appendChild(header);
+
+            filtered.forEach((item, idx) => {
+                const qId = `q-${sec.type}-${idx}`;
+                const div = document.createElement('div');
+                div.style.cssText = "margin-bottom:30px; padding:20px; background:#fff; border:1px solid #eee; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.05);";
+                
+                let html = `<p style="font-size:1.1rem;"><strong>${idx + 1}.</strong> ${item.q}</p>`;
+
+                if (item.type === '选择') {
+                    const opts = item.options.split('|');
+                    html += `<div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:15px;">`;
+                    opts.forEach(opt => {
+                        const val = opt.trim().charAt(0);
+                        html += `<button onclick="checkSelect(this, '${val}', '${item.a}', '${qId}')" 
+                                 style="padding:8px 20px; border:1px solid #ccc; background:#fff; cursor:pointer; border-radius:4px; transition:0.3s;">
+                                 ${opt.trim()}
+                                 </button>`;
+                    });
+                    html += `</div>`;
+                } else if (item.type === '填空') {
+                    html += `<div style="margin-top:15px;">
+                                <input type="text" id="input-${qId}" placeholder="在此输入答案..." 
+                                 style="padding:10px; width:250px; border:1px solid #ccc; border-radius:4px;">
+                                <button onclick="checkFill('${qId}', '${item.a}')" 
+                                 style="padding:10px 20px; background:#b03060; color:white; border:none; border-radius:4px; margin-left:10px; cursor:pointer;">提交</button>
+                             </div>`;
+                } else {
+                    html += `<div style="margin-top:15px;">
+                                <textarea id="input-${qId}" placeholder="请阐述你的见解..." 
+                                 style="padding:10px; width:100%; height:80px; border:1px solid #ccc; border-radius:4px;"></textarea>
+                                <button onclick="checkBrief('${qId}')" 
+                                 style="padding:10px 20px; background:#333; color:white; border:none; border-radius:4px; margin-top:10px; cursor:pointer;">完成思考</button>
+                             </div>`;
+                }
+
+                html += `<div id="feedback-${qId}" style="margin-top:15px; display:none;"></div>`;
+                html += `
+                    <details id="note-${qId}" style="margin-top:10px; display:none;">
+                        <summary style="color:#b03060; cursor:pointer; font-weight:bold;">查看解析</summary>
+                        <div style="margin-top:10px; padding:12px; background:#f9f9f9; border-left:4px solid #b03060; font-size:0.9rem;">
+                            <strong>解析：</strong>${item.note}
+                        </div>
+                    </details>`;
+
+                div.innerHTML = html;
+                container.appendChild(div);
+            });
+        }
+    });
+}
+
+function checkSelect(btn, userVal, correctVal, qId) {
+    const feedback = document.getElementById(`feedback-${qId}`);
+    const note = document.getElementById(`note-${qId}`);
+    feedback.style.display = "block";
+    note.style.display = "block";
+
+    if (userVal === correctVal) {
+        btn.style.background = "#dcfce7";
+        btn.style.borderColor = "#16a34a";
+        feedback.innerHTML = `<span style="color:#16a34a; font-weight:bold;">✅ 回答正确！</span>`;
+    } else {
+        btn.style.background = "#fee2e2";
+        btn.style.borderColor = "#ef4444";
+        feedback.innerHTML = `<span style="color:#ef4444; font-weight:bold;">❌ 回答错误，正确答案是 ${correctVal}</span>`;
+    }
+    const buttons = btn.parentElement.querySelectorAll('button');
+    buttons.forEach(b => b.onclick = null);
+}
+
+function checkFill(qId, correctVal) {
+    const input = document.getElementById(`input-${qId}`);
+    const feedback = document.getElementById(`feedback-${qId}`);
+    const note = document.getElementById(`note-${qId}`);
+    feedback.style.display = "block";
+    note.style.display = "block";
+
+    if (input.value.trim() === correctVal) {
+        feedback.innerHTML = `<span style="color:#16a34a; font-weight:bold;">✅ 恭喜，完全正确！</span>`;
+        input.style.borderColor = "#16a34a";
+    } else {
+        feedback.innerHTML = `<span style="color:#ef4444; font-weight:bold;">❌ 差了一点点，正确答案是：${correctVal}</span>`;
+        input.style.borderColor = "#ef4444";
+    }
+}
+
+function checkBrief(qId) {
+    const feedback = document.getElementById(`feedback-${qId}`);
+    const note = document.getElementById(`note-${qId}`);
+    feedback.style.display = "block";
+    note.style.display = "block";
+    feedback.innerHTML = `<span style="color:#333; font-weight:bold;">💡 已记录你的思考。请对照下方解析自我核对：</span>`;
+}
+
+window.onload = function() {
+    changeTab(document.querySelector('.nav-item'), '拾叁 · 抄检大观园');
+};
+
+const BadgeManager = {
+    STORAGE_KEY: 'badge_data_v1',
+    
+    getData() {
+        try {
+            const data = localStorage.getItem(this.STORAGE_KEY);
+            return data ? JSON.parse(data) : {
+                unlockedBadges: [],
+                badgeUnlockTime: {},
+                readingProgress: {
+                    xiyou: { stage1: false, stage2: false, stage3: false },
+                    sanguo: { stage1: false, stage2: false, stage3: false },
+                    shuihu: { stage1: false, stage2: false, stage3: false },
+                    honglou: { stage1: false, stage2: false, stage3: false }
+                }
+            };
+        } catch (e) {
+            return {
+                unlockedBadges: [],
+                badgeUnlockTime: {},
+                readingProgress: {
+                    xiyou: { stage1: false, stage2: false, stage3: false },
+                    sanguo: { stage1: false, stage2: false, stage3: false },
+                    shuihu: { stage1: false, stage2: false, stage3: false },
+                    honglou: { stage1: false, stage2: false, stage3: false }
+                }
+            };
+        }
+    },
+    
+    saveData(data) {
+        try {
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+        } catch (e) {
+            console.error('保存勋章数据失败:', e);
+        }
+    },
+    
+    isStageRead(book, stage) {
+        const data = this.getData();
+        return data.readingProgress[book] && data.readingProgress[book]['stage' + stage];
+    },
+    
+    markStageRead(book, stage) {
+        const data = this.getData();
+        if (!data.readingProgress[book]) {
+            data.readingProgress[book] = { stage1: false, stage2: false, stage3: false };
+        }
+        data.readingProgress[book]['stage' + stage] = true;
+        this.saveData(data);
+        return this.checkAndUnlockBadges();
+    },
+    
+    isBookCompleted(book) {
+        const data = this.getData();
+        const progress = data.readingProgress[book];
+        return progress && progress.stage1 && progress.stage2 && progress.stage3;
+    },
+    
+    getCompletedBooksCount() {
+        let count = 0;
+        ['xiyou', 'sanguo', 'shuihu', 'honglou'].forEach(book => {
+            if (this.isBookCompleted(book)) count++;
+        });
+        return count;
+    },
+    
+    checkAndUnlockBadges() {
+        const data = this.getData();
+        const newlyUnlocked = [];
+        
+        const bookBadges = [
+            { id: 'xiyou_reader', name: '西游行者', desc: '完成西游记阅读', book: 'xiyou' },
+            { id: 'sanguo_reader', name: '三国通览', desc: '完成三国演义阅读', book: 'sanguo' },
+            { id: 'shuihu_reader', name: '水浒知音', desc: '完成水浒传阅读', book: 'shuihu' },
+            { id: 'honglou_reader', name: '红楼初探', desc: '完成红楼梦阅读', book: 'honglou' },
+            { id: 'all_books_reader', name: '四大名著通', desc: '完成全部名著阅读', book: 'all' }
+        ];
+        
+        bookBadges.forEach(badge => {
+            if (data.unlockedBadges.includes(badge.id)) return;
+            
+            let shouldUnlock = false;
+            if (badge.book === 'all') {
+                shouldUnlock = this.getCompletedBooksCount() >= 4;
+            } else {
+                shouldUnlock = this.isBookCompleted(badge.book);
+            }
+            
+            if (shouldUnlock) {
+                data.unlockedBadges.push(badge.id);
+                data.badgeUnlockTime[badge.id] = Date.now();
+                newlyUnlocked.push(badge);
+            }
+        });
+        
+        if (newlyUnlocked.length > 0) {
+            this.saveData(data);
+        }
+        
+        return newlyUnlocked;
+    }
+};
+
+let autoReadStartTime = Date.now();
+let hasScrolledEnough = false;
+const MIN_READ_TIME = 30000;
+const SCROLL_THRESHOLD = 0.8;
+let autoReadMarked = false;
+
+function initAutoReadTracking() {
+    if (BadgeManager.isStageRead('honglou', 3)) {
+        autoReadMarked = true;
+        return;
+    }
+    
+    const mainContent = document.querySelector('.main-content');
+    
+    mainContent.addEventListener('scroll', function() {
+        if (autoReadMarked) return;
+        
+        const scrollPercent = (mainContent.scrollTop + mainContent.clientHeight) / mainContent.scrollHeight;
+        if (scrollPercent >= SCROLL_THRESHOLD) {
+            hasScrolledEnough = true;
+            checkAndMarkAutoRead();
+        }
+    });
+    
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden && !autoReadMarked) {
+            checkAndMarkAutoRead();
+        }
+    });
+    
+    window.addEventListener('beforeunload', function() {
+        if (!autoReadMarked) {
+            checkAndMarkAutoRead();
+        }
+    });
+}
+
+function checkAndMarkAutoRead() {
+    if (autoReadMarked) return;
+    
+    const readTime = Date.now() - autoReadStartTime;
+    if (readTime >= MIN_READ_TIME && hasScrolledEnough) {
+        const newlyUnlocked = BadgeManager.markStageRead('honglou', 3);
+        autoReadMarked = true;
+        
+        if (newlyUnlocked.length > 0) {
+            localStorage.setItem('pending_badge_notification', newlyUnlocked[0].id);
+        }
+    }
+}
+
+function showBadgeNotification(badge) {
+    document.getElementById('badgeName').textContent = badge.name;
+    document.getElementById('badgeDesc').textContent = badge.desc;
+    
+    const card = document.getElementById('badgeCard');
+    const rarityColors = {
+        common: '#d4af37',
+        rare: '#9c27b0',
+        epic: '#ff6b35'
+    };
+    const color = rarityColors[badge.rarity] || rarityColors.common;
+    card.style.border = '4px solid ' + color;
+    card.style.boxShadow = '0 10px 40px ' + color + '80';
+    document.getElementById('badgeName').style.color = color;
+    
+    document.getElementById('badgeNotification').classList.add('show');
+}
+
+function closeBadgeNotification() {
+    document.getElementById('badgeNotification').classList.remove('show');
+}
+
+window.addEventListener('load', function() {
+    initAutoReadTracking();
+});
+</script>
+
+</body>
+</html>

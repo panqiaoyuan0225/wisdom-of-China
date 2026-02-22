@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>梦碎江湖 - 水浒专题导览</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            font-family: "STKaiti", "Microsoft YaHei", serif;
+            background-color: #d8d3c3;
+        }
+
+        /* 左侧大纲栏 - 深青墨色调 */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(180deg, #2d3a3a 0%, #1a2424 100%);
+            color: #d4af37;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.3);
+            border-right: 2px solid #8b1a1a;
+            z-index: 10;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            font-size: 1.6rem;
+            margin: 0;
+            padding: 40px 0;
+            background: rgba(0,0,0,0.3);
+            letter-spacing: 4px;
+            border-bottom: 1px solid rgba(139, 26, 26, 0.4);
+            color: #e2c08d;
+        }
+
+        .nav-item {
+            padding: 22px 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            color: #b8a99a;
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            background: rgba(139, 26, 26, 0.2);
+            padding-left: 45px;
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background: #8b1a1a;
+            color: #fff;
+            font-weight: bold;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.4);
+        }
+
+        /* 右侧内容区 */
+        .main-content {
+            flex: 1;
+            padding: 50px;
+            overflow-y: auto;
+            background-image: url('https://www.transparenttextures.com/patterns/papyrus.png');
+        }
+
+        .content-box {
+            background: rgba(255, 255, 255, 0.9);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px;
+            border: 1px solid #a6937c;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+            position: relative;
+            min-height: 80vh;
+        }
+
+        h1 {
+            color: #8b1a1a;
+            border-left: 8px solid #2d3a3a;
+            padding-left: 15px;
+            font-size: 2.2rem;
+            margin-top: 0;
+        }
+
+        h2 { color: #1a2424; border-bottom: 1px solid #d2c5a7; padding-bottom: 5px; margin-top: 30px; }
+ p {
+    line-height: 1.8;
+    text-indent: 2em;
+    font-size: 1.2rem;       
+ }
+        .back-link {
+            position: fixed;
+            top: 20px;
+            right: 40px;
+            text-decoration: none;
+            color: #8b1a1a;
+            font-weight: bold;
+            background: #fff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        /* 测试题样式 */
+        .quiz-card { border: 2px double #8b1a1a; padding: 25px; background: #fffcf5; margin-top: 20px; }
+        .q-input { width: 85%; border:none; border-bottom:1px solid #8b1a1a; background:transparent; outline:none; padding: 2px 5px; }
+
+        .badge-notification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .badge-notification-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .badge-notification-card {
+            background: linear-gradient(135deg, #fff9e6, #fff);
+            border-radius: 20px;
+            padding: 40px 50px;
+            text-align: center;
+            max-width: 350px;
+            transform: scale(0.8);
+            transition: transform 0.3s;
+        }
+
+        .badge-notification-overlay.show .badge-notification-card {
+            transform: scale(1);
+        }
+
+/* 确保主内容区域不限制溢出 */
+#content-body {
+    padding: 0 !important;
+    background: #fff;
+}
+
+/* 视口容器：必须有明确高度，背景纯白 */
+#mindmap-viewport {
+    width: 100%;
+    height: 75vh; /* 占据屏幕高度的75% */
+    background: #ffffff;
+    position: relative;
+    overflow: hidden;
+    cursor: grab;
+    touch-action: none; /* 防止手机端干扰 */
+}
+
+/* 控制按钮美化 */
+.zoom-controls {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    flex-direction: column; /* 垂直排列更有 NotebookLM 感觉 */
+    gap: 12px;
+    z-index: 1000;
+}
+
+.zoom-btn {
+    width: 45px;
+    height: 45px;
+    background: #ffffff;
+    color: #8b1a1a;
+    border: 2px solid #8b1a1a;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.2s;
+}
+
+.zoom-btn:hover {
+    background: #8b1a1a;
+    color: white;
+}
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>梦碎江湖</h2>
+        <div class="nav-item active" onclick="changeTab(this, '拾叁 · 血染征袍')">拾叁 · 血染征袍</div>
+        <div class="nav-item" onclick="changeTab(this, '拾肆 · 将星陨落')">拾肆 · 将星陨落</div>
+        <div class="nav-item" onclick="changeTab(this, '拾伍 · 悲歌归京')">拾伍 · 悲歌归京</div>
+        <div class="nav-item" onclick="changeTab(this, '拾陆 · 楚州毒酒')">拾陆 · 楚州毒酒</div>
+        <div class="nav-item" onclick="changeTab(this, '拾柒 · 蓼儿洼祭')">拾柒 · 蓼儿洼祭</div>
+        <div class="nav-item" onclick="changeTab(this, '拾捌 · 英雄之路')">拾捌 · 英雄之路</div>
+        <div class="nav-item" onclick="changeTab(this, '拾玖 · 百题挑战')">拾玖 · 百题挑战</div>
+    </div>
+
+    <div class="main-content">
+        <a href="shuihu.html" class="back-link">← 返回主页</a>
+        <div class="content-box">
+            <h1 id="content-title">拾叁 · 血染征袍</h1>
+            <div id="content-body" class="text-section">
+                </div>
+        </div>
+    </div>
+
+    <div class="badge-notification-overlay" id="badgeNotification">
+        <div class="badge-notification-card" id="badgeCard">
+            <div style="font-size: 1.5rem; color: #8b4513; margin-bottom: 20px;">🎉 恭喜获得勋章！</div>
+            <div style="font-size: 2.5rem; margin-bottom: 15px;">🎖️</div>
+            <div style="font-size: 1.8rem; font-weight: bold; margin-bottom: 10px;" id="badgeName"></div>
+            <div style="color: #666; margin-bottom: 20px;" id="badgeDesc"></div>
+            <button onclick="closeBadgeNotification()" style="background: #8b4513; color: #fff; border: none; padding: 10px 30px; border-radius: 20px; font-size: 1rem; cursor: pointer;">太棒了！</button>
+        </div>
+    </div>
+
+<script>
+    const contentData = {
+'拾叁 · 血染征袍': `
+    <h2 style="color:#8b1a1a; border-bottom: 2px solid #8b1a1a; padding-bottom:10px;">🏹 拾叁 · 血染征袍：征田虎与王庆</h2>
+    
+    <h3>一、征田虎：河北的血战</h3>
+    <p><b>1. 背景与起因</b><br>
+    <b>田虎势力：</b>原河北威州猎户，乘宋室衰弱、民不聊生之际，占据五州五十六县，自称“晋王”，是四大寇中最早称王者，气焰嚣张。<br>
+    <b>梁山介入：</b>宋江刚完成征辽，未及休整，便奉旨征讨河北。这是梁山招安后第二次大规模出征，对手是完整的割据政权。</p>
+
+    <p><b>2. 战争特点与核心情节</b><br>
+    <b>妖术与道法的对决：</b>此役最大的特点是高度神魔化，战场充满妖法、幻术。</p>
+    <ul>
+        <li><b>田虎方妖人：</b>国师乔道清（后归降梁山）、马灵（神驹子，有神行、金砖术，后归降）、孙安（猛将，后归降）等。</li>
+        <li><b>梁山解法：</b>主要依靠公孙胜（乃至其师父罗真人）的道法，以及后来归降的乔道清、马灵等人。这标志着梁山战争从“人力”向“神通”升级。</li>
+    </ul>
+
+    <p><b>3. 关键战役</b></p>
+    <ul>
+        <li><b>大战乔道清：</b>宋江初战遭乔道清妖法所困，几乎全军覆没，幸得天降闪电（后文暗示为罗真人暗中相助）才得脱险。最终公孙胜降服乔道清，乔道清感宋江义气归降，成为梁山重要助力。</li>
+        <li><b>收降孙安：</b>孙安是田虎麾下第一勇将，与卢俊义大战数百回合。宋江爱其才，设计擒获后以义感化，孙安归降并屡立战功。</li>
+        <li><b>平定襄垣：</b>攻破田虎最后巢穴，田虎被张清、琼英夫妇（详见下文）擒获。</li>
+    </ul>
+
+    <p><b>4. 重要人物——琼英的传奇</b><br>
+    少女琼英，梦中学得飞石绝技，为报父母之仇潜伏仇人邬梨处。她梦中与张清互授飞石、枪法，并预见姻缘（“宿世姻缘”）。后张清在阵前与她相认，两人结为夫妇，里应外合，成为平定田虎的关键人物。这是征田虎中一段极具浪漫色彩的插曲。</p>
+
+    <p><b>5. 结局与意义</b><br>
+    田虎势力被彻底铲除，河北平定。梁山阵营大幅扩充，收降了乔道清、孙安、马灵、琼英、叶清等一大批能人异士和猛将，实力达到空前顶峰。此役使梁山“顺天护国”的形象进一步确立，但战事的超现实色彩也冲淡了前期写实主义的悲剧基调。</p>
+
+    <hr style="border-top: 1px dashed #a6937c; margin: 20px 0;">
+
+    <h3>二、征王庆：淮西的扫荡</h3>
+    <p><b>1. 背景与起因</b><br>
+    <b>王庆势力：</b>原东京浮浪子弟，因奸情杀人逃亡，后在淮西造反，占据八座军州八十六县，自称“楚王”。其出身低微，故事更具市井传奇色彩。<br>
+    <b>梁山介入：</b>平定田虎后，宋江集团未受封赏反被疑忌，即刻被命征讨淮西。将士已有疲态与怨言。</p>
+
+    <p><b>2. 战争特点与核心情节</b><br>
+    <b>相对“去神魔化”：</b>相比征田虎，此役妖法成分大减，更多是硬碰硬的攻城战、阵地战与个人武勇对决。<br>
+    <b>复杂的地形与攻坚战：</b>王庆据守的山城纪山、荆南（南丰）等地形险要，攻坚战异常惨烈。</p>
+
+    <p><b>3. 关键战役与人物</b></p>
+    <ul>
+        <li><b>卢俊义独当一面：</b>此役中卢俊义分兵作战表现极为突出，展现了其“河北三绝”的统帅之才。</li>
+        <li><b>“金剑先生”李助的昙花一现：</b>王庆军师李助，曾以剑术几乎击败卢俊义，被公孙胜施法制服。是王庆麾下少数有特色的人物。</li>
+        <li><b>萧嘉穗的义举：</b>在梁山攻打荆南受阻时，城中义士萧嘉穗发动百姓起义，杀了守将，献城给宋江。这一情节反映了“官逼民反”主题的延续，也暗示了王庆统治不得民心。</li>
+        <li><b>惨烈的最终决战：</b>在纪山、龙门山等地，双方投入全部主力，进行了多次大规模会战，梁山虽胜但过程艰难。</li>
+        <li><b>梁山一方的损耗开始显现：</b>虽然未折损原一百零八将，但收降的将领（如孙安）在此役中病故，暗示了连续征战对军队的消耗。</li>
+    </ul>
+
+    <p><b>4. 结局与意义</b><br>
+    王庆在逃亡途中被“混江龙”李俊率领的水军擒获，淮西平定。梁山至此已连续征战（征辽→征田虎→征王庆），人马极度疲惫，但功高震主，朝廷猜忌日深。此役更贴近传统军事小说写法，为接下来征方腊的写实主义悲剧进行了铺垫和过渡。</p>
+
+    <hr style="border-top: 1px dashed #a6937c; margin: 30px 0;">
+
+    <h3>📊 整体分析：结构功能与文学评价</h3>
+    <table style="width:100%; border-collapse: collapse; background:#fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
+        <thead>
+            <tr style="background:#8b1a1a; color:#fff;">
+                <th style="padding:12px; border:1px solid #5a1212; width:25%;">功能维度</th>
+                <th style="padding:12px; border:1px solid #5a1212;">详细解析</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding:10px; border:1px solid #ddd; font-weight:bold; color:#2d3a3a;">1. 武力展示的舞台</td>
+                <td style="padding:10px; border:1px solid #ddd;">让梁山好汉（尤其是招安后加入的降将）有更多施展空间，将梁山集团的军事能力推到神话般的顶峰。</td>
+            </tr>
+            <tr style="background:#f9f9f9;">
+                <td style="padding:10px; border:1px solid #ddd; font-weight:bold; color:#2d3a3a;">2. 悲剧的延迟与蓄力</td>
+                <td style="padding:10px; border:1px solid #ddd;">在征辽的“理想化胜利”与征方腊的“惨烈毁灭”之间，插入这两场虽艰苦但最终完胜的战役，延长了梁山事业的“巅峰期”，使后续的跌落更具冲击力。</td>
+            </tr>
+            <tr>
+                <td style="padding:10px; border:1px solid #ddd; font-weight:bold; color:#2d3a3a;">3. 思想逻辑的延续</td>
+                <td style="padding:10px; border:1px solid #ddd;">贯彻了“只反贪官，不反皇帝”的路线，梁山作为“朝廷鹰犬”平定其他“反贼”，在封建伦理中完成了其“忠义”的实践。</td>
+            </tr>
+            <tr style="background:#f9f9f9;">
+                <td style="padding:10px; border:1px solid #ddd; font-weight:bold; color:#2d3a3a;">4. 文学手法转变</td>
+                <td style="padding:10px; border:1px solid #ddd;">从写实到神魔（征田虎）再回归写实（征王庆）。虽情节模式化、人物塑造单薄，但完成了必要的过渡。</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="margin-top: 40px; padding: 20px; background-color: #fffcf0; border-left: 5px solid #d4af37; border-radius: 5px;">
+        <h3 style="margin-top: 0; color: #8b1a1a;">💡 专题思考：隐藏的政治隐喻</h3>
+        
+        <p><b>🤔 思考一：“狡兔死，走狗烹”的进程</b><br>
+        梁山越是成功，越凸显其强大与不可控。朝廷令其连续征战，亦有“驱虎吞狼”、消耗其力量的意图。征王庆后，梁山军已是一支疲敝却功高盖主的强军，毁灭的种子已然埋下。</p>
+        
+        <p><b>😰 思考二：“同类相残”的悲剧性</b><br>
+        田虎、王庆与宋江出身相似（皆是被逼或野心勃勃的造反者），梁山平定他们，本质是<b>招安者镇压未招安者</b>，强化了全书对“造反出路”的深刻悲观主义思考。</p>
+        
+        <p><b>🧐 总结</b><br>
+        征田虎、王庆是梁山招安后、征方腊前一段漫长的“中场战事”。它们最重要的功能，或许是将梁山众星拱月般推向辉煌的顶点，只为让他们在接下来的征方腊中，坠落得更加彻底和悲壮。</p>
+    </div>
+`,
+'拾肆 · 将星陨落': `
+
+        
+        <h2 style="color:#8b1a1a; font-size: 26px; border-bottom: 2px solid #8b1a1a; padding-bottom:10px; margin-top: 0;">拾肆 · 将星陨落</h2>
+        
+        <h3 style="font-size: 20px; color: #8b1a1a; margin-top: 25px;">一、背景与基调：赴死之路的开启</h3>
+        <p><b>政治困局：</b></p>
+        <p>梁山在接连平定辽国、田虎、王庆后，功高震主，已成为朝廷心腹大患。</p>
+        <p>以蔡京、高俅为首的奸臣集团，深恨梁山，设计出 “借刀杀人” 之策：命梁山征剿实力最强、同为“四大寇”之一的江南方腊，意图令其两败俱伤。</p>
+        
+        <p><b>不祥之兆：</b></p>
+        <p>出征前，金大坚、乐和等技术型人才被朝廷直接征用，剥离出队伍，削弱了梁山的辅助力量。</p>
+        <p>梁山军久战疲惫，思乡情切，斗志与凝聚力已非鼎盛时期可比。</p>
+        <p>战役的核心基调从之前的 “顺天护国” 转变为 “残酷消耗”。</p>
+
+        <hr style="border-top: 1px dashed #a6937c; margin: 25px 0;">
+
+        <h3 style="font-size: 20px; color: #8b1a1a;">二、战争特点：绞肉机式的消耗战</h3>
+        <p>与此前战役不同，征方腊呈现出 “写实化”、“去神话化” 的极端惨烈特征：</p>
+        <ul>
+            <li><b>对手强大：</b>方腊是真正的农民起义领袖，占据八州二十五县，自立为帝，政权组织严密，军力雄厚，民心依附。</li>
+            <li><b>主场劣势：</b>梁山深入江南水网、山林地带，地形、气候均不适应。</li>
+            <li><b>神魔退场：</b>公孙胜在此战前已被师父罗真人召回，梁山失去了最重要的“法术支援”，战斗回归最原始、最血腥的肉搏、攻城与牺牲。</li>
+            <li><b>死亡方式：</b>好汉们不再死于浪漫的单挑或斗法，而是大量死于冷箭、埋伏、瘟疫、溺水、坠崖，甚至自尽，充满了偶然与憋屈，凸显战争的残酷与无意义。</li>
+        </ul>
+
+        <hr style="border-top: 1px dashed #a6937c; margin: 25px 0;">
+
+        <h3 style="font-size: 20px; color: #8b1a1a;">三、核心战役与好汉陨落图谱</h3>
+        <p>征方腊是一系列惨烈攻城战的总和，重要战役及阵亡情况如下：</p>
+
+        <table style="width:100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; background: #fffcf5; border: 1px solid #d4af37;">
+            <thead>
+                <tr style="background:#8b1a1a; color:#ffffff;">
+                    <th style="padding:10px; border:1px solid #8b1a1a; width:20%;">战争阶段</th>
+                    <th style="padding:10px; border:1px solid #8b1a1a;">战况与陨落名单 (部分)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding:10px; border:1px solid #d4af37; font-weight:bold;">第一阶段：江北门户</td>
+                    <td style="padding:10px; border:1px solid #d4af37;"><b>润州：</b>折损宋万、焦挺、陶宗旺。<br><b>常州：</b>韩滔、彭玘阵亡。<br><b>宣州：</b>郑天寿、曹正、王定六阵亡。</td>
+                </tr>
+                <tr>
+                    <td style="padding:10px; border:1px solid #d4af37; font-weight:bold;">第二阶段：杭州攻坚</td>
+                    <td style="padding:10px; border:1px solid #d4af37;"><b>独松关：</b>董平、张清、周通。<br><b>涌金门：</b>张顺牺牲。<br><b>城内：</b>徐宁、郝思文、索超、刘唐等猛将凋零。<br><b>瘟疫：</b>张横、穆弘等六人病故。</td>
+                </tr>
+                <tr>
+                    <td style="padding:10px; border:1px solid #d4af37; font-weight:bold;">第三阶段：最终合围</td>
+                    <td style="padding:10px; border:1px solid #d4af37;"><b>乌龙岭：</b>阮小二自刎，解氏兄弟坠崖。<br><b>昱岭关：</b>史进、石秀等六人死于庞万春乱箭。<br><b>清溪洞：</b>秦明、王英、扈三娘、孙二娘等壮烈牺牲。</td>
+                </tr>
+            </tbody>
+        </table>
+        <p><b>最终擒方腊者：</b>鲁智深（一禅杖打翻，活捉）。此情节设计更具禅意，象征“屠龙者终成佛”。</p>
+    </div>
+`,
+'拾伍 · 悲歌归京': ` 
+        <h2 style="color:#8b1a1a; font-size: 26px; border-bottom: 2px solid #8b1a1a; padding-bottom:10px; margin-top: 0;"> 拾伍 · 悲歌归京：荣耀背后的文明废墟</h2>
+        
+        <h3 style="font-size: 20px; color: #8b1a1a; margin-top: 25px;">一、启程：死亡阴影下的“凯旋”</h3>
+        <p><b>队伍的残缺</b></p>
+        <p>出征时的千军万马、旌旗招展，如今只剩下二十七位头领（后因林冲病留，实际回京者更少）和一群疲惫哀伤的士卒。</p>
+        <p>阵亡兄弟的灵位或尸骨（部分能收殓的）被一同带上，使队伍本身就像一个移动的集体墓冢。🕯️</p>
+        
+        <p><b>心灵的离散</b></p>
+        <p>武松在六和寺对宋江直言：“小弟今已残疾，不愿赴京朝觐。”宋江仅冷冷回以“任从你心”。兄弟情义在政治功名面前已然冷却。</p>
+        <p>鲁智深坐化圆寂，留下“今日方知我是我”的彻悟偈语，肉身虽寂，精神却完成了对红尘功业的最终超越。</p>
+        <p>林冲突患风瘫，杨志病逝丹徒，时迁等病故。死亡并未因战争结束而停止，它如影随形。</p>
+        <p>燕青的深夜辞别，是清醒者对悲剧剧本的提前退场。他劝卢俊义“韩信赤族”的历史殷鉴，但卢俊义执迷于“衣锦还乡”的幻梦。燕青的“飘然远去”，是全书为数不多的自主且光明的结局。🕊️</p>
+
+        <hr style="border-top: 1px dashed #a6937c; margin: 25px 0;">
+
+        <h3 style="font-size: 20px; color: #8b1a1a;">二、路途：荣耀表象下的无尽悲凉</h3>
+        <p>回京之路，实则是一条展示伤痕、咀嚼悲痛的“示众”之路。</p>
+        <ul>
+            <li>队伍所经之处，百姓看到的不是英雄，而是一群伤痕累累、神情麻木的幸存者。</li>
+            <li>曾经的“替天行道”大旗，如今显得空洞而刺眼。他们为之“行道”的朝廷，正是这场屠杀的间接导演。</li>
+            <li>这漫长的路途，给了幸存者充足的时间去回想死去的每一个兄弟，去反思招安这条路的价值。凯歌无人唱响，唯有内心悲鸣。</li>
+        </ul>
+
+        <hr style="border-top: 1px dashed #a6937c; margin: 25px 0;">
+
+        <h3 style="font-size: 20px; color: #8b1a1a;">三、抵京：盛典与葬礼的交织</h3>
+        <p><b>皇帝的“表演”</b></p>
+        <p>宋徽宗故作隆重，亲御宣德楼受贺，给予宋江等人丰厚的物质封赏（金银、锦袍、御酒）。</p>
+        <p>但这套程式化的荣耀，与江南漫山遍野的坟茔相比，显得无比廉价与虚伪。它是对死者生命的最终定价，也是对生者感情的再次利用。🎭</p>
+        
+        <p><b>宋江的“巅峰”与空心</b></p>
+        <p>此刻的宋江，达到了他人生的世俗巅峰：加授武德大夫、楚州安抚使兼兵马都总管。</p>
+        <p>然而，他站在朝堂之上，身边已无比肩作战的生死兄弟，只有满朝曾欲置梁山于死地的奸佞同僚。他的“忠义”理想实现了，却也在实现的那一刻被掏空了全部血肉和灵魂。</p>
+
+        <hr style="border-top: 1px dashed #a6937c; margin: 25px 0;">
+
+        <h3 style="font-size: 20px; color: #8b1a1a;">四、封赏：看似圆满的残忍分账</h3>
+        <table style="width:100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; background: #fafafa; border: 1px solid #8b1a1a;">
+            <thead>
+                <tr style="background:#8b1a1a; color:#ffffff;">
+                    <th style="padding:10px; border:1px solid #8b1a1a; width:25%;">对象</th>
+                    <th style="padding:10px; border:1px solid #8b1a1a;">封赏结果与本质</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding:10px; border:1px solid #8b1a1a; font-weight:bold;">幸存者</td>
+                    <td style="padding:10px; border:1px solid #8b1a1a;">获得虚衔与散官，被分散到各地。<b>本质：</b>肢解了梁山最后的实体与凝聚力。</td>
+                </tr>
+                <tr>
+                    <td style="padding:10px; border:1px solid #8b1a1a; font-weight:bold;">阵亡者</td>
+                    <td style="padding:10px; border:1px solid #8b1a1a;">追封名号，子孙承袭名爵。<b>本质：</b>冰冷的数据，安抚人心的虚假恩典。</td>
+                </tr>
+                <tr>
+                    <td style="padding:10px; border:1px solid #8b1a1a; font-weight:bold;">真正的赢家</td>
+                    <td style="padding:10px; border:1px solid #8b1a1a;">蔡京、高俅等奸臣。<b>本质：</b>借刀杀人，彻底铲除心腹大患，且不担骂名。</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="margin-top: 40px; padding: 20px; background-color: #fffcf0; border-left: 5px solid #d4af37; border-radius: 5px;">
+            <h3 style="margin-top: 0; color: #8b1a1a; font-size: 20px;">💡 专题思考：“悲歌”的多重内核</h3>
+            <p style="font-size: 15px;"><b>🤔 幸存者的哀歌与理想主义的挽歌：</b><br>
+            为死去的兄弟而唱。每一声荣华富贵的道贺，都反衬着灵位前的冷寂。宋江“尽忠报国、青史留名”的理想看似实现，但代价是兄弟殆尽的集团毁灭。这理想本身已成为一座华丽的墓碑。</p>
+            
+            <p style="font-size: 15px;"><b>🥀 江湖精神的葬歌：</b><br>
+            梁山泊那种“生死相托、快意恩仇”的江湖精神，在皇权的册封和官僚体系的规训下，彻底死亡。归京，意味着江湖的终结。</p>
+            
+            <p style="font-size: 15px;"><b>🧐 历史循环的叹歌：</b><br>
+            “飞鸟尽，良弓藏”的古老悲剧再次上演。梁山好汉用鲜血写下的，不过是历史长卷中又一页常见的注脚。归京的宋江，在灵魂意义上已经随着兄弟们的离去而死去了。<b>招安的终点不是荣华富贵，而是自我毁灭。</b></p>
+        </div>
+    </div>
+`,
+'拾陆 · 楚州毒酒': `
+        
+        <h2 style="color:#8b1a1a; font-size: 26px; border-bottom: 2px solid #8b1a1a; padding-bottom:10px; margin-top: 0;">🍷 专题拾陆 · 楚州毒酒</h2>
+        
+        <h3 style="font-size: 20px; color: #8b1a1a; margin-top: 25px;">一、背景：功高震主与奸臣未除</h3>
+        <p><b>宋江的“圆满”假象：</b>平定方腊后，宋江受封楚州安抚使兼兵马都总管，表面上实现了“封妻荫子、青史留名”的理想，在楚州履职“惜军爱民，百姓敬之如父母”。</p>
+        <p><b>奸臣的刻骨仇恨：</b>高俅、杨戬、蔡京等权奸，对梁山的仇恨从未消解。他们深知宋江“仁德忠义”，深得军心民心，且麾下仍有李逵等猛将，卧榻之侧，岂容他人安睡？ 必欲除之而后快。</p>
+        <p><b>皇帝的软弱与默许：</b>宋徽宗虽对宋江有所赞赏，但其昏聩软弱，朝政被奸臣把持。他对除掉宋江一事，即便不知具体阴谋，也处在一种放任与默许的状态。</p>
+
+        <hr style="border-top: 1px dashed #a6937c; margin: 25px 0;">
+
+        <h3 style="font-size: 20px; color: #8b1a1a;">二、毒计施行：一场针对“忠义”的精密谋杀</h3>
+        <p><b>密谋定策：</b>高、杨二奸臣于枢密院密议，认定宋江不死，“后患无穷”。他们利用职权，选定最阴险的方式——御赐毒酒，以“皇恩”之名行谋杀之实。</p>
+        <p><b>使者下毒：</b>二奸派心腹使者，赍“御酒”前往楚州。酒中已下水银慢毒（一种发作较慢的剧毒，符合“天使赐酒，饮后谢恩”的流程，避免当场暴毙引发事变）。</p>
+        <p><b>宋江饮鸩：</b>宋江毫无防备，恭迎天使，焚香沐浴，望阙谢恩，将毒酒一饮而尽。这一系列动作充满仪式感，也充满讽刺——他以最虔诚的“忠君”礼仪，迎接了自己的死亡判决。</p>
+
+        <hr style="border-top: 1px dashed #a6937c; margin: 25px 0;">
+
+        <h3 style="font-size: 20px; color: #8b1a1a;">三、事件核心：识破真相后的抉择与连锁悲剧</h3>
+        <p>这才是事件最残酷、最具悲剧张力的部分：宋江并非无知无觉地死去，而是在毒发前知晓了真相，并做出了令人心寒的选择。</p>
+        
+        <p><b>毒发与知情：</b>饮鸩数日后，宋江觉腹疼体沉，渐知是中毒。恰逢李逵自润州任上前来探视，宋江在对话中更确信酒中有毒，且此乃朝廷之意。</p>
+        
+        <p><b>宋江的终极抉择——“我死不争，只有李逵……”</b></p>
+        <ul>
+            <li><b>心理活动：</b>宋江自知必死，但他最恐惧的不是个人身死，而是李逵闻讯后必然哨聚山林，再造反叛，这会毁掉自己毕生经营的“忠义”之名，使梁山事业蒙上“叛臣”的污点。</li>
+            <li><b>惊人之举：</b>宋江唤来李逵，不仅告知自己中毒将亡，更在接风酒中也给李逵下了慢药。</li>
+        </ul>
+
+        <p><b>临终对话（灵魂拷问）：</b></p>
+        <blockquote style="margin: 20px 0; padding: 15px; background: #fffcf0; border-left: 5px solid #d4af37; font-style: italic;">
+            宋江道：“兄弟，你休怪我！前日朝廷差天使，赐药酒与我服了，死在旦夕。我为人一世，只主张‘忠义’二字，不肯半点欺心。今日朝廷赐死无辜，宁可朝廷负我，我忠心不负朝廷。我死之后，恐怕你造反，坏了我梁山泊替天行道忠义之名。因此，请将你来，相见一面。昨日酒中，已与了你慢药服了，回至润州必死。”<br>
+            李逵见说，亦垂泪道：“罢，罢，罢！生时伏侍哥哥，死了也只是哥哥部下一个小鬼。”
+        </blockquote>
+
+        <p><b>李逵的回应：</b>没有愤怒，只有悲哀的认命。这头一生反抗的“黑旋风”，最终被“义兄”的“忠义”所毒杀，并自愿接受。这是对“兄弟义气”最彻底的背叛与扭曲。</p>
+
+        <hr style="border-top: 1px dashed #a6937c; margin: 25px 0;">
+
+        <h3 style="font-size: 20px; color: #8b1a1a;">四、事件的深层寓意与全书结局</h3>
+        <table style="width:100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; background: #fffcf5; border: 1px solid #d4af37;">
+            <thead>
+                <tr style="background:#8b1a1a; color:#ffffff;">
+                    <th style="padding:10px; border:1px solid #8b1a1a; width:30%;">核心要素</th>
+                    <th style="padding:10px; border:1px solid #8b1a1a;">悲剧呈现</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding:10px; border:1px solid #d4af37; font-weight:bold;">死亡方式</td>
+                    <td style="padding:10px; border:1px solid #d4af37;"><b>宋江：</b>谢恩饮鸩（仪式化的自毁）。<br><b>李逵：</b>兄赐弟死（义气被忠君绑架）。</td>
+                </tr>
+                <tr>
+                    <td style="padding:10px; border:1px solid #d4af37; font-weight:bold;">朝廷态度</td>
+                    <td style="padding:10px; border:1px solid #d4af37;"><b>生前：</b>借刀杀人（利用后除掉）。<br><b>死后：</b>立庙追封（廉价的道德补偿）。</td>
+                </tr>
+                <tr>
+                    <td style="padding:10px; border:1px solid #d4af37; font-weight:bold;">神话闭环</td>
+                    <td style="padding:10px; border:1px solid #d4af37;">从“误走妖魔”到“星魂归位”，现实幻灭后归于鬼神传说。</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>1. <b>“忠义”的彻底异化与吃人本质：</b>宋江临死前，用“忠义”之名毒杀了最忠心的兄弟李逵。“义”在这里，成了实践“忠”的工具和祭品。宋江的“忠”，已异化为对抽象皇权符号的迷信，超越了具体兄弟的生命。</p>
+        <p>2. <b>体制对理想主义者的终极消化：</b>朝廷（奸臣代表）用一杯毒酒，完成了对梁山反抗力量的最终清除。招安不是接纳，而是消化和排泄。宋江的悲剧在于，他主动进入这个消化系统，并最终成为了系统排出的残渣。</p>
+        <p>3. <b>全书结构的闭环与升华：</b>起点与终点从“洪太尉误走妖魔”，到“宋公明神聚”，完成了一个 “出世→聚义→招安→毁灭→归位” 的神话循环。</p>
+        <p>4. <b>梦的呼应：</b>结局宋徽宗梦游得知真相，追封忠烈。皇帝的梦，反衬出现实的黑暗与不可改变。梁山好汉最终只能作为“鬼神”，获得生前求而不得的公正。</p>
+
+        <div style="margin-top: 40px; padding: 25px; background-color: #fffcf0; border-left: 6px solid #d4af37; border-radius: 4px;">
+            <h4 style="margin-top: 0; color: #8b1a1a; font-size: 18px;">💡 专题思考：悲歌的终极音符</h4>
+            <p style="font-size: 15px; margin-bottom: 0;">
+                楚州毒酒事件，为梁山泊的史诗奏响了最后一个，也是最沉重、最讽刺的音符。它告诉读者：<b>在以权力和阴谋为核心的封建体制中，任何基于个人道德的“忠义”理想，若试图通过依附体制来实现，终将被体制本身所吞噬和践踏。</b>这种毁灭不是外力的摧毁，而是理想本身被异化后的自我献祭。🤔🍷🥀
+            </p>
+        </div>
+    </div>
+`,
+'拾柒 · 蓼儿洼祭': `
+        
+        <h2 style="color:#8b1a1a; font-size: 26px; border-bottom: 2px solid #8b1a1a; padding-bottom:10px; margin-top: 0;"> 拾柒 · 蓼儿洼祭：江湖史诗的最终落幕</h2>
+        
+        <h3 style="font-size: 20px; color: #8b1a1a; margin-top: 25px;">一、蓼儿洼：一个悲剧性的地理意象</h3>
+        <p><b>地点特征：</b>位于楚州南门外，一处“四面是水，中有高山”的所在，其风景“宛如梁山泊一般”。</p>
+        <p><b>宋江的自我选择：</b>宋江到楚州任职后，常至此游玩，慨然欢喜，临终前特意嘱咐亲随将其葬于此地。这并非随意选择，而是其复杂心理的投射：</p>
+        <ul>
+            <li><b>精神的归乡：</b>将墓地选在形似梁山泊之地，暗示其灵魂对梁山兄弟与江湖岁月的最终眷恋。</li>
+            <li><b>忠义的完满：</b>葬于王土（楚州辖地），而非真正的梁山泊，象征其至死未离“忠臣”之地。</li>
+            <li><b>无声的讽喻：</b>以“宛如梁山”的风景，构成对朝廷招安政策的微妙讽刺——朝廷给予的最终归宿，不过是一个仿制的、缩微的、死寂的梁山泊。</li>
+        </ul>
+
+        <hr style="border-top: 1px dashed #a6937c; margin: 25px 0;">
+
+        <h3 style="font-size: 20px; color: #8b1a1a;">二、双星陨落：吴用与花荣的殉祭</h3>
+        <p>这是“蓼儿洼祭”的核心行动，其过程充满仪式感与绝望之美：</p>
+        
+        <p><b>感梦奔赴：</b></p>
+        <p>吴用（时任武胜军承宣使）与花荣（应天府兵马都统制）同时夜梦宋江，梦中宋江“雾惨云愁，一身血污”，泣告自己已被毒死，葬于蓼儿洼。此梦具有超验色彩，既是兄弟间的心灵感应，也象征梁山核心人物命运的终极联结。</p>
+
+        <p><b>墓前决断：</b></p>
+        <p>吴用、花荣不约而同赶至楚州，在蓼儿洼宋江墓前相遇。二人“哭祭一场”，行为决绝。</p>
+        <p><b>无留恋的对话：</b></p>
+        <blockquote style="margin: 20px 0; padding: 15px; background: #fffcf0; border-left: 5px solid #d4af37; font-style: italic;">
+            吴用道：“……今既已葬于此，我等何不相就此处，以完当初兄弟誓言？”<br>
+            花荣道：“军师既有此心，小弟便当随之，亦与仁兄同尽忠义。”
+        </blockquote>
+        <p>这段对话表明，他们殉葬的对象是宋江个人及其代表的“忠义”誓言，而非朝廷。他们清醒地认识到，在宋江死后，朝廷已无他们这类“梁山旧人”的容身之地。</p>
+
+        <p><b>自缢殉葬：</b></p>
+        <p>二人于宋江墓前双双自缢于树上。这一行为是全书“义”的极端体现，也是对其空洞性的终极展示——当“忠”的对象（朝廷）已不值得效忠，“义”便只能通过对已逝领袖的殉死来体现，成为一种没有未来、只有终结的纯粹姿态。</p>
+
+        <div style="margin: 30px 0; text-align: center;">
+            <img src="images/liaoerwa_landscape.jpg" alt="蓼儿洼意象图" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #d4af37;">
+            <p style="font-size: 12px; color: #666; margin-top: 10px;">宋江</p>
+        </div>
+
+        <hr style="border-top: 1px dashed #a6937c; margin: 25px 0;">
+
+        <h3 style="font-size: 20px; color: #8b1a1a;">三、神聚：悲剧的神话闭环</h3>
+        <table style="width:100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; background: #fffcf5; border: 1px solid #d4af37;">
+            <thead>
+                <tr style="background:#8b1a1a; color:#ffffff;">
+                    <th style="padding:10px; border:1px solid #8b1a1a; width:30%;">阶段</th>
+                    <th style="padding:10px; border:1px solid #8b1a1a;">神话与现实的纠缠</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding:10px; border:1px solid #d4af37; font-weight:bold;">起点：误走妖魔</td>
+                    <td style="padding:10px; border:1px solid #d4af37;">洪太尉误走妖魔，一百零八颗魔星降临人间。</td>
+                </tr>
+                <tr>
+                    <td style="padding:10px; border:1px solid #d4af37; font-weight:bold;">终点：神聚楚州</td>
+                    <td style="padding:10px; border:1px solid #d4af37;">众星魂归一处，完成了“出世→聚义→毁灭→归位”的闭环。</td>
+                </tr>
+                <tr>
+                    <td style="padding:10px; border:1px solid #d4af37; font-weight:bold;">皇权补救</td>
+                    <td style="padding:10px; border:1px solid #d4af37;">皇帝梦游、追封立庙。本质是将危险的反抗记忆转化为可控的忠烈符号。</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3 style="font-size: 20px; color: #8b1a1a; margin-top: 25px;">四、蓼儿洼祭的深层寓意</h3>
+        <p>1. <b>地理的终结与精神的囚牢：</b>蓼儿洼是梁山泊的“镜像”与“替代品”。它象征着招安后，梁山好汉的精神世界被禁锢在一个仿制的、狭小的、属于朝廷管辖的“风景名胜”之中，再无昔日吞吐天地的气象。</p>
+        <p>2. <b>殉葬行为的双重性：</b>吴用、花荣以生命兑现了“生死相随”的兄弟誓言。同时，他们的死也宣告了跟随宋江招安这条路线的彻底破产。作为路线的规划者与执行者，他们用生命投下了最终的否定票。</p>
+        <p>3. <b>全书悲剧力量的最终凝聚点：</b>蓼儿洼汇聚了全书的悲怆：宋江的愚忠、李逵的枉死、吴用与花荣的绝望。它像一块吸满了梁山鲜血的海绵，沉在楚州的水边，成为这座悲剧大厦的基石。</p>
+    </div>
+`,
+'拾捌 · 英雄之路': `
+        
+        <style>
+            .timeline-container {
+                position: relative;
+                padding: 20px 0;
+                margin-top: 20px;
+            }
+            /* 中间的垂直线 */
+            .timeline-line {
+                position: absolute;
+                left: 100px;
+                top: 0;
+                bottom: 0;
+                width: 2px;
+                background: linear-gradient(180deg, #d4af37 0%, #8b1a1a 100%);
+                opacity: 0.6;
+            }
+            .timeline-event {
+                position: relative;
+                margin-bottom: 30px;
+                display: flex;
+                align-items: flex-start;
+            }
+            .event-year {
+                width: 100px;
+                text-align: right;
+                padding-right: 25px;
+                font-weight: bold;
+                color: #8b1a1a;
+                font-size: 1rem;
+                flex-shrink: 0;
+                padding-top: 5px;
+            }
+            .event-dot {
+                position: absolute;
+                left: 96px;
+                top: 12px;
+                width: 10px;
+                height: 10px;
+                background: #d4af37;
+                border-radius: 50%;
+                box-shadow: 0 0 8px #d4af37;
+                z-index: 2;
+            }
+            .event-content {
+                padding-left: 35px;
+                padding-bottom: 15px;
+                border-bottom: 1px dashed #d2c5a7;
+                width: 100%;
+            }
+            .event-title {
+                font-weight: bold;
+                color: #4a0404;
+                font-size: 1.1rem;
+                margin-bottom: 5px;
+            }
+            .event-desc {
+                margin: 0;
+                line-height: 1.6;
+                color: #333;
+                font-size: 14px;
+            }
+            .event-analysis {
+                margin-top: 5px;
+                font-style: italic;
+                color: #8b1a1a;
+                font-size: 13px;
+            }
+        </style>
+
+        <div class="timeline-container">
+            <div class="timeline-line"></div>
+
+            <div class="timeline-event">
+                <div class="event-year">第一回</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">误走妖魔</div>
+                    <p class="event-desc"><b>事件：</b>洪太尉揭开伏魔殿封印，放走天罡地煞星。</p>
+                    <p class="event-analysis">解析：为全书奠定神话宿命基调，将人间起义归为天命。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">第二至七回</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">林冲被逼</div>
+                    <p class="event-desc"><b>事件：</b>鲁达拳打镇关西，林冲遭高俅陷害，雪夜上梁山。</p>
+                    <p class="event-analysis">解析：展现“官逼民反”的经典个案，林冲的转变最具悲剧深度。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">第十六回</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">智取生辰纲</div>
+                    <p class="event-desc"><b>事件：</b>晁盖、吴用等七星劫取梁中书不义之财。</p>
+                    <p class="event-analysis">解析：梁山事业的真正起点，标志着有组织的集体反抗开始。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">第二十三至三十二回</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">武松传奇</div>
+                    <p class="event-desc"><b>事件：</b>武松景阳冈打虎、为兄报仇、醉打蒋门神、血溅鸳鸯楼。</p>
+                    <p class="event-analysis">解析：塑造了一位从守法都头到快意恩仇的行者的完整形象。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">第三十九至四十回</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">江州劫法场</div>
+                    <p class="event-desc"><b>事件：</b>宋江题反诗被判斩，晁盖率众劫法场救其上山。</p>
+                    <p class="event-analysis">解析：梁山核心领导层形成，宋江成为实际灵魂人物。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">第四十七至五十回</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">三打祝家庄</div>
+                    <p class="event-desc"><b>事件：</b>为扩势扬威，梁山历经波折攻破祝家庄。</p>
+                    <p class="event-analysis">解析：梁山首次大规模对外攻坚战，宋江确立军事指挥权威。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">第五十八至五十九回</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">三山聚义</div>
+                    <p class="event-desc"><b>事件：</b>二龙山、桃花山、白虎山好汉齐聚梁山。</p>
+                    <p class="event-analysis">解析：梁山实力空前壮大，成为各路江湖力量的最终归宿。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">第六十回</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">晁盖中箭</div>
+                    <p class="event-desc"><b>事件：</b>晁盖在曾头市中毒箭身亡。</p>
+                    <p class="event-analysis">解析：梁山权力结构根本转折，为宋江正式上位铺平道路。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">第七十一回</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">英雄排座次</div>
+                    <p class="event-desc"><b>事件：</b>天降石碣，排定一百零八将座次。</p>
+                    <p class="event-analysis">解析：梁山事业达至鼎盛，组织神圣化，招安路线公开化。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">第七十二回</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">闹东京</div>
+                    <p class="event-desc"><b>事件：</b>宋江访李师师求门路，李逵大闹东京。</p>
+                    <p class="event-analysis">解析：展现招安路线的屈辱性与内部的本能反抗。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">第七十五回</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">扯诏骂钦差</div>
+                    <p class="event-desc"><b>事件：</b>首次招安失败，阮小七偷酒，李逵扯诏。</p>
+                    <p class="event-analysis">解析：招安陷入僵局，梁山强硬派展现力量。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">第七十八至八十回</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">两赢童贯，三败高俅</div>
+                    <p class="event-desc"><b>事件：</b>梁山武力击溃朝廷最高规格的军事围剿。</p>
+                    <p class="event-analysis">解析：实现“以战促和”，为赢得有尊严的招安创造条件。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">第八十二回</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">全伙受招安</div>
+                    <p class="event-desc"><b>事件：</b>宋江率众正式接受朝廷招安。</p>
+                    <p class="event-analysis">解析：宋江政治理想在形式上实现，全体命运纳入体制轨道。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">第八十三回</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">陈桥驿斩小卒</div>
+                    <p class="event-desc"><b>事件：</b>宋江含泪处死反抗克扣的军校。</p>
+                    <p class="event-analysis">解析：招安后第一滴血，“兄弟义气”开始让位于“朝廷法度”。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">第八十四至一百一十回</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">北征辽国 / 平田虎 / 定王庆</div>
+                    <p class="event-desc"><b>事件：</b>连年征战，收降名将，虽功成却显朝廷凉薄。</p>
+                    <p class="event-analysis">解析：理想的“护国”战事，虽未损大将，却是梁山实力消耗之始。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">第一百一十一回至一百一十九回</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">征方腊</div>
+                    <p class="event-desc"><b>事件：</b>血战江南，张顺、秦明等接连阵亡，武松断臂。</p>
+                    <p class="event-analysis">解析：梁山集团的毁灭之路，一百零八将仅余二十七人生还。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">第一百二十回</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">楚州毒酒，蓼儿洼祭</div>
+                    <p class="event-desc"><b>事件：</b>宋江被毒杀并毒死李逵；吴用花荣自缢；皇帝梦游封神。</p>
+                    <p class="event-analysis">解析：“忠义”彻底异化与幻灭，精神被符号化收编，完成终极悲剧。</p>
+                </div>
+            </div>
+    </div>
+`,
+'拾玖 · 百题挑战': `
+    <div id="quiz-cover" style="text-align:center; padding: 60px 20px; background: #fdfaf3; border: 2px solid #8b1a1a; border-radius: 15px; margin: 20px;">
+        <h1 style="color: #8b1a1a; margin-bottom: 20px;">🏆 水浒传 · 百题挑战</h1>
+
+        <button onclick="startQuiz()" style="padding:15px 50px; background:#8b1a1a; color:white; border:none; cursor:pointer; font-size:1.3rem; border-radius:30px; margin-top:30px; box-shadow: 0 4px 15px rgba(139,26,26,0.3); transition: 0.3s;">
+            开启挑战
+        </button>
+    </div>
+
+    <div id="quiz-content" style="display:none; animation: fadeIn 1s;">
+        <p style="background: #fff8e1; padding: 15px; border-left: 5px solid #ffa000; margin: 20px;">
+            <strong>老师寄语：</strong> 真正的大师永远怀着一颗学徒的心。点击题目下方的“查看答案”来检验你的成果。
+        </p>
+        <div id="quiz-app" style="background: white; padding: 0 20px;"></div>
+    </div>
+
+    <style>
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .question-box { margin-bottom: 20px; padding: 15px; border-bottom: 1px inset #eee; }
+        .answer-text { margin-top: 10px; padding: 12px; background: #f0fdf4; color: #16a34a; border-radius: 5px; font-weight: bold; border: 1px dashed #16a34a; }
+        summary { color: #8b1a1a; cursor: pointer; font-weight: bold; outline: none; }
+        summary:hover { text-decoration: underline; }
+    </style>
+`,
+    };
+const GLOBAL_QUIZ_DATA = [
+    // --- 一、选择题 (1-50) ---
+    { type: '选择', q: '《水浒传》的开篇诗“试看书林隐处，几多俊逸儒流”之后，紧接着的历史事件是？', options: 'A. 陈桥兵变 | B. 黄袍加身 | C. 杯酒释兵权 | D. 澶渊之盟', a: 'A', note: '小说开篇以陈桥兵变、宋太祖定天下引出背景，展现乱世到治世的交替。' },
+    { type: '选择', q: '洪太尉在龙虎山放走的妖魔共有多少位？', options: 'A. 36位 | B. 72位 | C. 108位 | D. 100位', a: 'C', note: '对应了上应天罡星36员、下应地煞星72员，合共108将。' },
+    { type: '选择', q: '“九纹龙”史进的师父是？', options: 'A. 王进 | B. 林冲 | C. 鲁智深 | D. 李忠', a: 'A', note: '王进因得罪高俅逃亡，途中指点史进武艺，史进自此才算学得真本事。' },
+    { type: '选择', q: '鲁智深在五台山出家前，打死的恶霸是？', options: 'A. 镇关西 | B. 蒋门神 | C. 西门庆 | D. 牛二', a: 'A', note: '鲁提辖拳打镇关西是全书第一个高潮，展现了极致的侠义与快意。' },
+    { type: '选择', q: '林冲买刀，误入的白虎节堂是何处？', options: 'A. 太尉府军机重地 | B. 皇宫禁苑 | C. 开封府大堂 | D. 枢密院', a: 'A', note: '白虎节堂是古代高级军政重地，林冲带刀进入给了高俅陷害的借口。' },
+    { type: '选择', q: '“风雪山神庙”中，林冲用何物杀死陆谦？', options: 'A. 花枪 | B. 朴刀 | C. 解腕尖刀 | D. 宝剑', a: 'C', note: '林冲先用枪刺，最后是用解腕尖刀剜心，可见恨之入骨。' },
+    { type: '选择', q: '“智取生辰纲”发生在何处？', options: 'A. 黄泥冈 | B. 蜈蚣岭 | C. 快活林 | D. 赤松林', a: 'A', note: '“黄泥冈上巧用药”，这一劫让杨志失去了官场前途。' },
+    { type: '选择', q: '梁山“七星聚义”中，最后一位上山的是？', options: 'A. 吴用 | B. 公孙胜 | C. 白胜 | D. 刘唐', a: 'C', note: '“白日鼠”白胜负责挑酒诱敌，也是聚义的关键一环。' },
+    { type: '选择', q: '宋江杀死阎婆惜的直接原因是？', options: 'A. 她与张文远私通 | B. 她勒索金子与梁山书信 | C. 她辱骂宋太公 | D. 她拒绝与宋江和离', a: 'B', note: '宋江虽知私通，但招文袋里的梁山书信是致命威胁，属于“灭口”行为。' },
+    { type: '选择', q: '武松在景阳冈打死的猛虎，最后被谁抬走？', options: 'A. 猎户 | B. 阳谷县士兵 C. 当地里正 D. 围观百姓', a: 'A', note: '书中描写猎户见到武松打死老虎后大为震惊，随后将其抬往阳谷县。' },
+    { type: '选择', q: '“王婆贪贿说风情”中，潘驴邓小闲，“邓”指的是？', options: 'A. 邓通的财富 | B. 邓禹的功业 | C. 忍耐的功夫 | D. 模样俊俏', a: 'A', note: '邓通是汉代大富豪，这里代指要有丰厚的家产财力。' },
+    { type: '选择', q: '武松为兄报仇，杀潘金莲和西门庆的先后顺序是？', options: 'A. 先杀潘，后杀西门 | B. 先杀西门，后杀潘 | C. 同一天先后杀死 | D. 设计让二人互杀', a: 'A', note: '武松先在家中祭奠哥哥并手刃潘金莲，再去狮子楼斗杀西门庆。' },
+    { type: '选择', q: '宋江在浔阳楼题的反诗中，“他时若遂凌云志”的下一句是？', options: 'A. 敢笑黄巢不丈夫 | B. 血染浔阳江口 | C. 报与桃花一处开 | D. 讥讽权奸当道时', a: 'A', note: '这句诗尽显宋江虽然表面谦卑，实则内心极具野望。' },
+    { type: '选择', q: '江州劫法场时，李逵使用的武器是？', options: 'A. 双戒刀 | B. 两把板斧 | C. 混铁棍 | D. 朴刀', a: 'B', note: '李逵标志性的武器就是两把黑漆板斧，被称为“杀人机器”。' },
+    { type: '选择', q: '梁山好汉“三打祝家庄”的直接导火索是？', options: 'A. 时迁偷吃报晓公鸡 | B. 石秀打探盘陀路 | C. 李应与祝家庄结仇 | D. 宋江欲扩充粮草', a: 'A', note: '一个鸡引发的血案，时迁被抓导致梁山师出有名。' },
+    { type: '选择', q: '祝家庄的盘陀路，识别方向的秘诀是？', options: 'A. 看北斗星 | B. 见白杨树转弯 | C. 遇红灯则停 | D. 只走右边道路', a: 'B', note: '这种迷魂阵般的路，若无本地人指点，很难攻入核心。' },
+    { type: '选择', q: '“一丈青”扈三娘最终嫁给了？', options: 'A. 宋江 | B. 林冲 | C. 王英 | D. 祝彪', a: 'C', note: '这是水浒传中公认的最“不速配”婚姻，体现了宋江对功臣的拉拢。' },
+    { type: '选择', q: '“黑旋风斗浪里白条”发生在？', options: 'A. 浔阳江 | B. 梁山泊 | C. 大名府 | D. 蓟州', a: 'A', note: '旱鸭子李逵在水里被张顺教训得不轻，是不打不相识的经典。' },
+    { type: '选择', q: '晁盖在曾头市被谁射中毒箭？', options: 'A. 史文恭 | B. 曾涂 | C. 曾升 | D. 苏定', a: 'A', note: '箭上刻有“史文恭”字样，这也成了卢俊义后来上山的契机。' },
+    { type: '选择', q: '为赚取卢俊义上山，吴用扮作什么身份？', options: 'A. 算命先生 | B. 游方和尚 | C. 卖卦道士 | D. 贩枣商人', a: 'A', note: '吴用利用卢俊义当时对“血光之灾”的恐惧，巧设反诗陷阱。' },
+    { type: '选择', q: '卢俊义在墙上题的反诗“芦花丛里一扁舟”下一句是？', options: 'A. 煞曜翻作白虎星 | B. 俊杰俄从此地游 | C. 英雄聚义在山东 | D. 事遇机关命亦休', a: 'B', note: '这首藏头诗合起来是“卢俊义反”，导致卢麒麟家破人亡。' },
+    { type: '选择', q: '梁山排座次时，排名第四位的“入云龙”是？', options: 'A. 吴用 | B. 公孙胜 | C. 关胜 | D. 林冲', a: 'B', note: '公孙胜作为身怀法术的世外高人，其排位反映了梁山对超自然力量的尊重。' },
+    { type: '选择', q: '天降石碣上，侧首一边刻着“替天行道”，另一边刻着？', options: 'A. 忠义双全 | B. 保境安民 | C. 顺天护国 | D. 聚义同心', a: 'A', note: '这四个字是梁山集团的政治纲领。' },
+    { type: '选择', q: '宋江在菊花大会上作《满江红》词，唱到哪句时引发武松、李逵反对？', options: 'A. 日月常悬忠烈胆 | B. 望天王降诏，早招安 | C. 义胆包天，忠肝盖地 | D. 统豹虎，御边幅', a: 'B', note: '“招安”二字直接点燃了反对派和现实派的冲突。' },
+    { type: '选择', q: '“燕青智扑擎天柱”中，“擎天柱”指的是相扑高手？', options: 'A. 任原 | B. 高俅 | C. 蒋忠 | D. 焦挺', a: 'A', note: '燕青以小博大，展现了惊人的相扑技巧，这是他高光时刻之一。' },
+    { type: '选择', q: '第一次招安时，偷换御酒，导致招安失败的是？', options: 'A. 阮小二 | B. 阮小五 | C. 阮小七 | D. 张顺', a: 'C', note: '阮小七性格桀骜，这番举动也预示了他最终不归顺朝廷的性格。' },
+    { type: '选择', q: '梁山活捉高俅后，谁在京城疏通关节，最终促成招安？', options: 'A. 宿太尉 | B. 李师师 | C. 崔靖 | D. 闻焕章', a: 'A', note: '宿太尉在书中被塑造成一个正面且清廉的官员，是梁山招安的“贵人”。' },
+    { type: '选择', q: '招安后，陈桥驿小校因何事被宋江处斩？', options: 'A. 顶撞上官 | B. 克扣酒肉 | C. 擅离职守 | D. 杀害贪官', a: 'D', note: '为了证明自己彻底臣服朝廷规矩，宋江忍痛斩杀了这名杀害贪官的小校。' },
+    { type: '选择', q: '征辽途中，宋江拜访的两位世外高人是罗真人和？', options: 'A. 智真长老 | B. 张天师 | C. 公孙胜师父 | D. 紫虚观主', a: 'A', note: '智真长老是鲁智深的师父，曾给宋江四句偈语暗示未来。' },
+    { type: '选择', q: '征田虎时，会使妖术“金砖法”和神行术的敌将是？', options: 'A. 乔道清 | B. 马灵 C. 孙安 D. 卞祥', a: 'B', note: '马灵的神行速度甚至超过戴宗，最终归降。' },
+    { type: '选择', q: '张清与琼英的姻缘，源于？', options: 'A. 阵前比武招亲 | B. 宋江指婚 | C. 梦中互授武艺 | D. 旧日相识', a: 'C', note: '这是全书唯一的超现实浪漫爱情，石子结缘。' },
+    { type: '选择', q: '征王庆时，发动百姓起义，献城给梁山的义士是？', options: 'A. 萧让 | B. 萧嘉穗 | C. 金大坚 | D. 安道全', a: 'B', note: '萧嘉穗是真正的隐逸豪杰，功成后扁舟而去。' },
+    { type: '选择', q: '征方腊首战，在润州阵亡的第一位梁山好汉是？', options: 'A. 宋万 | B. 焦挺 | C. 陶宗旺 | D. 以上三人同时阵亡', a: 'D', note: '这一战极度惨烈，宣告了梁山好汉大损耗的序幕。' },
+    { type: '选择', q: '“浪里白条”张顺魂断于何处？', options: 'A. 西湖断桥 | B. 钱塘江潮 | C. 涌金门水闸 | D. 太湖芦苇荡', a: 'C', note: '张顺死于乱箭攒心，是书中最令人扼腕的瞬间之一。' },
+    { type: '选择', q: '杭州之战中，被“小养由基”庞万春射死的梁山好汉有几位？', options: 'A. 4位 | B. 6位 | C. 8位 | D. 10位', a: 'B', note: '史进、石勇、陈达、杨春、李忠、薛永均丧生于此。' },
+    { type: '选择', q: '武松在征方腊时失去的是？', options: 'A. 左臂 | B. 右臂 | C. 左腿 | D. 右眼', a: 'A', note: '独臂行者，自此看透尘世，留在了六和塔。' },
+    { type: '选择', q: '鲁智深在浙江听到钱塘潮信后，最终？', options: 'A. 还俗归乡 | B. 坐化圆寂 | C. 战死沙场 | D. 出海为王', a: 'B', note: '“今日方知我是我”，鲁智深完成了终极觉悟。' },
+    { type: '选择', q: '征方腊后，梁山一百零八将中生还回朝的有多少人？', options: 'A. 27人 | B. 36人 | C. 48人 | D. 56人', a: 'A', note: '只有四分之一的人生还，一代英雄落幕。' },
+    { type: '选择', q: '宋江被赐毒酒，死前担心谁造反而将其毒死？', options: 'A. 李逵 | B. 花荣 | C. 吴用 | D. 卢俊义', a: 'A', note: '为了所谓的“忠义”名声，不惜带着唯一的赤诚兄弟一起死。' },
+    { type: '选择', q: '吴用和花荣在何处自缢，为宋江殉葬？', options: 'A. 梁山泊忠义堂 | B. 蓼儿洼宋江墓前 | C. 楚州南门外 | D. 庐山脚下', a: 'B', note: '悲剧的终点，生时聚义，死后同穴。' },
+    { type: '选择', q: '宋徽宗梦游梁山泊后，追封宋江为什么侯？', options: 'A. 忠烈义济灵应侯 | B. 靖忠侯 | C. 楚州安抚侯 | D. 顺天护国侯', a: 'A', note: '生前得不到的尊重，死后化作了虚无的谥号。' },
+    { type: '选择', q: '书中未提及的梁山征讨对象是？', options: 'A. 辽国 | B. 田虎 | C. 王庆 | D. （此为陷阱，以上皆提及）', a: 'D', note: '《水浒传》完整版通常包含征辽及剿灭国内三大寇（田、王、方）。' },
+    { type: '选择', q: '梁山好汉中，原是东京八十万禁军教头的有？', options: 'A. 林冲、徐宁 | B. 林冲、王进 | C. 林冲、丘岳 | D. 林冲、周昂', a: 'A', note: '林冲是正教头，徐宁则是钩镰枪教头，王进并非梁山中人。' },
+    { type: '选择', q: '“没羽箭”张清的绝技是？', options: 'A. 飞石打人 | B. 连珠箭法 | C. 袖箭 | D. 流星锤', a: 'A', note: '其石子绝技曾在连败梁山十五将。' },
+    { type: '选择', q: '戴宗的外号“神行太保”源于他能？', options: 'A. 日行千里 | B. 夜间视物 | C. 水上疾走 | D. 攀岩走壁', a: 'A', note: '通过在他腿上贴神行太保符来实现。' },
+    { type: '选择', q: '梁山泊最初的寨主是？', options: 'A. 晁盖 | B. 王伦 | C. 宋江 | D. 林冲', a: 'B', note: '白衣秀士王伦，因心胸狭隘被林冲火并。' },
+    { type: '选择', q: '下列人物中，不属于“梁山泊早期创始团队成员”的是？', options: 'A. 杜迁 | B. 宋万 | C. 朱贵 | D. 白胜', a: 'D', note: '白胜是晁盖派系，杜、宋、朱是更早的王伦班底。' },
+    { type: '选择', q: '高俅发迹，是因为他擅长什么技艺得到端王（即后来的徽宗）赏识？', options: 'A. 书法 | B. 蹴鞠 C. 绘画 D. 诗词', a: 'B', note: '踢得一脚好球，彻底改变了高俅的人生命运。' },
+    { type: '选择', q: '李逵的故乡是？', options: 'A. 沂水县 | B. 江州 | C. 蓟州 | D. 大名府', a: 'A', note: '他在沂水县百丈村还有个老母亲，曾回去背母上山。' },
+    { type: '选择', q: '《水浒传》的成书，主要取材于？', options: 'A. 正史《宋史》 | B. 民间话本、杂剧 | C. 作者个人经历 | D. 前代小说汇编', a: 'B', note: '文学史通常认为这是民间集体创作与文人润色的结晶。' },
+
+    // --- 二、填空题 (51-95) ---
+    { type: '填空', q: '《水浒传》的作者，一般被认为是元末明初的 _____。', a: '施耐庵', note: '文学史上也有“施耐庵、罗贯中合著”的说法。' },
+    { type: '填空', q: '梁山好汉的根据地梁山泊，位于当时的 _____ 省。', a: '山东', note: '北宋时期的巨野泽，即现在的山东省梁山县。' },
+    { type: '填空', q: '史进因身上纹有九条青龙，得绰号 _____。', a: '九纹龙', note: '纹身是宋代江湖人的潮流标配。' },
+    { type: '填空', q: '鲁智深在五台山出家，智真长老赐其法名“智深”，他的俗家姓名为 _____。', a: '鲁达', note: '原本是渭州小种经略相公帐下的提辖官。' },
+    { type: '填空', q: '林冲发配沧州途中，在 _____ 被鲁智深所救。', a: '野猪林', note: '鲁智深一路暗地保护，直到危急关头出手。' },
+    { type: '填空', q: '杨志在东京街头卖刀，杀死的无赖名叫 _____。', a: '牛二', note: '杨志想卖刀求财，牛二却来寻死。' },
+    { type: '填空', q: '“智取生辰纲”中，白胜挑酒唱的民歌首句是“ _____ ”。', a: '赤日炎炎似火烧', note: '下句是“野田禾稻半枯焦”，描写了酷热的环境背景。' },
+    { type: '填空', q: '宋江的弟弟名叫 _____。', a: '宋清', note: '外号“铁扇子”，他在梁山负责排设筵宴。' },
+    { type: '填空', q: '武松在 _____（地点）连喝十八碗酒，后过岗打虎。', a: '景阳冈', note: '也叫“三碗不过冈”酒家。' },
+    { type: '填空', q: '帮助西门庆与潘金莲勾搭成奸的茶坊老板娘是 _____。', a: '王婆', note: '她是古典文学中最为人熟知的“牵线恶人”形象。' },
+    { type: '填空', q: '宋江在 _____（地名）的楼上题写了反诗。', a: '浔阳楼', note: '那是他一生中最苦闷、也最具反骨的时刻。' },
+    { type: '填空', q: '戴宗传假信计谋失败，是因为印章“ _____ ”四字被黄文炳识破。', a: '翰林蔡京', note: '蔡京给儿子蔡九写信不应用此公章，黄文炳眼尖发现了漏洞。' },
+    { type: '填空', q: '梁山好汉大闹江州后，在白龙庙举行了 _____。', a: '小聚义', note: '也有人称其为“白龙庙二十九人聚义”。' },
+    { type: '填空', q: '李逵的绰号是 _____。', a: '黑旋风', note: '形容他杀起人来像黑色风暴一样不可收拾。' },
+    { type: '填空', q: '“三打祝家庄”中，宋江从 _____ 老人处得知盘陀路的秘密。', a: '钟离', note: '钟离老人不仅救了梁山军，还指引了破阵之法。' },
+    { type: '填空', q: '扈三娘的哥哥是 _____，他向梁山求和。', a: '扈成', note: '可惜扈三娘全家最终还是被李逵所杀。' },
+    { type: '填空', q: '呼延灼用 _____ 阵法大败梁山初战。', a: '连环马', note: '此阵威力巨大，重骑兵连接，势如破竹。' },
+    { type: '填空', q: '徐宁的独门绝技是用 _____ 枪破连环马。', a: '钩镰', note: '由于钩镰枪能钩马腿，正克制连环马阵。' },
+    { type: '填空', q: '晁盖的遗嘱是：捉得 _____ 者，为梁山泊主。', a: '史文恭', note: '这道遗言直接决定了卢俊义上山的地位，也让宋江略显尴尬。' },
+    { type: '填空', q: '卢俊义的家仆，后来成为梁山好汉的是 _____。', a: '燕青', note: '绰号“浪子”，才华横溢，是全书最完美的形象之一。' },
+    { type: '填空', q: '吴用为逼朱仝上山，指使 _____ 害死了沧州知府的小衙内。', a: '李逵', note: '这是梁山行事极具争议、冷酷残忍的一幕。' },
+    { type: '填空', q: '梁山排座次时，石碣上的文字是由道士 _____ 翻译的。', a: '何玄通', note: '通过宗教化的神秘仪式，赋予了排名的绝对权威性。' },
+    { type: '填空', q: '梁山好汉中，以“孝”闻名的黑大汉是 _____。', a: '李逵', note: '李逵虽然杀人如麻，但对他娘确是一片至诚。' },
+    { type: '填空', q: '高俅征讨梁山，其党羽 _____ 在济州打造海鳅船。', a: '叶春', note: '这些先进的船只最终都被张顺、阮氏兄弟破坏。' },
+    { type: '填空', q: '招安后，梁山军首次出征大辽，首战夺取的州郡是 _____。', a: '檀州', note: '从此开启了梁山为朝廷征战四方的悲壮旅程。' },
+    { type: '填空', q: '征辽途中，宋江在 _____（地点）参禅，智真长老赠其偈语。', a: '五台山', note: '智真长老看出了宋江等人的命运终局。' },
+    { type: '填空', q: '征田虎时，投降梁山并拜公孙胜为师的敌国师是 _____。', a: '乔道清', note: '乔道清幻术高超，归顺后是极佳的战力。' },
+    { type: '填空', q: '“神驹子”马灵的法宝是 _____ 和风火轮。', a: '金砖', note: '他头上有第三只眼，外貌与神话中的华光天王相似。' },
+    { type: '填空', q: '琼英的飞石绝技，是其丈夫 _____ 在梦中传授。', a: '张清', note: '所谓“千里姻缘一线牵”，两人在梦中已结连理。' },
+    { type: '填空', q: '征王庆时，梁山好汉中 _____ 病故于途中。', a: '孙安', note: '孙安武艺极高，曾与秦明战成平手。' },
+    { type: '填空', q: '方腊在 _____（地名）自号圣公，建立政权。', a: '清溪县', note: '清溪县是方腊的大本营，也是最终决战地。' },
+    { type: '填空', q: '征方腊时，在杭州感染瘟疫而病故的梁山好汉有 _____ 位。', a: '6', note: '包括林冲在内的六人因风瘫、瘟疫等病在此。' },
+    { type: '填空', q: '秦明在清溪县被方腊之侄 _____ 杀死。', a: '方杰', note: '方杰武艺不凡，也是梁山五虎将之一秦明的终结者。' },
+    { type: '填空', q: '阮小七因身穿 _____（衣物），被奸臣诬告有僭越之心。', a: '龙袍', note: '其实是他在缴获的方腊御衣中贪玩穿戴，落下了把柄。' },
+    { type: '填空', q: '燕青在离开前，曾用韩信、彭越的典故劝告 _____ 急流勇退。', a: '卢俊义', note: '可惜卢麒麟执迷于功名，最终受害。' },
+    { type: '填空', q: '宋江被朝廷封为 _____ 安抚使兼兵马都总管。', a: '楚州', note: '官职虽然上去了，但死期也近了。' },
+    { type: '填空', q: '毒死宋江的御酒中，下的毒药是 _____。', a: '水银', note: '书中称为“慢药”，会逐渐渗入骨髓而死。' },
+    { type: '填空', q: '李逵临死前说：“生时伏侍哥哥，死了也只是 _____ 。”', a: '哥哥部下一个小鬼', note: '体现了李逵一生最纯粹也最悲剧的忠诚。' },
+    { type: '填空', q: '吴用和花荣是在得知宋江死讯后，在 _____（具体地点）自缢身亡。', a: '蓼儿洼', note: '蓼儿洼景致类似梁山泊，是他们寻找的精神寄托。' },
+    { type: '填空', q: '宋徽宗梦游时，在梁山泊忠义堂上见到 _____（人物）的牌位。', a: '宋江', note: '天子如梦方醒，却为时已晚。' },
+    { type: '填空', q: '梁山五虎将分别是：关胜、林冲、秦明、呼延灼、 _____。', a: '董平', note: '绰号“双枪将”，以心灵手巧、勇猛善战闻名。' },
+    { type: '填空', q: '梁山八骠骑兼先锋使中，箭法最精的是 _____。', a: '花荣', note: '绰号“小李广”，百步穿杨，从未虚发。' },
+    { type: '填空', q: '专管梁山钱粮支出纳入的好汉是 _____。', a: '蒋敬', note: '绰号“神算子”，精通算法，掌管财务大权。' },
+    { type: '填空', q: '负责制作梁山兵符印信、旌旗袍袄的是 _____ 和萧让。', a: '金大坚', note: '外号“玉臂匠”，擅长雕刻。' },
+    { type: '填空', q: '《水浒传》的别名之一是《 _____ 》。', a: '忠义水浒传', note: '这个名字体现了宋江追求的核心价值观。' },
+
+    // --- 三、简答题 (96-100) ---
+    { type: '简答', q: '简述“智取生辰纲”中吴用的计谋核心步骤，并分析此事件对梁山发展的意义。', note: '计谋步骤：1.利用酷热天气诱渴；2.扮作枣商消除戒心；3.一桶真酒诱导，另一桶巧妙下药；4.白胜演戏，杨志中计。意义：它是梁山事业的起点，获得了巨额资金，并促成了晁盖集团的成型，打破了杨志的体制梦想，是江湖力量对抗官方财源的象征。' },
+    { type: '简答', q: '“林冲风雪山神庙”是人物塑造的经典片段。请结合具体情节，分析林冲性格在此事件前后发生了怎样的转变。', note: '转变前：极度隐忍、委曲求全。即便被发配、被暗杀，依然修缮草料场，幻想刑满归家。转变后：彻底觉醒、绝望爆发。听闻陆谦密谋后明白官逼民反，无路可退，由“软弱教头”转变为“复仇死神”，那一刻的杀伐果决奠定了他梁山战神的基础。' },
+    { type: '简答', q: '宋江力主招安，而武松、鲁智深、李逵等人强烈反对。请阐述双方主要理由，并分析这场“招安之辩”所反映的梁山内部矛盾。', note: '宋江理由：求名于后世，为兄弟谋封妻荫子。反对派理由：朝廷腐败不可信（鲁智深）、自由自在最快活（李逵）、招安冷了人心（武松）。矛盾反映：这是江湖自由主义与儒家忠君思想的冲突，是平民阶层对上升通道的渴望与对腐朽体制绝望之间的对立。' },
+    { type: '简答', q: '“征方腊”是梁山好汉的覆灭之战。与之前征辽、田虎、王庆相比，此战在过程与结果上有何显著不同？体现了怎样的创作意图？', note: '不同：战况极度惨烈，108将死伤大半，不再有公孙胜等神力相助，甚至充满瘟疫与意外。意图：通过如此惨烈的毁灭，作者揭示了招安之路的虚无与悲惨，强化了“狡兔死走狗烹”的历史真实感，将英雄传奇升华为深度的人性悲剧。' },
+    { type: '简答', q: '“楚州毒酒”是全书结局的高潮。请解读宋江毒死李逵这一行为，并分析“忠义”二字在全书结尾处的复杂性与悲剧性。', note: '解读：宋江杀李逵是为了保全他最后一点“忠义”的名节（怕李逵造反），用兄弟的命来殉自己的名。复杂性：此处的“忠”是对昏君的愚忠，“义”是被“忠”裹挟的牺牲。这种忠义在结尾彻底幻灭，揭示了在黑暗社会下，高尚的道德追求最终成了权谋者的祭品。' }
+];
+
+// 2. 开始测验：切换显示状态并渲染题目
+function startQuiz() {
+    const cover = document.getElementById('quiz-cover');
+    const content = document.getElementById('quiz-content');
+    
+    if (cover) cover.style.display = 'none';
+    if (content) content.style.display = 'block';
+    
+    renderQuestions(); 
+}
+
+// 3. 核心渲染函数：按题型分区生成 HTML
+function renderQuestions() {
+    const container = document.getElementById('quiz-app');
+    const questions = GLOBAL_QUIZ_DATA;
+if (!container) {
+        console.error("找不到 quiz-app 容器！");
+        return;
+    }
+    container.innerHTML = ""; // 强制清空再渲染，确保不会空白
+    const sections = [
+        { title: '第一部分：选择题', type: '选择' },
+        { title: '第二部分：填空题', type: '填空' },
+        { title: '第三部分：简答题', type: '简答' }
+    ];
+
+    sections.forEach(sec => {
+        const filtered = questions.filter(item => item.type === sec.type);
+        if (filtered.length > 0) {
+            // 渲染分区标题
+            const header = document.createElement('h2');
+            header.style.cssText = "color:#8b1a1a; border-bottom:2px solid #8b1a1a; margin-top:40px; padding-bottom:10px;";
+            header.innerText = sec.title;
+            container.appendChild(header);
+
+            filtered.forEach((item, idx) => {
+                const qId = `q-${sec.type}-${idx}`; // 生成唯一ID
+                const div = document.createElement('div');
+                div.style.cssText = "margin-bottom:30px; padding:20px; background:#fff; border:1px solid #eee; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.05);";
+
+                let html = `<p style="font-size:1.1rem;"><strong>${idx + 1}.</strong> ${item.q}</p>`;
+
+                // --- 分支：选择题 ---
+                if (item.type === '选择') {
+                    const opts = item.options.split('|');
+                    html += `<div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:15px;">`;
+                    opts.forEach(opt => {
+                        const val = opt.trim().charAt(0); // 获取 A, B, C, D
+                        html += `<button onclick="checkSelect(this, '${val}', '${item.a}', '${qId}')" 
+                                 style="padding:8px 20px; border:1px solid #ccc; background:#fff; cursor:pointer; border-radius:4px; transition:0.3s;">
+                                 ${opt.trim()}
+                                 </button>`;
+                    });
+                    html += `</div>`;
+                } 
+                // --- 分支：填空题 ---
+                else if (item.type === '填空') {
+                    html += `<div style="margin-top:15px;">
+                                <input type="text" id="input-${qId}" placeholder="在此输入答案..." 
+                                 style="padding:10px; width:250px; border:1px solid #ccc; border-radius:4px;">
+                                <button onclick="checkFill('${qId}', '${item.a}')" 
+                                 style="padding:10px 20px; background:#8b1a1a; color:white; border:none; border-radius:4px; margin-left:10px; cursor:pointer;">提交</button>
+                             </div>`;
+                }
+                // --- 分支：简答题 ---
+                else {
+                    html += `<div style="margin-top:15px;">
+                                <textarea id="input-${qId}" placeholder="请阐述你的见解..." 
+                                 style="padding:10px; width:100%; height:80px; border:1px solid #ccc; border-radius:4px;"></textarea>
+                                <button onclick="checkBrief('${qId}')" 
+                                 style="padding:10px 20px; background:#333; color:white; border:none; border-radius:4px; margin-top:10px; cursor:pointer;">完成思考</button>
+                             </div>`;
+                }
+
+                // 反馈区域与解析区域（默认隐藏）
+                html += `
+                    <div id="feedback-${qId}" style="margin-top:15px; display:none;"></div>
+                    <details id="note-${qId}" style="margin-top:10px; display:none;">
+                        <summary style="color:#8b1a1a; cursor:pointer; font-weight:bold;">查看解析</summary>
+                        <div style="margin-top:10px; padding:12px; background:#f9f9f9; border-left:4px solid #8b1a1a; font-size:0.9rem;">
+                            <strong>解析：</strong>${item.note}
+                        </div>
+                    </details>`;
+
+                div.innerHTML = html;
+                container.appendChild(div);
+            });
+        }
+    });
+}
+
+// 4. 判分逻辑函数
+function checkSelect(btn, userVal, correctVal, qId) {
+    const feedback = document.getElementById(`feedback-${qId}`);
+    const note = document.getElementById(`note-${qId}`);
+    feedback.style.display = "block";
+    note.style.display = "block";
+
+    if (userVal === correctVal) {
+        btn.style.background = "#dcfce7";
+        btn.style.borderColor = "#16a34a";
+        feedback.innerHTML = `<span style="color:#16a34a; font-weight:bold;">✅ 回答正确！</span>`;
+    } else {
+        btn.style.background = "#fee2e2";
+        btn.style.borderColor = "#ef4444";
+        feedback.innerHTML = `<span style="color:#ef4444; font-weight:bold;">❌ 回答错误，正确答案是 ${correctVal}</span>`;
+    }
+    // 禁用该题按钮
+    const buttons = btn.parentElement.querySelectorAll('button');
+    buttons.forEach(b => b.onclick = null);
+}
+
+function checkFill(qId, correctVal) {
+    const input = document.getElementById(`input-${qId}`);
+    const feedback = document.getElementById(`feedback-${qId}`);
+    const note = document.getElementById(`note-${qId}`);
+    feedback.style.display = "block";
+    note.style.display = "block";
+
+    if (input.value.trim().toLowerCase() === correctVal.toLowerCase()) {
+        feedback.innerHTML = `<span style="color:#16a34a; font-weight:bold;">✅ 恭喜，完全正确！</span>`;
+        input.style.borderColor = "#16a34a";
+    } else {
+        feedback.innerHTML = `<span style="color:#ef4444; font-weight:bold;">❌ 正确答案是：${correctVal}</span>`;
+        input.style.borderColor = "#ef4444";
+    }
+}
+
+function checkBrief(qId) {
+    const feedback = document.getElementById(`feedback-${qId}`);
+    const note = document.getElementById(`note-${qId}`);
+    feedback.style.display = "block";
+    note.style.display = "block";
+    feedback.innerHTML = `<span style="color:#333; font-weight:bold;">💡 已记录你的思考。请对照解析自我核对：</span>`;
+}
+    function changeTab(element, title) {
+        const items = document.querySelectorAll('.nav-item');
+        items.forEach(item => item.classList.remove('active'));
+        element.classList.add('active');
+        
+        document.getElementById('content-title').innerText = title;
+        const body = document.getElementById('content-body');
+        if (contentData[title]) {
+            body.innerHTML = contentData[title];
+        }
+    }
+
+    // 初始化显示
+    window.onload = () => {
+        const first = document.querySelector('.nav-item');
+        if(first) changeTab(first, '拾叁 · 血染征袍');
+    };
+
+    const BadgeManager = {
+        STORAGE_KEY: 'badge_data_v1',
+        
+        getData() {
+            try {
+                const data = localStorage.getItem(this.STORAGE_KEY);
+                return data ? JSON.parse(data) : {
+                    unlockedBadges: [],
+                    badgeUnlockTime: {},
+                    readingProgress: {
+                        xiyou: { stage1: false, stage2: false, stage3: false },
+                        sanguo: { stage1: false, stage2: false, stage3: false },
+                        shuihu: { stage1: false, stage2: false, stage3: false },
+                        honglou: { stage1: false, stage2: false, stage3: false }
+                    }
+                };
+            } catch (e) {
+                return {
+                    unlockedBadges: [],
+                    badgeUnlockTime: {},
+                    readingProgress: {
+                        xiyou: { stage1: false, stage2: false, stage3: false },
+                        sanguo: { stage1: false, stage2: false, stage3: false },
+                        shuihu: { stage1: false, stage2: false, stage3: false },
+                        honglou: { stage1: false, stage2: false, stage3: false }
+                    }
+                };
+            }
+        },
+        
+        saveData(data) {
+            try {
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+            } catch (e) {
+                console.error('保存勋章数据失败:', e);
+            }
+        },
+        
+        isStageRead(book, stage) {
+            const data = this.getData();
+            return data.readingProgress[book] && data.readingProgress[book]['stage' + stage];
+        },
+        
+        markStageRead(book, stage) {
+            const data = this.getData();
+            if (!data.readingProgress[book]) {
+                data.readingProgress[book] = { stage1: false, stage2: false, stage3: false };
+            }
+            data.readingProgress[book]['stage' + stage] = true;
+            this.saveData(data);
+            return this.checkAndUnlockBadges();
+        },
+        
+        isBookCompleted(book) {
+            const data = this.getData();
+            const progress = data.readingProgress[book];
+            return progress && progress.stage1 && progress.stage2 && progress.stage3;
+        },
+        
+        getCompletedBooksCount() {
+            let count = 0;
+            ['xiyou', 'sanguo', 'shuihu', 'honglou'].forEach(book => {
+                if (this.isBookCompleted(book)) count++;
+            });
+            return count;
+        },
+        
+        checkAndUnlockBadges() {
+            const data = this.getData();
+            const newlyUnlocked = [];
+            
+            const bookBadges = [
+                { id: 'xiyou_reader', name: '西游行者', desc: '完成西游记阅读', book: 'xiyou' },
+                { id: 'sanguo_reader', name: '三国通览', desc: '完成三国演义阅读', book: 'sanguo' },
+                { id: 'shuihu_reader', name: '水浒知音', desc: '完成水浒传阅读', book: 'shuihu' },
+                { id: 'honglou_reader', name: '红楼初探', desc: '完成红楼梦阅读', book: 'honglou' },
+                { id: 'all_books_reader', name: '四大名著通', desc: '完成全部名著阅读', book: 'all' }
+            ];
+            
+            bookBadges.forEach(badge => {
+                if (data.unlockedBadges.includes(badge.id)) return;
+                
+                let shouldUnlock = false;
+                if (badge.book === 'all') {
+                    shouldUnlock = this.getCompletedBooksCount() >= 4;
+                } else {
+                    shouldUnlock = this.isBookCompleted(badge.book);
+                }
+                
+                if (shouldUnlock) {
+                    data.unlockedBadges.push(badge.id);
+                    data.badgeUnlockTime[badge.id] = Date.now();
+                    newlyUnlocked.push(badge);
+                }
+            });
+            
+            if (newlyUnlocked.length > 0) {
+                this.saveData(data);
+            }
+            
+            return newlyUnlocked;
+        }
+    };
+
+    let autoReadStartTime = Date.now();
+    let hasScrolledEnough = false;
+    const MIN_READ_TIME = 30000;
+    const SCROLL_THRESHOLD = 0.8;
+    let autoReadMarked = false;
+
+    function initAutoReadTracking() {
+        if (BadgeManager.isStageRead('shuihu', 3)) {
+            autoReadMarked = true;
+            return;
+        }
+        
+        const mainContent = document.querySelector('.main-content');
+        
+        mainContent.addEventListener('scroll', function() {
+            if (autoReadMarked) return;
+            
+            const scrollPercent = (mainContent.scrollTop + mainContent.clientHeight) / mainContent.scrollHeight;
+            if (scrollPercent >= SCROLL_THRESHOLD) {
+                hasScrolledEnough = true;
+                checkAndMarkAutoRead();
+            }
+        });
+        
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && !autoReadMarked) {
+                checkAndMarkAutoRead();
+            }
+        });
+        
+        window.addEventListener('beforeunload', function() {
+            if (!autoReadMarked) {
+                checkAndMarkAutoRead();
+            }
+        });
+    }
+
+    function checkAndMarkAutoRead() {
+        if (autoReadMarked) return;
+        
+        const readTime = Date.now() - autoReadStartTime;
+        if (readTime >= MIN_READ_TIME && hasScrolledEnough) {
+            const newlyUnlocked = BadgeManager.markStageRead('shuihu', 3);
+            autoReadMarked = true;
+            
+            if (newlyUnlocked.length > 0) {
+                localStorage.setItem('pending_badge_notification', newlyUnlocked[0].id);
+            }
+        }
+    }
+
+    function showBadgeNotification(badge) {
+        document.getElementById('badgeName').textContent = badge.name;
+        document.getElementById('badgeDesc').textContent = badge.desc;
+        
+        const card = document.getElementById('badgeCard');
+        const rarityColors = {
+            common: '#d4af37',
+            rare: '#9c27b0',
+            epic: '#ff6b35'
+        };
+        const color = rarityColors[badge.rarity] || rarityColors.common;
+        card.style.border = '4px solid ' + color;
+        card.style.boxShadow = '0 10px 40px ' + color + '80';
+        document.getElementById('badgeName').style.color = color;
+        
+        document.getElementById('badgeNotification').classList.add('show');
+    }
+
+    function closeBadgeNotification() {
+        document.getElementById('badgeNotification').classList.remove('show');
+    }
+
+    window.addEventListener('load', function() {
+        initAutoReadTracking();
+    });
+</script>
+</body>
+</html>

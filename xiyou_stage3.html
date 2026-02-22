@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>终成正果 - 西游记专题导览</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    display: flex;
+    height: 100vh;
+    font-family: "STKaiti", "Microsoft YaHei", serif;
+    background: linear-gradient(135deg, #e6fffb, #fff9e6);
+}
+
+/* 左侧栏 */
+.sidebar {
+    width: 300px;
+    background: linear-gradient(180deg, #008b8b 0%, #005f5f 100%);
+    color: #FFD700;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 5px 0 18px rgba(0,0,0,0.25);
+    border-right: 2px solid #FFD700;
+}
+
+.sidebar h2 {
+    text-align: center;
+    font-size: 1.6rem;
+    margin: 0;
+    padding: 40px 0;
+    background: rgba(0,0,0,0.15);
+    letter-spacing: 4px;
+    color: #FFD700;
+}
+
+.nav-item {
+    padding: 22px 30px;
+    cursor: pointer;
+    transition: 0.3s;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    font-size: 1.1rem;
+    color: #ffe89a;
+}
+
+.nav-item:hover {
+    background: rgba(0,139,139,0.18);
+    padding-left: 45px;
+    color: #fff8e1;
+}
+
+.nav-item.active {
+    background: linear-gradient(90deg, #FFD700, #e6c200);
+    color: #004d40;
+    font-weight: bold;
+}
+
+/* 内容区 */
+.main-content {
+    flex: 1;
+    padding: 50px;
+    overflow-y: auto;
+    background-image: url('https://www.transparenttextures.com/patterns/papyrus.png');
+}
+
+.content-box {
+    background: rgba(255, 252, 230, 0.95);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px;
+    border: 1px solid #FFD700;
+    box-shadow: 0 0 25px rgba(0,0,0,0.15);
+    min-height: 80vh;
+}
+
+h1 {
+    color: #C02C3F;
+    border-left: 8px solid #FFD700;
+    padding-left: 15px;
+}
+
+h2 {
+    color: #C02C3F;
+    border-bottom: 1px solid #FFD700;
+    padding-bottom: 5px;
+    margin-top: 30px;
+}
+
+h3 {
+    color: #8b1a1a;
+    margin-top: 24px;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed rgba(192,44,63,0.35);
+    font-size: 1.2rem;
+}
+ p {
+    line-height: 1.8;
+    text-indent: 2em;
+    font-size: 1.2rem;       
+ }
+.back-link {
+    position: fixed;
+    top: 20px;
+    right: 40px;
+    text-decoration: none;
+    color: #C02C3F;
+    font-weight: bold;
+    background: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+th {
+    background: #fff3b0;
+}
+
+.badge-notification-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.badge-notification-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.badge-notification-card {
+    background: linear-gradient(135deg, #fff9e6, #fff);
+    border-radius: 20px;
+    padding: 40px 50px;
+    text-align: center;
+    max-width: 350px;
+    transform: scale(0.8);
+    transition: transform 0.3s;
+}
+
+.badge-notification-overlay.show .badge-notification-card {
+    transform: scale(1);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <h2>终成正果</h2>
+    <div class="nav-item active" onclick="changeTab(this, '拾叁 · 取得真经')">拾叁·取得真经</div>
+    <div class="nav-item" onclick="changeTab(this, '拾肆 · 八十一难盘点')">拾肆·八十一难盘点</div>
+    <div class="nav-item" onclick="changeTab(this, '拾伍 · 人物封神')">拾伍·人物封神</div>
+    <div class="nav-item" onclick="changeTab(this, '拾陆 · 文化影响')">拾陆·文化影响</div>
+    <div class="nav-item" onclick="changeTab(this, '拾柒 · 名著结语')">拾柒·名著结语</div>
+    <div class="nav-item" onclick="changeTab(this, '拾捌 · 西游之路')">拾捌·西游之路</div>
+    <div class="nav-item" onclick="changeTab(this, '拾玖 · 百题挑战')">拾玖·百题挑战</div>
+</div>
+
+<div class="main-content">
+    <a href="xiyou.html" class="back-link">← 返回主页</a>
+
+    <div class="content-box">
+        <h1 id="content-title">拾叁 · 取得真经</h1>
+        <div id="content-body"></div>
+    </div>
+</div>
+
+<div class="badge-notification-overlay" id="badgeNotification">
+    <div class="badge-notification-card" id="badgeCard">
+        <div style="font-size: 1.5rem; color: #8b4513; margin-bottom: 20px;">🎉 恭喜获得勋章！</div>
+        <div style="font-size: 2.5rem; margin-bottom: 15px;">🎖️</div>
+        <div style="font-size: 1.8rem; font-weight: bold; margin-bottom: 10px;" id="badgeName"></div>
+        <div style="color: #666; margin-bottom: 20px;" id="badgeDesc"></div>
+        <button onclick="closeBadgeNotification()" style="background: #8b4513; color: #fff; border: none; padding: 10px 30px; border-radius: 20px; font-size: 1rem; cursor: pointer;">太棒了！</button>
+    </div>
+</div>
+
+<script>
+const contentData = {
+
+"拾叁 · 取得真经": `
+<h3>一、灵山脚下</h3>
+<p>
+    贞观二十七年（小说设定时间），师徒四人历经一十四载寒暑，终于抵达天竺国灵山脚下。
+</p>
+<p>
+    远望灵山祥云缭绕，瑞气千条。唐僧下马，沐浴更衣，虔诚礼拜。
+</p>
+<p>
+    玉真观金顶大仙出迎，指引他们从凌云渡乘无底船过河。唐僧上船时，见上游漂下一具死尸，大惊。悟空笑道："师父莫怕，那原来是你！"原来脱去凡胎，方能成佛。
+</p>
+
+<h3>二、拜见如来</h3>
+<p>
+    师徒四人来到雷音寺大雄宝殿，拜见如来佛祖。如来嘉奖他们历经千辛万苦，取得真经，普度众生。
+</p>
+<p>
+    如来命阿傩、伽叶两位尊者带领他们去藏经阁取经。不料二位尊者索要"人事"（即贿赂），唐僧无奈，只得将唐王所赐紫金钵盂献上。
+</p>
+
+<h3>三、白雄尊者送经</h3>
+<div style="border: 2px dashed #008b8b; padding: 20px; border-radius: 8px; margin: 15px 0; background: rgba(0, 139, 139, 0.05);">
+<p>
+    师徒四人取得真经，满心欢喜，准备返回东土。不料燃灯古佛得知阿傩、伽叶传了无字经书，命白雄尊者前去夺回，让他们重新求取有字真经。
+</p>
+<p>
+    白雄尊者化作一阵狂风，将经书吹散。师徒四人发现经书无字，只得返回雷音寺，向如来哭诉。如来笑道："经不可轻传，亦不可轻取。"命阿傩、伽叶再次传经。
+</p>
+</div>
+
+<h3>四、返回东土</h3>
+<p>
+    师徒四人取得有字真经共五千零四十八卷，观音菩萨查点取经簿，发现还少一难，即命揭谛追上金刚，让他们再降一难，以完九九归真之数。
+</p>
+<p>
+    金刚将师徒四人坠落在通天河西岸，老鼋驮他们过河。行至江心，老鼋问起当年所托之事（问如来自己何时能脱本壳，得人身），唐僧忘了回答，老鼋大怒，将他们翻入河中。
+</p>
+<p>
+    师徒四人上岸后，发现经书被水浸湿，只得在石上晾晒。不料经尾残缺，至今藏经阁所藏经书仍有残缺。
+</p>
+
+<h3>五、长安复命</h3>
+<p>
+    师徒四人回到长安，满城百姓夹道欢迎。唐王李世民亲自出迎，设宴款待。唐僧献上真经，唐王大喜，命人在大雁塔修建藏经阁，珍藏真经。
+</p>
+<p>
+    唐僧本欲开坛讲经，不料八大金刚降临，传如来法旨，命他们速回灵山受封。师徒四人只得告别唐王，随金刚返回灵山。
+</p>
+
+<div style="margin-top: 40px; padding: 25px; background-color: #fff4d6; border-left: 6px solid #C02C3F; border-radius: 8px;">
+    <h3 style="margin-top: 0; color: #C02C3F;">💡 专题思考：真经的意义</h3>
+    
+    <p><b>🤔 思考一：无字经与有字经</b><br>
+    阿傩、伽叶先传无字经，后传有字经，这其中蕴含深意。无字经代表"空"，是佛法的最高境界；有字经代表"有"，是度化众生的方便法门。唐僧取回有字经，说明众生根器不同，需要循序渐进。真正的智慧，不在于经书的文字，而在于对佛法的领悟和实践。</p>
+    
+    <p><b>🙏 思考二：取经的真正价值</b><br>
+    唐僧取经，表面上是取回佛经，实际上是完成了一次心灵的修行。真经不在西天，而在路上。十万八千里的跋涉，九九八十一难的考验，才是真正的"真经"。正如如来所说："经不可轻传，亦不可轻取。"只有历经磨难，才能真正领悟佛法的精髓。</p>
+    
+    <p><b>🌟 思考三：残缺的圆满</b><br>
+    经书在通天河被水浸湿，晾晒时经尾残缺。这看似遗憾，实则寓意深远——世间没有完美无缺的事物，残缺本身就是一种圆满。正如《金刚经》所言："一切有为法，如梦幻泡影。"经书的残缺，恰恰提醒人们不要执着于文字相，而要体悟佛法的真谛。</p>
+    
+    <p><b>📖 思考四：从"取经"到"传经"</b><br>
+    唐僧取经的最终目的，不是为了自己成佛，而是为了普度众生。他将真经带回东土，让佛法在中土弘扬，这才是取经的真正意义。取经是"自度"，传经是"度他"，二者结合，才是完整的菩萨道。</p>
+</div>
+`,
+
+"拾肆 · 八十一难盘点": `
+<h2 style="color: #008b8b; border-bottom: 2px solid #FFD700; padding-bottom: 10px;">📊 九九八十一难全览表</h2>
+<p style="margin-bottom: 20px; color: #666;">唐僧师徒历经九九八十一难，方得真经。下表详列每一难的名称与简要描述：</p>
+
+<table style="width:100%; border-collapse: collapse; background:#fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); font-size: 0.95rem;">
+<thead>
+<tr style="background:#008b8b; color:#000;">
+    <th style="padding:12px; border:1px solid #005f5f; width:8%;">难数</th>
+    <th style="padding:12px; border:1px solid #005f5f; width:25%;">难名</th>
+    <th style="padding:12px; border:1px solid #005f5f; width:67%;">简要描述</th>
+</tr>
+</thead>
+<tbody>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第一难</td><td style="padding:10px; border:1px solid #ddd;">金蝉遭贬</td><td style="padding:10px; border:1px solid #ddd;">如来佛祖第二弟子金蝉子，因不听讲法，轻慢大教，被贬下凡，投胎为唐僧。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第二难</td><td style="padding:10px; border:1px solid #ddd;">出胎几杀</td><td style="padding:10px; border:1px solid #ddd;">唐僧出生后，母亲殷温娇为保其性命，将他放入木盆，顺江漂流，后被金山寺法明和尚救起。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第三难</td><td style="padding:10px; border:1px solid #ddd;">满月抛江</td><td style="padding:10px; border:1px solid #ddd;">唐僧满月时，母亲将他抛入江中，以躲避仇人刘洪的迫害。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第四难</td><td style="padding:10px; border:1px solid #ddd;">寻亲报冤</td><td style="padding:10px; border:1px solid #ddd;">唐僧长大后，得知自己身世，前往京城寻亲，最终为父报仇，全家团聚。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第五难</td><td style="padding:10px; border:1px solid #ddd;">出城逢虎</td><td style="padding:10px; border:1px solid #ddd;">唐僧辞别唐王，西行取经，出城不久即遇到猛虎，幸得镇山太保刘伯钦相救。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第六难</td><td style="padding:10px; border:1px solid #ddd;">落坑折从</td><td style="padding:10px; border:1px solid #ddd;">唐僧在双叉岭落入深坑，被老虎精、野牛精、熊罴精捉住，随从被吃掉。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第七难</td><td style="padding:10px; border:1px solid #ddd;">双叉岭上</td><td style="padding:10px; border:1px solid #ddd;">唐僧在双叉岭遭遇三妖，幸得太白金星相救。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第八难</td><td style="padding:10px; border:1px solid #ddd;">两界山头</td><td style="padding:10px; border:1px solid #ddd;">唐僧在两界山（五行山）下救出孙悟空，收为大徒弟。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第九难</td><td style="padding:10px; border:1px solid #ddd;">陡涧换马</td><td style="padding:10px; border:1px solid #ddd;">唐僧在蛇盘山鹰愁涧被玉龙吃掉坐骑，玉龙化作白马，成为唐僧脚力。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第十难</td><td style="padding:10px; border:1px solid #ddd;">夜被火烧</td><td style="padding:10px; border:1px solid #ddd;">唐僧在观音禅院，金池长老贪图袈裟，放火欲烧死唐僧师徒。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第十一难</td><td style="padding:10px; border:1px solid #ddd;">失却袈裟</td><td style="padding:10px; border:1px solid #ddd;">黑风山黑熊精趁火打劫，偷走唐僧袈裟。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第十二难</td><td style="padding:10px; border:1px solid #ddd;">收降八戒</td><td style="padding:10px; border:1px solid #ddd;">唐僧在高老庄收猪八戒为二徒弟。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第十三难</td><td style="padding:10px; border:1px solid #ddd;">黄风怪阻</td><td style="padding:10px; border:1px solid #ddd;">黄风岭黄风怪用三昧神风打败孙悟空，后得灵吉菩萨相助才降伏。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第十四难</td><td style="padding:10px; border:1px solid #ddd;">请求灵吉</td><td style="padding:10px; border:1px solid #ddd;">孙悟空前往小须弥山请灵吉菩萨降伏黄风怪。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第十五难</td><td style="padding:10px; border:1px solid #ddd;">流沙难渡</td><td style="padding:10px; border:1px solid #ddd;">流沙河八百里汹涌，鹅毛不起，师徒无法渡过。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第十六难</td><td style="padding:10px; border:1px solid #ddd;">收得沙僧</td><td style="padding:10px; border:1px solid #ddd;">唐僧在流沙河收沙悟净为三徒弟。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第十七难</td><td style="padding:10px; border:1px solid #ddd;">四圣显化</td><td style="padding:10px; border:1px solid #ddd;">观音菩萨、文殊菩萨、普贤菩萨、黎山老母化作母女四人，考验师徒禅心。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第十八难</td><td style="padding:10px; border:1px solid #ddd;">五庄观中</td><td style="padding:10px; border:1px solid #ddd;">师徒在五庄观偷吃人参果，被镇元大仙捉住。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第十九难</td><td style="padding:10px; border:1px solid #ddd;">难活人参</td><td style="padding:10px; border:1px solid #ddd;">孙悟空推倒人参果树，多方求医无果，后得观音菩萨相助才救活果树。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第二十难</td><td style="padding:10px; border:1px solid #ddd;">贬退心猿</td><td style="padding:10px; border:1px solid #ddd;">白骨精三次变化，唐僧肉眼凡胎，误认为孙悟空滥杀无辜，将他赶走。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第二十一难</td><td style="padding:10px; border:1px solid #ddd;">黑松林失散</td><td style="padding:10px; border:1px solid #ddd;">唐僧在黑松林被黄袍怪捉住，与徒弟失散。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第二十二难</td><td style="padding:10px; border:1px solid #ddd;">宝象国捎书</td><td style="padding:10px; border:1px solid #ddd;">唐僧被黄袍怪变成老虎，八戒去花果山请回孙悟空。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第二十三难</td><td style="padding:10px; border:1px solid #ddd;">金銮殿变虎</td><td style="padding:10px; border:1px solid #ddd;">黄袍怪将唐僧变成老虎，关在笼中。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第二十四难</td><td style="padding:10px; border:1px solid #ddd;">平顶山逢魔</td><td style="padding:10px; border:1px solid #ddd;">平顶山金角大王、银角大王捉住唐僧。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第二十五难</td><td style="padding:10px; border:1px solid #ddd;">莲花洞高悬</td><td style="padding:10px; border:1px solid #ddd;">孙悟空被银角大王用须弥山、峨眉山压住，后逃脱。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第二十六难</td><td style="padding:10px; border:1px solid #ddd;">乌鸡国救主</td><td style="padding:10px; border:1px solid #ddd;">乌鸡国国王被妖道推入井中淹死，孙悟空救活国王。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第二十七难</td><td style="padding:10px; border:1px solid #ddd;">被魔化身</td><td style="padding:10px; border:1px solid #ddd;">妖道变成唐僧模样，真假难辨。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第二十八难</td><td style="padding:10px; border:1px solid #ddd;">号山逢怪</td><td style="padding:10px; border:1px solid #ddd;">红孩儿用三昧真火烧伤孙悟空，后请观音菩萨收伏。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第二十九难</td><td style="padding:10px; border:1px solid #ddd;">请收红孩儿</td><td style="padding:10px; border:1px solid #ddd;">观音菩萨用金箍收伏红孩儿，封为善财童子。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第三十难</td><td style="padding:10px; border:1px solid #ddd;">黑水河衡阳</td><td style="padding:10px; border:1px solid #ddd;">黑水河鼍龙捉住唐僧，摩昂太子相助降伏。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第三十一难</td><td style="padding:10px; border:1px solid #ddd;">搬运车迟</td><td style="padding:10px; border:1px solid #ddd;">车迟国三妖道虎力大仙、鹿力大仙、羊力大仙与孙悟空斗法。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第三十二难</td><td style="padding:10px; border:1px solid #ddd;">大赌输赢</td><td style="padding:10px; border:1px solid #ddd;">孙悟空与三妖道比求雨、坐禅、隔板猜物，三妖道皆败。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第三十三难</td><td style="padding:10px; border:1px solid #ddd;">祛道兴僧</td><td style="padding:10px; border:1px solid #ddd;">车迟国国王信道灭僧，孙悟空破除妖术，恢复佛教。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第三十四难</td><td style="padding:10px; border:1px solid #ddd;">路逢大水</td><td style="padding:10px; border:1px solid #ddd;">通天河阻路，八百里宽，无法渡过。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第三十五难</td><td style="padding:10px; border:1px solid #ddd;">身落天河</td><td style="padding:10px; border:1px solid #ddd;">灵感大王捉住唐僧，沉入水底。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第三十六难</td><td style="padding:10px; border:1px solid #ddd;">鱼篮现身</td><td style="padding:10px; border:1px solid #ddd;">观音菩萨用鱼篮收伏灵感大王（金鱼精）。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第三十七难</td><td style="padding:10px; border:1px solid #ddd;">金兜山遇怪</td><td style="padding:10px; border:1px solid #ddd;">金兜山独角兕大王用金刚琢套走孙悟空的金箍棒。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第三十八难</td><td style="padding:10px; border:1px solid #ddd;">普天神难伏</td><td style="padding:10px; border:1px solid #ddd;">众天神兵器皆被金刚琢套走，无法降伏兕大王。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第三十九难</td><td style="padding:10px; border:1px solid #ddd;">问佛根源</td><td style="padding:10px; border:1px solid #ddd;">如来告知兕大王是太上老君的青牛，老君亲自收伏。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第四十难</td><td style="padding:10px; border:1px solid #ddd;">吃水遭毒</td><td style="padding:10px; border:1px solid #ddd;">西梁女国饮水怀孕，需落胎泉水解胎。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第四十一难</td><td style="padding:10px; border:1px solid #ddd;">西梁国留婚</td><td style="padding:10px; border:1px solid #ddd;">女儿国国王欲招唐僧为婿，唐僧假意应允后脱身。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第四十二难</td><td style="padding:10px; border:1px solid #ddd;">琵琶洞受苦</td><td style="padding:10px; border:1px solid #ddd;">蝎子精捉唐僧入琵琶洞，欲强行成亲，后被昴日星官收伏。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第四十三难</td><td style="padding:10px; border:1px solid #ddd;">再贬心猿</td><td style="padding:10px; border:1px solid #ddd;">真假美猴王事件，孙悟空再次被唐僧误解赶走。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第四十四难</td><td style="padding:10px; border:1px solid #ddd;">难辨猕猴</td><td style="padding:10px; border:1px solid #ddd;">六耳猕猴假冒孙悟空，真假难辨，后由如来识破。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第四十五难</td><td style="padding:10px; border:1px solid #ddd;">路阻火焰山</td><td style="padding:10px; border:1px solid #ddd;">火焰山八百里烈火，无法通过。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第四十六难</td><td style="padding:10px; border:1px solid #ddd;">求取芭蕉扇</td><td style="padding:10px; border:1px solid #ddd;">孙悟空三借芭蕉扇，扇灭火焰山大火。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第四十七难</td><td style="padding:10px; border:1px solid #ddd;">收缚魔王</td><td style="padding:10px; border:1px solid #ddd;">牛魔王与孙悟空大战，后哪吒父子助阵收伏。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第四十八难</td><td style="padding:10px; border:1px solid #ddd;">赛城扫塔</td><td style="padding:10px; border:1px solid #ddd;">祭赛国金光寺宝塔舍利被偷，孙悟空扫塔寻宝。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第四十九难</td><td style="padding:10px; border:1px solid #ddd;">取宝救僧</td><td style="padding:10px; border:1px solid #ddd;">九头虫偷走舍利，二郎神助孙悟空夺回。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第五十难</td><td style="padding:10px; border:1px solid #ddd;">棘林吟咏</td><td style="padding:10px; border:1px solid #ddd;">荆棘岭树精藤怪与唐僧吟诗论道，后欲强留唐僧。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第五十一难</td><td style="padding:10px; border:1px solid #ddd;">小雷音遇难</td><td style="padding:10px; border:1px solid #ddd;">黄眉大王假扮佛祖，捉住唐僧师徒。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第五十二难</td><td style="padding:10px; border:1px solid #ddd;">诸天神遭困</td><td style="padding:10px; border:1px solid #ddd;">二十八宿等天神皆被黄眉大王用人种袋收走。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第五十三难</td><td style="padding:10px; border:1px solid #ddd;">稀柿衕秽阻</td><td style="padding:10px; border:1px solid #ddd;">稀柿衕被烂柿子堵塞，八戒变成大猪拱开道路。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第五十四难</td><td style="padding:10px; border:1px solid #ddd;">朱紫国行医</td><td style="padding:10px; border:1px solid #ddd;">朱紫国国王患病，孙悟空悬丝诊脉治病。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第五十五难</td><td style="padding:10px; border:1px solid #ddd;">拯救疲癃</td><td style="padding:10px; border:1px solid #ddd;">孙悟空用无根水治好国王的病。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第五十六难</td><td style="padding:10px; border:1px solid #ddd;">降妖取后</td><td style="padding:10px; border:1px solid #ddd;">赛太岁抢走朱紫国金圣宫娘娘，孙悟空救回。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第五十七难</td><td style="padding:10px; border:1px solid #ddd;">七情迷没</td><td style="padding:10px; border:1px solid #ddd;">盘丝洞七个蜘蛛精捉住唐僧。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第五十八难</td><td style="padding:10px; border:1px solid #ddd;">多目遭伤</td><td style="padding:10px; border:1px solid #ddd;">百眼魔君（蜈蚣精）用金光阵困住孙悟空，毗蓝婆菩萨相助。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第五十九难</td><td style="padding:10px; border:1px solid #ddd;">路阻狮驼</td><td style="padding:10px; border:1px solid #ddd;">狮驼岭三大王青狮、白象、大鹏阻路。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第六十难</td><td style="padding:10px; border:1px solid #ddd;">怪分三色</td><td style="padding:10px; border:1px solid #ddd;">三大王各显神通，孙悟空多次被擒。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第六十一难</td><td style="padding:10px; border:1px solid #ddd;">城里遇灾</td><td style="padding:10px; border:1px solid #ddd;">狮驼国满城皆妖，唐僧被捉。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第六十二难</td><td style="padding:10px; border:1px solid #ddd;">请佛收魔</td><td style="padding:10px; border:1px solid #ddd;">如来佛祖亲自收伏大鹏金翅雕。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第六十三难</td><td style="padding:10px; border:1px solid #ddd;">比丘救子</td><td style="padding:10px; border:1px solid #ddd;">比丘国国王听信妖道，欲用小儿心肝做药引。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第六十四难</td><td style="padding:10px; border:1px solid #ddd;">辨认真邪</td><td style="padding:10px; border:1px solid #ddd;">白鹿精假扮国丈，孙悟空识破并降伏。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第六十五难</td><td style="padding:10px; border:1px solid #ddd;">松林救怪</td><td style="padding:10px; border:1px solid #ddd;">唐僧在松林救下被绑的女子，实为金鼻白毛老鼠精。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第六十六难</td><td style="padding:10px; border:1px solid #ddd;">僧房卧病</td><td style="padding:10px; border:1px solid #ddd;">唐僧在镇海禅林寺染病，老鼠精趁机作乱。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第六十七难</td><td style="padding:10px; border:1px solid #ddd;">无底洞遭困</td><td style="padding:10px; border:1px solid #ddd;">老鼠精将唐僧掳入无底洞，欲强行成亲。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第六十八难</td><td style="padding:10px; border:1px solid #ddd;">请天神收鼠</td><td style="padding:10px; border:1px solid #ddd;">托塔天王李靖收伏金鼻白毛老鼠精。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第六十九难</td><td style="padding:10px; border:1px solid #ddd;">灭法国难行</td><td style="padding:10px; border:1px solid #ddd;">灭法国国王杀和尚，孙悟空剃光皇宫众人头发。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第七十难</td><td style="padding:10px; border:1px solid #ddd;">隐雾山遇怪</td><td style="padding:10px; border:1px solid #ddd;">豹子精捉住唐僧，用假人头欺骗徒弟。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第七十一难</td><td style="padding:10px; border:1px solid #ddd;">凤仙郡求雨</td><td style="padding:10px; border:1px solid #ddd;">凤仙郡大旱三年，孙悟空求雨救灾。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第七十二难</td><td style="padding:10px; border:1px solid #ddd;">失落兵器</td><td style="padding:10px; border:1px solid #ddd;">玉华州三王子拜师，兵器被黄狮精偷走。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第七十三难</td><td style="padding:10px; border:1px solid #ddd;">会庆钉钯</td><td style="padding:10px; border:1px solid #ddd;">黄狮精开钉钯宴，孙悟空等夺回兵器。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第七十四难</td><td style="padding:10px; border:1px solid #ddd;">竹节山遭难</td><td style="padding:10px; border:1px solid #ddd;">九灵元圣（九头狮子）捉走唐僧和三个王子。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第七十五难</td><td style="padding:10px; border:1px solid #ddd;">玄英洞受苦</td><td style="padding:10px; border:1px solid #ddd;">青龙山三只犀牛精捉住唐僧。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第七十六难</td><td style="padding:10px; border:1px solid #ddd;">赶捉犀牛</td><td style="padding:10px; border:1px solid #ddd;">四木禽星助孙悟空降伏三只犀牛精。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第七十七难</td><td style="padding:10px; border:1px solid #ddd;">天竺招婚</td><td style="padding:10px; border:1px solid #ddd;">天竺国公主抛绣球招驸马，唐僧被选中。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第七十八难</td><td style="padding:10px; border:1px solid #ddd;">铜台府监禁</td><td style="padding:10px; border:1px solid #ddd;">铜台府寇员外被杀，唐僧师徒被诬陷入狱。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第七十九难</td><td style="padding:10px; border:1px solid #ddd;">凌云渡脱胎</td><td style="padding:10px; border:1px solid #ddd;">凌云渡无底船，唐僧脱去凡胎，肉身漂走。</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第八十难</td><td style="padding:10px; border:1px solid #ddd;">取经遇怪</td><td style="padding:10px; border:1px solid #ddd;">阿傩、伽叶索要人事，先传无字经。</td></tr>
+<tr><td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:bold;">第八十一难</td><td style="padding:10px; border:1px solid #ddd;">通天河遇鼋</td><td style="padding:10px; border:1px solid #ddd;">老鼋因唐僧忘了问寿，将师徒翻入河中，经书浸湿。</td></tr>
+</tbody>
+</table>
+
+<div style="margin-top: 40px; padding: 25px; background-color: #fff4d6; border-left: 6px solid #C02C3F; border-radius: 8px;">
+    <h3 style="margin-top: 0; color: #C02C3F;">💡 九九归真总评</h3>
+    <p>唐僧师徒历经一十四载，行程十万八千里，遭遇九九八十一难，终于取得真经，修成正果。这八十一难不仅是对他们身体的考验，更是对他们心性的磨练。每一次劫难，都是一次修行；每一次战胜，都是一次成长。</p>
+    <p><b>八十一难的分类：</b></p>
+    <ul>
+        <li><b>妖魔之难：</b>约五十余难，占比最大，代表修行路上的外在障碍。</li>
+        <li><b>自然之难：</b>如火焰山、通天河等，代表自然环境对修行的考验。</li>
+        <li><b>人心之难：</b>如女儿国、灭法国等，代表世俗诱惑与政治迫害。</li>
+        <li><b>师徒之难：</b>如贬退心猿、真假美猴王，代表团队内部的矛盾与考验。</li>
+    </ul>
+    <p>八十一难，实则是人生修行路上必经的八十一道关卡。每一难的克服，都是对自我的超越；每一次的磨难，都是通往觉悟的阶梯。</p>
+</div>
+`,
+
+"拾伍 · 人物封神": `
+<h3>一、唐僧——旃檀功德佛</h3>
+<p>
+    如来封唐僧为旃檀功德佛。唐僧本是金蝉子转世，历经九九八十一难，取得真经，普度众生，功德圆满。
+</p>
+<p>
+    <strong>封号寓意：</strong>旃檀是一种香木，香气馥郁，能除污秽。旃檀功德佛象征着唐僧以慈悲为怀，普度众生，功德无量。
+</p>
+
+<h3>二、孙悟空——斗战胜佛</h3>
+<p>
+    如来封孙悟空为斗战胜佛。孙悟空一路降妖除魔，保护唐僧西天取经，功劳最大。
+</p>
+<p>
+    <strong>封号寓意：</strong>斗战胜佛不是指好勇斗狠，而是指战胜内心的烦恼和无明。孙悟空从一个反叛者成长为一个修行者，最终战胜了自己，修成正果。
+</p>
+
+<h3>三、猪八戒——净坛使者</h3>
+<p>
+    如来封猪八戒为净坛使者。猪八戒一路虽然贪吃懒惰，但也挑担有功，保护唐僧。
+</p>
+<p>
+    <strong>封号寓意：</strong>净坛使者负责打扫祭坛，享用贡品。这个封号既满足了猪八戒贪吃的本性，也肯定了他的功劳。猪八戒对此封号虽然不太满意，但也只得接受。
+</p>
+
+<h3>四、沙悟净——金身罗汉</h3>
+<p>
+    如来封沙悟净为金身罗汉。沙悟净一路挑担牵马，任劳任怨，忠心耿耿。
+</p>
+<p>
+    <strong>封号寓意：</strong>金身罗汉是佛教中的正果，象征着沙悟净功德圆满，修成金身。沙悟净对此封号非常满意。
+</p>
+
+<h3>五、白龙马——八部天龙</h3>
+<p>
+    如来封白龙马为八部天龙。白龙马一路驮着唐僧西行，历尽艰辛，功劳不小。
+</p>
+<p>
+    <strong>封号寓意：</strong>八部天龙是佛教中的护法神，白龙马被封为八部天龙，在灵山后崖化龙池恢复龙身，盘绕在山门里擎天华表柱上。
+</p>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 20px 0;">
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #C02C3F;">
+    <h4>唐僧</h4>
+    <p>旃檀功德佛</p>
+</div>
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #C02C3F;">
+    <h4>孙悟空</h4>
+    <p>斗战胜佛</p>
+</div>
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #C02C3F;">
+    <h4>猪八戒</h4>
+    <p>净坛使者</p>
+</div>
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #C02C3F;">
+    <h4>沙悟净</h4>
+    <p>金身罗汉</p>
+</div>
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #C02C3F;">
+    <h4>白龙马</h4>
+    <p>八部天龙</p>
+</div>
+</div>
+`,
+
+"拾陆 · 文化影响": `
+<h3>一、文学影响</h3>
+<p>
+    《西游记》是中国古典四大名著之一，是中国古代浪漫主义文学的巅峰之作。它以丰富的想象力、精彩的故事情节、鲜明的人物形象，对后世文学产生了深远的影响。
+</p>
+<p>
+    后世许多文学作品都受到《西游记》的启发，如《封神演义》、《镜花缘》等。现代网络文学中，"西游"题材更是层出不穷，成为一个重要的文学流派。
+</p>
+
+<h3>二、戏曲影响</h3>
+<p>
+    《西游记》的故事被改编成各种戏曲形式，如京剧、昆曲、越剧等。其中，京剧《大闹天宫》、《三打白骨精》等更是经典剧目，久演不衰。
+</p>
+<p>
+    戏曲艺术家们通过精湛的表演，将孙悟空、猪八戒等人物形象栩栩如生地展现在舞台上，深受观众喜爱。
+</p>
+
+<h3>三、影视影响</h3>
+<p>
+    1986年，央视版电视剧《西游记》播出，成为中国电视剧史上的经典之作。该剧由杨洁执导，六小龄童、迟重瑞等主演，一经播出，便轰动全国，至今仍是寒暑假重播次数最多的电视剧之一。
+</p>
+<p>
+    除了电视剧，《西游记》还被改编成许多电影、动画作品，如《大闹天宫》动画片、《大话西游》系列电影等，都深受观众喜爱。
+</p>
+
+<h3>四、民俗影响</h3>
+<p>
+    《西游记》中的许多故事和人物形象，已经深入到中国民俗文化中。比如，孙悟空的形象常常出现在年画、剪纸、玩具等民间工艺品中，深受人们喜爱。
+</p>
+<p>
+    此外，《西游记》中的许多典故也成为人们日常生活中的常用语，如"猪八戒照镜子——里外不是人"、"孙悟空七十二变——神通广大"等。
+</p>
+
+<h3>五、国际影响</h3>
+<p>
+    《西游记》不仅在中国影响深远，在世界范围内也有广泛的影响。它被翻译成多种语言，在世界各地传播。
+</p>
+<p>
+    许多国家的读者都对《西游记》中的故事和人物形象充满兴趣，孙悟空更是成为中国文化的重要符号之一。
+</p>
+
+<div style="background: #fff4d6; padding: 20px; border-left: 6px solid #C02C3F; border-radius: 8px; margin-top: 20px;">
+    <p>
+        《西游记》是中华文化的瑰宝，它不仅是一部文学作品，更是中华民族精神的象征。它所传递的勇敢、坚持、团结、正义等价值观，至今仍然具有重要的现实意义。
+    </p>
+</div>
+`,
+
+"拾柒 · 名著结语": `
+<h3>一、关于成长</h3>
+<p>
+    《西游记》的故事，其实是一个关于成长的故事。孙悟空从一个叛逆的石猴，成长为一个成熟的斗战胜佛；唐僧从一个懦弱的僧人，成长为一个坚定的取经人；猪八戒从一个贪吃懒惰的天蓬元帅，成长为一个净坛使者；沙悟净从一个失手打碎玻璃盏的卷帘大将，成长为一个金身罗汉。
+</p>
+<p>
+    他们在取经路上，不断战胜困难，也不断战胜自己。每一次劫难，都是一次成长的机会；每一次战胜，都是一次自我超越。
+</p>
+
+<h3>二、关于团队</h3>
+<p>
+    取经团队是一个完美的团队。唐僧有坚定的信念，孙悟空有高强的本领，猪八戒有乐观的态度，沙悟净有踏实的作风。他们各有所长，也各有所短，但他们能够相互配合，相互包容，最终完成了取经大业。
+</p>
+<p>
+    这告诉我们，一个团队要想成功，不仅需要每个人都发挥自己的长处，更需要团队成员之间的相互信任、相互配合、相互包容。
+</p>
+
+<h3>三、关于信念</h3>
+<p>
+    取经之路，十万八千里，九九八十一难，充满了艰难险阻。但唐僧始终没有放弃，他始终坚信，只要坚持下去，就一定能够取得真经。
+</p>
+<p>
+    这告诉我们，无论做什么事情，都要有坚定的信念。信念是我们前进的动力，是我们战胜困难的勇气。只要我们有坚定的信念，就一定能够克服一切困难，实现自己的目标。
+</p>
+
+<h3>四、关于磨难</h3>
+<p>
+    取经路上的九九八十一难，看似是磨难，其实是修行。每一次磨难，都是对他们心性的磨练；每一次战胜，都是对他们意志的考验。
+</p>
+<p>
+    这告诉我们，人生中的磨难，其实是成长的机会。只有经历过磨难，我们才能变得更加坚强，更加成熟。
+</p>
+
+<h3>五、关于放下</h3>
+<p>
+    孙悟空在五行山下压了六百年，最终放下了过去的仇恨和不甘，选择保护唐僧西天取经；唐僧在取经路上，放下了对生死的恐惧，放下了对荣华富贵的留恋，最终取得真经，修成正果。
+</p>
+<p>
+    这告诉我们，只有放下过去，才能迎接未来；只有放下执念，才能获得自由。
+</p>
+
+<div style="text-align: center; margin-top: 40px; padding: 30px; background: linear-gradient(135deg, #fff9e6, #e6fffb); border-radius: 15px;">
+    <h2 style="color: #008b8b;">🎉 取经圆满结束 🎉</h2>
+    <p style="font-size: 1.2rem; color: #555; margin-top: 20px;">
+        感谢您陪伴唐僧师徒走完这十万八千里取经路！
+    </p>
+    <p style="font-size: 1.2rem; color: #555;">
+        愿您在人生的道路上，也能像他们一样，
+    </p>
+    <p style="font-size: 1.2rem; color: #555;">
+        坚定信念，勇往直前，终成正果！
+    </p>
+    <p style="font-size: 2rem; margin-top: 30px;">🙏</p>
+</div>
+`,
+
+"拾捌 · 西游之路": `
+        
+        <style>
+            .timeline-container {
+                position: relative;
+                padding: 20px 0;
+                margin-top: 20px;
+            }
+            .timeline-line {
+                position: absolute;
+                left: 140px;
+                top: 0;
+                bottom: 0;
+                width: 2px;
+                background: linear-gradient(180deg, #FFD700 0%, #008b8b 100%);
+                opacity: 0.6;
+            }
+            .timeline-event {
+                position: relative;
+                margin-bottom: 30px;
+                display: flex;
+                align-items: flex-start;
+            }
+            .event-year {
+                width: 140px;
+                text-align: right;
+                padding-right: 25px;
+                font-weight: bold;
+                color: #008b8b;
+                font-size: 0.95rem;
+                flex-shrink: 0;
+                padding-top: 5px;
+            }
+            .event-dot {
+                position: absolute;
+                left: 136px;
+                top: 12px;
+                width: 10px;
+                height: 10px;
+                background: #FFD700;
+                border-radius: 50%;
+                box-shadow: 0 0 8px #FFD700;
+                z-index: 2;
+            }
+            .event-content {
+                padding-left: 35px;
+                padding-bottom: 15px;
+                border-bottom: 1px dashed #d2c5a7;
+                width: 100%;
+            }
+            .event-title {
+                font-weight: bold;
+                color: #C02C3F;
+                font-size: 1.1rem;
+                margin-bottom: 5px;
+            }
+            .event-desc {
+                margin: 0;
+                line-height: 1.6;
+                color: #333;
+                font-size: 14px;
+            }
+            .event-analysis {
+                margin-top: 5px;
+                font-style: italic;
+                color: #008b8b;
+                font-size: 13px;
+            }
+        </style>
+
+        <div class="timeline-container">
+            <div class="timeline-line"></div>
+
+            <div class="timeline-event">
+                <div class="event-year">约公元前22世纪</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">大禹治水，留定海神针于东海</div>
+                    <p class="event-desc"><b>事件：</b>大禹治水成功后，将测量海水深浅的神铁留在东海龙宫，名为"定海神针"，后成为孙悟空的如意金箍棒。</p>
+                    <p class="event-analysis">解析：金箍棒的起源，为后世孙悟空得宝埋下伏笔。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">约公元前11世纪</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">封神大战</div>
+                    <p class="event-desc"><b>事件：</b>姜子牙辅佐周武王伐纣，众神归位，天庭体系确立。李靖、哪吒、杨戬等在此战中成名。</p>
+                    <p class="event-analysis">解析：西游记中诸多神仙皆出自封神体系，如托塔天王李靖、二郎神杨戬等。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元前579年左右</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">孙悟空出世</div>
+                    <p class="event-desc"><b>事件：</b>花果山顶一块仙石，受天地精华孕育，产一石卵，化作石猴。石猴目运两道金光，射冲斗府。</p>
+                    <p class="event-analysis">解析：孙悟空的出世充满神话色彩，其"灵明石猴"的身份注定了他不凡的命运。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元前570年左右</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">老子、释迦牟尼、孔子相继出生</div>
+                    <p class="event-desc"><b>事件：</b>这一时期，道家创始人老子、佛教创始人释迦牟尼、儒家创始人孔子相继出生，三教并立。</p>
+                    <p class="event-analysis">解析：西游记融合三教思想，这一时期的文化背景为取经故事奠定了思想基础。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元前247年左右</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">孙悟空出海寻仙</div>
+                    <p class="event-desc"><b>事件：</b>石猴因惧怕死亡，决心出海寻访神仙，学习长生不老之术。他独自乘筏漂洋过海，历经艰辛。</p>
+                    <p class="event-analysis">解析：这是孙悟空求道之路的起点，体现了他对生命的思考和对自由的追求。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元前238年左右</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">孙悟空拜菩提祖师学艺</div>
+                    <p class="event-desc"><b>事件：</b>石猴在灵台方寸山斜月三星洞拜菩提祖师为师，得名"孙悟空"，学得七十二变和筋斗云。</p>
+                    <p class="event-analysis">解析：菩提祖师是孙悟空的启蒙恩师，其神秘身份至今众说纷纭。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元前230年左右</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">孙悟空艺成，闹龙宫地府，招安任弼马温</div>
+                    <p class="event-desc"><b>事件：</b>孙悟空学成归来，先去东海龙宫取得金箍棒，又大闹地府勾销生死簿。天庭招安，封为弼马温。</p>
+                    <p class="event-analysis">解析：孙悟空初显神通，却因官职低微心生不满，为后续反叛埋下伏笔。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元前222年</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">孙悟空反下天庭，自封齐天大圣</div>
+                    <p class="event-desc"><b>事件：</b>孙悟空嫌弼马温官小，反下天庭，回到花果山自封"齐天大圣"，与天庭分庭抗礼。</p>
+                    <p class="event-analysis">解析：这是孙悟空反抗精神的集中体现，"齐天大圣"之名响彻三界。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元前221年</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">天庭再次招安，封齐天大圣</div>
+                    <p class="event-desc"><b>事件：</b>天庭派太白金星二次招安，承认"齐天大圣"称号，让孙悟空看管蟠桃园。</p>
+                    <p class="event-analysis">解析：天庭的妥协只是缓兵之计，更大的冲突即将爆发。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元前41年</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">孙悟空大闹天宫，被擒</div>
+                    <p class="event-desc"><b>事件：</b>孙悟空偷吃蟠桃、盗取仙丹，大闹天宫。玉帝调集十万天兵天将，最终被二郎神与太上老君联手擒获。</p>
+                    <p class="event-analysis">解析：大闹天宫是孙悟空反抗精神的巅峰，也是他命运的转折点。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元8年</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">孙悟空被压五行山下</div>
+                    <p class="event-desc"><b>事件：</b>孙悟空跳出八卦炉后，被如来佛祖压在五行山下，这一压就是五百年。</p>
+                    <p class="event-analysis">解析：五百年的反思，是孙悟空从叛逆者到修行者的必经之路。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元前30年左右</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">火焰山形成</div>
+                    <p class="event-desc"><b>事件：</b>孙悟空当年蹬倒太上老君的八卦炉，耐火砖掉落人间，形成八百里火焰山。</p>
+                    <p class="event-analysis">解析：火焰山的形成与孙悟空大闹天宫直接相关，是因果循环的体现。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元140年左右</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">狮驼岭三怪占据狮驼国</div>
+                    <p class="event-desc"><b>事件：</b>青狮、白象、大鹏三大王占据狮驼岭，大鹏更是将狮驼国满城百姓吃尽，建立妖魔国度。</p>
+                    <p class="event-analysis">解析：狮驼岭是取经路上最凶险的一难，大鹏金翅雕更是如来佛祖的舅舅。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元320年左右</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">猪八戒贬下凡，金蝉子遭贬，蝎子精等逃下灵山</div>
+                    <p class="event-desc"><b>事件：</b>天蓬元帅因调戏嫦娥被贬下凡，错投猪胎；金蝉子因轻慢佛法被贬；蝎子精在灵山听经，蜇了如来后逃走。</p>
+                    <p class="event-analysis">解析：取经团队成员和诸多妖魔的来历，在此时期陆续确定。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元350年左右</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">毗蓝婆菩萨隐居</div>
+                    <p class="event-desc"><b>事件：</b>毗蓝婆菩萨因某种原因隐居紫云山千花洞，不再过问世间事。</p>
+                    <p class="event-analysis">解析：毗蓝婆菩萨后来帮助孙悟空收伏蜈蚣精，是昴日星官的母亲。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元370年左右</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">金池长老出生</div>
+                    <p class="event-desc"><b>事件：</b>观音禅院的金池长老出生，后活到二百七十岁，因贪图唐僧袈裟而自取灭亡。</p>
+                    <p class="event-analysis">解析：金池长老的长寿源于黑熊精传授的养生之法，却因贪念毁了一世修行。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元509年</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">五行山陈老头出生</div>
+                    <p class="event-desc"><b>事件：</b>五行山下的陈老头出生，后成为见证孙悟空被救出的村民。</p>
+                    <p class="event-analysis">解析：陈老头曾听孙悟空讲述自己被压的经历，是历史的见证者。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元608年</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">唐僧出生</div>
+                    <p class="event-desc"><b>事件：</b>金蝉子转世，投胎为陈光蕊与殷温娇之子，乳名江流儿，法号玄奘。</p>
+                    <p class="event-analysis">解析：唐僧的出生充满传奇色彩，其身世坎坷，注定要承担取经重任。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元626年</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">虎鹿羊三仙到车迟国</div>
+                    <p class="event-desc"><b>事件：</b>虎力大仙、鹿力大仙、羊力大仙来到车迟国，以法术求雨，被尊为国师，迫害僧人。</p>
+                    <p class="event-analysis">解析：三仙虽有些本事，却心术不正，最终在与孙悟空斗法中丧命。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元629年</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">历史上的玄奘法师西行</div>
+                    <p class="event-desc"><b>事件：</b>历史上真实的玄奘法师从长安出发，西行求法，历经艰辛，前往天竺取经。</p>
+                    <p class="event-analysis">解析：小说中的取经故事以历史事件为蓝本，但进行了大量艺术加工。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元637年</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">金鱼精到通天河，小白龙贬鹰愁涧，猪八戒入赘高老庄</div>
+                    <p class="event-desc"><b>事件：</b>观音菩萨的金鱼精逃到通天河为妖；小白龙被贬鹰愁涧；猪八戒入赘高老庄。</p>
+                    <p class="event-analysis">解析：取经团队成员陆续就位，只等唐僧到来。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元638年</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">陈家庄"一秤金"出生</div>
+                    <p class="event-desc"><b>事件：</b>陈家庄陈澄之女"一秤金"出生，后被灵感大王索要，险些被献祭。</p>
+                    <p class="event-analysis">解析：一秤金的名字来源于"一秤金子"的重量，后被孙悟空所救。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元639年</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">陈家庄"陈关保"出生，唐僧出发取经</div>
+                    <p class="event-desc"><b>事件：</b>陈澄之子陈关保出生；唐僧在长安誓愿西行，踏上取经之路。</p>
+                    <p class="event-analysis">解析：唐僧出发取经，西游记主线故事正式开始。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元639年—653年</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">取经路上14年，历八十一难</div>
+                    <p class="event-desc"><b>事件：</b>唐僧师徒四人历经十四年寒暑，行程十万八千里，遭遇九九八十一难，一路降妖除魔，终于抵达灵山。</p>
+                    <p class="event-analysis">解析：取经之路是修行之路，每一难都是对心性的考验和磨练。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">公元653年秋</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">取经成功，师徒受封</div>
+                    <p class="event-desc"><b>事件：</b>唐僧被封为旃檀功德佛，孙悟空被封为斗战胜佛，猪八戒被封为净坛使者，沙悟净被封为金身罗汉，白龙马被封为八部天龙。</p>
+                    <p class="event-analysis">解析：取经圆满结束，师徒五人各得正果，功德圆满。</p>
+                </div>
+            </div>
+
+            <div class="timeline-event">
+                <div class="event-year">约公元661年</div>
+                <div class="event-dot"></div>
+                <div class="event-content">
+                    <div class="event-title">唐僧最后一次回长安</div>
+                    <p class="event-desc"><b>事件：</b>唐僧成佛后，最后一次回到长安，向唐王复命，完成取经使命。</p>
+                    <p class="event-analysis">解析：取经故事的终章，唐僧完成了从凡人到佛的蜕变，实现了普度众生的宏愿。</p>
+                </div>
+            </div>
+    </div>
+`,
+
+"拾玖 · 百题挑战": `
+    <div id="quiz-cover" style="text-align:center; padding: 60px 20px; background: linear-gradient(135deg, #fff9e6, #e6fffb); border: 2px solid #008b8b; border-radius: 15px; margin: 20px;">
+        <h1 style="color: #008b8b; margin-bottom: 20px;">🏆 西游记 · 百题挑战</h1>
+        <p style="font-size:1.2rem; color: #555; line-height: 1.6;">
+            恭喜您完成了西游记专题导览！<br>
+            本挑战包含50道选择题、45道填空题、5道简答题。<br>
+            准备好了吗？
+        </p>
+        <button onclick="startQuiz()" style="padding:15px 50px; background:#008b8b; color:#FFD700; border:none; cursor:pointer; font-size:1.3rem; border-radius:30px; margin-top:30px; box-shadow: 0 4px 15px rgba(0,139,139,0.3); transition: 0.3s;">
+            开启挑战
+        </button>
+    </div>
+
+    <div id="quiz-content" style="display:none; animation: fadeIn 1s;">
+        <p style="background: #fff8e1; padding: 15px; border-left: 5px solid #FFD700; margin: 20px;">
+            <strong>老师寄语：</strong> 真正的大师永远怀着一颗学徒的心。点击题目下方的"查看答案"来检验你的成果。
+        </p>
+        <div id="quiz-app" style="background: white; padding: 0 20px;"></div>
+    </div>
+
+    <style>
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .question-box { margin-bottom: 20px; padding: 15px; border-bottom: 1px inset #eee; }
+        .answer-text { margin-top: 10px; padding: 12px; background: #e6fffb; color: #008b8b; border-radius: 5px; font-weight: bold; border: 1px dashed #008b8b; }
+        summary { color: #008b8b; cursor: pointer; font-weight: bold; outline: none; }
+        summary:hover { text-decoration: underline; }
+    </style>
+`};
+
+const GLOBAL_QUIZ_DATA = [
+    // --- 一、选择题 (1-50) ---
+    { type: '选择', q: '孙悟空的第一个师父是谁？', options: 'A. 唐僧 | B. 菩提祖师 | C. 如来佛祖 | D. 观音菩萨', a: 'B', note: '孙悟空在灵台方寸山斜月三星洞拜菩提祖师为师，学得七十二变和筋斗云。' },
+    { type: '选择', q: '唐僧的俗家姓是什么？', options: 'A. 李 | B. 王 | C. 陈 | D. 刘', a: 'C', note: '唐僧俗姓陈，名祎，法号玄奘，是唐代著名高僧。' },
+    { type: '选择', q: '猪八戒的武器是什么？', options: 'A. 金箍棒 | B. 九齿钉耙 | C. 降妖宝杖 | D. 风火轮', a: 'B', note: '九齿钉耙是太上老君用神冰铁亲自锤炼，重五千零四十八斤。' },
+    { type: '选择', q: '沙悟净在流沙河时，项上挂着什么？', options: 'A. 佛珠 | B. 九颗骷髅 | C. 宝石 | D. 金铃', a: 'B', note: '沙僧在流沙河吃人，将取经人的骷髅串成项链，共九颗。' },
+    { type: '选择', q: '白龙马原本是谁的儿子？', options: 'A. 东海龙王 | B. 西海龙王 | C. 南海龙王 | D. 北海龙王', a: 'B', note: '白龙马是西海龙王三太子，因纵火烧毁玉帝御赐明珠，被判死罪。' },
+    { type: '选择', q: '孙悟空被压在五行山下多少年？', options: 'A. 三百年 | B. 五百年 | C. 六百年 | D. 一千年', a: 'B', note: '孙悟空大闹天宫后被如来佛祖压在五行山下五百年。' },
+    { type: '选择', q: '唐僧取经用了多少年？', options: 'A. 十年 | B. 十二年 | C. 十四年 | D. 十六年', a: 'C', note: '唐僧贞观十三年出发，贞观二十七年返回，历时十四年。' },
+    { type: '选择', q: '取经团队经历了多少难？', options: 'A. 九九八十一难 | B. 七七四十九难 | C. 六六三十六难 | D. 八八六十四难', a: 'A', note: '取经团队历经九九八十一难，方得真经。' },
+    { type: '选择', q: '孙悟空最终被封为什么？', options: 'A. 旃檀功德佛 | B. 斗战胜佛 | C. 净坛使者 | D. 金身罗汉', a: 'B', note: '孙悟空一路降妖除魔，功劳最大，被封为斗战胜佛。' },
+    { type: '选择', q: '猪八戒最终被封为什么？', options: 'A. 斗战胜佛 | B. 净坛使者 | C. 金身罗汉 | D. 八部天龙', a: 'B', note: '猪八戒因贪吃，被封为净坛使者，负责享用贡品。' },
+    { type: '选择', q: '沙悟净最终被封为什么？', options: 'A. 净坛使者 | B. 金身罗汉 | C. 八部天龙 | D. 斗战胜佛', a: 'B', note: '沙悟净一路挑担牵马，任劳任怨，被封为金身罗汉。' },
+    { type: '选择', q: '白龙马最终被封为什么？', options: 'A. 金身罗汉 | B. 八部天龙 | C. 净坛使者 | D. 旃檀功德佛', a: 'B', note: '白龙马被封为八部天龙，在灵山后崖化龙池恢复龙身。' },
+    { type: '选择', q: '唐僧最终被封为什么？', options: 'A. 斗战胜佛 | B. 旃檀功德佛 | C. 净坛使者 | D. 金身罗汉', a: 'B', note: '唐僧本是金蝉子转世，历经磨难取得真经，被封为旃檀功德佛。' },
+    { type: '选择', q: '铁扇公主的芭蕉扇能扇灭火焰山的大火吗？', options: 'A. 能 | B. 不能 | C. 只能扇小一点 | D. 要扇七七四十九次', a: 'A', note: '芭蕉扇是天地初开时的灵宝，能扇灭火焰山八百里大火。' },
+    { type: '选择', q: '红孩儿是被谁收伏的？', options: 'A. 孙悟空 | B. 观音菩萨 | C. 如来佛祖 | D. 玉皇大帝', a: 'B', note: '红孩儿的三昧真火烧伤孙悟空，后请观音菩萨用金箍收伏，封为善财童子。' },
+    { type: '选择', q: '真假美猴王中，假猴王是谁变的？', options: 'A. 牛魔王 | B. 六耳猕猴 | C. 黄袍怪 | D. 黄风怪', a: 'B', note: '六耳猕猴善聆音，能察理，与孙悟空本领相同，后被如来识破。' },
+    { type: '选择', q: '白骨精几次变化欺骗唐僧？', options: 'A. 一次 | B. 两次 | C. 三次 | D. 四次', a: 'C', note: '白骨精先后变成村姑、老妇、老翁三次欺骗唐僧，都被孙悟空打死。' },
+    { type: '选择', q: '唐僧取经是从哪里出发的？', options: 'A. 洛阳 | B. 长安 | C. 北京 | D. 南京', a: 'B', note: '唐僧从长安（今西安）出发，西行取经。' },
+    { type: '选择', q: '真经藏在哪里？', options: 'A. 五台山 | B. 普陀山 | C. 灵山 | D. 峨眉山', a: 'C', note: '真经藏于西天灵山大雷音寺。' },
+    { type: '选择', q: '取经回来后，唐僧要把经书藏在哪里？', options: 'A. 少林寺 | B. 大雁塔 | C. 小雁塔 | D. 法门寺', a: 'B', note: '唐僧将真经藏于长安大雁塔。' },
+    { type: '选择', q: '孙悟空的如意金箍棒重多少斤？', options: 'A. 三千六百斤 | B. 七千二百斤 | C. 一万三千五百斤 | D. 一万八千斤', a: 'C', note: '金箍棒原是东海龙宫的定海神针，重一万三千五百斤。' },
+    { type: '选择', q: '孙悟空大闹天宫时，被谁放入八卦炉中炼了七七四十九天？', options: 'A. 元始天尊 | B. 太上老君 | C. 玉皇大帝 | D. 如来佛祖', a: 'B', note: '太上老君将孙悟空放入八卦炉，想用三昧真火将其炼成丹药。' },
+    { type: '选择', q: '孙悟空的火眼金睛是在哪里炼成的？', options: 'A. 花果山 | B. 菩提洞 | C. 八卦炉 | D. 水帘洞', a: 'C', note: '孙悟空在八卦炉中被烟熏出了火眼金睛，能识破妖魔变化。' },
+    { type: '选择', q: '猪八戒在天庭的官职是什么？', options: 'A. 托塔天王 | B. 天蓬元帅 | C. 卷帘大将 | D. 齐天大圣', a: 'B', note: '猪八戒原是天蓬元帅，统领八万水军，因调戏嫦娥被贬下凡。' },
+    { type: '选择', q: '沙悟净在天庭的官职是什么？', options: 'A. 托塔天王 | B. 天蓬元帅 | C. 卷帘大将 | D. 齐天大圣', a: 'C', note: '沙悟净原是卷帘大将，因失手打碎琉璃盏被贬下流沙河。' },
+    { type: '选择', q: '孙悟空的第一个称号是什么？', options: 'A. 齐天大圣 | B. 美猴王 | C. 弼马温 | D. 斗战胜佛', a: 'B', note: '孙悟空在花果山称王，被众猴尊称为"美猴王"。' },
+    { type: '选择', q: '孙悟空在天庭担任的第一个官职是什么？', options: 'A. 齐天大圣 | B. 美猴王 | C. 弼马温 | D. 卷帘大将', a: 'C', note: '玉帝封孙悟空为弼马温，负责养马，孙悟空嫌官小反下天庭。' },
+    { type: '选择', q: '孙悟空偷吃了王母娘娘的什么？', options: 'A. 人参果 | B. 蟠桃 | C. 仙丹 | D. 蟠桃和仙丹', a: 'D', note: '孙悟空偷吃蟠桃，又偷吃太上老君的仙丹，闯下大祸。' },
+    { type: '选择', q: '镇元大仙的人参果多少年成熟一次？', options: 'A. 三千年 | B. 六千年 | C. 九千年 | D. 一万年', a: 'C', note: '人参果三千年一开花，三千年一结果，三千年一成熟，共九千年。' },
+    { type: '选择', q: '人参果要用什么才能摘下来？', options: 'A. 金箍棒 | B. 九齿钉耙 | C. 金击子 | D. 银钩', a: 'C', note: '人参果遇金而落，需用金击子敲击才能摘下。' },
+    { type: '选择', q: '人参果遇什么会消失？', options: 'A. 遇金 | B. 遇木 | C. 遇土 | D. 遇水', a: 'C', note: '人参果遇土而入，掉在地上就会消失。' },
+    { type: '选择', q: '黄风怪的三昧神风是谁教他的？', options: 'A. 太上老君 | B. 灵吉菩萨 | C. 如来佛祖 | D. 观音菩萨', a: 'A', note: '黄风怪原是灵山脚下的黄毛貂鼠，偷学了太上老君的三昧神风。' },
+    { type: '选择', q: '收伏黄风怪的是谁？', options: 'A. 观音菩萨 | B. 灵吉菩萨 | C. 文殊菩萨 | D. 普贤菩萨', a: 'B', note: '灵吉菩萨用定风丹和飞龙杖收伏了黄风怪。' },
+    { type: '选择', q: '唐僧收孙悟空为徒的地点是？', options: 'A. 花果山 | B. 五行山 | C. 高老庄 | D. 流沙河', a: 'B', note: '唐僧在五行山（两界山）下救出孙悟空，收为大徒弟。' },
+    { type: '选择', q: '唐僧收猪八戒为徒的地点是？', options: 'A. 花果山 | B. 五行山 | C. 高老庄 | D. 流沙河', a: 'C', note: '唐僧在高老庄收猪八戒为二徒弟。' },
+    { type: '选择', q: '唐僧收沙悟净为徒的地点是？', options: 'A. 花果山 | B. 五行山 | C. 高老庄 | D. 流沙河', a: 'D', note: '唐僧在流沙河收沙悟净为三徒弟。' },
+    { type: '选择', q: '观音菩萨给唐僧的紧箍咒是用来约束谁的？', options: 'A. 唐僧 | B. 孙悟空 | C. 猪八戒 | D. 沙悟净', a: 'B', note: '紧箍咒是观音菩萨给唐僧用来约束孙悟空的。' },
+    { type: '选择', q: '牛魔王的妻子是谁？', options: 'A. 铁扇公主 | B. 玉面狐狸 | C. 蜘蛛精 | D. 蝎子精', a: 'A', note: '牛魔王的妻子是铁扇公主，又名罗刹女。' },
+    { type: '选择', q: '牛魔王的儿子是谁？', options: 'A. 红孩儿 | B. 黑熊精 | C. 黄袍怪 | D. 狮子精', a: 'A', note: '红孩儿是牛魔王和铁扇公主的儿子。' },
+    { type: '选择', q: '红孩儿的三昧真火烧伤了谁？', options: 'A. 唐僧 | B. 猪八戒 | C. 孙悟空 | D. 沙悟净', a: 'C', note: '红孩儿的三昧真火烧伤了孙悟空，差点将他烧死。' },
+    { type: '选择', q: '金角大王和银角大王是谁的下属？', options: 'A. 太上老君 | B. 如来佛祖 | C. 玉皇大帝 | D. 观音菩萨', a: 'A', note: '金角大王和银角大王是太上老君看守金炉和银炉的童子。' },
+    { type: '选择', q: '金角大王和银角大王用什么法宝把孙悟空压住？', options: 'A. 金刚琢 | B. 须弥山 | C. 紫金红葫芦 | D. 羊脂玉净瓶', a: 'B', note: '银角大王用须弥山、峨眉山、泰山三座大山压住孙悟空。' },
+    { type: '选择', q: '狮驼岭的三大王分别是什么？', options: 'A. 狮子、大象、老鹰 | B. 狮子、老虎、老鹰 | C. 大象、老虎、老鹰 | D. 狮子、大象、金雕', a: 'D', note: '狮驼岭三大王分别是青狮、白象、大鹏金翅雕。' },
+    { type: '选择', q: '狮驼岭的大鹏金翅雕是谁的亲戚？', options: 'A. 如来佛祖 | B. 玉皇大帝 | C. 太上老君 | D. 观音菩萨', a: 'A', note: '大鹏金翅雕是如来佛祖的舅舅，孔雀大明王菩萨的弟弟。' },
+    { type: '选择', q: '收伏大鹏金翅雕的是谁？', options: 'A. 观音菩萨 | B. 文殊菩萨 | C. 如来佛祖 | D. 太上老君', a: 'C', note: '如来佛祖亲自收伏大鹏金翅雕，将其留在灵山。' },
+    { type: '选择', q: '女儿国的国名是什么？', options: 'A. 西梁女国 | B. 东梁女国 | C. 南梁女国 | D. 北梁女国', a: 'A', note: '女儿国名为西梁女国，全国皆是女子。' },
+    { type: '选择', q: '女儿国的水喝了会怎样？', options: 'A. 长生不老 | B. 怀孕生子 | C. 变成女子 | D. 忘记一切', a: 'B', note: '女儿国的子母河水喝了会怀孕生子。' },
+    { type: '选择', q: '蝎子精是被谁收伏的？', options: 'A. 观音菩萨 | B. 昴日星官 | C. 如来佛祖 | D. 太上老君', a: 'B', note: '蝎子精被昴日星官（大公鸡）收伏。' },
+    { type: '选择', q: '《西游记》的作者是谁？', options: 'A. 罗贯中 | B. 施耐庵 | C. 吴承恩 | D. 曹雪芹', a: 'C', note: '《西游记》的作者是明代小说家吴承恩。' },
+
+    // --- 二、填空题 (51-95) ---
+    { type: '填空', q: '《西游记》是中国古典四大名著之一，作者是明代的 _____。', a: '吴承恩', note: '吴承恩（约1500-1582），字汝忠，号射阳山人。' },
+    { type: '填空', q: '孙悟空的故乡是 _____。', a: '花果山', note: '花果山位于东胜神洲傲来国。' },
+    { type: '填空', q: '孙悟空的水帘洞洞口对联是"花果山福地， _____ 洞天"。', a: '水帘洞', note: '这副对联点明了花果山和水帘洞的仙境地位。' },
+    { type: '填空', q: '孙悟空学艺的地方是灵台方寸山 _____。', a: '斜月三星洞', note: '菩提祖师的道场，孙悟空在此学得七十二变和筋斗云。' },
+    { type: '填空', q: '孙悟空的如意金箍棒原是东海龙宫的 _____。', a: '定海神针', note: '定海神针是大禹治水时留下的测量海水深浅的神铁。' },
+    { type: '填空', q: '孙悟空大闹天宫后，被如来佛祖压在 _____ 下。', a: '五行山', note: '五行山又名两界山，是大唐与西域的分界。' },
+    { type: '填空', q: '唐僧的法号是 _____。', a: '玄奘', note: '唐僧俗姓陈，法号玄奘，被尊称为"三藏法师"。' },
+    { type: '填空', q: '唐僧是如来佛祖第二弟子 _____ 转世。', a: '金蝉子', note: '金蝉子因不听讲法、轻慢大教，被贬下凡。' },
+    { type: '填空', q: '唐僧的坐骑白龙马原是西海龙王三太子 _____。', a: '敖烈', note: '敖烈因纵火烧毁明珠，被判死罪，后经观音点化等候取经人。' },
+    { type: '填空', q: '猪八戒在高老庄娶的媳妇叫 _____。', a: '高翠兰', note: '猪八戒入赘高老庄，娶高太公之女高翠兰为妻。' },
+    { type: '填空', q: '猪八戒的九齿钉耙重 _____ 斤。', a: '五千零四十八', note: '九齿钉耙全名"上宝沁金耙"，是太上老君亲手打造。' },
+    { type: '填空', q: '沙悟净的武器叫 _____。', a: '降妖宝杖', note: '降妖宝杖是鲁班用梭罗仙木打造，重五千零四十八斤。' },
+    { type: '填空', q: '观音菩萨住在南方的 _____。', a: '普陀山', note: '普陀山位于南海，是观音菩萨的道场。' },
+    { type: '填空', q: '如来佛祖住在西方的 _____。', a: '灵山', note: '灵山又名西天，是大雷音寺所在地。' },
+    { type: '填空', q: '唐僧取经共取得真经 _____ 卷。', a: '五千零四十八', note: '唐僧取回真经共三十五部，五千零四十八卷。' },
+    { type: '填空', q: '孙悟空会 _____ 般变化。', a: '七十二', note: '七十二变是地煞变化术，猪八戒会三十六变（天罡变化术）。' },
+    { type: '填空', q: '孙悟空一个筋斗能翻 _____ 里。', a: '十万八千', note: '筋斗云是孙悟空的独门绝技，一个筋斗十万八千里。' },
+    { type: '填空', q: '唐僧师徒取经行程共 _____ 里。', a: '十万八千', note: '从长安到灵山，共十万八千里路。' },
+    { type: '填空', q: '白骨精住在 _____。', a: '白虎岭', note: '白骨精是白虎岭上一具白骨成精。' },
+    { type: '填空', q: '红孩儿住在 _____。', a: '火云洞', note: '火云洞位于号山枯松涧。' },
+    { type: '填空', q: '铁扇公主住在 _____。', a: '芭蕉洞', note: '芭蕉洞位于翠云山。' },
+    { type: '填空', q: '牛魔王住在 _____。', a: '摩云洞', note: '牛魔王后来入赘玉面狐狸的摩云洞。' },
+    { type: '填空', q: '火焰山是孙悟空当年蹬倒太上老君的 _____ 形成的。', a: '八卦炉', note: '八卦炉中的耐火砖掉落人间，形成了火焰山。' },
+    { type: '填空', q: '镇元大仙住在 _____。', a: '五庄观', note: '五庄观位于万寿山，有人参果树。' },
+    { type: '填空', q: '人参果又名 _____。', a: '草还丹', note: '人参果又名草还丹，闻一闻能活三百六十岁。' },
+    { type: '填空', q: '黄风怪住在 _____。', a: '黄风岭', note: '黄风岭黄风洞是黄风怪的巢穴。' },
+    { type: '填空', q: '金角大王和银角大王住在 _____。', a: '莲花洞', note: '莲花洞位于平顶山。' },
+    { type: '填空', q: '黄眉大王住在 _____。', a: '小雷音寺', note: '黄眉大王假扮佛祖，在小雷音寺捉住唐僧。' },
+    { type: '填空', q: '盘丝洞有 _____ 个蜘蛛精。', a: '七', note: '七个蜘蛛精是七姐妹，号称"七情蜘蛛"。' },
+    { type: '填空', q: '狮驼岭的三大王分别是青狮、白象和 _____。', a: '大鹏', note: '大鹏金翅雕是三大王中最厉害的。' },
+    { type: '填空', q: '唐僧在女儿国差点被 _____ 精强逼成亲。', a: '蝎子', note: '蝎子精将唐僧掳入琵琶洞，欲强行成亲。' },
+    { type: '填空', q: '真假美猴王中，假猴王是 _____。', a: '六耳猕猴', note: '六耳猕猴善聆音，能察理，知前后，万物皆明。' },
+    { type: '填空', q: '孙悟空被唐僧赶走后，回到 _____。', a: '花果山', note: '孙悟空被赶走后，回到花果山重整旗鼓。' },
+    { type: '填空', q: '唐僧在五行山下救出孙悟空，给他取名 _____。', a: '孙行者', note: '唐僧给孙悟空取名"行者"，意为修行之人。' },
+    { type: '填空', q: '唐僧在高老庄收猪八戒，给他取名 _____。', a: '猪八戒', note: '唐僧给猪八戒取名"八戒"，意为戒除八种贪欲。' },
+    { type: '填空', q: '唐僧在流沙河收沙悟净，给他取名 _____。', a: '沙和尚', note: '唐僧给沙悟净取名"沙和尚"，意为出家人。' },
+    { type: '填空', q: '观音菩萨给唐僧的袈裟叫 _____。', a: '锦襕袈裟', note: '锦襕袈裟是观音菩萨送给唐僧的宝物，穿上不入沉沦。' },
+    { type: '填空', q: '观音菩萨给唐僧的锡杖叫 _____。', a: '九环锡杖', note: '九环锡杖持在手中，不遭毒害。' },
+    { type: '填空', q: '唐僧取经出发时，唐王李世民送给他一个 _____。', a: '紫金钵盂', note: '紫金钵盂是唐王所赐，唐僧用它换取了有字真经。' },
+    { type: '填空', q: '唐僧师徒取经归来，在通天河被老鼋翻入水中，是因为唐僧忘了问老鼋 _____。', a: '寿命', note: '老鼋请唐僧问佛祖自己何时能脱本壳得人身，唐僧忘了问。' },
+    { type: '填空', q: '唐僧师徒取回的真经在通天河被水浸湿，晾晒时 _____ 残缺。', a: '经尾', note: '经书晾晒时被粘掉一角，至今藏经阁所藏经书仍有残缺。' },
+    { type: '填空', q: '阿傩、伽叶先传给唐僧的是 _____ 经。', a: '无字', note: '无字经代表"空"，是佛法的最高境界。' },
+    { type: '填空', q: '唐僧师徒渡凌云渡时，唐僧脱去了 _____。', a: '凡胎', note: '唐僧在凌云渡脱去凡胎，肉身漂走，方得成佛。' },
+    { type: '填空', q: '《西游记》全书共 _____ 回。', a: '一百', note: '《西游记》共一百回，是中国古典长篇小说的典型结构。' },
+
+    // --- 三、简答题 (96-100) ---
+    { type: '简答', q: '简述"三打白骨精"的故事情节，并分析唐僧为什么要赶走孙悟空。', note: '情节：白骨精先后变成村姑、老妇、老翁三次欺骗唐僧，都被孙悟空识破并打死。唐僧肉眼凡胎看不出妖魔，误认为孙悟空滥杀无辜，加上猪八戒挑唆，唐僧念紧箍咒并写下贬书，将孙悟空赶回花果山。原因：唐僧慈悲为怀，不辨真假；猪八戒挑拨离间；孙悟空行事鲁莽，没有解释清楚。' },
+    { type: '简答', q: '分析孙悟空的形象特点及其成长历程。', note: '形象特点：勇敢无畏、嫉恶如仇、聪明机智、重情重义、桀骜不驯。成长历程：从石猴到美猴王（称王）；从美猴王到弼马温、齐天大圣（反叛）；从齐天大圣到五行山下被压（受罚）；从五行山下到取经路上（修行）；从取经路上到斗战胜佛（成佛）。孙悟空的成长是从反叛者到修行者的转变，体现了修行的主题。' },
+    { type: '简答', q: '分析取经团队中四个角色的象征意义。', note: '唐僧：代表信念和目标，是团队的核心和灵魂，象征修行者的"心"。孙悟空：代表能力和行动，是降妖除魔的主力，象征"心猿"，需要约束。猪八戒：代表欲望和惰性，贪吃好色、懒惰散漫，象征修行路上的障碍。沙悟净：代表踏实和忠诚，任劳任怨、默默奉献，象征修行者的坚持。四人组合象征修行者内心的不同层面：信念、能力、欲望、坚持。' },
+    { type: '简答', q: '分析"九九八十一难"的象征意义。', note: '八十一难象征修行路上的种种考验和磨难。从内容看：妖魔之难代表外在障碍；自然之难代表环境考验；人心之难代表世俗诱惑；师徒之难代表内部矛盾。从结构看：八十一难是"九九归真"的体现，九是阳数之极，九九八十一代表圆满。从主题看：每一难都是一次修行，每一次战胜都是一次成长，磨难是通往觉悟的必经之路。' },
+    { type: '简答', q: '分析《西游记》的主题思想及其现实意义。', note: '主题思想：1.修行主题：取经之路即修行之路，磨难是修行的必经过程。2.成长主题：从反叛到觉悟，从凡人到成佛的成长历程。3.团队主题：信念、能力、坚持、克服欲望缺一不可。4.反抗主题：孙悟空大闹天宫体现了反抗精神。现实意义：1.面对困难要坚持不懈，磨难是成长的机会。2.团队合作需要相互信任、包容。3.要有坚定的信念和目标。4.要克服内心的欲望和惰性。5.真正的修行在于实践，不在于形式。' }
+];
+
+function startQuiz() {
+    const cover = document.getElementById('quiz-cover');
+    const content = document.getElementById('quiz-content');
+    
+    if (cover) cover.style.display = 'none';
+    if (content) content.style.display = 'block';
+    
+    renderQuestions(); 
+}
+
+function renderQuestions() {
+    const container = document.getElementById('quiz-app');
+    const questions = GLOBAL_QUIZ_DATA;
+    if (!container) {
+        console.error("找不到 quiz-app 容器！");
+        return;
+    }
+    container.innerHTML = "";
+    const sections = [
+        { title: '第一部分：选择题（1-50题）', type: '选择' },
+        { title: '第二部分：填空题（51-95题）', type: '填空' },
+        { title: '第三部分：简答题（96-100题）', type: '简答' }
+    ];
+
+    sections.forEach(sec => {
+        const filtered = questions.filter(item => item.type === sec.type);
+        if (filtered.length > 0) {
+            const header = document.createElement('h2');
+            header.style.cssText = "color:#008b8b; border-bottom:2px solid #FFD700; margin-top:40px; padding-bottom:10px;";
+            header.innerText = sec.title;
+            container.appendChild(header);
+
+            filtered.forEach((item, idx) => {
+                const qId = "q-" + sec.type + "-" + idx;
+                const div = document.createElement('div');
+                div.style.cssText = "margin-bottom:30px; padding:20px; background: rgba(255, 252, 230, 0.95); border:1px solid #d2c5a7; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.05);";
+
+                let html = "<p style='font-size:1.1rem; font-family: STKaiti, Microsoft YaHei, serif;'><strong>" + (idx + 1) + ".</strong> " + item.q + "</p>";
+
+                if (item.type === '选择') {
+                    const opts = item.options.split('|');
+                    html += "<div style='display:flex; flex-wrap:wrap; gap:10px; margin-top:15px;'>";
+                    opts.forEach(opt => {
+                        const val = opt.trim().charAt(0);
+                        html += "<button onclick=\"checkSelect(this, '" + val + "', '" + item.a + "', '" + qId + "')\" style='padding:8px 20px; border:1px solid #8b4513; background: rgba(255, 255, 255, 0.7); cursor:pointer; border-radius:4px; transition:0.3s; font-family: STKaiti, Microsoft YaHei, serif;'>" + opt.trim() + "</button>";
+                    });
+                    html += "</div>";
+                } else if (item.type === '填空') {
+                    html += "<div style='margin-top:15px;'><input type='text' id='input-" + qId + "' placeholder='在此输入答案...' style='padding:10px; width:250px; border:1px solid #8b4513; border-radius:4px; font-family: STKaiti, Microsoft YaHei, serif;'><button onclick=\"checkFill('" + qId + "', '" + item.a + "')\" style='padding:10px 20px; background:#008b8b; color:#FFD700; border:none; border-radius:4px; margin-left:10px; cursor:pointer; font-family: STKaiti, Microsoft YaHei, serif;'>提交</button></div>";
+                } else {
+                    html += "<div style='margin-top:15px;'><textarea id='input-" + qId + "' placeholder='请阐述你的见解...' style='padding:10px; width:100%; height:80px; border:1px solid #8b4513; border-radius:4px; font-family: STKaiti, Microsoft YaHei, serif;'></textarea><button onclick=\"checkBrief('" + qId + "')\" style='padding:10px 20px; background:#C02C3F; color:white; border:none; border-radius:4px; margin-top:10px; cursor:pointer; font-family: STKaiti, Microsoft YaHei, serif;'>完成思考</button></div>";
+                }
+
+                html += "<div id='feedback-" + qId + "' style='margin-top:15px; display:none;'></div><details id='note-" + qId + "' style='margin-top:10px; display:none;'><summary style='color:#C02C3F; cursor:pointer; font-weight:bold; font-family: STKaiti, Microsoft YaHei, serif;'>查看解析</summary><div style='margin-top:10px; padding:12px; background: rgba(255, 248, 230, 0.9); border-left:4px solid #C02C3F; font-size:0.9rem; font-family: STKaiti, Microsoft YaHei, serif;'><strong>解析：</strong>" + item.note + "</div></details>";
+
+                div.innerHTML = html;
+                container.appendChild(div);
+            });
+        }
+    });
+}
+
+function checkSelect(btn, userVal, correctVal, qId) {
+    const feedback = document.getElementById("feedback-" + qId);
+    const note = document.getElementById("note-" + qId);
+    feedback.style.display = "block";
+    note.style.display = "block";
+
+    if (userVal === correctVal) {
+        btn.style.background = "#dcfce7";
+        btn.style.borderColor = "#16a34a";
+        feedback.innerHTML = "<span style='color:#16a34a; font-weight:bold; font-family: STKaiti, Microsoft YaHei, serif;'>✅ 回答正确！</span>";
+    } else {
+        btn.style.background = "#fee2e2";
+        btn.style.borderColor = "#ef4444";
+        feedback.innerHTML = "<span style='color:#ef4444; font-weight:bold; font-family: STKaiti, Microsoft YaHei, serif;'>❌ 回答错误，正确答案是 " + correctVal + "</span>";
+    }
+    const buttons = btn.parentElement.querySelectorAll('button');
+    buttons.forEach(b => b.onclick = null);
+}
+
+function checkFill(qId, correctVal) {
+    const input = document.getElementById("input-" + qId);
+    const feedback = document.getElementById("feedback-" + qId);
+    const note = document.getElementById("note-" + qId);
+    feedback.style.display = "block";
+    note.style.display = "block";
+
+    if (input.value.trim().toLowerCase() === correctVal.toLowerCase()) {
+        feedback.innerHTML = "<span style='color:#16a34a; font-weight:bold; font-family: STKaiti, Microsoft YaHei, serif;'>✅ 恭喜，完全正确！</span>";
+        input.style.borderColor = "#16a34a";
+    } else {
+        feedback.innerHTML = "<span style='color:#ef4444; font-weight:bold; font-family: STKaiti, Microsoft YaHei, serif;'>❌ 正确答案是：" + correctVal + "</span>";
+        input.style.borderColor = "#ef4444";
+    }
+}
+
+function checkBrief(qId) {
+    const feedback = document.getElementById("feedback-" + qId);
+    const note = document.getElementById("note-" + qId);
+    feedback.style.display = "block";
+    note.style.display = "block";
+    feedback.innerHTML = "<span style='color:#333; font-weight:bold; font-family: STKaiti, Microsoft YaHei, serif;'>💡 已记录你的思考。请对照解析自我核对：</span>";
+}
+
+function changeTab(element, title) {
+    const items = document.querySelectorAll('.nav-item');
+    items.forEach(item => item.classList.remove('active'));
+    element.classList.add('active');
+
+    document.getElementById('content-title').innerText = title;
+    const body = document.getElementById('content-body');
+    if (contentData[title]) {
+        body.innerHTML = contentData[title];
+    }
+}
+
+window.onload = function() {
+    changeTab(document.querySelector('.nav-item'), '拾叁 · 取得真经');
+};
+
+const BadgeManager = {
+    STORAGE_KEY: 'badge_data_v1',
+    
+    getData() {
+        try {
+            const data = localStorage.getItem(this.STORAGE_KEY);
+            return data ? JSON.parse(data) : {
+                unlockedBadges: [],
+                badgeUnlockTime: {},
+                readingProgress: {
+                    xiyou: { stage1: false, stage2: false, stage3: false },
+                    sanguo: { stage1: false, stage2: false, stage3: false },
+                    shuihu: { stage1: false, stage2: false, stage3: false },
+                    honglou: { stage1: false, stage2: false, stage3: false }
+                }
+            };
+        } catch (e) {
+            return {
+                unlockedBadges: [],
+                badgeUnlockTime: {},
+                readingProgress: {
+                    xiyou: { stage1: false, stage2: false, stage3: false },
+                    sanguo: { stage1: false, stage2: false, stage3: false },
+                    shuihu: { stage1: false, stage2: false, stage3: false },
+                    honglou: { stage1: false, stage2: false, stage3: false }
+                }
+            };
+        }
+    },
+    
+    saveData(data) {
+        try {
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+        } catch (e) {
+            console.error('保存勋章数据失败:', e);
+        }
+    },
+    
+    isStageRead(book, stage) {
+        const data = this.getData();
+        return data.readingProgress[book] && data.readingProgress[book]['stage' + stage];
+    },
+    
+    markStageRead(book, stage) {
+        const data = this.getData();
+        if (!data.readingProgress[book]) {
+            data.readingProgress[book] = { stage1: false, stage2: false, stage3: false };
+        }
+        data.readingProgress[book]['stage' + stage] = true;
+        this.saveData(data);
+        return this.checkAndUnlockBadges();
+    },
+    
+    isBookCompleted(book) {
+        const data = this.getData();
+        const progress = data.readingProgress[book];
+        return progress && progress.stage1 && progress.stage2 && progress.stage3;
+    },
+    
+    getCompletedBooksCount() {
+        let count = 0;
+        ['xiyou', 'sanguo', 'shuihu', 'honglou'].forEach(book => {
+            if (this.isBookCompleted(book)) count++;
+        });
+        return count;
+    },
+    
+    checkAndUnlockBadges() {
+        const data = this.getData();
+        const newlyUnlocked = [];
+        
+        const bookBadges = [
+            { id: 'xiyou_reader', name: '西游行者', desc: '完成西游记阅读', book: 'xiyou' },
+            { id: 'sanguo_reader', name: '三国通览', desc: '完成三国演义阅读', book: 'sanguo' },
+            { id: 'shuihu_reader', name: '水浒知音', desc: '完成水浒传阅读', book: 'shuihu' },
+            { id: 'honglou_reader', name: '红楼初探', desc: '完成红楼梦阅读', book: 'honglou' },
+            { id: 'all_books_reader', name: '四大名著通', desc: '完成全部名著阅读', book: 'all' }
+        ];
+        
+        bookBadges.forEach(badge => {
+            if (data.unlockedBadges.includes(badge.id)) return;
+            
+            let shouldUnlock = false;
+            if (badge.book === 'all') {
+                shouldUnlock = this.getCompletedBooksCount() >= 4;
+            } else {
+                shouldUnlock = this.isBookCompleted(badge.book);
+            }
+            
+            if (shouldUnlock) {
+                data.unlockedBadges.push(badge.id);
+                data.badgeUnlockTime[badge.id] = Date.now();
+                newlyUnlocked.push(badge);
+            }
+        });
+        
+        if (newlyUnlocked.length > 0) {
+            this.saveData(data);
+        }
+        
+        return newlyUnlocked;
+    }
+};
+
+function showBadgeNotification(badge) {
+    document.getElementById('badgeName').textContent = badge.name;
+    document.getElementById('badgeDesc').textContent = badge.desc;
+    
+    const card = document.getElementById('badgeCard');
+    const rarityColors = {
+        common: '#d4af37',
+        rare: '#9c27b0',
+        epic: '#ff6b35'
+    };
+    const color = rarityColors[badge.rarity] || rarityColors.common;
+    card.style.border = '4px solid ' + color;
+    card.style.boxShadow = '0 10px 40px ' + color + '80';
+    document.getElementById('badgeName').style.color = color;
+    
+    document.getElementById('badgeNotification').classList.add('show');
+}
+
+function closeBadgeNotification() {
+    document.getElementById('badgeNotification').classList.remove('show');
+}
+
+let autoReadStartTime = Date.now();
+let hasScrolledEnough = false;
+const MIN_READ_TIME = 30000;
+const SCROLL_THRESHOLD = 0.8;
+let autoReadMarked = false;
+
+function initAutoReadTracking() {
+    if (BadgeManager.isStageRead('xiyou', 3)) {
+        autoReadMarked = true;
+        return;
+    }
+    
+    const mainContent = document.querySelector('.main-content');
+    
+    mainContent.addEventListener('scroll', function() {
+        if (autoReadMarked) return;
+        
+        const scrollPercent = (mainContent.scrollTop + mainContent.clientHeight) / mainContent.scrollHeight;
+        if (scrollPercent >= SCROLL_THRESHOLD) {
+            hasScrolledEnough = true;
+            checkAndMarkAutoRead();
+        }
+    });
+    
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden && !autoReadMarked) {
+            checkAndMarkAutoRead();
+        }
+    });
+    
+    window.addEventListener('beforeunload', function() {
+        if (!autoReadMarked) {
+            checkAndMarkAutoRead();
+        }
+    });
+}
+
+function checkAndMarkAutoRead() {
+    if (autoReadMarked) return;
+    
+    const readTime = Date.now() - autoReadStartTime;
+    if (readTime >= MIN_READ_TIME && hasScrolledEnough) {
+        const newlyUnlocked = BadgeManager.markStageRead('xiyou', 3);
+        autoReadMarked = true;
+        
+        if (newlyUnlocked.length > 0) {
+            localStorage.setItem('pending_badge_notification', newlyUnlocked[0].id);
+        }
+    }
+}
+
+window.addEventListener('load', function() {
+    initAutoReadTracking();
+});
+</script>
+
+</body>
+</html>

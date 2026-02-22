@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>初识三国 - 专题导览</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            font-family: "STKaiti", "Microsoft YaHei", serif;
+            background-color: #e8e2d0;
+        }
+
+        /* 左侧大纲栏 */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(180deg, #8b1a1a 0%, #4a0e0e 100%);
+            color: #f0e68c;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.3);
+            border-right: 2px solid #d4af37;
+            z-index: 10;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            font-size: 1.6rem;
+            margin: 0;
+            padding: 40px 0;
+            background: rgba(0,0,0,0.2);
+            letter-spacing: 4px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            color: #f0e68c; /* <--- 加上这一行，或者把原来的颜色改成这个 */
+        }
+
+        .nav-item {
+            padding: 22px 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            color: #f0e68c;
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            background: rgba(212, 175, 55, 0.2);
+            padding-left: 45px;
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background: #d4af37;
+            color: #4a0e0e;
+            font-weight: bold;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        /* 右侧内容区 */
+        .main-content {
+            flex: 1;
+            padding: 50px;
+            overflow-y: auto;
+            background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+        }
+
+        .content-box {
+            background: rgba(255, 255, 255, 0.85);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px;
+            border: 1px solid #d2c5a7;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+            position: relative;
+            min-height: 80vh;
+        }
+
+        h1 {
+            color: #8b1a1a;
+            border-left: 8px solid #8b1a1a;
+            padding-left: 15px;
+            font-size: 2.2rem;
+            margin-top: 0;
+        }
+
+        h2 { color: #8b1a1a; border-bottom: 1px solid #d2c5a7; padding-bottom: 5px; }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            right: 40px;
+            text-decoration: none;
+            color: #8b1a1a;
+            font-weight: bold;
+            background: #fff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: white; }
+        th, td { padding: 12px; border: 1px solid #ccc; text-align: left; }
+        th { background: #efefef; }
+ p {
+    line-height: 1.8;
+    text-indent: 2em;
+    font-size: 1.2rem;       
+ }
+        .badge-notification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .badge-notification-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .badge-notification-card {
+            background: linear-gradient(135deg, #fff9e6, #fff);
+            border-radius: 20px;
+            padding: 40px 50px;
+            text-align: center;
+            max-width: 350px;
+            transform: scale(0.8);
+            transition: transform 0.3s;
+        }
+
+        .badge-notification-overlay.show .badge-notification-card {
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>初识三国</h2>
+        <div class="nav-item active" onclick="changeTab(this, '壹 · 汉末风云')">壹·汉末风云</div>
+        <div class="nav-item" onclick="changeTab(this, '贰 · 桃园结义')">贰·桃园结义</div>
+        <div class="nav-item" onclick="changeTab(this, '叁 · 乱世群雄')">叁·乱世群雄</div>
+        <div class="nav-item" onclick="changeTab(this, '肆 · 曹操崛起')">肆·曹操崛起</div>
+        <div class="nav-item" onclick="changeTab(this, '伍 · 三国地理')">伍·三国地理</div>
+        <div class="nav-item" onclick="changeTab(this, '陆 · 百题挑战')">陆·百题挑战 🏆</div>
+    </div>
+
+    <div class="main-content">
+        <a href="sanguo.html" class="back-link">← 返回主页</a>
+        <div class="content-box" id="content-display">
+            <h1 id="content-title">壹 · 汉末风云：乱世的开端</h1>
+            <div id="content-body">
+                </div>
+        </div>
+    </div>
+
+    <div class="badge-notification-overlay" id="badgeNotification">
+        <div class="badge-notification-card" id="badgeCard">
+            <div style="font-size: 1.5rem; color: #8b4513; margin-bottom: 20px;">🎉 恭喜获得勋章！</div>
+            <div style="font-size: 2.5rem; margin-bottom: 15px;">🎖️</div>
+            <div style="font-size: 1.8rem; font-weight: bold; margin-bottom: 10px;" id="badgeName"></div>
+            <div style="color: #666; margin-bottom: 20px;" id="badgeDesc"></div>
+            <button onclick="closeBadgeNotification()" style="background: #8b4513; color: #fff; border: none; padding: 10px 30px; border-radius: 20px; font-size: 1rem; cursor: pointer;">太棒了！</button>
+        </div>
+    </div>
+
+    <script>
+        const contentData = {
+            '壹 · 汉末风云': `
+                <p style="font-size: 1.1rem; color: #555; font-style: italic; line-height: 1.6;">
+                    “推其源流，始于桓、灵二帝。桓帝禁锢善类，崇信宦官……及灵帝即位，太傅陈蕃、大将军窦武，协同谋除内侍，反为所害，中涓自此愈横。” ——《三国演义》第一回
+                </p>
+                <hr style="border: 0; border-top: 1px solid #d2c5a7; margin: 30px 0;">
+
+                <section style="margin-bottom: 40px;">
+                    <h2>一、 宗教与绝望：黄巾起义 (公元184年)</h2>
+                    <p><strong>【演义视角】</strong> 巨鹿郡人张角，因入山采药遇南华老仙，授以《太平要术》。他能“呼风唤雨”，号“天公将军”，率领三十六方信众，一时“天下响应”。</p>
+                    <p><strong>【史实深度】</strong> 连年大旱，朝廷赋税不减。张角利用“太平道”组织流民。起义迫使汉廷下放<strong>“兵权”和“行政权”</strong>给地方州牧，导致了军阀割据的雏形。</p>
+                </section>
+
+                <section style="margin-bottom: 40px; background: #f9f6f0; padding: 25px; border: 1px solid #ddd;">
+                    <h2>二、 权力的崩塌：十常侍与何进</h2>
+                    <p><strong>权力格局：</strong> 此时的朝廷是三方博弈——<strong>宦官（十常侍）、外戚（何进）、士大夫（袁绍等）</strong>。</p>
+                    <p><strong>关键转折：</strong> 大将军何进不听曹操劝告，执意召董卓进京。结果何进反被十常侍诱杀。袁绍、袁术闻讯破门而入，尽诛宫中宦官，甚至“无须者亦被误杀”。此役之后，朝廷精英阶层同归于尽，权力真空彻底形成，给了董卓可乘之机。</p>
+                </section>
+
+                <section>
+                    <h2>三、 黑暗时代：董卓专权与废立</h2>
+                    <p>董卓凭借麾下骁勇的<strong>西凉军</strong>进入洛阳，废刘辩立刘协，标志着汉室名存实亡。</p>
+                    <table>
+                        <tr><th style="width:150px;">核心事件</th><th>详情与后果</th></tr>
+                        <tr><td>废立皇帝</td><td>废少帝立陈留王（汉献帝）。对皇权尊严的毁灭性打击。</td></tr>
+                        <tr><td>迁都长安</td><td>火烧洛阳，方圆二百里化为焦土，百余年文明毁于一旦。</td></tr>
+                    </table>
+                </section>
+            `,
+            '贰 · 桃园结义': `
+    <p style="font-size: 1.1rem; color: #555; font-style: italic; line-height: 1.6; background: #fdfaf3; padding: 15px; border-radius: 5px;">
+        “念刘备、关羽、张飞，虽然异姓，既结为兄弟，则同心协力，救困扶危；上报国家，下安黎庶。不求同年同月同日生，只愿同年同月同日死。皇天后土，实鉴此心，背义忘恩，天人共戮！” ——《桃园盟誓》
+    </p>
+    <hr style="border: 0; border-top: 1px solid #d2c5a7; margin: 30px 0;">
+
+    <section style="margin-bottom: 40px;">
+        <h2 style="color: #8b1a1a;">一、 涿县相逢：三颗孤星的汇聚</h2>
+        <p><strong>【草根枭雄：刘备】</strong> 此时的刘备已二十八岁，虽为中山靖王之后，却沦落到“贩屦织席”为生。但他“不甚乐读书，喜狗马、音乐、美衣服”，生平志向远大，沉默寡言，喜怒不形于色，却有着极强的亲和力。</p>
+        <p><strong>【亡命英雄：关羽】</strong> 关羽，字云长，因在家乡解良杀了仗势欺人的豪强，流亡江湖五年。他路过涿县时，正准备投军。他那“身长九尺，髯长二尺，面如重枣，唇若涂脂”的威武形象，在酒馆中引起了刘备的注意。</p>
+        <p><strong>【燕赵豪杰：张飞】</strong> 此时的张飞“身长八尺，豹头环眼，燕颔虎须，声若巨雷，势如奔马”。他家世颇丰，在涿县有庄田、有桃园，是个杀猪卖酒的痛快人。正是由于他的慷慨资助，才有了三人的事业起步。</p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+        <img src="images/taoyuan.jpg" style="width: 100%; max-width: 700px; border: 5px solid #d2c5a7; box-shadow: 0 5px 15px rgba(0,0,0,0.3); border-radius: 5px;">
+        </div>
+    </section>
+
+    <section style="margin-bottom: 40px; background: #fdfaf3; padding: 25px; border: 1px solid #ddd; line-height: 1.8;">
+        <h2 style="color: #8b1a1a;">二、 史实考据：被神化的“恩若兄弟”</h2>
+        <p><strong>【史实深度】</strong> 翻开陈寿的《三国志》，你会发现历史比演义更动人。史书虽未明确记载“桃园”这个地点，但真实描述了三人的极端亲密：</p>
+        <ul>
+            <li><strong>抵足而眠：</strong> 《三国志·关羽传》载：“先主（刘备）与二人寝则同室，恩若兄弟。”在那个阶级森严的时代，一个领袖能与下属同吃同住，这种信任在历史上绝无仅有。</li>
+            <li><strong>稠人广坐：</strong> 在公共场合，关、张二人整天侍立在刘备身后，无论多么劳累从不抱怨。这种关系已经超越了职场，进化成了基于信仰的共同体。</li>
+            <li><strong>义之所向：</strong> 史实中，关羽被曹操俘虏后，面对高官厚禄依然“挂印封金”去寻找落魄到一无所有的刘备，这证明了这种“义”绝非演义虚构，而是真实存在的历史奇迹。</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2 style="color: #8b1a1a;">三、 创业维艰：从五百乡勇开始</h2>
+        <p>结义后的第一步并非立刻封侯拜相，而是漫长的底层拼搏。在中山大商人张世平、苏双的资助下，他们获得了优良的马匹和生铁，打造了三件贯穿整个三国史的顶级神兵：</p>
+        <table style="width:100%; border-collapse: collapse; margin: 20px 0; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <tr style="background: #8b1a1a; color: black; font-weight: bold;">
+                <th style="padding: 15px; border: 1px solid #ccc;">核心人物</th>
+                <th style="padding: 15px; border: 1px solid #ccc;">神兵利器</th>
+                <th style="padding: 15px; border: 1px solid #ccc;">首战功勋（大兴山之战）</th>
+            </tr>
+            <tr>
+                <td style="padding: 12px; border: 1px solid #ccc; font-weight: bold; text-align: center;">刘玄德</td>
+                <td style="padding: 12px; border: 1px solid #ccc; text-align: center;">雌雄双股剑</td>
+                <td style="padding: 12px; border: 1px solid #ccc;">统帅五百乡勇，首次展现出收服人心的政治天赋。</td>
+            </tr>
+            <tr>
+                <td style="padding: 12px; border: 1px solid #ccc; font-weight: bold; text-align: center;">关云长</td>
+                <td style="padding: 12px; border: 1px solid #ccc; text-align: center;">青龙偃月刀</td>
+                <td style="padding: 12px; border: 1px solid #ccc;">手起刀落，将黄巾副将程远志一劈为二，威震敌胆。</td>
+            </tr>
+            <tr>
+                <td style="padding: 12px; border: 1px solid #ccc; font-weight: bold; text-align: center;">张翼德</td>
+                <td style="padding: 12px; border: 1px solid #ccc; text-align: center;">丈八蛇矛</td>
+                <td style="padding: 12px; border: 1px solid #ccc;">首当其冲，直刺敌将邓茂心窝，初显万人敌之勇。</td>
+            </tr>
+        </table>
+        <div style="background: #fff3f3; padding: 15px; border-left: 5px solid #ff4d4d; margin-top: 20px;">
+            <strong>💡 思考：</strong> 桃园结义不仅是三个人结拜，它是汉末动乱中，失意精英与热血平民的联手。刘备的“仁”、关羽的“义”、张飞的“勇”，构成了蜀汉集团最稳固的三脚架。
+        </div>
+    </section>
+`,
+            '叁 · 乱世群雄': `
+    <p style="font-size: 1.1rem; color: #555; font-style: italic; line-height: 1.6; background: #f9f9f9; padding: 20px; border-left: 5px solid #8b1a1a;">
+        “关东有义士，兴兵讨群凶。初期会盟津，乃心在咸阳。军合力不齐，踌躇而雁行。势利使人争，嗣还自相戕。” ——曹操《蒿里行》
+    </p>
+    <hr style="border: 0; border-top: 1px solid #d2c5a7; margin: 30px 0;">
+
+    <section style="margin-bottom: 40px;">
+        <h2 style="color: #8b1a1a;">一、 刺董与逃亡：曹操的政治初秀</h2>
+        <p><strong>【演义视角】</strong> 曹操持七星宝刀行刺董卓，因镜中反光暴露，急中生智改为“献刀”。随后他亡命天涯，在陈留散尽家财，首倡义兵。这一举动让他从一个中层官员，瞬间跃升为全国性的政治明星。</p>
+        <p><strong>【深层剖析】</strong> 曹操的魅力在于他极其务实。当满朝大臣只会聚在一起痛哭时，只有他意识到：<strong>眼泪救不了汉朝，唯有武力可以。</strong></p>
+    </section>
+
+    <section style="margin-bottom: 40px;">
+        <h2 style="color: #8b1a1a;">二、 貌合神离：十八路诸侯的利益博弈</h2>
+        <p>名义上是“讨伐国贼”，实际上这是一场关于<strong>未来权力分配</strong>的预演。联军内部的矛盾甚至比他们与董卓的矛盾还要大：</p>
+        <ul style="line-height: 1.8;">
+            <li><strong>粮草要挟：</strong> 孙坚作为先锋猛攻汜水关，几乎攻破，但负责后勤的袁术担心孙坚功劳太大（“此乃除狼得虎也”），竟然故意停发粮草，导致孙坚大败，折了名将祖茂。</li>
+            <li><strong>保存实力：</strong> 多数诸侯如韩馥、刘岱、张邈等，带兵前来只是为了“刷存在感”。他们在酸枣整日饮酒高会，谁也不愿第一个去碰董卓的精锐西凉军。</li>
+            <li><strong>正统之争：</strong> 袁绍身为盟主，却想另立幽州牧刘虞为帝，试图以此掌握“册立之功”，这与曹操、刘备坚持的“维护现任汉室”产生了根本性的战略分歧。</li>
+        </ul>
+        
+        <div style="text-align: center; margin: 30px 0;">
+        </div>
+    </section>
+
+    <section style="margin-bottom: 40px; background: #fdfaf3; padding: 25px; border: 1px solid #ddd;">
+        <h2 style="color: #8b1a1a;">三、 战力天花板：虎牢关的武力盛宴</h2>
+        <p>虽然高层勾心斗角，但前线的将士们贡献了三国史上最精彩的单挑时刻：</p>
+        <p><strong>【温酒斩华雄】</strong> 袁绍感叹“可惜吾上将颜良、文丑未至”时，关羽以马弓手身份出战。曹操的这杯温酒，其实是他对底层人才的第一次破格“风投”。</p>
+        <p><strong>【三英战吕布】</strong> 吕布是汉末最纯粹的暴力象征。刘关张三人围攻吕布，表面上是武力对决，深层里是<strong>“民间义士”对“体制内战神”</strong>的合力阻击。此战之后，董卓胆寒，决定焚烧洛阳，迁都长安。</p>
+    </section>
+
+    <section style="margin-bottom: 40px; background: #fff5f5; padding: 20px; border-left: 5px solid #ff4d4d;">
+        <h2 style="color: #8b1a1a;">💡 深度思考：为什么联盟一定会失败？</h2>
+        <p><strong>1. 缺乏核心统帅：</strong> 袁绍虽名满天下，但优柔寡断，没有曹操那样的决断力，无法压服各路野心家。</p>
+        <p><strong>2. 零和游戏思维：</strong> 诸侯们认为，董卓垮台后的权力是有限的。如果别人功劳大，自己的地盘就危险。这种“宁可国贼不灭，不可友军壮大”的病态心理，贯穿了整个讨董过程。</p>
+        <p><strong>3. 传国玉玺的诱惑：</strong> 孙坚在洛阳井中寻获玉玺，本应上交，却起私心欲带回江东。这成了联盟彻底破裂的导火索，诸侯间从“打董卓”变成了“抢玉玺”。</p>
+    </section>
+
+    <section>
+        <h2 style="color: #8b1a1a;">📊 群雄势力对比简表</h2>
+        <table style="width:100%; border-collapse: collapse; margin: 20px 0; background: white;">
+            <tr style="background: #d2c5a7; color: black;">
+                <th style="padding: 15px; border: 1px solid #ccc;">势力</th>
+                <th style="padding: 15px; border: 1px solid #ccc;">代表人物</th>
+                <th style="padding: 15px; border: 1px solid #ccc;">真实目的</th>
+            </tr>
+            <tr>
+                <td style="padding: 12px; border: 1px solid #ccc; font-weight: bold; text-align: center;">袁氏集团</td>
+                <td style="padding: 12px; border: 1px solid #ccc; text-align: center;">袁绍、袁术</td>
+                <td style="padding: 12px; border: 1px solid #ccc;">利用家族名望，通过讨董确立自己在乱世中的领袖地位。</td>
+            </tr>
+            <tr>
+                <td style="padding: 12px; border: 1px solid #ccc; font-weight: bold; text-align: center;">曹操军</td>
+                <td style="padding: 12px; border: 1px solid #ccc; text-align: center;">曹操、曹仁、夏侯惇</td>
+                <td style="padding: 12px; border: 1px solid #ccc;">真心杀贼，并试图在战争中筛选和磨合自己的核心团队。</td>
+            </tr>
+            <tr>
+                <td style="padding: 12px; border: 1px solid #ccc; font-weight: bold; text-align: center;">西凉军</td>
+                <td style="padding: 12px; border: 1px solid #ccc; text-align: center;">董卓、吕布、华雄</td>
+                <td style="padding: 12px; border: 1px solid #ccc;">暴力维稳。通过劫掠洛阳财富和迁都来巩固个人权势。</td>
+            </tr>
+        </table>
+    </section>
+`,
+            '肆 · 曹操崛起': `
+    <p style="font-size: 1.1rem; color: #555; font-style: italic; line-height: 1.6; background: #f0f4f8; padding: 20px; border-left: 5px solid #1a5276;">
+        “设使国家无有孤，不知当几人称帝，几人称王。” ——曹操《述志令》
+    </p>
+    <hr style="border: 0; border-top: 1px solid #d2c5a7; margin: 30px 0;">
+
+    <section style="margin-bottom: 40px;">
+        <h2 style="color: #8b1a1a;">一、 奉天子以令不臣：最高明的政治牌</h2>
+        <p><strong>【演义视角】</strong> 汉献帝在李傕、郭汜的内斗中死里逃生，流落洛阳。当诸侯都在观望时，曹操听取荀彧建议，抢先迎驾并迁都许县。从此，曹操掌握了“奉天子”的大义名分。</p>
+        <p><strong>【深层剖析】</strong> 这是一个极其高明的“四两拨千斤”。曹操从此可以以皇帝的名义给袁绍、孙策发公文，打仗变成了“平叛”。虽然有人骂他“挟天子以令诸侯”，但在那个讲究名正言顺的时代，这一招让曹操在政治上瞬间无敌。</p>
+    </section>
+
+    <section style="margin-bottom: 40px;">
+        <h2 style="color: #8b1a1a;">二、 唯才是举：曹魏集团的骨干力量</h2>
+        <p>曹操的成功离不开他独特的用人观。他三次发布“求贤令”，甚至明确提出“若必廉士而后可用，则齐桓其能霸世乎？”（只要有才，人品差点也没关系）。</p>
+        <div style="background: #fff; padding: 20px; border: 1px solid #d2c5a7;">
+            <p><strong>两大智囊团：</strong></p>
+            <ul>
+                <li><strong>颍川谋士群：</strong> 以荀彧、荀攸、郭嘉为首。他们为曹操定下了“战略方向”。</li>
+                <li><strong>五子良将：</strong> 张辽、乐进、于禁、张郃、徐晃。他们是曹操横扫北方的先锋。</li>
+            </ul>
+        </div>
+    </section>
+
+    <section style="margin-bottom: 40px;">
+        <h2 style="color: #8b1a1a;">三、 官渡之战：以弱胜强的奇迹 (公元200年)</h2>
+        <p><strong>战况背景：</strong> 袁绍拥有冀、青、幽、并四州，拥兵十万；曹操仅有两万人。双方在官渡僵持半年。</p>
+        <p><strong>决定性时刻：</strong> 袁绍谋士许攸投奔曹操，献计火烧乌巢粮仓。曹操亲率精锐奇袭，袁绍军心大乱。此战后，北方再无势力能阻挡曹操。</p>
+        <div style="text-align: center; margin: 30px 0;">
+        </div>
+    </section>
+
+    <section style="background: #f9f6f0; padding: 25px; border: 1px solid #ddd;">
+        <h2 style="color: #8b1a1a;">💡 史实考据：曹操到底是“奸”还是“雄”？</h2>
+        <p><strong>【屯田制】</strong> 曹操最伟大的功绩之一。他组织流民和士兵在许都周围种田，解决了困扰东汉末年几十年的粮荒问题。有了粮草，他才有了统一全国的底气。</p>
+        <p><strong>【性格底色】</strong> 曹操既是一个杀伐果断的统帅，也是一个极高造诣的诗人（建安文学代表）。他的复杂性在于，他一方面屠杀徐州百姓，另一方面又在《短歌行》里表达“周公吐哺，天下归心”的宏图大志。</p>
+    </section>
+
+    <section style="margin-top: 40px;">
+        <h2 style="color: #8b1a1a;">📊 曹袁对比表</h2>
+        <table style="width:100%; border-collapse: collapse; margin: 20px 0; background: white;">
+            <tr style="background: #d2c5a7; color: black;">
+                <th style="padding: 15px; border: 1px solid #ccc;">维度</th>
+                <th style="padding: 15px; border: 1px solid #ccc;">袁绍 (多谋寡断)</th>
+                <th style="padding: 15px; border: 1px solid #ccc;">曹操 (断而能行)</th>
+            </tr>
+            <tr>
+                <td style="padding: 12px; border: 1px solid #ccc; font-weight: bold; text-align: center;">人才使用</td>
+                <td style="padding: 12px; border: 1px solid #ccc;">听不进逆耳忠言（气走许攸，关押田丰）</td>
+                <td style="padding: 12px; border: 1px solid #ccc;">疑人不用，用人不疑，甚至厚待俘虏。</td>
+            </tr>
+            <tr>
+                <td style="padding: 12px; border: 1px solid #ccc; font-weight: bold; text-align: center;">政治眼光</td>
+                <td style="padding: 12px; border: 1px solid #ccc;">认为汉帝是累赘，错失迎驾良机。</td>
+                <td style="padding: 12px; border: 1px solid #ccc;">奉天子以令不臣，获得政治最高点。</td>
+            </tr>
+            <tr>
+                <td style="padding: 12px; border: 1px solid #ccc; font-weight: bold; text-align: center;">最终结果</td>
+                <td style="padding: 12px; border: 1px solid #ccc;">官渡战败后忧愤而死，基业分崩离析。</td>
+                <td style="padding: 12px; border: 1px solid #ccc;">统一北方，奠定曹魏帝基。</td>
+            </tr>
+        </table>
+    </section>
+<div style="margin-top: 30px; text-align: center;">
+    <h3 style="color: #8b1a1a;">📺深度解析视频</h3>
+    <div style="position: relative; width: 100%; max-width: 700px; margin: 0 auto; border: 3px solid #d2c5a7; border-radius: 8px; overflow: hidden; background: #000;">
+        <iframe src="//player.bilibili.com/player.html?isOutside=true&aid=115984048324994&bvid=BV1NK6qBLEF2&cid=35712009891&p=1&autoplay=0" 
+                scrolling="no" 
+                border="0" 
+                frameborder="no" 
+                framespacing="0" 
+                allowfullscreen="true" 
+                style="width: 100%; height: 400px;">
+        </iframe>
+    </div>
+    <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">（视频来源于 Bilibili，加载较慢时请刷新）</p>
+</div>
+`,
+ '伍 · 三国地理': `
+    <p style="font-size: 1.1rem; color: #555; font-style: italic; line-height: 1.8; background: #f0fdf4; padding: 25px; border-left: 5px solid #16a34a; margin-bottom: 30px;">
+        “天下形势，不在王气，而在地缘。荆州失则蜀汉断一臂，合肥守则江东无北进之期。三国之争，终究是空间与资源的终极博弈。”
+    </p>
+    <hr style="border: 0; border-top: 1px solid #d2c5a7; margin: 30px 0;">
+
+    <section style="margin-bottom: 50px;">
+        <h2 style="color: #8b1a1a;">一、 荆州：被地理诅咒的“战略十字路口”</h2>
+        <p style="line-height: 1.8;">在三国的版图上，荆州（今湖北、湖南一带）是唯一的<strong>“中轴线”</strong>。从宏观地理看，荆州北接中原宛洛，南通交广，西入巴蜀，东下吴越。诸葛亮在《隆中对》中将其视为北伐的必经之地，认为唯有“跨有荆益”，才能形成两路夹击曹魏的钳形攻势。</p>
+        <p style="line-height: 1.8;">然而，这种地理上的“完美”恰恰是它被诅咒的原因：<strong>它太容易被四面围攻了。</strong> 荆州境内多平原水系，虽然利于通航，却无险可守。对于刘备来说，荆州是暂借的落脚点；对于孙权来说，荆州占据长江上游，如悬在江东头顶的利剑；对于曹操来说，荆州是南下的跳板。这种“三方必争”的属性，决定了任何占据荆州的势力都必须面临多线作战的消耗，关羽的覆灭，本质上是蜀汉政权无法承受这种地缘压力的必然结果。</p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            
+            <p style="color: #8b1a1a; font-size: 0.9rem; margin-top: 10px;">
+            <img src="images/jingzhou_strategy.jpg" style="width: 100%; max-width: 800px; border: 5px solid #d2c5a7; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-radius: 5px;">
+        </div>
+    </section>
+
+    <section style="margin-bottom: 50px; background: #fdfaf3; padding: 30px; border: 1px solid #ddd; line-height: 2;">
+        <h2 style="color: #8b1a1a;">二、 终极博弈：三大战区的地理逻辑</h2>
+        <p>三国中后期的战争并非盲目冲突，而是被山川河流严格限制在三大战区之内：</p>
+        <ul style="margin-left: 20px;">
+            <li><strong>【西线战区：秦岭与栈道的博弈】</strong> 
+                由于魏蜀边界横亘着高耸入云的秦岭，诸葛亮与姜维的北伐只能在祁山、陈仓、斜谷等狭窄的隘口进行。地理环境决定了蜀军的补给线极长且脆弱，而魏军只需“以逸待劳，坚守不出”即可耗尽蜀军。这种<strong>“地理压制”</strong>使得蜀汉即便拥有顶级的统帅，也难以逾越汉中到关中的最后一百公里。
+            </li>
+            <li><strong>【中线战区：襄樊的钥匙效应】</strong> 
+                襄阳与樊城隔汉江相望，是进入中原的南方大门。一旦襄樊失守，曹魏的中原腹地将无险可守。因此，曹操、曹丕父子在此修筑了极强的防御体系，这里成为了绞杀无数英雄的血肉磨坊。
+            </li>
+            <li><strong>【东线战区：守江必守淮的铁律】</strong> 
+                孙吴虽有长江天险，但古代军事家公认“无淮则吴必亡”。如果曹魏跨过淮河，直接陈兵长江北岸，江东的防御纵深将极度萎缩。这就是为什么孙权屡次亲自带兵猛攻合肥的原因——他必须通过控制合肥来获取淮南的战略缓冲带。遗憾的是，“张辽威震逍遥津”让孙权终其一生未能跨过合肥半步。
+            </li>
+        </ul>
+    </section>
+
+    <section style="margin-bottom: 50px;">
+        <h2 style="color: #8b1a1a;">三、 资源决算：为什么统一的希望在北方？</h2>
+        <p style="line-height: 1.8;">如果我们剥离英雄人物的光环，纯粹看地理资源数据，三国的结局在赤壁之战后就已经写好了。根据史料推算：</p>
+        <p style="line-height: 1.8;"><strong>曹魏</strong> 占据了黄河流域的华北平原，这里是东汉文化的中心，拥有全国约 <strong>65%</strong> 的人口和 <strong>70%</strong> 的耕地。<strong>蜀汉</strong> 虽有天府之国，但实际户籍人口仅 90 万左右，不到曹魏的四分之一。<strong>孙吴</strong> 虽然地广，但大多是尚未开发的蛮荒之地。这种由于地理带来的“体量差距”，决定了蜀吴联军只能通过不断的骚扰来推迟覆灭的命运，却无法从根本上动摇曹魏的根基。</p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            
+            <p style="color: #8b1a1a; font-size: 0.9rem; margin-top: 10px;">
+            <img src="images/resource_map.jpg" style="width: 100%; max-width: 800px; border: 5px solid #d2c5a7; box-shadow: 0 5px 15px rgba(0,0,0,0.2); border-radius: 5px;">
+        </div>
+    </section>
+
+    <section style="background: #fff; padding: 25px; border: 1px solid #8b1a1a; border-radius: 5px;">
+        <h2 style="color: #8b1a1a;">📊 三国地理优劣势深度汇总</h2>
+        <table style="width:100%; border-collapse: collapse; margin-top: 20px; border: 1px solid #ccc;">
+            <thead>
+                <tr style="background: #8b1a1a; color: #000000;">
+                    <th style="padding: 15px; border: 1px solid #ccc; text-align: center; font-weight: bold;">维度</th>
+                    <th style="padding: 15px; border: 1px solid #ccc; text-align: center; font-weight: bold;">曹魏 (北方)</th>
+                    <th style="padding: 15px; border: 1px solid #ccc; text-align: center; font-weight: bold;">蜀汉 (西南)</th>
+                    <th style="padding: 15px; border: 1px solid #ccc; text-align: center; font-weight: bold;">孙吴 (江南)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #ccc; font-weight: bold; background: #f9f9f9; text-align: center;">核心地缘</td>
+                    <td style="padding: 12px; border: 1px solid #ccc;">中原腹地，四通八达</td>
+                    <td style="padding: 12px; border: 1px solid #ccc;">盆地孤岛，关隘重重</td>
+                    <td style="padding: 12px; border: 1px solid #ccc;">水网纵横，长江门户</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #ccc; font-weight: bold; background: #f9f9f9; text-align: center;">防御机制</td>
+                    <td style="padding: 12px; border: 1px solid #ccc;">以庞大的战略纵深抵消压力</td>
+                    <td style="padding: 12px; border: 1px solid #ccc;">利用极高的海拔落差阻滞进攻</td>
+                    <td style="padding: 12px; border: 1px solid #ccc;">利用水军优势进行江面封锁</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid #ccc; font-weight: bold; background: #f9f9f9; text-align: center;">扩张上限</td>
+                    <td style="padding: 12px; border: 1px solid #ccc;">高。具备统一全中国的资源</td>
+                    <td style="padding: 12px; border: 1px solid #ccc;">低。运力无法支撑跨区域作战</td>
+                    <td style="padding: 12px; border: 1px solid #ccc;">中。受限于陆战能力，难过淮河</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+`,
+'陆 · 百题挑战': `
+    <div id="quiz-cover" style="text-align:center; padding: 60px 20px; background: #fdfaf3; border: 2px solid #8b1a1a; border-radius: 15px; margin: 20px;">
+        <h1 style="color: #8b1a1a; margin-bottom: 20px;">🏆 三国演义 · 百题挑战</h1>
+        <p style="font-size:1.2rem; color: #555; line-height: 1.6;">
+            滚滚长江东逝水，英雄谁属看今朝。<br>
+            你已阅遍群雄、深谙地理，是否敢接下这百题战书？
+        </p>
+        <button onclick="startQuiz()" style="padding:15px 50px; background:#8b1a1a; color:white; border:none; cursor:pointer; font-size:1.3rem; border-radius:30px; margin-top:30px; box-shadow: 0 4px 15px rgba(139,26,26,0.3); transition: 0.3s;">
+            开启挑战
+        </button>
+    </div>
+
+    <div id="quiz-content" style="display:none; animation: fadeIn 1s;">
+        <p style="background: #fff8e1; padding: 15px; border-left: 5px solid #ffa000; margin: 20px;">
+            <strong>老师寄语：</strong> 真正的大师永远怀着一颗学徒的心。点击题目下方的“查看答案”来检验你的成果。
+        </p>
+        <div id="quiz-app" style="background: white; padding: 0 20px;"></div>
+    </div>
+
+    <style>
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .question-box { margin-bottom: 20px; padding: 15px; border-bottom: 1px inset #eee; }
+        .answer-text { margin-top: 10px; padding: 12px; background: #f0fdf4; color: #16a34a; border-radius: 5px; font-weight: bold; border: 1px dashed #16a34a; }
+        summary { color: #8b1a1a; cursor: pointer; font-weight: bold; outline: none; }
+        summary:hover { text-decoration: underline; }
+    </style>
+`,
+        };
+
+const GLOBAL_QUIZ_DATA = [
+    { type: '选择', q: '诸葛亮在《隆中对》中建议刘备首先夺取的战略要地是？', options: 'A.益州 | B.荆州 | C.冀州 | D.凉州', a: 'B', note: '荆州北据汉沔，东连吴会，西通巴蜀，是夺取天下的第一步。' },
+    { type: '选择', q: '官渡之战中，曹操奇袭了袁绍的哪一个粮仓导致其全线崩溃？', options: 'A.官渡 | B.延津 | C.乌巢 | D.白马', a: 'C', note: '奇袭乌巢由许攸献计，烧毁粮草是此战反败为胜的核心。' },
+    { type: '选择', q: '三国中人口最少、资源最贫乏的一方是？', options: 'A.曹魏 | B.孙吴 | C.蜀汉 | D.辽东', a: 'C', note: '蜀汉实际控制人口仅约90万，远低于魏国，且地形封闭导致扩张困难。' },
+    { type: '选择', q: '曹操“挟天子以令诸侯”中的“天子”指的是？', options: 'A.汉献帝 | B.汉灵帝 | C.汉少帝 | D.汉桓帝', a: 'A', note: '曹操迎汉献帝于许都，获得了政治上的正统地位。' },
+    { type: '选择', q: '奠定三国鼎立格局的关键战役是？', options: 'A.官渡之战 | B.赤壁之战 | C.夷陵之战 | D.汉中之战', a: 'B', note: '赤壁之战后，曹操北撤，三足鼎立雏形初现。' },
+    { type: '选择', q: '曹操求贤令中提到的用人标准是？', options: 'A.仁德至上 | B.名声显赫 | C.唯才是举 | D.血统纯正', a: 'C', note: '曹操不计出身，打破了东汉末年看重门第的传统。' },
+    { type: '选择', q: '官渡之战发生时，北方势力最强大的割据军阀是？', options: 'A.曹操 | B.袁绍 | C.吕布 | D.公孙瓒', a: 'B', note: '当时袁绍占据冀、青、幽、并四州，兵力远超曹操。' },
+    { type: '选择', q: '提出“十胜十败”论来分析曹操必胜、袁绍必败的人是？', options: 'A.荀彧 | B.郭嘉 | C.贾诩 | D.程昱', a: 'B', note: '郭嘉的“十胜十败”极大地鼓舞了曹军士气。' },
+    { type: '选择', q: '赤壁之战中，黄盖执行的策略是？', options: 'A.反间计 | B.美人计 | C.苦肉计 | D.空城计', a: 'C', note: '黄盖受苦肉计后假装投降，以此接近曹军船队放火。' },
+    { type: '选择', q: '曹操统一北方的过程中，最后平定的主要对手是？', options: 'A.袁绍及其子 | B.吕布 | C.张绣 | D.陶谦', a: 'A', note: '官渡战后，曹操历经数年才彻底消灭袁氏残余势力。' },
+    { type: '选择', q: '被称为“王佐之才”，为曹操规划“奉天子”战略的是？', options: 'A.郭嘉 | B.荀彧 | C.司马懿 | D.荀攸', a: 'B', note: '荀彧是曹操阵营的首功之臣，负责内政与战略。' },
+    { type: '选择', q: '汉末爆发的哪场起义直接导致了军阀割据的局面？', options: 'A.黄巾起义 | B.绿林起义 | C.赤眉起义 | D.大泽乡起义', a: 'A', note: '朝廷为镇压黄巾放权给地方，导致地方长官掌握兵权。' },
+    { type: '选择', q: '曹操在白马之战中，派谁斩杀了袁绍大将颜良？', options: 'A.张辽 | B.许褚 | C.关羽 | D.徐晃', a: 'C', note: '关羽此时投靠曹操，为报恩而立下大功。' },
+    { type: '选择', q: '孙权接替其兄掌管江东，其兄是？', options: 'A.孙坚 | B.孙策 | C.孙静 | D.孙翊', a: 'B', note: '孙策人称“小霸王”，是孙吴基业的开创者。' },
+    { type: '选择', q: '诸葛亮隐居的地方被称为？', options: 'A.隆中 | B.卧龙岗 | C.柴桑 | D.江夏', a: 'A', note: '刘备曾三顾茅庐于此，并诞生了著名的《隆中对》。' },
+    { type: '选择', q: '三国时期，曹魏政权的都城主要在？', options: 'A.长安 | B.洛阳 | C.许昌 | D.邺城', a: 'B', note: '虽然初期在许昌，但后来迁都洛阳作为正统象征。' },
+    { type: '选择', q: '曹操在诗歌《短歌行》中表达了什么心境？', options: 'A.思乡之情 | B.归隐之意 | C.求贤若渴 | D.儿女情长', a: 'C', note: '“周公吐哺，天下归心”表达了其收揽人才的雄心。' },
+    { type: '选择', q: '诸葛亮在赤壁之战前，说服谁联合抗曹？', options: 'A.周瑜 | B.孙权 | C.鲁肃 | D.张昭', a: 'B', note: '诸葛亮通过舌战群儒和智激孙权，促成了孙刘联盟。' },
+    { type: '选择', q: '下列哪位不属于“五虎上将”？', options: 'A.马超 | B.黄忠 | C.魏延 | D.赵云', a: 'C', note: '魏延虽是重臣，但在演义中并非五虎将成员。' },
+    { type: '选择', q: '曹操在赤壁之战中惨败的直接技术原因是？', options: 'A.粮食短缺 | B.战船相连 | C.士兵叛变 | D.缺乏箭支', a: 'B', note: '战船用铁锁相连，导致火攻时无法躲避，瞬间全毁。' },
+    { type: '选择', q: '三国时期，主要的农耕税收制度是？', options: 'A.摊丁入亩 | B.租庸调制 | C.屯田制 | D.一条鞭法', a: 'C', note: '屯田制不仅提供粮食，还通过农耕固定了人口。' },
+    { type: '选择', q: '刘备在哪个地方正式称帝？', options: 'A.荆州 | B.成都 | C.汉中 | D.白帝城', a: 'B', note: '221年刘备在成都称帝，国号汉，史称蜀汉。' },
+    { type: '选择', q: '曹操阵营中，负责北方防务并曾大败乌桓的人是？', options: 'A.曹仁 | B.曹彰 | C.张辽 | D.曹操亲自统帅', a: 'D', note: '曹操亲征乌桓，扫清了袁氏残余和北方威胁。' },
+    { type: '选择', q: '官渡之战后，袁绍因为什么原因加速了灭亡？', options: 'A.曹军围城 | B.忧愤而死 | C.儿子争位 | D.内部投降', a: 'C', note: '袁绍死后，袁谭、袁尚兄弟不和，给了曹操可乘之机。' },
+    { type: '选择', q: '孙吴水军在赤壁之战中的指挥官是？', options: 'A.鲁肃 | B.陆逊 | C.周瑜 | D.甘宁', a: 'C', note: '周瑜作为大都督，是赤壁之战东吴一方的主帅。' },
+    { type: '选择', q: '曹操实施“屯田制”最早是在哪个地方试行？', options: 'A.许下 | B.兖州 | C.青州 | D.冀州', a: 'A', note: '在许县（许昌）一带试行成功后推广全国。' },
+    { type: '选择', q: '汉末被称为“江东猛虎”的是？', options: 'A.孙策 | B.孙坚 | C.孙权 | D.程普', a: 'B', note: '孙坚因勇猛被称为猛虎，他在反董卓战争中表现出色。' },
+    { type: '选择', q: '诸葛亮认为刘备作为皇室后裔，最大的政治资本是？', options: 'A.武力强悍 | B.地盘稳固 | C.仁德名望 | D.金钱丰厚', a: 'C', note: '刘备的仁德形象使其在吸引士人和流民方面极具优势。' },
+    { type: '选择', q: '赤壁之战发生的河流是？', options: 'A.黄河 | B.汉江 | C.长江 | D.淮河', a: 'C', note: '长江天险是孙刘联盟赖以抵抗曹操骑兵的关键。' },
+    { type: '选择', q: '曹操将汉献帝迁往许都后，自任什么官职？', options: 'A.太尉 | B.司空 | C.大将军 | D.丞相', a: 'B', note: '曹操初任司空，后改为丞相，掌握朝廷大权。' },
+    { type: '选择', q: '关羽在曹操阵营时被封为什么爵位？', options: 'A.汉寿亭侯 | B.温侯 | C.武乡侯 | D.关内侯', a: 'A', note: '这是关羽一生最看重的正式封号。' },
+    { type: '选择', q: '官渡之战中，袁绍拒绝了谁提出的奇袭许都的正确建议？', options: 'A.田丰 | B.沮授 | C.许攸 | D.审配', a: 'C', note: '许攸因建议不被采纳且家人受累，转投曹操。' },
+    { type: '选择', q: '曹操攻打吕布时，吕布在哪座城市被部下出卖？', options: 'A.下邳 | B.小沛 | C.徐州 | D.寿春', a: 'A', note: '曹操水淹下邳，吕布众叛亲离。' },
+    { type: '选择', q: '刘备投奔荆州刘表期间，曾在哪里结识徐庶？', options: 'A.襄阳 | B.新野 | C.江陵 | D.樊城', a: 'B', note: '刘备当时屯兵新野，徐庶是其第一位重要谋士。' },
+    { type: '选择', q: '赤壁之战前夕，曹操最担心的是什么？', options: 'A.士兵晕船 | B.孙权投降 | C.刘备逃跑 | D.天气突变', a: 'A', note: '北方士兵不习水性，晕船严重影响了曹军战斗力。' },
+    // === 36-50题：选择题 B卷（侧重地理与战略） ===
+    { type: '选择', q: '孙吴政权在地理防御上，除了长江天险外，最重要的陆路门户是？', options: 'A.合肥 | B.汉中 | C.江陵 | D.徐州', a: 'A', note: '合肥是曹魏南下的咽喉，张辽曾在此威震逍遥津，孙权一生未能攻克。' },
+    { type: '选择', q: '诸葛亮北伐的主要路线是穿过哪座山脉？', options: 'A.大别山 | B.秦岭 | C.太行山 | D.巫山', a: 'B', note: '秦岭山脉阻断了汉中与关中，蜀军必须翻越艰险的“蜀道”才能进攻魏国。' },
+    { type: '选择', q: '三国时期，中原地区（曹魏）的人口约占全国总人口的比例是？', options: 'A.30% | B.50% | C.65%以上 | D.90%', a: 'C', note: '曹魏占据了东汉时期人口最密集的黄河流域，这是其最终统一全国的底气。' },
+    { type: '选择', q: '关羽失去荆州的关键原因，是孙吴执行了什么策略？', options: 'A.围魏救赵 | B.白衣渡江 | C.空城计 | D.反间计', a: 'B', note: '吕蒙让士兵穿上白衣化装成商船，奇袭了烽火台，关羽因后方失陷而溃败。' },
+    { type: '选择', q: '哪一个州被称为“天下之腹”，在三国早期是各方争夺最激烈的十字路口？', options: 'A.益州 | B.荆州 | C.幽州 | D.并州', a: 'B', note: '荆州连接四方，是《隆中对》中实现“两路并举”的绝对枢纽。' },
+    { type: '选择', q: '蜀汉在汉中防御魏国时，最著名的险要关隘是？', options: 'A.剑门关 | B.山海关 | C.虎牢关 | D.嘉峪关', a: 'A', note: '剑门关一夫当关万夫莫开，是保卫成都平原的最后屏障。' },
+    { type: '选择', q: '曹魏政权为了运送士兵和军粮到南方，大规模开凿了什么？', options: 'A.运河 | B.驿道 | C.隧道 | D.长城', a: 'A', note: '曹操开凿了白沟等运河，完善了北方的水陆运输系统。' },
+    { type: '选择', q: '刘备在哪个战役后失去了对荆州的控制权？', options: 'A.赤壁之战 | B.官渡之战 | C.夷陵之战 | D.长坂坡之战', a: 'C', note: '夷陵之战惨败于陆逊，刘备精锐损失殆尽，蜀汉从此彻底失去荆州。' },
+    { type: '选择', q: '孙权定都建业（今南京），主要是利用了哪里的地形？', options: 'A.石头山天险 | B.太湖水网 | C.洞庭湖平原 | D.秦岭山脉', a: 'A', note: '南京虎踞龙盘，依山带江，是江东政权的最佳政治中心。' },
+    { type: '选择', q: '三国中，最后被灭亡的国家是？', options: 'A.曹魏 | B.蜀汉 | C.孙吴 | D.西晋', a: 'C', note: '蜀汉263年亡，曹魏265年被西晋代，孙吴直到280年才被西晋所灭。' },
+    { type: '选择', q: '诸葛亮在汉中实行什么政策，以解决北伐军粮短缺的问题？', options: 'A.抢夺敌粮 | B.木牛流马 | C.缩减人口 | D.割让土地', a: 'B', note: '木牛流马是蜀汉特有的运输工具，虽然载重有限，但适应山地地形。' },
+    { type: '选择', q: '孙吴的统治基础主要依靠的是？', options: 'A.中原流民 | B.江东大族 | C.外籍雇佣军 | D.西域游牧民族', a: 'B', note: '孙家父子通过与朱、张、顾、陆等江东大姓结盟，稳固了统治。' },
+    { type: '选择', q: '魏蜀边境最著名的“子午谷奇计”是由谁提出的？', options: 'A.诸葛亮 | B.魏延 | C.姜维 | D.司马懿', a: 'B', note: '魏延建议奇袭长安，但诸葛亮认为过于冒险而未采纳。' },
+    { type: '选择', q: '下列哪个地理名词与曹操的起家之地密切相关？', options: 'A.巴蜀 | B.兖州 | C.江东 | D.陇西', a: 'B', note: '曹操在兖州建立根据地，并以此为跳板吞并中原。' },
+    { type: '选择', q: '三国后期，作为曹魏权力中枢所在地的洛阳，其最大的短板是？', options: 'A.城防脆弱 | B.依赖东南漕运 | C.海拔过高 | D.气候干旱', a: 'B', note: '洛阳人口众多，粮食高度依赖来自南方的运河供给。' },
+
+    // === 51-80题：填空题（侧重名词、成语、基础事实） ===
+    { type: '填空', q: '曹操推行的_________制，解决了流民与军队的粮食补给问题。', a: '屯田制', note: '分为民屯和军屯，是曹魏称霸的经济支撑。' },
+    { type: '填空', q: '“守江必守_________”是孙吴政权在地理防御上的核心铁律。', a: '淮 (或淮南)', note: '淮河是长江的门户，失去淮南，长江天险将无险可守。' },
+    { type: '填空', q: '诸葛亮北伐翻越的秦岭中，最著名的险道包括子午谷、斜谷和_________。', a: '陈仓道', note: '诸葛亮曾围攻陈仓不下，可见此道之险。' },
+    { type: '填空', q: '曹操求贤令中强调选拔人才不分门第，其标准总结为“_________”。', a: '唯才是举', note: '这在注重门第名声的东汉末年是非常激进的改革。' },
+    { type: '填空', q: '曹魏名将张辽在_________之战中，以七千守军击败孙权十万大军。', a: '合肥 (或逍遥津)', note: '从此“张辽止啼”成为江东著名的典故。' },
+    { type: '填空', q: '蜀汉政权的都城在_________。', a: '成都', note: '成都平原资源丰富，是刘备立国的根本。' },
+    { type: '填空', q: '赤壁之战中，曹军将战船用铁链连接在一起，这种做法被称为“_________”。', a: '连环船 (或铁锁连舟)', note: '这虽解决了晕船问题，却成了火攻的致命弱点。' },
+    { type: '填空', q: '“东风不与周郎便，铜雀春深锁二乔”指的是_________战役。', a: '赤壁', note: '杜牧以此诗感慨气候对历史进程的偶然性影响。' },
+    { type: '填空', q: '诸葛亮隐居时，自比于古代名将管仲和_________。', a: '乐毅', note: '表现了其志向远大，绝非寻常隐士。' },
+    { type: '填空', q: '刘备三顾茅庐后，诸葛亮为其提出的宏伟蓝图被称为《_________》。', a: '隆中对', note: '这是中国历史上著名的战略规划。' },
+    { type: '填空', q: '官渡之战中，袁绍阵营的谋士_________因家人被捕而转投曹操。', a: '许攸', note: '他的投降直接导致了乌巢粮草被毁。' },
+    { type: '填空', q: '三国中，领土面积最大、实力最强的是_________。', a: '曹魏', note: '曹魏占据了当时华夏最核心的黄河流域。' },
+    { type: '填空', q: '孙权在赤壁之战中，拔刀砍掉案角，表示绝不投降_________。', a: '曹操', note: '以此展示其联刘抗曹的坚定决心。' },
+    { type: '填空', q: '刘备在攻占_________后，势力达到巅峰。', a: '汉中', note: '随后刘备进位汉中王。' },
+    { type: '填空', q: '魏国名将司马懿的主要对手是蜀汉的_________。', a: '诸葛亮', note: '两人在祁山、渭水一带展开了长期的心理与战略博弈。' },
+    { type: '填空', q: '三国鼎立时期，最晚建立的政权是_________。', a: '孙吴', note: '孙权直到229年才正式称帝，晚于魏、蜀。' },
+    { type: '填空', q: '曹魏政权废除汉献帝，建立魏朝的人是_________。', a: '曹丕', note: '曹丕是曹操的长子，史称魏文帝。' },
+    { type: '填空', q: '蜀汉在南方的经营主要是平定了_________地区的叛乱。', a: '南中', note: '诸葛亮“七擒孟获”确保了后方的稳定。' },
+    { type: '填空', q: '历史上，赤壁之战的具体发生年份是公元_________年。', a: '208', note: '这是中国历史上最著名的以少胜多的战役之一。' },
+    { type: '填空', q: '“既生瑜，何生亮”是文学作品中_________对诸葛亮的感慨。', a: '周瑜', note: '虽是演义虚构，但体现了两大天才的激烈碰撞。' },
+    { type: '填空', q: '孙吴政权最著名的水军基地位于_________。', a: '柴桑 (或江夏)', note: '这里是扼守长江中下游的关键点。' },
+    { type: '填空', q: '曹操死后，被追尊为_________皇帝。', a: '魏武帝', note: '曹操一生未称帝，但其基业由子孙继承。' },
+    { type: '填空', q: '诸葛亮最后一次北伐病逝于_________。', a: '五丈原', note: '“出师未捷身先死，长使英雄泪满襟。”' },
+    { type: '填空', q: '被称为“江表之虎臣”的是孙吴阵营的_________。', a: '程普/黄盖等老将', note: '这些老将是孙家三代创业的基石。' },
+    { type: '填空', q: '刘备病逝的地方是_________，并在那里将刘禅托付给诸葛亮。', a: '白帝城', note: '史称“刘备托孤”。' },
+    { type: '填空', q: '曹魏后期，掌握国家大权并最终由其子孙代魏的是_________家族。', a: '司马', note: '司马懿通过高平陵之变夺取了军政大权。' },
+    { type: '填空', q: '孙吴为了扩大资源，曾派遣将军卫温到达了_________。', a: '夷洲 (今台湾)', note: '这是中国古代历史上记载较早的海上远航。' },
+    { type: '填空', q: '诸葛亮北伐时期，由于粮草不济，多次被迫_________。', a: '退兵', note: '后勤补给一直是蜀汉北伐的死穴。' },
+    { type: '填空', q: '历史上，刘备的字是_________。', a: '玄德', note: '中山靖王刘胜之后，刘备一直以此作为政治口号。' },
+    { type: '填空', q: '曹操著名的诗句“老骥伏枥，志在千里”出自《_________》。', a: '龟虽寿', note: '表现了曹操晚年依然不减的雄心壮志。' },
+    // === 81-95题：填空题（侧重文化、后期及综合） ===
+    { type: '填空', q: '曹魏政权为了选拔人才，在后期由陈群提出了_________制，但这导致了门阀势力的崛起。', a: '九品中正', note: '这一制度后来演变为“上品无寒门，下品无势族”。' },
+    { type: '填空', q: '孙吴政权在地理上主要依靠长江，而其水军最精锐的部队被称为_________。', a: '解烦卫 (或解烦军)', note: '这是孙权直接统领的一支精锐部队。' },
+    { type: '填空', q: '“鞠躬尽瘁，死而后已”出自诸葛亮的《_________》。', a: '后出师表', note: '这八个字成为了诸葛亮一生忠诚与勤勉的真实写照。' },
+    { type: '填空', q: '历史上，赤壁之战的战场位于今天的_________省境内。', a: '湖北', note: '赤壁的地理位置至今在学术界仍有多种说法，但均在湖北省境内。' },
+    { type: '填空', q: '曹操在赤壁战败后，撤退时走的是极其泥泞的_________，损失惨重。', a: '华容道', note: '华容道当时是一片沼泽地，曹军在撤退过程中遭遇了巨大自然阻碍。' },
+    { type: '填空', q: '三国中，最后一位称帝的君主是吴国的_________。', a: '孙皓', note: '孙皓也是吴国的亡国之君，其统治后期非常残暴。' },
+    { type: '填空', q: '蜀汉在军事防守上，由姜维在_________死守，阻挡了钟会的大军。', a: '剑阁 (或剑门关)', note: '剑阁天险让魏军主力一度陷入僵局。' },
+    { type: '填空', q: '曹丕代汉建魏，标志着中国历史正式进入了_________时期。', a: '三国', note: '此前虽有割据，但在名义上仍属于东汉。' },
+    { type: '填空', q: '关羽死后被后世尊称为“_________”，成为了忠义的化身。', a: '武圣', note: '与文圣孔子并列，关羽的影响力早已超越了军事领域。' },
+    { type: '填空', q: '蜀汉灭亡时，后主刘禅投降魏国，被封为_________。', a: '安乐公', note: '这也是“乐不思蜀”典故的背景。' },
+    { type: '填空', q: '曹操的文学成就极高，他与曹丕、曹植并称为“_________”。', a: '三曹', note: '他们是建安文学的领军人物。' },
+    { type: '填空', q: '孙吴政权灭亡的标志是西晋水军攻克了其首都_________。', a: '建业 (或南京)', note: '西晋名将王濬楼船下益州，金陵王气黯然收。' },
+    { type: '填空', q: '被称为“锦马超”的蜀汉将领属于_________少数民族势力。', a: '羌胡 (或凉州势力)', note: '马超在西北地区拥有极高的威望。' },
+    { type: '填空', q: '三国时期，魏国的地盘主要位于_________流域。', a: '黄河', note: '黄河流域在当时依然是中国的政治与经济中心。' },
+    { type: '填空', q: '“士别三日，即更刮目相待”是说孙吴名将_________勤奋好学。', a: '吕蒙', note: '吕蒙从一介武夫成长为深谋远虑的统帅，奇袭荆州即出自其手。' },
+    { type: '简答', q: '简述荆州在三国地理博弈中为何被称为“被诅咒的十字路口”？', a: '战略地位极其重要，但地势平坦，无险可守。', note: '荆州是连接魏、蜀、吴三方的枢纽。对于占据者来说，它虽然是向四周扩张的跳板，但由于缺乏天然屏障且三方利益冲突无法调和，导致占据者必须随时面对多线作战的巨大压力。' },
+    { type: '简答', q: '曹操之所以能从汉末群雄中脱颖而出，其“屯田制”起到了什么作用？', a: '解决了粮食补给问题，并实现了人口的社会管理。', note: '屯田制通过将流民与土地结合，不仅保证了军队的军粮供给，还使曹操在战乱中获得了稳定的税收和兵源，从而在持久战中耗赢了其他军阀。' },
+    { type: '简答', q: '为什么《隆中对》中强调“跨有荆益”是北伐成功的前提？', a: '目的是形成两路并举的钳形攻势。', note: '如果只从益州出兵，会受阻于秦岭山道；若同时从荆州出兵宛洛，魏国必须分兵防御，蜀汉才能打破地理限制，使魏国首尾不能相顾。' },
+    { type: '简答', q: '分析赤壁之战中孙刘联军获胜的地理环境因素。', a: '利用了水网地形、气候（东南风）和北方士兵的生理局限。', note: '南方湿润多水阻断了北方骑兵的机动性；曹军不习水性导致连环锁船；周瑜敏锐捕捉到冬至前后的气象变化，利用火攻扩大了战果。' },
+    { type: '简答', q: '从长远来看，为什么曹魏统一全国是历史的必然？', a: '综合国力（人口、资源、正统地位）的绝对压制。', note: '曹魏占据了当时全国超过65%的人口和农耕产区。在长期的对峙中，魏国的容错率远高于蜀吴。随着时间的推移，这种巨大的资源差距最终演变为无法逾越的军事压制。' }
+];
+    function startQuiz() {
+        document.getElementById('quiz-cover').style.display = 'none';
+        document.getElementById('quiz-content').style.display = 'block';
+        renderQuestions(); // 调用下面的分区渲染函数
+    }
+
+function renderQuestions() {
+
+    const container = document.getElementById('quiz-app');
+    const questions = GLOBAL_QUIZ_DATA;
+    if(!container || container.innerHTML !== "") return; 
+
+    const sections = [
+        { title: '第一部分：选择题(共50题)', type: '选择' },
+        { title: '第二部分：填空题(共45题)', type: '填空' },
+        { title: '第三部分：简答题(共5题)', type: '简答' }
+    ];
+
+    sections.forEach(sec => {
+        const filtered = questions.filter(item => item.type === sec.type);
+        if (filtered.length > 0) {
+            const header = document.createElement('h2');
+            header.style.cssText = "color:#8b1a1a; border-bottom:2px solid #8b1a1a; margin-top:40px; padding-bottom:10px;";
+            header.innerText = sec.title;
+            container.appendChild(header);
+
+            filtered.forEach((item, idx) => {
+                const qId = `q-${sec.type}-${idx}`; // 为每道题生成唯一ID
+                const div = document.createElement('div');
+                div.style.cssText = "margin-bottom:30px; padding:20px; background:#fff; border:1px solid #eee; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.05);";
+                
+                let html = `<p style="font-size:1.1rem;"><strong>${idx + 1}.</strong> ${item.q}</p>`;
+
+                // --- 分支：选择题渲染按钮 ---
+                if (item.type === '选择') {
+                    const opts = item.options.split('|');
+                    html += `<div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:15px;">`;
+                    opts.forEach(opt => {
+                        const val = opt.trim().charAt(0); // 提取 A, B, C, D
+                        html += `<button onclick="checkSelect(this, '${val}', '${item.a}', '${qId}')" 
+                                 style="padding:8px 20px; border:1px solid #ccc; background:#fff; cursor:pointer; border-radius:4px; transition:0.3s;">
+                                 ${opt.trim()}
+                                 </button>`;
+                    });
+                    html += `</div>`;
+                } 
+                // --- 分支：填空题渲染输入框 ---
+                else if (item.type === '填空') {
+                    html += `<div style="margin-top:15px;">
+                                <input type="text" id="input-${qId}" placeholder="在此输入答案..." 
+                                 style="padding:10px; width:250px; border:1px solid #ccc; border-radius:4px;">
+                                <button onclick="checkFill('${qId}', '${item.a}')" 
+                                 style="padding:10px 20px; background:#8b1a1a; color:white; border:none; border-radius:4px; margin-left:10px; cursor:pointer;">提交</button>
+                             </div>`;
+                }
+                // --- 分支：简答题渲染大文本框 ---
+                else {
+                    html += `<div style="margin-top:15px;">
+                                <textarea id="input-${qId}" placeholder="请阐述你的见解..." 
+                                 style="padding:10px; width:100%; height:80px; border:1px solid #ccc; border-radius:4px;"></textarea>
+                                <button onclick="checkBrief('${qId}')" 
+                                 style="padding:10px 20px; background:#333; color:white; border:none; border-radius:4px; margin-top:10px; cursor:pointer;">完成思考</button>
+                             </div>`;
+                }
+
+                // 统一的反馈区域
+                html += `<div id="feedback-${qId}" style="margin-top:15px; display:none;"></div>`;
+                
+                // 传统的解析区域（默认隐藏，答题后显示）
+                html += `
+                    <details id="note-${qId}" style="margin-top:10px; display:none;">
+                        <summary style="color:#8b1a1a; cursor:pointer; font-weight:bold;">查看解析</summary>
+                        <div style="margin-top:10px; padding:12px; background:#f9f9f9; border-left:4px solid #8b1a1a; font-size:0.9rem;">
+                            <strong>解析：</strong>${item.note}
+                        </div>
+                    </details>`;
+
+                div.innerHTML = html;
+                container.appendChild(div);
+            });
+        }
+    });
+}
+
+// 选择题判对错
+function checkSelect(btn, userVal, correctVal, qId) {
+    const feedback = document.getElementById(`feedback-${qId}`);
+    const note = document.getElementById(`note-${qId}`);
+    feedback.style.display = "block";
+    note.style.display = "block";
+
+    if (userVal === correctVal) {
+        btn.style.background = "#dcfce7";
+        btn.style.borderColor = "#16a34a";
+        feedback.innerHTML = `<span style="color:#16a34a; font-weight:bold;">✅ 回答正确！</span>`;
+    } else {
+        btn.style.background = "#fee2e2";
+        btn.style.borderColor = "#ef4444";
+        feedback.innerHTML = `<span style="color:#ef4444; font-weight:bold;">❌ 回答错误，正确答案是 ${correctVal}</span>`;
+    }
+    // 禁用该题所有按钮，防止重复点
+    const buttons = btn.parentElement.querySelectorAll('button');
+    buttons.forEach(b => b.onclick = null);
+}
+
+// 填空题判对错
+function checkFill(qId, correctVal) {
+    const input = document.getElementById(`input-${qId}`);
+    const feedback = document.getElementById(`feedback-${qId}`);
+    const note = document.getElementById(`note-${qId}`);
+    feedback.style.display = "block";
+    note.style.display = "block";
+
+    if (input.value.trim() === correctVal) {
+        feedback.innerHTML = `<span style="color:#16a34a; font-weight:bold;">✅ 恭喜，完全正确！</span>`;
+        input.style.borderColor = "#16a34a";
+    } else {
+        feedback.innerHTML = `<span style="color:#ef4444; font-weight:bold;">❌ 差了一点点，正确答案是：${correctVal}</span>`;
+        input.style.borderColor = "#ef4444";
+    }
+}
+
+function checkBrief(qId) {
+    const feedback = document.getElementById(`feedback-${qId}`);
+    const note = document.getElementById(`note-${qId}`);
+    feedback.style.display = "block";
+    note.style.display = "block";
+    feedback.innerHTML = `<span style="color:#333; font-weight:bold;">💡 已记录你的思考。请对照下方解析自我核对：</span>`;
+}
+
+    function changeTab(element, title) {
+        const items = document.querySelectorAll('.nav-item');
+        items.forEach(item => item.classList.remove('active'));
+        element.classList.add('active');
+        
+        document.getElementById('content-title').innerText = title;
+        const body = document.getElementById('content-body');
+        if (contentData[title]) {
+            body.innerHTML = contentData[title];
+        }
+    }
+
+    window.onload = function() {
+        const firstItem = document.querySelector('.nav-item');
+        changeTab(firstItem, '壹 · 汉末风云');
+    };
+
+    const BadgeManager = {
+        STORAGE_KEY: 'badge_data_v1',
+        
+        getData() {
+            try {
+                const data = localStorage.getItem(this.STORAGE_KEY);
+                return data ? JSON.parse(data) : {
+                    unlockedBadges: [],
+                    badgeUnlockTime: {},
+                    readingProgress: {
+                        xiyou: { stage1: false, stage2: false, stage3: false },
+                        sanguo: { stage1: false, stage2: false, stage3: false },
+                        shuihu: { stage1: false, stage2: false, stage3: false },
+                        honglou: { stage1: false, stage2: false, stage3: false }
+                    }
+                };
+            } catch (e) {
+                return {
+                    unlockedBadges: [],
+                    badgeUnlockTime: {},
+                    readingProgress: {
+                        xiyou: { stage1: false, stage2: false, stage3: false },
+                        sanguo: { stage1: false, stage2: false, stage3: false },
+                        shuihu: { stage1: false, stage2: false, stage3: false },
+                        honglou: { stage1: false, stage2: false, stage3: false }
+                    }
+                };
+            }
+        },
+        
+        saveData(data) {
+            try {
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+            } catch (e) {
+                console.error('保存勋章数据失败:', e);
+            }
+        },
+        
+        isStageRead(book, stage) {
+            const data = this.getData();
+            return data.readingProgress[book] && data.readingProgress[book]['stage' + stage];
+        },
+        
+        markStageRead(book, stage) {
+            const data = this.getData();
+            if (!data.readingProgress[book]) {
+                data.readingProgress[book] = { stage1: false, stage2: false, stage3: false };
+            }
+            data.readingProgress[book]['stage' + stage] = true;
+            this.saveData(data);
+            return this.checkAndUnlockBadges();
+        },
+        
+        isBookCompleted(book) {
+            const data = this.getData();
+            const progress = data.readingProgress[book];
+            return progress && progress.stage1 && progress.stage2 && progress.stage3;
+        },
+        
+        getCompletedBooksCount() {
+            let count = 0;
+            ['xiyou', 'sanguo', 'shuihu', 'honglou'].forEach(book => {
+                if (this.isBookCompleted(book)) count++;
+            });
+            return count;
+        },
+        
+        checkAndUnlockBadges() {
+            const data = this.getData();
+            const newlyUnlocked = [];
+            
+            const bookBadges = [
+                { id: 'xiyou_reader', name: '西游行者', desc: '完成西游记阅读', book: 'xiyou' },
+                { id: 'sanguo_reader', name: '三国通览', desc: '完成三国演义阅读', book: 'sanguo' },
+                { id: 'shuihu_reader', name: '水浒知音', desc: '完成水浒传阅读', book: 'shuihu' },
+                { id: 'honglou_reader', name: '红楼初探', desc: '完成红楼梦阅读', book: 'honglou' },
+                { id: 'all_books_reader', name: '四大名著通', desc: '完成全部名著阅读', book: 'all' }
+            ];
+            
+            bookBadges.forEach(badge => {
+                if (data.unlockedBadges.includes(badge.id)) return;
+                
+                let shouldUnlock = false;
+                if (badge.book === 'all') {
+                    shouldUnlock = this.getCompletedBooksCount() >= 4;
+                } else {
+                    shouldUnlock = this.isBookCompleted(badge.book);
+                }
+                
+                if (shouldUnlock) {
+                    data.unlockedBadges.push(badge.id);
+                    data.badgeUnlockTime[badge.id] = Date.now();
+                    newlyUnlocked.push(badge);
+                }
+            });
+            
+            if (newlyUnlocked.length > 0) {
+                this.saveData(data);
+            }
+            
+            return newlyUnlocked;
+        }
+    };
+
+    let autoReadStartTime = Date.now();
+    let hasScrolledEnough = false;
+    const MIN_READ_TIME = 30000;
+    const SCROLL_THRESHOLD = 0.8;
+    let autoReadMarked = false;
+
+    function initAutoReadTracking() {
+        if (BadgeManager.isStageRead('sanguo', 1)) {
+            autoReadMarked = true;
+            return;
+        }
+        
+        const mainContent = document.querySelector('.main-content');
+        
+        mainContent.addEventListener('scroll', function() {
+            if (autoReadMarked) return;
+            
+            const scrollPercent = (mainContent.scrollTop + mainContent.clientHeight) / mainContent.scrollHeight;
+            if (scrollPercent >= SCROLL_THRESHOLD) {
+                hasScrolledEnough = true;
+                checkAndMarkAutoRead();
+            }
+        });
+        
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && !autoReadMarked) {
+                checkAndMarkAutoRead();
+            }
+        });
+        
+        window.addEventListener('beforeunload', function() {
+            if (!autoReadMarked) {
+                checkAndMarkAutoRead();
+            }
+        });
+    }
+
+    function checkAndMarkAutoRead() {
+        if (autoReadMarked) return;
+        
+        const readTime = Date.now() - autoReadStartTime;
+        if (readTime >= MIN_READ_TIME && hasScrolledEnough) {
+            const newlyUnlocked = BadgeManager.markStageRead('sanguo', 1);
+            autoReadMarked = true;
+            
+            if (newlyUnlocked.length > 0) {
+                localStorage.setItem('pending_badge_notification', newlyUnlocked[0].id);
+            }
+        }
+    }
+
+    function showBadgeNotification(badge) {
+        document.getElementById('badgeName').textContent = badge.name;
+        document.getElementById('badgeDesc').textContent = badge.desc;
+        
+        const card = document.getElementById('badgeCard');
+        const rarityColors = {
+            common: '#d4af37',
+            rare: '#9c27b0',
+            epic: '#ff6b35'
+        };
+        const color = rarityColors[badge.rarity] || rarityColors.common;
+        card.style.border = '4px solid ' + color;
+        card.style.boxShadow = '0 10px 40px ' + color + '80';
+        document.getElementById('badgeName').style.color = color;
+        
+        document.getElementById('badgeNotification').classList.add('show');
+    }
+
+    function closeBadgeNotification() {
+        document.getElementById('badgeNotification').classList.remove('show');
+    }
+
+    window.addEventListener('load', function() {
+        initAutoReadTracking();
+    });
+    </script>
+</body>
+</html>

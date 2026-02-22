@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>名著阅读</title>
+    <style>
+        /* 1. 基础背景设置 */
+        body {
+            font-family: "Microsoft YaHei", "SimSun", sans-serif;
+            background-color: #f5f5dc; /* 古风米黄色背景 */
+            text-align: center;
+            padding: 50px 20px;
+            margin: 0;
+        }
+
+        h1 {
+            color: #8b4513; /* 深木色标题 */
+            font-size: 2.5rem;
+            margin-bottom: 60px; /* 标题与下方内容的间距 */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        /* 2. 核心布局容器：控制四个书目的水平间距 */
+        .menu {
+            display: flex;
+            justify-content: center; /* 居中排列 */
+            gap: 80px; /* 左右拉开 80px 的超大空间 */
+            flex-wrap: wrap; /* 屏幕窄时自动换行 */
+            max-width: 1200px; /* 限制最大宽度 */
+            margin: 0 auto;
+        }
+
+        /* 3. 单个书目块：图片 + 按钮 */
+        .book-item {
+            display: flex;
+            flex-direction: column; /* 让图片和按钮上下垂直排列 */
+            align-items: center;    /* 水平居中 */
+            margin-bottom: 50px;    /* 防止换行时上下挤在一起 */
+        }
+
+        /* 4. 图片样式 */
+        .book-item img {
+            width: 160px;  
+            height: 240px; 
+            object-fit: cover; /* 自动裁剪，防止变形 */
+            border: 4px solid #fff; /* 白色相框边缘 */
+            border-radius: 10px;    
+            margin-bottom: 25px;    /* 图片与按钮之间的间距 */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15); /* 增加浮动阴影感 */
+            transition: transform 0.3s; /* 增加动画效果 */
+        }
+
+        .book-item img:hover {
+            transform: translateY(-10px); /* 鼠标指上去图片往上飘 */
+        }
+
+        /* 5. 按钮样式 */
+        .btn {
+            text-decoration: none;
+            padding: 12px 40px; 
+            background-color: #8b4513;
+            color: white;
+            border-radius: 30px; /* 胶囊状按钮 */
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.2s;
+            min-width: 140px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            background-color: #a0522d;
+            transform: scale(1.1); /* 按钮稍微变大 */
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        /* 6. 打字机效果宣传栏样式 */
+        .typewriter-container {
+            margin-top: 60px;
+            font-size: 1.8rem;
+            color: #8b4513;
+            font-family: "KaiTi", "STKaiti", serif; /* 楷体增加古风感 */
+            min-height: 40px; /* 防止文字消失时页面跳动 */
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        /* 模拟光标闪烁动画 */
+        .cursor {
+            color: #8b4513;
+            font-weight: normal;
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>名著阅读</h1>
+
+    <div class="menu">
+        <div class="book-item">
+            <img src="images/xiyou.jpg" alt="西游记封面">
+            <a href="xiyou.html" class="btn">西游记</a>
+        </div>
+
+        <div class="book-item">
+            <img src="images/sanguo.jpg" alt="三国演义封面">
+            <a href="sanguo.html" class="btn">三国演义</a>
+        </div>
+
+        <div class="book-item">
+            <img src="images/shuihu.jpg" alt="水浒传封面">
+            <a href="shuihu.html" class="btn">水浒传</a>
+        </div>
+
+        <div class="book-item">
+            <img src="images/honglou.jpg" alt="红楼梦封面">
+            <a href="honglou.html" class="btn">红楼梦</a>
+        </div>
+    </div>
+
+    <a href="home.html" class="back-link">← 返回主页</a>
+
+    <div class="typewriter-container">
+        <span id="typewriter-text"></span><span class="cursor">|</span>
+    </div>
+
+    <style>
+        /* 返回按钮样式，仿照xiyou_stage2.html */
+        .back-link {
+            position: fixed;
+            top: 20px;
+            right: 40px;
+            text-decoration: none;
+            color: #f0e68c; /* sanguo_stage1.html的按钮颜色 */
+            font-weight: bold;
+            background: #8b4513;
+            padding: 8px 15px;
+            border-radius: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+    </style>
+
+    <script>
+        const textElement = document.getElementById('typewriter-text');
+        const phrases = ["让阅读更简单", "四大名著助读", "经典永不落幕", "品读华夏瑰宝"];
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        let typeSpeed = 200;
+
+        function type() {
+            const currentPhrase = phrases[phraseIndex];
+            
+            if (isDeleting) {
+                // 正在删除文字
+                textElement.textContent = currentPhrase.substring(0, charIndex - 1);
+                charIndex--;
+                typeSpeed = 100; // 删除速度快一点
+            } else {
+                // 正在打出文字
+                textElement.textContent = currentPhrase.substring(0, charIndex + 1);
+                charIndex++;
+                typeSpeed = 200; // 打字速度
+            }
+
+            // 逻辑判断
+            if (!isDeleting && charIndex === currentPhrase.length) {
+                // 一句话打完了，停顿2秒
+                isDeleting = true;
+                typeSpeed = 2000; 
+            } else if (isDeleting && charIndex === 0) {
+                // 删除完了，换下一句
+                isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length; 
+                typeSpeed = 500;
+            }
+
+            setTimeout(type, typeSpeed);
+        }
+
+        // 页面加载完成后启动打字机
+        document.addEventListener('DOMContentLoaded', type);
+    </script>
+</body>
+</html>

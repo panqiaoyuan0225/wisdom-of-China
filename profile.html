@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人档案</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "SimSun", sans-serif;
+            background-color: #f5f5dc;
+            min-height: 100vh;
+            padding: 20px;
+            padding-top: 60px;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            right: 40px;
+            text-decoration: none;
+            color: #f0e68c;
+            font-weight: bold;
+            background: #8b4513;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .page-title {
+            text-align: center;
+            color: #8b4513;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .profile-header {
+            max-width: 800px;
+            margin: 0 auto 30px;
+            background: linear-gradient(135deg, #fff9e6, #fff5d6);
+            border-radius: 20px;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            border: 3px solid #d4af37;
+        }
+
+        .avatar-container {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid #d4af37;
+            object-fit: cover;
+            background: #e8e0c0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #8b4513;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .avatar-upload-hint {
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            background: #8b4513;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            border: 2px solid #d4af37;
+        }
+
+        .avatar-input {
+            display: none;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .username-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .username {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #8b4513;
+        }
+
+        .username-input {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #8b4513;
+            border: none;
+            background: transparent;
+            border-bottom: 2px dashed #d4af37;
+            outline: none;
+            padding: 5px;
+            width: 200px;
+        }
+
+        .edit-btn {
+            background: #8b4513;
+            color: #fff;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .edit-btn:hover {
+            background: #a0522d;
+        }
+
+        .user-rank {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .rank-icon-small {
+            width: 40px;
+            height: 40px;
+        }
+
+        .rank-name-text {
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .stats-grid {
+            max-width: 800px;
+            margin: 0 auto 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #8b4513;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .section {
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+
+        .section-title {
+            color: #8b4513;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #d4af37;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge-showcase {
+            background: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .badge-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .badge-item {
+            width: 80px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .badge-item:hover {
+            transform: scale(1.1);
+        }
+
+        .badge-icon-small {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 5px;
+        }
+
+        .badge-name-small {
+            font-size: 0.75rem;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .no-badges {
+            color: #999;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .reading-progress {
+            background: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .book-progress-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .book-progress-item:last-child {
+            border-bottom: none;
+        }
+
+        .book-icon {
+            font-size: 2rem;
+        }
+
+        .book-info {
+            flex: 1;
+        }
+
+        .book-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .progress-bar-bg {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #d4af37, #f0d78c);
+            transition: width 0.5s ease;
+        }
+
+        .book-status {
+            font-size: 0.85rem;
+            color: #666;
+            min-width: 60px;
+            text-align: right;
+        }
+
+        .logout-btn {
+            max-width: 800px;
+            margin: 0 auto 30px;
+            padding: 15px;
+            background: #c0392b;
+            color: #fff;
+            border: none;
+            border-radius: 15px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #e74c3c;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 600px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+            }
+
+            .username {
+                font-size: 1.5rem;
+            }
+
+            .username-input {
+                font-size: 1.5rem;
+                width: 150px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .avatar {
+                width: 100px;
+                height: 100px;
+                font-size: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="home.html" class="back-link">← 返回主页</a>
+    
+    <h1 class="page-title">个人档案</h1>
+    
+    <div class="profile-header">
+        <div class="avatar-container">
+            <div class="avatar" id="avatar" onclick="document.getElementById('avatarInput').click()">
+                <span id="avatarPlaceholder">👤</span>
+            </div>
+            <div class="avatar-upload-hint" onclick="document.getElementById('avatarInput').click()">📷</div>
+            <input type="file" id="avatarInput" class="avatar-input" accept="image/*" onchange="handleAvatarUpload(event)">
+        </div>
+        <div class="user-info">
+            <div class="username-container">
+                <span class="username" id="usernameDisplay">书友</span>
+                <input type="text" class="username-input" id="usernameInput" placeholder="输入昵称" style="display: none;" maxlength="12">
+                <button class="edit-btn" id="editBtn" onclick="toggleEditUsername()">✏️ 编辑</button>
+                <button class="edit-btn" id="saveBtn" style="display: none; background: #2e7d32;" onclick="saveUsername()">✓ 保存</button>
+            </div>
+            <div class="user-rank">
+                <div class="rank-icon-small" id="rankIcon"></div>
+                <span class="rank-name-text" id="rankName">加载中...</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">📝</div>
+            <div class="stat-value" id="totalQuestions">0</div>
+            <div class="stat-label">累计答题</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-value" id="accuracy">0%</div>
+            <div class="stat-label">正确率</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🎖️</div>
+            <div class="stat-value" id="badgeCount">0</div>
+            <div class="stat-label">获得勋章</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-value" id="booksCompleted">0/4</div>
+            <div class="stat-label">名著阅读</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">⏱️</div>
+            <div class="stat-value" id="totalTime">0分钟</div>
+            <div class="stat-label">浏览时长</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">🏅 我的勋章</h2>
+        <div class="badge-showcase">
+            <div class="badge-list" id="badgeList">
+                <div class="no-badges">暂无勋章，继续努力吧！</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">📖 名著阅读进度</h2>
+        <div class="reading-progress">
+            <div class="book-progress-item">
+                <span class="book-icon">📕</span>
+                <div class="book-info">
+                    <div class="book-name">红楼梦</div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="honglouProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+                <span class="book-status" id="honglouStatus">未开始</span>
+            </div>
+            <div class="book-progress-item">
+                <span class="book-icon">📘</span>
+                <div class="book-info">
+                    <div class="book-name">三国演义</div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="sanguoProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+                <span class="book-status" id="sanguoStatus">未开始</span>
+            </div>
+            <div class="book-progress-item">
+                <span class="book-icon">📙</span>
+                <div class="book-info">
+                    <div class="book-name">水浒传</div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="shuihuProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+                <span class="book-status" id="shuihuStatus">未开始</span>
+            </div>
+            <div class="book-progress-item">
+                <span class="book-icon">📗</span>
+                <div class="book-info">
+                    <div class="book-name">西游记</div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="xiyouProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+                <span class="book-status" id="xiyouStatus">未开始</span>
+            </div>
+        </div>
+    </div>
+
+    <button class="logout-btn" id="logoutBtn" onclick="handleLogout()">退出登录</button>
+
+    <script>
+        const PROFILE_STORAGE_KEY = 'user_profile_v1';
+        const TIME_STORAGE_KEY = 'browsing_time_v1';
+        const BADGE_STORAGE_KEY = 'badge_data_v1';
+        const HISTORY_KEY = 'quiz_history_v1';
+
+        const BADGES = [
+            { id: 'honglou_reader', name: '红楼初探', rarity: 'common' },
+            { id: 'sanguo_reader', name: '三国通览', rarity: 'common' },
+            { id: 'shuihu_reader', name: '水浒知音', rarity: 'common' },
+            { id: 'xiyou_reader', name: '西游行者', rarity: 'common' },
+            { id: 'all_books_reader', name: '四大名著通', rarity: 'rare' },
+            { id: '100_questions', name: '初试锋芒', rarity: 'common' },
+            { id: '500_questions', name: '勤学不辍', rarity: 'common' },
+            { id: '1000_questions', name: '博闻强识', rarity: 'rare' },
+            { id: '2000_questions', name: '学海无涯', rarity: 'epic' },
+            { id: 'honglou_characters', name: '金陵十二钗', rarity: 'rare' },
+            { id: 'sanguo_strategists', name: '卧龙凤雏', rarity: 'rare' },
+            { id: 'shuihu_heroes', name: '一百零八将', rarity: 'rare' },
+            { id: 'xiyou_plot', name: '九九八十一难', rarity: 'rare' },
+            { id: 'poetry_master', name: '诗词雅士', rarity: 'epic' }
+        ];
+
+        const RANKS = [
+            { name: '蒙童', icon: 'mengtong', color: '#7CB342', stages: [5, 10, 15] },
+            { name: '书生', icon: 'shusheng', color: '#5C6BC0', stages: [20, 28, 36] },
+            { name: '秀才', icon: 'xiucai', color: '#81D4FA', stages: [45, 54, 63] },
+            { name: '举人', icon: 'juren', color: '#E53935', stages: [70, 77, 84] },
+            { name: '进士', icon: 'jinshi', color: '#AB47BC', stages: [88, 92, 96] },
+            { name: '翰林', icon: 'hanlin', color: '#00897B', stages: [97, 98, 99] },
+            { name: '状元', icon: 'zhuangyuan', color: '#FFD700', stages: [100] }
+        ];
+
+        const RANK_ICONS = {
+            mengtong: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="bambooGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#C5E1A5"/><stop offset="50%" style="stop-color:#DCEDC8"/><stop offset="100%" style="stop-color:#C5E1A5"/></linearGradient></defs><line x1="20" y1="35" x2="80" y2="35" stroke="#7CB342" stroke-width="1.5" /><line x1="20" y1="65" x2="80" y2="65" stroke="#7CB342" stroke-width="1.5" /><rect x="22" y="25" width="10" height="50" rx="1.5" fill="url(#bambooGrad)" stroke="#9CCC65" stroke-width="0.5" /><rect x="33" y="25" width="10" height="50" rx="1.5" fill="url(#bambooGrad)" stroke="#9CCC65" stroke-width="0.5" /><rect x="44" y="25" width="10" height="50" rx="1.5" fill="url(#bambooGrad)" stroke="#9CCC65" stroke-width="0.5" /><rect x="55" y="25" width="10" height="50" rx="1.5" fill="url(#bambooGrad)" stroke="#9CCC65" stroke-width="0.5" /><rect x="66" y="25" width="10" height="50" rx="1.5" fill="url(#bambooGrad)" stroke="#9CCC65" stroke-width="0.5" /></svg>`,
+            shusheng: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="brushHandle" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#4E342E"/><stop offset="30%" style="stop-color:#8D6E63"/><stop offset="60%" style="stop-color:#5D4037"/><stop offset="100%" style="stop-color:#3E2723"/></linearGradient><linearGradient id="brushTip" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#666"/><stop offset="70%" style="stop-color:#222"/><stop offset="100%" style="stop-color:#000"/></linearGradient></defs><g transform="rotate(-20 50 50)"><circle cx="50" cy="12" r="1.5" fill="none" stroke="#8D6E63" stroke-width="0.5"/><rect x="47.5" y="14" width="5" height="50" rx="1.5" fill="url(#brushHandle)" /><path d="M47 62 L53 62 L54 68 Q54 70 52 70 L48 70 Q46 70 46 68 Z" fill="#212121" /><rect x="46.5" y="62" width="7" height="1.5" fill="#C0C0C0" opacity="0.3" /><path d="M46 69 Q46 75 44 82 Q43 92 50 95 Q57 92 56 82 Q54 75 54 69 Z" fill="url(#brushTip)" /><path d="M48 72 Q47 80 49 88" stroke="white" stroke-width="0.3" opacity="0.2" fill="none" /><path d="M51 75 Q52 82 51 90" stroke="white" stroke-width="0.2" opacity="0.1" fill="none" /></g></svg>`,
+            xiucai: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="fanPaper" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#F5F5DC"/><stop offset="50%" style="stop-color:#FFFDE7"/><stop offset="100%" style="stop-color:#F5F5DC"/></linearGradient><linearGradient id="bambooBone" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#795548"/><stop offset="50%" style="stop-color:#A1887F"/><stop offset="100%" style="stop-color:#5D4037"/></linearGradient></defs><path d="M10 75 Q10 25 50 15 Q90 25 90 75 L55 85 Q50 87 45 85 Z" fill="url(#fanPaper)" stroke="#D7CCC8" stroke-width="0.5"/><g stroke="#E0E0E0" stroke-width="0.2" opacity="0.6"><line x1="50" y1="85" x2="20" y2="45" /><line x1="50" y1="85" x2="35" y2="25" /><line x1="50" y1="85" x2="50" y2="15" /><line x1="50" y1="85" x2="65" y2="25" /><line x1="50" y1="85" x2="80" y2="45" /></g><path d="M10 75 L14 78 L50 85 L50 82 Z" fill="url(#bambooBone)" /><path d="M90 75 L86 78 L50 85 L50 82 Z" fill="url(#bambooBone)" /><path d="M65 60 Q68 50 75 45 M67 55 Q72 53 78 55 M64 58 Q60 50 62 42" stroke="#424242" stroke-width="0.8" fill="none" opacity="0.7"/><text x="50" y="50" text-anchor="middle" font-family="serif" font-size="8" fill="#212121" style="writing-mode: tb;">清风</text><circle cx="50" cy="85" r="2.5" fill="#3E2723"/><path d="M50 87.5 Q50 92 48 94 M50 87.5 Q50 92 52 94" stroke="#B71C1C" stroke-width="1" fill="none" /></svg>`,
+            juren: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lanternBody" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#D32F2F"/><stop offset="50%" style="stop-color:#FF5252"/><stop offset="100%" style="stop-color:#B71C1C"/></linearGradient><linearGradient id="goldFrame" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#FFD700"/><stop offset="50%" style="stop-color:#FFF176"/><stop offset="100%" style="stop-color:#FFA000"/></linearGradient></defs><path d="M50 5 L50 15" stroke="#424242" stroke-width="1.5" fill="none"/><rect x="42" y="15" width="16" height="4" rx="1" fill="#3E2723"/><path d="M30 20 L70 20 L75 45 L70 70 L30 70 L25 45 Z" fill="url(#lanternBody)" stroke="url(#goldFrame)" stroke-width="1.5"/><line x1="30" y1="20" x2="30" y2="70" stroke="#FFCDD2" stroke-width="0.5" opacity="0.3"/><line x1="70" y1="20" x2="70" y2="70" stroke="#FFCDD2" stroke-width="0.5" opacity="0.3"/><text x="50" y="52" text-anchor="middle" font-family="serif" font-size="22" fill="#FFD700" font-weight="900" style="text-shadow: 0 0 5px rgba(255,215,0,0.5);">才</text><rect x="38" y="70" width="24" height="5" rx="1" fill="#3E2723"/><g stroke="#D32F2F" stroke-width="1.2"><path d="M42 75 Q40 88 40 95" fill="none"/><path d="M46 75 Q46 90 46 98" fill="none"/><path d="M50 75 L50 99" fill="none" stroke="#FF5252"/><path d="M54 75 Q54 90 54 98" fill="none"/><path d="M58 75 Q60 88 60 95" fill="none"/></g><circle cx="50" cy="78" r="2.5" fill="url(#goldFrame)"/></svg>`,
+            jinshi: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="towerGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#9575CD"/><stop offset="100%" style="stop-color:#512DA8"/></linearGradient><radialGradient id="petalGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#FFF9C4"/><stop offset="70%" style="stop-color:#F06292"/><stop offset="100%" style="stop-color:#880E4F"/></radialGradient><radialGradient id="centerSun" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#FFF176"/><stop offset="100%" style="stop-color:#FBC02D"/></radialGradient></defs><g opacity="0.15"><path d="M40 95 L60 95 L58 75 L42 75 Z" fill="url(#towerGrad)"/><path d="M43 75 L57 75 L55 58 L45 58 Z" fill="url(#towerGrad)"/><path d="M46 58 L54 58 L52 45 L48 45 Z" fill="url(#towerGrad)"/><path d="M49 45 L51 45 L50 38 Z" fill="url(#towerGrad)"/></g><g transform="translate(50, 55)"><circle cx="0" cy="-12" r="10" fill="url(#petalGrad)" opacity="0.9"/><circle cx="11" cy="-4" r="10" fill="url(#petalGrad)" opacity="0.9"/><circle cx="7" cy="10" r="10" fill="url(#petalGrad)" opacity="0.9"/><circle cx="-7" cy="10" r="10" fill="url(#petalGrad)" opacity="0.9"/><circle cx="-11" cy="-4" r="10" fill="url(#petalGrad)" opacity="0.9"/><g scale="0.6"><path d="M-6 -6 Q0 -18 6 -6 Q18 0 6 6 Q0 18 -6 6 Q-18 0 -6 -6 Z" fill="white" opacity="0.4"/></g><circle cx="0" cy="0" r="4.5" fill="url(#centerSun)"/><circle cx="0" cy="0" r="2" fill="#F9A825"/><g stroke="#FBC02D" stroke-width="0.3" opacity="0.8"><line x1="0" y1="0" x2="0" y2="-6"/><line x1="0" y1="0" x2="5" y2="-3"/><line x1="0" y1="0" x2="5" y2="3"/><line x1="0" y1="0" x2="0" y2="6"/><line x1="0" y1="0" x2="-5" y2="3"/><line x1="0" y1="0" x2="-5" y2="-3"/></g></g><path d="M25 25 Q30 20 35 25 T45 25" fill="none" stroke="#CE93D8" stroke-width="1" opacity="0.4"/><path d="M55 15 Q60 10 65 15 T75 15" fill="none" stroke="#CE93D8" stroke-width="1" opacity="0.4"/></svg>`,
+            hanlin: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00695C"/><stop offset="50%" style="stop-color:#4DB6AC"/><stop offset="100%" style="stop-color:#004D40"/></linearGradient><linearGradient id="silkGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#FFD54F"/><stop offset="100%" style="stop-color:#FF8F00"/></linearGradient></defs><g transform="translate(50, 50)"><path d="M5 0 C 25 -20, 45 0, 30 15 C 20 25, 5 10, 0 0" fill="none" stroke="url(#emeraldGrad)" stroke-width="4" stroke-linecap="round" /><path d="M-5 0 C -25 -20, -45 0, -30 15 C -20 25, -5 10, 0 0" fill="none" stroke="url(#emeraldGrad)" stroke-width="4" stroke-linecap="round" /><circle cx="0" cy="0" r="3" fill="#004D40" /><path d="M-32 8 Q-20 18 -8 5" fill="none" stroke="#B2DFDB" stroke-width="0.8" opacity="0.6" /><path d="M32 8 Q20 18 8 5" fill="none" stroke="#B2DFDB" stroke-width="0.8" opacity="0.6" /></g><g opacity="0.8"><path d="M47 55 Q45 75 42 90" fill="none" stroke="url(#silkGrad)" stroke-width="1.2" stroke-linecap="round" /><path d="M53 55 Q55 75 58 90" fill="none" stroke="url(#silkGrad)" stroke-width="1.2" stroke-linecap="round" /><circle cx="44" cy="70" r="1.5" fill="#4DB6AC" /><circle cx="56" cy="70" r="1.5" fill="#4DB6AC" /></g><circle cx="50" cy="45" r="25" fill="url(#emeraldGrad)" opacity="0.05" /></svg>`,
+            zhuangyuan: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="haloGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#FF5252; stop-opacity:0.4"/><stop offset="70%" style="stop-color:#B71C1C; stop-opacity:0.1"/><stop offset="100%" style="stop-color:#B71C1C; stop-opacity:0"/></radialGradient><linearGradient id="goldTop" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#FFF176"/><stop offset="50%" style="stop-color:#FFD700"/><stop offset="100%" style="stop-color:#FFA000"/></linearGradient><radialGradient id="rubyGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#FF8A80"/><stop offset="60%" style="stop-color:#D32F2F"/><stop offset="100%" style="stop-color:#5D4037"/></radialGradient></defs><circle cx="50" cy="45" r="45" fill="url(#haloGrad)" /><path d="M25 55 Q50 5 75 55" fill="#1A1A1A" stroke="url(#goldTop)" stroke-width="1.5" /><path d="M32 48 Q50 18 68 48" fill="none" stroke="#FFD700" stroke-width="0.5" opacity="0.6" /><g><rect x="2" y="50" width="30" height="10" rx="2" fill="#111" stroke="url(#goldTop)" stroke-width="1.2" /><path d="M5 53 H28 M5 57 H28" stroke="url(#goldTop)" stroke-width="0.3" opacity="0.4" /><circle cx="5" cy="55" r="1" fill="#FFD700" /><rect x="68" y="50" width="30" height="10" rx="2" fill="#111" stroke="url(#goldTop)" stroke-width="1.2" /><path d="M72 53 H95 M72 57 H95" stroke="url(#goldTop)" stroke-width="0.3" opacity="0.4" /><circle cx="95" cy="55" r="1" fill="#FFD700" /></g><path d="M32 68 C 32 35, 68 35, 68 68 Z" fill="#1A1A1A" stroke="#333" stroke-width="0.5" /><path d="M40 45 Q50 38 60 45" fill="none" stroke="#FFD700" stroke-width="0.2" opacity="0.2" /><path d="M31 62 Q50 56 69 62 L68 70 Q50 64 32 70 Z" fill="url(#goldTop)" /><g transform="translate(50, 48)"><circle cx="0" cy="0" r="10" fill="url(#goldTop)" opacity="0.8" /><circle cx="0" cy="0" r="8" fill="#1A1A1A" /><circle cx="0" cy="0" r="6.5" fill="url(#rubyGrad)" /><circle cx="-1.5" cy="-1.5" r="1.5" fill="white" opacity="0.3" /><g stroke="#FFD700" stroke-width="0.6"><line x1="0" y1="-10" x2="0" y2="-13" /><line x1="10" y1="0" x2="13" y2="0" /><line x1="-10" y1="0" x2="-13" y2="0" /><path d="M-5 -11 Q0 -15 5 -11" fill="none" stroke-width="0.4" /></g></g><path d="M30 40 Q25 30 30 20" fill="none" stroke="white" stroke-width="0.8" opacity="0.4" /><path d="M70 40 Q75 30 70 20" fill="none" stroke="white" stroke-width="0.8" opacity="0.4" /><path d="M36 70 Q35 78 28 82" fill="none" stroke="#B71C1C" stroke-width="3.5" stroke-linecap="round" /><path d="M64 70 Q65 78 72 82" fill="none" stroke="#B71C1C" stroke-width="3.5" stroke-linecap="round" /></svg>`
+        };
+
+        const BADGE_ICONS = {
+            honglou_reader: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="bookCover" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#7a1a1a"/>
+            <stop offset="100%" style="stop-color:#8e2323"/>
+        </linearGradient>
+    </defs>
+
+    <rect x="25" y="15" width="55" height="70" fill="#fdf5e6" stroke="#d4c5a1" stroke-width="0.5" />
+    <g stroke="#d4c5a1" stroke-width="0.3">
+        <line x1="77" y1="15" x2="77" y2="85" />
+        <line x1="74" y1="15" x2="74" y2="85" />
+    </g>
+
+    <path d="M20 15 L75 15 L75 85 L20 85 Z" fill="url(#bookCover)" stroke="#3e1414" stroke-width="1"/>
+
+    <rect x="20" y="15" width="4" height="70" fill="#000" fill-opacity="0.2" />
+
+    <g stroke="#d4c5a1" stroke-width="0.8">
+        <circle cx="24" cy="22" r="0.5" fill="#d4c5a1"/>
+        <circle cx="24" cy="40" r="0.5" fill="#d4c5a1"/>
+        <circle cx="24" cy="60" r="0.5" fill="#d4c5a1"/>
+        <circle cx="24" cy="78" r="0.5" fill="#d4c5a1"/>
+        <line x1="20" y1="22" x2="24" y2="22" />
+        <line x1="20" y1="40" x2="24" y2="40" />
+        <line x1="20" y1="60" x2="24" y2="60" />
+        <line x1="20" y1="78" x2="24" y2="78" />
+    </g>
+
+    <rect x="45" y="22" width="16" height="42" fill="#fdf5e6" stroke="#3e1414" stroke-width="0.4" />
+
+    <g font-family="Noto Serif SC, SimSun, serif" font-size="7" fill="#3e1414" text-anchor="middle" font-weight="bold">
+        <text x="53" y="32">红</text>
+        <text x="53" y="42">楼</text>
+        <text x="53" y="52">梦</text>
+    </g>
+</svg>`,
+            
+            sanguo_reader: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="sgCover" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#2c3e50"/>
+            <stop offset="100%" style="stop-color:#34495e"/>
+        </linearGradient>
+    </defs>
+
+    <rect x="25" y="15" width="55" height="70" fill="#fdf5e6" stroke="#bdc3c7" stroke-width="0.5" />
+    <g stroke="#bdc3c7" stroke-width="0.3">
+        <line x1="77" y1="15" x2="77" y2="85" />
+        <line x1="74" y1="15" x2="74" y2="85" />
+    </g>
+
+    <path d="M20 15 L75 15 L75 85 L20 85 Z" fill="url(#sgCover)" stroke="#1a252f" stroke-width="1"/>
+
+    <rect x="20" y="15" width="4" height="70" fill="#000" fill-opacity="0.3" />
+
+    <g stroke="#d4c5a1" stroke-width="0.8">
+        <circle cx="24" cy="22" r="0.5" fill="#d4c5a1"/>
+        <circle cx="24" cy="40" r="0.5" fill="#d4c5a1"/>
+        <circle cx="24" cy="60" r="0.5" fill="#d4c5a1"/>
+        <circle cx="24" cy="78" r="0.5" fill="#d4c5a1"/>
+        <line x1="20" y1="22" x2="24" y2="22" />
+        <line x1="20" y1="40" x2="24" y2="40" />
+        <line x1="20" y1="60" x2="24" y2="60" />
+        <line x1="20" y1="78" x2="24" y2="78" />
+    </g>
+
+    <rect x="45" y="22" width="16" height="42" fill="#fdf5e6" stroke="#1a252f" stroke-width="0.4" />
+
+    <g font-family="Noto Serif SC, SimSun, serif" font-size="6" fill="#1a252f" text-anchor="middle" font-weight="bold">
+        <text x="53" y="30">三</text>
+        <text x="53" y="38">国</text>
+        <text x="53" y="46">演</text>
+        <text x="53" y="54">义</text>
+    </g>
+</svg>`,
+            
+            shuihu_reader: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="shCover" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#8b4513"/> <stop offset="100%" style="stop-color:#5d2e0a"/> </linearGradient>
+    </defs>
+
+    <rect x="25" y="15" width="55" height="70" fill="#fdf5e6" stroke="#d2b48c" stroke-width="0.5" />
+    <g stroke="#d2b48c" stroke-width="0.3">
+        <line x1="77" y1="15" x2="77" y2="85" />
+        <line x1="74" y1="15" x2="74" y2="85" />
+    </g>
+
+    <path d="M20 15 L75 15 L75 85 L20 85 Z" fill="url(#shCover)" stroke="#3e1d06" stroke-width="1"/>
+
+    <rect x="20" y="15" width="4" height="70" fill="#000" fill-opacity="0.25" />
+
+    <g stroke="#d4c5a1" stroke-width="0.8">
+        <circle cx="24" cy="22" r="0.5" fill="#d4c5a1"/>
+        <circle cx="24" cy="40" r="0.5" fill="#d4c5a1"/>
+        <circle cx="24" cy="60" r="0.5" fill="#d4c5a1"/>
+        <circle cx="24" cy="78" r="0.5" fill="#d4c5a1"/>
+        <line x1="20" y1="22" x2="24" y2="22" />
+        <line x1="20" y1="40" x2="24" y2="40" />
+        <line x1="20" y1="60" x2="24" y2="60" />
+        <line x1="20" y1="78" x2="24" y2="78" />
+    </g>
+
+    <rect x="45" y="22" width="16" height="42" fill="#fdf5e6" stroke="#3e1d06" stroke-width="0.4" />
+
+    <g font-family="Noto Serif SC, SimSun, serif" font-size="7" fill="#3e1d06" text-anchor="middle" font-weight="bold">
+        <text x="53" y="32">水</text>
+        <text x="53" y="42">浒</text>
+        <text x="53" y="52">传</text>
+    </g>
+</svg>`,
+            
+            xiyou_reader: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="xyCover" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#d4a017"/> <stop offset="100%" style="stop-color:#b8860b"/> </linearGradient>
+    </defs>
+
+    <rect x="25" y="15" width="55" height="70" fill="#fdf5e6" stroke="#cfb53b" stroke-width="0.5" />
+    <g stroke="#cfb53b" stroke-width="0.3">
+        <line x1="77" y1="15" x2="77" y2="85" />
+        <line x1="74" y1="15" x2="74" y2="85" />
+    </g>
+
+    <path d="M20 15 L75 15 L75 85 L20 85 Z" fill="url(#xyCover)" stroke="#8b6508" stroke-width="1"/>
+
+    <rect x="20" y="15" width="4" height="70" fill="#000" fill-opacity="0.2" />
+
+    <g stroke="#fdf5e6" stroke-width="0.8">
+        <circle cx="24" cy="22" r="0.5" fill="#fdf5e6"/>
+        <circle cx="24" cy="40" r="0.5" fill="#fdf5e6"/>
+        <circle cx="24" cy="60" r="0.5" fill="#fdf5e6"/>
+        <circle cx="24" cy="78" r="0.5" fill="#fdf5e6"/>
+        <line x1="20" y1="22" x2="24" y2="22" />
+        <line x1="20" y1="40" x2="24" y2="40" />
+        <line x1="20" y1="60" x2="24" y2="60" />
+        <line x1="20" y1="78" x2="24" y2="78" />
+    </g>
+
+    <rect x="45" y="22" width="16" height="42" fill="#fdf5e6" stroke="#8b6508" stroke-width="0.4" />
+
+    <g font-family="Noto Serif SC, SimSun, serif" font-size="7" fill="#5d4037" text-anchor="middle" font-weight="bold">
+        <text x="53" y="32">西</text>
+        <text x="53" y="42">游</text>
+        <text x="53" y="52">记</text>
+    </g>
+</svg>`,
+            
+            all_books_reader: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="setCover" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#2c3e50"/>
+            <stop offset="100%" style="stop-color:#1a252f"/>
+        </linearGradient>
+    </defs>
+
+    <path d="M22 18 L77 18 L77 88 L22 88 Z" fill="#d4c5a1" stroke="#3e1414" stroke-width="0.5" />
+    <path d="M24 16 L79 16 L79 86 L24 86 Z" fill="#eaddca" stroke="#3e1414" stroke-width="0.5" />
+
+    <path d="M26 14 L81 14 L81 84 L26 84 Z" fill="url(#setCover)" stroke="#1a252f" stroke-width="1"/>
+
+    <rect x="26" y="14" width="5" height="70" fill="#000" fill-opacity="0.3" />
+
+    <rect x="78" y="30" width="4" height="10" rx="1" fill="#fdf5e6" stroke="#3e1414" stroke-width="0.3" />
+    <rect x="78" y="60" width="4" height="10" rx="1" fill="#fdf5e6" stroke="#3e1414" stroke-width="0.3" />
+
+    <rect x="42" y="24" width="22" height="48" fill="#fdf5e6" stroke="#1a252f" stroke-width="0.5" />
+
+    <g font-family="Noto Serif SC, SimSun, serif" font-size="8" fill="#1a252f" text-anchor="middle" font-weight="bold">
+        <text x="53" y="36">四</text>
+        <text x="53" y="46">大</text>
+        <text x="53" y="56">名</text>
+        <text x="53" y="66">著</text>
+    </g>
+
+    <rect x="49" y="68" width="8" height="8" fill="#c0392b" fill-opacity="0.8" />
+    <text x="53" y="74" font-family="serif" font-size="4" fill="#fff" text-anchor="middle">珍藏</text>
+</svg>`,
+            
+            '100_questions': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="paperGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#fdf5e6"/>
+            <stop offset="50%" style="stop-color:#faecd0"/>
+            <stop offset="100%" style="stop-color:#fdf5e6"/>
+        </linearGradient>
+    </defs>
+
+    <rect x="15" y="12" width="70" height="4" rx="2" fill="#5d4037" />
+    <rect x="15" y="84" width="70" height="4" rx="2" fill="#5d4037" />
+
+    <rect x="20" y="15" width="60" height="70" fill="url(#paperGrad)" stroke="#d4af37" stroke-width="0.5"/>
+
+    <rect x="23" y="18" width="54" height="64" fill="none" stroke="#d4af37" stroke-width="0.3" stroke-dasharray="2,1"/>
+
+    <circle cx="50" cy="38" r="12" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="1,1"/>
+    <text x="50" y="43" text-anchor="middle" font-family="Noto Serif SC, SimSun, serif" font-size="14" fill="#c0392b" font-weight="bold">百</text>
+
+    <g stroke="#8b4513" stroke-width="1" stroke-linecap="round" opacity="0.6">
+        <line x1="30" y1="58" x2="70" y2="58" />
+        <line x1="30" y1="66" x2="70" y2="66" />
+        <line x1="30" y1="74" x2="55" y2="74" />
+    </g>
+
+    <rect x="65" y="72" width="6" height="6" fill="#c0392b" opacity="0.8" />
+</svg>`,
+            
+            '500_questions': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="scrollGrad500" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#fdf5e6"/>
+            <stop offset="50%" style="stop-color:#f7e8c3"/>
+            <stop offset="100%" style="stop-color:#fdf5e6"/>
+        </linearGradient>
+    </defs>
+
+    <rect x="12" y="15" width="4" height="70" rx="1.5" fill="#4e342e" />
+    <rect x="11" y="12" width="6" height="3" rx="1" fill="#3e2723" />
+    <rect x="11" y="85" width="6" height="3" rx="1" fill="#3e2723" />
+    
+    <rect x="84" y="15" width="4" height="70" rx="1.5" fill="#4e342e" />
+    <rect x="83" y="12" width="6" height="3" rx="1" fill="#3e2723" />
+    <rect x="83" y="85" width="6" height="3" rx="1" fill="#3e2723" />
+
+    <rect x="16" y="18" width="68" height="64" fill="url(#scrollGrad500)" stroke="#d4af37" stroke-width="0.5"/>
+
+    <rect x="20" y="22" width="60" height="56" fill="none" stroke="#d4af37" stroke-width="0.3" opacity="0.8"/>
+
+    <rect x="38" y="28" width="24" height="20" fill="none" stroke="#c0392b" stroke-width="1.5"/>
+    <g font-family="Noto Serif SC, SimSun, serif" font-weight="bold" fill="#c0392b" text-anchor="middle">
+        <text x="50" y="42" font-size="12">五百</text>
+    </g>
+
+    <g stroke="#8b4513" stroke-width="0.8" stroke-linecap="round" opacity="0.4">
+        <line x1="28" y1="55" x2="72" y2="55" />
+        <line x1="28" y1="62" x2="72" y2="62" />
+        <line x1="28" y1="69" x2="72" y2="69" />
+    </g>
+
+    <rect x="70" y="30" width="8" height="8" fill="#c0392b" opacity="0.7" />
+    <text x="74" y="36" font-family="serif" font-size="4" fill="#fff" text-anchor="middle">考</text>
+</svg>`,
+            
+            '1000_questions': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="scrollGrad1000" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#f3eef5"/>
+            <stop offset="50%" style="stop-color:#e8daef"/>
+            <stop offset="100%" style="stop-color:#f3eef5"/>
+        </linearGradient>
+        
+        <radialGradient id="goldGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#ffeb3b"/>
+            <stop offset="100%" style="stop-color:#f9a825"/>
+        </radialGradient>
+    </defs>
+
+    <g fill="#4a148c">
+        <rect x="11" y="10" width="6" height="80" rx="2" />
+        <circle cx="14" cy="10" r="4" />
+        <circle cx="14" cy="90" r="4" />
+        <rect x="83" y="10" width="6" height="80" rx="2" />
+        <circle cx="86" cy="10" r="4" />
+        <circle cx="86" cy="90" r="4" />
+    </g>
+
+    <rect x="16" y="18" width="68" height="64" fill="url(#scrollGrad1000)" stroke="#7b1fa2" stroke-width="0.5"/>
+    
+    <g fill="#d4af37" opacity="0.3">
+        <circle cx="25" cy="30" r="0.8"/><circle cx="40" cy="70" r="0.5"/>
+        <circle cx="60" cy="25" r="0.7"/><circle cx="75" cy="55" r="0.6"/>
+        <circle cx="30" cy="50" r="0.4"/><circle cx="55" cy="75" r="0.8"/>
+    </g>
+
+    <circle cx="50" cy="42" r="14" fill="none" stroke="#6a1b9a" stroke-width="1" stroke-dasharray="2,2"/>
+    <text x="50" y="47" text-anchor="middle" font-family="Noto Serif SC, SimSun, serif" font-size="11" fill="#4a148c" font-weight="bold">千题</text>
+
+    <g stroke="#6a1b9a" stroke-width="0.6" stroke-linecap="round" opacity="0.4">
+        <line x1="28" y1="60" x2="72" y2="60" />
+        <line x1="28" y1="67" x2="72" y2="67" />
+        <line x1="28" y1="74" x2="60" y2="74" />
+    </g>
+
+    <path d="M72 15 L88 15 L88 32 L80 38 L72 32 Z" fill="url(#goldGlow)" stroke="#f57f17" stroke-width="0.8"/>
+    <text x="80" y="27" text-anchor="middle" font-family="serif" font-size="6" fill="#bf360c" font-weight="bold">极</text>
+    <path d="M76 15 L76 10 M84 15 L84 10" stroke="#f57f17" stroke-width="1" />
+</svg>`,
+            
+            '2000_questions': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="scrollGrad2000" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#fceabb"/>
+            <stop offset="50%" style="stop-color:#f8d347"/>
+            <stop offset="100%" style="stop-color:#fceabb"/>
+        </linearGradient>
+        
+        <linearGradient id="goldShine" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#ffd700"/>
+            <stop offset="50%" style="stop-color:#ffecb3"/>
+            <stop offset="100%" style="stop-color:#ffa000"/>
+        </linearGradient>
+    </defs>
+
+    <g fill="#fdf5e6" stroke="#d4af37" stroke-width="0.5">
+        <rect x="10" y="10" width="6" height="80" rx="3" />
+        <circle cx="13" cy="10" r="4.5" fill="url(#goldShine)"/>
+        <circle cx="13" cy="90" r="4.5" fill="url(#goldShine)"/>
+        <rect x="84" y="10" width="6" height="80" rx="3" />
+        <circle cx="87" cy="10" r="4.5" fill="url(#goldShine)"/>
+        <circle cx="87" cy="90" r="4.5" fill="url(#goldShine)"/>
+    </g>
+
+    <rect x="16" y="15" width="68" height="70" fill="url(#scrollGrad2000)" stroke="#d4af37" stroke-width="0.8"/>
+    
+    <g fill="none" stroke="#d4af37" stroke-width="0.3" opacity="0.4">
+        <path d="M25 25 Q30 20 35 25 T45 25" />
+        <path d="M60 75 Q65 70 70 75 T80 75" />
+    </g>
+
+    <circle cx="50" cy="42" r="18" fill="none" stroke="url(#goldShine)" stroke-width="2"/>
+    <circle cx="50" cy="42" r="15" fill="none" stroke="#e67e22" stroke-width="0.5" stroke-dasharray="2,1"/>
+    <text x="50" y="46" text-anchor="middle" font-family="Noto Serif SC, SimSun, serif" font-size="10" fill="#bf360c" font-weight="bold">二千</text>
+
+    <g stroke="#bf360c" stroke-width="0.8" stroke-linecap="round" opacity="0.5">
+        <line x1="28" y1="62" x2="72" y2="62" />
+        <line x1="28" y1="69" x2="72" y2="69" />
+        <line x1="28" y1="76" x2="50" y2="76" />
+    </g>
+
+    <path d="M19 18 L25 18 L22 28 Z" fill="#c0392b" />
+    <circle cx="22" cy="18" r="7" fill="url(#goldShine)" stroke="#d4af37" stroke-width="0.8"/>
+    <text x="22" y="21" text-anchor="middle" font-size="6" fill="#bf360c" font-weight="bold">超</text>
+
+    <path d="M75 18 L81 18 L78 30 Z" fill="#c0392b" />
+    <circle cx="78" cy="18" r="9" fill="url(#goldShine)" stroke="#d4af37" stroke-width="1"/>
+    <text x="78" y="22" text-anchor="middle" font-size="8" fill="#bf360c" font-weight="bold">尊</text>
+</svg>`,
+            
+            'honglou_characters': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <radialGradient id="fanGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#fff5f7"/>
+            <stop offset="100%" style="stop-color:#f8bbd9"/>
+        </radialGradient>
+    </defs>
+
+    <rect x="48" y="70" width="4" height="25" rx="2" fill="#2c3e50" />
+    <circle cx="50" cy="92" r="1.5" fill="#c0392b" />
+    <path d="M50 92 L50 98" stroke="#c0392b" stroke-width="0.5" stroke-dasharray="1,0.5" />
+
+    <circle cx="50" cy="45" r="40" fill="url(#fanGrad)" stroke="#d4af37" stroke-width="1.5"/>
+    
+    <circle cx="50" cy="45" r="36" fill="none" stroke="#f48fb1" stroke-width="0.5" stroke-dasharray="2,2" opacity="0.6"/>
+
+    <g font-family="Noto Serif SC, SimSun, serif" fill="#880e4f" text-anchor="middle">
+        <text x="50" y="32" font-size="8" font-weight="bold">金</text>
+        <text x="50" y="41" font-size="8" font-weight="bold">陵</text>
+        <text x="50" y="50" font-size="8" font-weight="bold">十</text>
+        <text x="50" y="59" font-size="8" font-weight="bold">二</text>
+        <text x="50" y="68" font-size="8" font-weight="bold">钗</text>
+    </g>
+
+    <circle cx="28" cy="23" r="3" fill="#f06292" opacity="0.8"/>
+    <circle cx="26" cy="21" r="1.5" fill="#fff" opacity="0.5"/>
+    <circle cx="72" cy="23" r="3" fill="#f06292" opacity="0.8"/>
+    <circle cx="28" cy="67" r="3" fill="#f06292" opacity="0.8"/>
+    <circle cx="72" cy="67" r="3" fill="#f06292" opacity="0.8"/>
+    
+    <ellipse cx="78" cy="45" rx="2" ry="3" fill="#f8bbd9" transform="rotate(30 78 45)"/>
+</svg>`,
+            
+            'sanguo_strategists': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="stratGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#f8f9fa"/>
+            <stop offset="100%" style="stop-color:#e3f2fd"/>
+        </linearGradient>
+    </defs>
+
+    <circle cx="50" cy="50" r="42" fill="none" stroke="#1565c0" stroke-width="0.5" stroke-dasharray="8,4" opacity="0.3"/>
+
+    <circle cx="50" cy="50" r="40" fill="url(#stratGrad)" stroke="#1565c0" stroke-width="1.5"/>
+
+    <polygon points="50,18 73,27 82,50 73,73 50,82 27,73 18,50 27,27" fill="none" stroke="#90caf9" stroke-width="0.8"/>
+
+    <path d="M45 88 L55 88 L52 98 L48 98 Z" fill="#5d4037" />
+
+    <g stroke="#1565c0" stroke-width="0.5" fill="none" opacity="0.6">
+        <path d="M20 50 Q25 45 30 50" />
+        <path d="M70 50 Q75 55 80 50" />
+    </g>
+
+    <g font-family="Noto Serif SC, SimSun, serif" fill="#0d47a1" text-anchor="middle" font-weight="bold">
+        <text x="42" y="42" font-size="9">卧</text>
+        <text x="42" y="52" font-size="9">龙</text>
+        
+        <text x="58" y="48" font-size="9">凤</text>
+        <text x="58" y="58" font-size="9">雏</text>
+    </g>
+
+    <g transform="translate(50, 28) scale(0.6)">
+        <path d="M0 -10 A10 10 0 0 1 0 10 A5 5 0 0 1 0 0 A5 5 0 0 0 0 -10" fill="#1565c0" />
+        <path d="M0 10 A10 10 0 0 1 0 -10 A5 5 0 0 0 0 0 A5 5 0 0 1 0 10" fill="none" stroke="#1565c0" stroke-width="1" />
+        <circle cy="-5" r="1.5" fill="#fff" />
+        <circle cy="5" r="1.5" fill="#1565c0" />
+    </g>
+    
+    <g stroke="#1565c0" stroke-width="0.3" opacity="0.4">
+        <line x1="40" y1="75" x2="40" y2="85" />
+        <line x1="50" y1="78" x2="50" y2="85" />
+        <line x1="60" y1="75" x2="60" y2="85" />
+    </g>
+</svg>`,
+            
+            'shuihu_heroes': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="noticeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#fdf5e6"/>
+            <stop offset="100%" style="stop-color:#e6d5b8"/>
+        </linearGradient>
+    </defs>
+
+    <path d="M15 10 L85 12 L82 90 L18 88 Z" fill="url(#noticeGrad)" stroke="#8b4513" stroke-width="1"/>
+
+    <path d="M15 25 L18 25 M82 70 L85 70" stroke="#8b4513" stroke-width="0.5"/>
+
+    <rect x="14" y="8" width="72" height="3" fill="#5d4037" rx="1" />
+
+    <g font-family="Noto Serif SC, SimSun, serif" fill="#1a1a1a" text-anchor="middle">
+        <text x="50" y="30" font-size="12" font-weight="900" letter-spacing="2">梁山好汉</text>
+        
+        <g stroke="#1a1a1a" stroke-width="0.5" opacity="0.3">
+            <line x1="25" y1="45" x2="75" y2="45" />
+            <line x1="25" y1="55" x2="75" y2="55" />
+            <line x1="25" y1="65" x2="75" y2="65" />
+        </g>
+        
+        <text x="50" y="52" font-size="6" font-style="italic">一〇八将 聚义</text>
+    </g>
+
+    <rect x="65" y="70" width="12" height="12" fill="#c0392b" fill-opacity="0.8" />
+    <text x="71" y="78" font-family="serif" font-size="5" fill="#fff" text-anchor="middle" font-weight="bold">义</text>
+
+    <circle cx="25" cy="20" r="1.5" fill="#8b4513" opacity="0.2"/>
+</svg>`,
+            
+            'xiyou_plot': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="staffGold" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#FFD700"/>
+            <stop offset="100%" style="stop-color:#B8860B"/>
+        </linearGradient>
+    </defs>
+
+    <g fill="#FFFDE7" stroke="#FFD54F" stroke-width="1.5">
+        <circle cx="35" cy="55" r="15" />
+        <circle cx="50" cy="45" r="20" />
+        <circle cx="65" cy="55" r="15" />
+        <rect x="35" y="55" width="30" height="15" stroke="none" />
+        <line x1="35" y1="70" x2="65" y2="70" stroke="#FFD54F" />
+    </g>
+
+    <g stroke="#FFB300" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.6">
+        <path d="M20 40 Q10 40 5 45" />
+        <path d="M80 60 Q90 60 95 55" />
+    </g>
+
+    <g transform="rotate(-15, 50, 50)">
+        <rect x="10" y="47" width="80" height="6" fill="#D32F2F" stroke="#8B0000" stroke-width="0.5" />
+        <rect x="10" y="47" width="12" height="6" fill="url(#staffGold)" stroke="#B8860B" stroke-width="0.5" />
+        <rect x="78" y="47" width="12" height="6" fill="url(#staffGold)" stroke="#B8860B" stroke-width="0.5" />
+        
+        <line x1="25" y1="50" x2="35" y2="50" stroke="#FFD700" stroke-width="0.5" opacity="0.5" />
+        <line x1="65" y1="50" x2="75" y2="50" stroke="#FFD700" stroke-width="0.5" opacity="0.5" />
+    </g>
+
+    <g font-family="Noto Serif SC, SimSun, serif" fill="#E65100" text-anchor="middle" font-weight="900">
+        <text x="50" y="45" font-size="8">九九</text>
+        <text x="50" y="56" font-size="8">八十一难</text>
+    </g>
+
+    <path d="M45 85 Q50 80 55 85 T65 85" fill="none" stroke="#FFA000" stroke-width="1" />
+</svg>`,
+            
+            'poetry_master': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="inkstoneGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#333333"/>
+            <stop offset="100%" style="stop-color:#1a1a1a"/>
+        </linearGradient>
+        <radialGradient id="inkGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#444444"/>
+            <stop offset="100%" style="stop-color:#000000"/>
+        </radialGradient>
+        <linearGradient id="brushStem" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#5d4037"/>
+            <stop offset="100%" style="stop-color:#8d6e63"/>
+        </linearGradient>
+    </defs>
+
+    <g transform="rotate(-2, 50, 50)">
+        <rect x="20" y="20" width="65" height="60" fill="#fff9e6" stroke="#d4af37" stroke-width="0.5"/>
+        <g font-family="Noto Serif SC, SimSun, serif" fill="#2c3e50" text-anchor="middle" font-weight="bold">
+            <text x="45" y="45" font-size="9">诗词</text>
+            <text x="45" y="60" font-size="9">雅士</text>
+        </g>
+        <rect x="68" y="65" width="7" height="7" fill="#c0392b"/>
+        <text x="71.5" y="70.5" font-family="serif" font-size="4" fill="#fff" text-anchor="middle">赏</text>
+    </g>
+
+    <g transform="translate(68, 12) scale(0.6)">
+        <path d="M5 10 Q-5 30 5 50 L55 60 Q65 30 55 5 Z" fill="url(#inkstoneGrad)" stroke="#444" stroke-width="1"/>
+        <ellipse cx="28" cy="30" rx="18" ry="15" fill="url(#inkGlow)" stroke="#222" stroke-width="0.5"/>
+    </g>
+
+    <g transform="translate(18, 15) rotate(-5)">
+        <path d="M0 0 L4 0 L3.5 65 L0.5 65 Z" fill="url(#brushStem)" stroke="#3e2723" stroke-width="0.2"/>
+        <circle cx="2" cy="-2" r="1.5" fill="none" stroke="#5d4037" stroke-width="0.5"/>
+        
+        <g transform="translate(0, 65)">
+            <rect x="0" y="0" width="4" height="4" fill="#d4af37"/>
+            <path d="M0 4 Q-3 15 2 22 Q7 15 4 4 Z" fill="#fdfdfd" stroke="#ccc" stroke-width="0.2"/>
+            <path d="M-0.8 12 Q2 22 4.8 12 L2 20 Z" fill="#000"/>
+        </g>
+    </g>
+</svg>`
+        };
+
+        const ProfileManager = {
+            getProfileData() {
+                try {
+                    const data = localStorage.getItem(PROFILE_STORAGE_KEY);
+                    return data ? JSON.parse(data) : {
+                        username: '书友',
+                        avatar: null,
+                        firstVisit: Date.now()
+                    };
+                } catch (e) {
+                    return { username: '书友', avatar: null, firstVisit: Date.now() };
+                }
+            },
+
+            saveProfileData(data) {
+                try {
+                    localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(data));
+                } catch (e) {
+                    console.error('保存用户数据失败:', e);
+                }
+            },
+
+            getBadgeData() {
+                try {
+                    const data = localStorage.getItem(BADGE_STORAGE_KEY);
+                    return data ? JSON.parse(data) : { unlockedBadges: [], readingProgress: {} };
+                } catch (e) {
+                    return { unlockedBadges: [], readingProgress: {} };
+                }
+            },
+
+            getHistoryData() {
+                try {
+                    const data = localStorage.getItem(HISTORY_KEY);
+                    return data ? JSON.parse(data) : {};
+                } catch (e) {
+                    return {};
+                }
+            },
+
+            getTimeData() {
+                try {
+                    const data = localStorage.getItem(TIME_STORAGE_KEY);
+                    return data ? JSON.parse(data) : { totalMinutes: 0, lastVisit: null };
+                } catch (e) {
+                    return { totalMinutes: 0, lastVisit: null };
+                }
+            },
+
+            saveTimeData(data) {
+                try {
+                    localStorage.setItem(TIME_STORAGE_KEY, JSON.stringify(data));
+                } catch (e) {
+                    console.error('保存时间数据失败:', e);
+                }
+            },
+
+            updateBrowsingTime() {
+                const timeData = this.getTimeData();
+                const now = Date.now();
+                
+                if (timeData.lastVisit) {
+                    const diffMinutes = Math.floor((now - timeData.lastVisit) / 60000);
+                    if (diffMinutes > 0 && diffMinutes < 60) {
+                        timeData.totalMinutes += diffMinutes;
+                    }
+                }
+                
+                timeData.lastVisit = now;
+                this.saveTimeData(timeData);
+                
+                return timeData.totalMinutes;
+            },
+
+            getTotalQuizCount() {
+                const history = this.getHistoryData();
+                let total = 0;
+                let correct = 0;
+                Object.values(history).forEach(item => {
+                    total += item.totalAttempts || 0;
+                    correct += item.correctCount || 0;
+                });
+                return { total, correct };
+            },
+
+            getReadingProgress() {
+                const badgeData = this.getBadgeData();
+                const progress = badgeData.readingProgress || {};
+                const books = ['honglou', 'sanguo', 'shuihu', 'xiyou'];
+                const result = {};
+                let completed = 0;
+
+                books.forEach(book => {
+                    const bookProgress = progress[book] || { stage1: false, stage2: false, stage3: false };
+                    const stages = (bookProgress.stage1 ? 1 : 0) + (bookProgress.stage2 ? 1 : 0) + (bookProgress.stage3 ? 1 : 0);
+                    result[book] = {
+                        stages,
+                        percent: Math.round((stages / 3) * 100),
+                        completed: stages === 3
+                    };
+                    if (stages === 3) completed++;
+                });
+
+                return { books: result, completed };
+            },
+
+            getRank() {
+                const TOTAL_QUESTIONS = 800;
+                const history = this.getHistoryData();
+                let mastered = 0;
+                
+                Object.values(history).forEach(item => {
+                    if (item.totalAttempts > 0 && (item.correctCount / item.totalAttempts) >= 0.8) {
+                        mastered++;
+                    }
+                });
+                
+                const percent = Math.round((mastered / TOTAL_QUESTIONS) * 100);
+                
+                for (let i = RANKS.length - 1; i >= 0; i--) {
+                    const rank = RANKS[i];
+                    for (let j = rank.stages.length - 1; j >= 0; j--) {
+                        if (percent >= rank.stages[j]) {
+                            return {
+                                rank: rank,
+                                stageIndex: j,
+                                stageLabel: ['Ⅰ', 'Ⅱ', 'Ⅲ'][j] || ''
+                            };
+                        }
+                    }
+                }
+                
+                return { rank: RANKS[0], stageIndex: -1, stageLabel: '' };
+            }
+        };
+
+        function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                alert('请选择图片文件');
+                return;
+            }
+
+            if (file.size > 2 * 1024 * 1024) {
+                alert('图片大小不能超过2MB');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const profileData = ProfileManager.getProfileData();
+                profileData.avatar = e.target.result;
+                ProfileManager.saveProfileData(profileData);
+                displayAvatar(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function displayAvatar(avatarData) {
+            const avatar = document.getElementById('avatar');
+            const placeholder = document.getElementById('avatarPlaceholder');
+            
+            if (avatarData) {
+                avatar.innerHTML = `<img src="${avatarData}" alt="头像">`;
+            } else {
+                avatar.innerHTML = `<span id="avatarPlaceholder">👤</span>`;
+            }
+        }
+
+        function toggleEditUsername() {
+            const display = document.getElementById('usernameDisplay');
+            const input = document.getElementById('usernameInput');
+            const editBtn = document.getElementById('editBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            
+            display.style.display = 'none';
+            input.style.display = 'inline-block';
+            editBtn.style.display = 'none';
+            saveBtn.style.display = 'inline-block';
+            
+            input.value = display.textContent;
+            input.focus();
+        }
+
+        function saveUsername() {
+            const display = document.getElementById('usernameDisplay');
+            const input = document.getElementById('usernameInput');
+            const editBtn = document.getElementById('editBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            
+            const newUsername = input.value.trim() || '书友';
+            
+            const profileData = ProfileManager.getProfileData();
+            profileData.username = newUsername;
+            ProfileManager.saveProfileData(profileData);
+            
+            display.textContent = newUsername;
+            display.style.display = 'inline';
+            input.style.display = 'none';
+            editBtn.style.display = 'inline-block';
+            saveBtn.style.display = 'none';
+        }
+
+        function renderStats() {
+            const quizStats = ProfileManager.getTotalQuizCount();
+            const accuracy = quizStats.total > 0 
+                ? Math.round((quizStats.correct / quizStats.total) * 100) 
+                : 0;
+            
+            document.getElementById('totalQuestions').textContent = quizStats.total;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+            
+            const badgeData = ProfileManager.getBadgeData();
+            document.getElementById('badgeCount').textContent = badgeData.unlockedBadges.length;
+            
+            const readingProgress = ProfileManager.getReadingProgress();
+            document.getElementById('booksCompleted').textContent = readingProgress.completed + '/4';
+            
+            const totalMinutes = ProfileManager.updateBrowsingTime();
+            if (totalMinutes >= 60) {
+                const hours = Math.floor(totalMinutes / 60);
+                const mins = totalMinutes % 60;
+                document.getElementById('totalTime').textContent = hours + '小时' + (mins > 0 ? mins + '分' : '');
+            } else {
+                document.getElementById('totalTime').textContent = totalMinutes + '分钟';
+            }
+        }
+
+        function renderRank() {
+            const rankInfo = ProfileManager.getRank();
+            const rankName = rankInfo.rank.name + (rankInfo.stageLabel ? ' ' + rankInfo.stageLabel : '');
+            
+            document.getElementById('rankIcon').innerHTML = RANK_ICONS[rankInfo.rank.icon];
+            document.getElementById('rankName').textContent = rankName;
+            document.getElementById('rankName').style.color = rankInfo.rank.color;
+        }
+
+        function renderBadges() {
+            const badgeData = ProfileManager.getBadgeData();
+            const unlockedIds = badgeData.unlockedBadges || [];
+            
+            const badgeList = document.getElementById('badgeList');
+            
+            if (unlockedIds.length === 0) {
+                badgeList.innerHTML = '<div class="no-badges">暂无勋章，继续努力吧！</div>';
+                return;
+            }
+            
+            const unlockedBadges = BADGES.filter(b => unlockedIds.includes(b.id));
+            
+            badgeList.innerHTML = unlockedBadges.map(badge => `
+                <div class="badge-item">
+                    <div class="badge-icon-small">${BADGE_ICONS[badge.id]}</div>
+                    <div class="badge-name-small">${badge.name}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderReadingProgress() {
+            const readingProgress = ProfileManager.getReadingProgress();
+            const books = readingProgress.books;
+            
+            const bookNames = ['honglou', 'sanguo', 'shuihu', 'xiyou'];
+            
+            bookNames.forEach(book => {
+                const progress = books[book];
+                document.getElementById(book + 'Progress').style.width = progress.percent + '%';
+                document.getElementById(book + 'Status').textContent = progress.completed ? '已完成' : progress.stages + '/3';
+            });
+        }
+
+        function handleLogout() {
+            if (confirm('确定要退出登录吗？')) {
+                sessionStorage.removeItem('isLoggedIn');
+                sessionStorage.removeItem('currentUser');
+                window.location.href = 'index.html';
+            }
+        }
+
+        function init() {
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+            if (isLoggedIn !== 'true') {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const profileData = ProfileManager.getProfileData();
+            
+            displayAvatar(profileData.avatar);
+            document.getElementById('usernameDisplay').textContent = profileData.username;
+            
+            renderStats();
+            renderRank();
+            renderBadges();
+            renderReadingProgress();
+        }
+
+        init();
+
+        setInterval(() => {
+            ProfileManager.updateBrowsingTime();
+        }, 60000);
+    </script>
+</body>
+</html>

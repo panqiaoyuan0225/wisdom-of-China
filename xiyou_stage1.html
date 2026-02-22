@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大闹天宫 - 西游记专题导览</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    display: flex;
+    height: 100vh;
+    font-family: "STKaiti", "Microsoft YaHei", serif;
+    background: linear-gradient(135deg, #e6fffb, #fff9e6);
+}
+
+/* 左侧栏 */
+.sidebar {
+    width: 300px;
+    background: linear-gradient(180deg, #008b8b 0%, #005f5f 100%);
+    color: #FFD700;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 5px 0 18px rgba(0,0,0,0.25);
+    border-right: 2px solid #FFD700;
+}
+
+.sidebar h2 {
+    text-align: center;
+    font-size: 1.6rem;
+    margin: 0;
+    padding: 40px 0;
+    background: rgba(0,0,0,0.15);
+    letter-spacing: 4px;
+    color: #FFD700;
+}
+
+.nav-item {
+    padding: 22px 30px;
+    cursor: pointer;
+    transition: 0.3s;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    font-size: 1.1rem;
+    color: #ffe89a;
+}
+
+.nav-item:hover {
+    background: rgba(0,139,139,0.18);
+    padding-left: 45px;
+    color: #fff8e1;
+}
+
+.nav-item.active {
+    background: linear-gradient(90deg, #FFD700, #e6c200);
+    color: #004d40;
+    font-weight: bold;
+}
+
+/* 内容区 */
+.main-content {
+    flex: 1;
+    padding: 50px;
+    overflow-y: auto;
+    background-image: url('https://www.transparenttextures.com/patterns/papyrus.png');
+}
+
+.content-box {
+    background: rgba(255, 252, 230, 0.95);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px;
+    border: 1px solid #FFD700;
+    box-shadow: 0 0 25px rgba(0,0,0,0.15);
+    min-height: 80vh;
+}
+
+h1 {
+    color: #C02C3F;
+    border-left: 8px solid #FFD700;
+    padding-left: 15px;
+}
+
+h2 {
+    color: #C02C3F;
+    border-bottom: 1px solid #FFD700;
+    padding-bottom: 5px;
+    margin-top: 30px;
+}
+
+h3 {
+    color: #8b1a1a;
+    margin-top: 24px;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed rgba(192,44,63,0.35);
+}
+ p {
+    line-height: 1.8;
+    text-indent: 2em;
+    font-size: 1.2rem;       
+ }
+.back-link {
+    position: fixed;
+    top: 20px;
+    right: 40px;
+    text-decoration: none;
+    color: #C02C3F;
+    font-weight: bold;
+    background: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+th {
+    background: #fff3b0;
+}
+
+.badge-notification-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.badge-notification-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.badge-notification-card {
+    background: linear-gradient(135deg, #fff9e6, #fff);
+    border-radius: 20px;
+    padding: 40px 50px;
+    text-align: center;
+    max-width: 350px;
+    transform: scale(0.8);
+    transition: transform 0.3s;
+}
+
+.badge-notification-overlay.show .badge-notification-card {
+    transform: scale(1);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <h2>大闹天宫</h2>
+    <div class="nav-item active" onclick="changeTab(this, '壹 · 石猴出世')">壹·石猴出世</div>
+    <div class="nav-item" onclick="changeTab(this, '贰 · 拜师学艺')">贰·拜师学艺</div>
+    <div class="nav-item" onclick="changeTab(this, '叁 · 大闹龙宫')">叁·大闹龙宫</div>
+    <div class="nav-item" onclick="changeTab(this, '肆 · 齐天大圣')">肆·齐天大圣</div>
+    <div class="nav-item" onclick="changeTab(this, '伍 · 反出天庭')">伍·反出天庭</div>
+    <div class="nav-item" onclick="changeTab(this, '陆 · 成语典故')">陆·成语典故</div>
+</div>
+
+<div class="main-content">
+    <a href="xiyou.html" class="back-link">← 返回主页</a>
+
+    <div class="content-box">
+        <h1 id="content-title">壹 · 石猴出世</h1>
+        <div id="content-body"></div>
+    </div>
+</div>
+
+<div class="badge-notification-overlay" id="badgeNotification">
+    <div class="badge-notification-card" id="badgeCard">
+        <div style="font-size: 1.5rem; color: #8b4513; margin-bottom: 20px;">🎉 恭喜获得勋章！</div>
+        <div style="font-size: 2.5rem; margin-bottom: 15px;">🎖️</div>
+        <div style="font-size: 1.8rem; font-weight: bold; margin-bottom: 10px;" id="badgeName"></div>
+        <div style="color: #666; margin-bottom: 20px;" id="badgeDesc"></div>
+        <button onclick="closeBadgeNotification()" style="background: #8b4513; color: #fff; border: none; padding: 10px 30px; border-radius: 20px; font-size: 1rem; cursor: pointer;">太棒了！</button>
+    </div>
+</div>
+
+<script>
+const contentData = {
+
+"壹 · 石猴出世": `
+
+<h2>一、花果山与仙石</h2>
+<p>
+故事始于东胜神洲海外一座名山——花果山。此山乃十洲之祖脉，三岛之来龙，自开清浊而立，便受天真地秀、日精月华滋养。
+</p>
+
+<p>
+山顶有一块仙石，其形制暗合周天之数：
+</p>
+<ul>
+  <li>高三丈六尺五寸，合周天三百六十五度；</li>
+  <li>围圆二丈四尺，对应二十四节气；</li>
+  <li>石上更有九窍八孔，契合九宫八卦。</li>
+</ul>
+
+<p>
+此石自混沌开辟以来，便立于此处，内育仙胞，感之既久。一日，天地气机交感，仙石迸裂，产出一枚石卵。见风之后，竟化作一个石猴——五官俱备，四肢皆全，甫一出生便能爬走，拜了四方。
+</p>
+
+<p>
+尤为奇者，是那石猴眼中射出的两道金光，直冲斗府，惊动了高天之上的玉皇大帝。
+</p>
+
+<h3>二、惊动天庭：玉帝的“不足为异”</h3>
+<p>
+金光直射凌霄宝殿，玉帝即命千里眼、顺风耳开南天门查看。二将回报：“乃花果山一仙石所产石猴，眼运金光，食草木，饮涧泉，似无特别。”
+</p>
+
+<p>
+玉帝闻言，垂示道：“下方之物，乃天地精华所生，不足为异。” 一句轻描淡写的“不足为异”，既显天庭之居高临下，也为后文大闹天宫埋下伏笔——天庭起初的轻视，恰是日后祸端的起点。
+</p>
+
+<p>
+石猴眼中金光旋即收敛，因其服食凡间之水食，金光渐潜。
+</p>
+
+<h3>三、水帘洞称王：胆识与天命</h3>
+<p>
+石猴在山中行走跳跃，食草木，饮涧泉，采山花，觅树果；与狼虫为伴，虎豹为群，獐鹿为友，猕猴为亲，好不自在。
+</p>
+
+<p>
+一日酷热，群猴于山涧中洗澡，见一股瀑布飞泉，如帘幕高悬。有猴提议：“谁敢钻入寻得源头，且不伤身，我等便拜他为王。”
+</p>
+<img src="images/shihou_chushi.jpg" alt="石猴出世" style="width:100%; border-radius:10px; margin:20px 0;">
+
+<p>
+连呼三声，石猴应声高叫：“我进去！我进去！” 只见他：
+</p>
+<ol>
+  <li>瞑目蹲身，纵身一跃，径直跳入瀑布之中；</li>
+  <li>穿瀑而过，却无半点水花——眼前竟是一座铁板桥，桥下之水冲贯石窍，倒挂流出，遮蔽桥门；</li>
+  <li>过桥后，只见一处洞天福地：“花果山福地，水帘洞洞天”。内有石锅、石灶、石碗、石盆、石床、石凳，更有一块石碣刻着此联，俨然一个天造地设的家当。</li>
+</ol>
+
+<p>
+石猴喜不自胜，急抽身跳出，将洞中景象告知众猴。众猴胆怯，石猴便道：“都随我进来！进来！”又以身示范，瞑目蹲身，往里一跳，众猴方敢跟随。进入后，众猴争夺盆碗灶床，搬来挪去，直至力竭方休。
+</p>
+
+<p>
+石猴端坐高处道：“列位呵，‘人而无信，不知其可’。方才说好，寻得源头不伤身者即拜为王。我如今进来又出去，出去又进来，寻得这一洞天与列位安眠稳睡，何不推我为王？”众猴闻言，即拱伏无违，序齿排班，朝上礼拜，口称“千岁大王”。石猴自此隐去“石”字，称 “美猴王” 。
+</p>
+
+<h3>四、文化深意：自由与反叛的序章</h3>
+<ul>
+  <li><strong>“天生石猴”的象征：</strong>石猴无父无母，乃天地所生，象征一种未经世俗教化、不受任何束缚的纯然本性。他的出世即是对既有秩序（天庭）的天然冲击。</li>
+  <li><strong>水帘洞的考验：</strong>此番称王，非凭血统武力，全仗 “胆识”与“信义”。一跃而入，显其勇；邀众同享，显其仁；依约请王，显其信。这为后来孙悟空虽桀骜却重诺的性格埋下伏笔。</li>
+  <li><strong>“美猴王”的意义：</strong>此名号不仅源于群猴拥戴，更标志着他从“自然之猴”向“领袖之猴”的转变。水帘洞这一方天地，是他最初的“王国”，也是他追求自由与自治的起点。</li>
+</ul>
+
+<p>
+石猴出世一事，看似神话异闻，实则已奠定全书精髓：一个纯粹由自然孕育的生命，如何因一次勇敢的跳跃，开启了挑战三界秩序、追寻生命真谛的壮阔征程。此后三百余年，他在此“享乐天真”，却因目睹生死而心生远虑，终飘洋过海访师求道，得姓名孙悟空，习得通天本领——而这一切传奇的源头，皆始于花果山上那块仙石的迸裂，与那惊天动地的一跃。
+</p>
+
+<h3>📊 象征意义与故事价值</h3>
+<table style="width:100%; border-collapse: collapse; background:#fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
+<thead>
+<tr style="background:#8b1a1a; color:#000;">
+<th style="padding:12px; border:1px solid #5a1212; width:25%;">核心维度</th>
+<th style="padding:12px; border:1px solid #5a1212;">具体内容</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">1. 天地象征</td>
+<td style="padding:10px; border:1px solid #ddd;">石猴由天地精华孕育，体现人与自然共生的宇宙观。</td>
+</tr>
+
+<tr style="background:#f9f9f9;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">2. 反叛精神起点</td>
+<td style="padding:10px; border:1px solid #ddd;">玉帝轻视石猴，为后续大闹天宫埋下伏笔。</td>
+</tr>
+
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">3. 领袖形成</td>
+<td style="padding:10px; border:1px solid #ddd;">水帘洞称王表现孙悟空的勇气与领导力。</td>
+</tr>
+
+<tr style="background:#f9f9f9;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">4. 文学意义</td>
+<td style="padding:10px; border:1px solid #ddd;">奠定西游记追求自由与生命意义的主题。</td>
+</tr>
+</tbody>
+</table>
+
+<h3>思考</h3>
+<div style="background:#fff4d6; padding:20px; border-left:6px solid #C02C3F; border-radius:8px; margin-top:20px;">
+<p>
+石猴的诞生不仅是神话故事，更象征着个体对命运与秩序的挑战。从自然孕育到成为美猴王，他通过勇气与信义赢得尊重。这也启示人们，在面对未知与困难时，勇敢尝试往往能够开辟新的道路。
+</p>
+</div>
+`,
+
+
+"贰 · 拜师学艺": `
+<h2>拜师学艺：从悟生死到悟空性</h2>
+
+<h3>一、求道之心的萌发：目睹生死而悟无常</h3>
+<p>
+美猴王在花果山享乐三五百载后，一日宴间忽然堕泪。众猴惊问，猴王道出心病：“虽不归人王法律，不惧禽兽威服，将来年老血衰，暗中有阎王老子管着，一旦身亡，可不枉生世界？”
+</p>
+<p>
+这番话道出了生命最深层的焦虑——对死亡必然性的觉醒。一通背猿（猴群中的智者）点破迷津：唯有佛、仙、神圣三者，能躲过轮回，与天地齐寿。猴王遂立誓：“我明日就辞汝等下山，云游海角，远涉天涯，务必访此三者，学一个不老长生。”
+</p>
+
+<h3>二、浮世觅仙：人间八九年与“心性修持”</h3>
+<p>
+猴王扎木筏，带果粮，漂洋过海数十年来到南赡部洲。他串长城，游小县，学人礼，说人话，却见世人皆为“争名夺利”之徒，无一人为性命着想。
+</p>
+<p>
+他穿州过府，市尘中衣冠学步，一晃八九年，始终未遇真仙。这段历程实为重要铺垫：猴王在红尘中学会了人的形貌与言语，更看透了世俗欲望的空虚，内心求道的渴望愈发纯粹坚贞。
+</p>
+
+<h3>三、灵台方寸，斜月三星：缘至而遇真师</h3>
+<p>
+直至西至西洋大海，他再造筏漂至西牛贺洲。忽见一座高山秀丽，林麓幽深。他听得樵夫唱《满庭芳》，词中有“静坐讲《黄庭》”之句，急问方知是山中神仙所教。
+</p>
+<p>
+樵夫指引：此山名灵台方寸山，中有斜月三星洞，洞中有位菩提祖师（“须菩提”为其佛家名号）。猴王至洞口，却不敢擅入，直至童子出迎，道：“我家师父正登坛讲道，说‘门外有个修行的来了’，教我接待。”
+</p>
+<p>
+“灵台方寸”喻指心，“斜月三星”是“心”字的象形——悟空所求之道，终究是向内心求索。
+</p>
+
+<h3>四、七年洒扫与“悟空”之名的赐予</h3>
+<ol>
+  <li>
+    <strong>初见考验：</strong>祖师问其来历，猴王叩头答：“弟子漂洋过海，登界游方，有十数个年头，方才访到此处。” 又问姓什么，猴王道：“我无性……一生无性。” 此“性”实指姓氏，却暗合本性——此刻的他还是一块未经雕琢的璞玉。
+  </li>
+  <li>
+    <strong>赐名寓意：</strong>祖师从其身形（“猢狲”），去兽旁，赐姓为孙。又按门中“广、大、智、慧、真、如、性、海、颖、悟、圆、觉”排行，为他取名孙悟空。猴王欢喜：“好！好！好！自今就叫做孙悟空也！” “悟空”即“悟彻空性”，乃佛道修行之核心。
+  </li>
+  <li>
+    <strong>日常磨砺：</strong>此后，悟空与众师兄学言语礼貌，讲经论道，习字焚香，每日如此。闲时即扫地锄园，养花修树，寻柴燃火，挑水运浆。如此竟过了七年。祖师问他“山中何以为食”，他答以松子檇泉，祖师赞其“已注长生之道”——这七年看似未学法术，实是磨去心猿野性，奠定修道根基。
+  </li>
+</ol>
+
+<h3>五、三回问术与半夜秘传</h3>
+<ol>
+  <li>
+    <strong>三次拒绝：</strong>一日，祖师登坛，问悟空欲学“术”、“流”、“静”、“动”中何门道法。悟空一听这些门道不能长生，便连连摇头说“不学！不学！”。祖师闻言，“咄”的一声跳下高台，手持戒尺指斥道：“你这猢狲，这般不学，那般不学，却待怎么？” 在他头上连打三下，倒背着手，走入里面，将中门关了。众人惊怪，悟空却已悟得祖师哑谜：打三下，是约他三更时分；倒背手入内，是教他从后门进入，秘处传道。
+  </li>
+  <li>
+    <strong>夜半得道：</strong>是夜三更，悟空从后门跪于祖师榻前。祖师叹道：“难！难！难！道最玄，莫把金丹作等闲。不遇至人传妙诀，空言口困舌头干！” 知他真心求道，遂传其长生妙道口诀。悟空心性通明，记牢口诀，此后自修自炼三年，将根本法门修成。
+  </li>
+</ol>
+
+<h3>📊 拜师学艺阶段概览</h3>
+<table style="width:100%; border-collapse: collapse; background:#fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); margin-top:15px;">
+  <thead>
+    <tr style="background:#8b1a1a; color:#000;">
+      <th style="padding:10px; border:1px solid #5a1212; width:22%;">阶段</th>
+      <th style="padding:10px; border:1px solid #5a1212; width:35%;">关键事件</th>
+      <th style="padding:10px; border:1px solid #5a1212;">内在变化 / 意义</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="padding:10px; border:1px solid #ddd; font-weight:bold;">求道之心萌发</td>
+      <td style="padding:10px; border:1px solid #ddd;">宴间忽悟“终有一死”，向背猿请教生死大事</td>
+      <td style="padding:10px; border:1px solid #ddd;">从只知享乐，转向主动追问生命意义与出路</td>
+    </tr>
+    <tr style="background:#f9f9f9;">
+      <td style="padding:10px; border:1px solid #ddd; font-weight:bold;">人间八九年</td>
+      <td style="padding:10px; border:1px solid #ddd;">在南赡部洲学人礼佛、行走市井，始终未遇真仙</td>
+      <td style="padding:10px; border:1px solid #ddd;">看透名利虚妄，求道动机由好奇变为坚定信念</td>
+    </tr>
+    <tr>
+      <td style="padding:10px; border:1px solid #ddd; font-weight:bold;">灵台方寸遇师</td>
+      <td style="padding:10px; border:1px solid #ddd;">循樵夫歌声线索，来到灵台方寸山、斜月三星洞</td>
+      <td style="padding:10px; border:1px solid #ddd;">明白“求道在心不在远”，真正与内在修行结缘</td>
+    </tr>
+    <tr style="background:#f9f9f9;">
+      <td style="padding:10px; border:1px solid #ddd; font-weight:bold;">得名“孙悟空”</td>
+      <td style="padding:10px; border:1px solid #ddd;">被赐姓“孙”，名“悟空”，在山中洒扫服侍七年</td>
+      <td style="padding:10px; border:1px solid #ddd;">由“石猴”转为“悟空”，完成从野性到修行者的身份变换</td>
+    </tr>
+    <tr>
+      <td style="padding:10px; border:1px solid #ddd; font-weight:bold;">夜半秘传长生诀</td>
+      <td style="padding:10px; border:1px solid #ddd;">解出戒尺三击之意，三更从后门入室得口诀</td>
+      <td style="padding:10px; border:1px solid #ddd;">显示悟性与诚心，正式踏入内丹长生之道的门槛</td>
+    </tr>
+  </tbody>
+</table>
+`,
+
+"叁 · 大闹龙宫": `
+<h2>大闹龙宫：定海神珍与龙宫风波</h2>
+
+<h3>一、事起之因：猴王缺宝，龙宫遭灾</h3>
+<p>
+孙悟空自灵台方寸山归来，剿灭强占水帘洞的混世魔王，夺了一口大刀。然操演猴兵时，他自觉这凡铁“不遂意”，便生出寻一件趁手神兵的念头。此时，通背老猿进言：“大王乃仙圣，凡兵不堪用。我们这铁板桥下，水通东海龙宫。何不去寻老龙王，要件神器？”
+</p>
+<p>
+悟空大喜：“等我去来！” 即至桥边，捻诀念咒，“扑”的钻入水中，分开水路，径入东洋海底。
+</p>
+
+<h3>二、初入龙宫：先礼后兵，索求兵器</h3>
+<p>
+东海龙王敖广闻报，急领虾兵蟹将出迎：“上仙请进！请进！” 礼毕，问明来意。悟空道：“我自生身之后，出家修行，近来守护山洞，奈何没件兵器。久闻贤邻享乐瑶宫贝阙，必有多余神器，特来告求一件。”
+</p>
+<p>
+龙王不好推辞，即令鳜都司取出一把大捍刀。悟空不喜：“老孙不会使刀，乞另赐一件。” 龙王又令鲅大尉抬出一杆三千六百斤重的九股叉。悟空接在手中，耍了一阵，嫌轻：“不趁手！不趁手！” 龙王心惊，又命鯾提督、鲤总兵抬出一柄七千二百斤重的画杆方天戟。悟空提在手中，如玩灯草，笑道：“也还轻！轻！轻！”
+</p>
+
+<h3>三、得宝定海神珍铁：如意金箍棒现世</h3>
+<p>
+龙王越发恐惧：“上仙，我宫中只这根戟重，再没什么兵器了。” 悟空不信，正说话间，龙婆龙女在后提醒：“大王，观看此圣，决非小可。我们这海藏中，那一块天河定底的神珍铁，这几日霞光艳艳，瑞气腾腾，敢莫是该遇此圣？”
+</p>
+<p>
+龙王道：“那是大禹治水时，定江海深浅的一个定子，是块神铁，能有何用？” 龙婆道：“莫管他用不用，且送与他，凭他怎么改造，打发他出门便了。” 龙王依言，告知悟空：“有是有，只是拿不动，请上仙亲去看。”
+</p>
+<p>
+悟空随龙王至海藏深处，忽见金光万道。龙王指道：“那放光的便是。” 悟空撩衣上前，摸一把，乃是一根铁柱子，约斗来粗，二丈余长。他尽力两手挝过：“忒粗忒长些！再短细些方可用。” 说毕，那宝贝果然短了几尺，细了一圈。悟空又掂量道：“再细些更好！” 那宝贝真个又细了几分。
+</p>
+<p>
+悟空十分欢喜，拿出海藏看时，原来两头是两个金箍，中间乃一段乌铁，紧挨箍有镌成的一行字：“如意金箍棒，重一万三千五百斤”。悟空心中暗喜道：“想必这宝贝能如人意！” 一边走，一边心思口念：“再短细些更妙！” 拿出外面时，那棒已变得只有丈二长短，碗口粗细。
+</p>
+<p>
+他遂弄神通，丢开解数，打转水晶宫。唬得老龙王胆战心惊，小龙子魂飞魄散，龟鳖鼋鼍皆缩颈，鱼虾鳌蟹尽藏头。
+</p>
+
+<h3>四、强索披挂：四海龙王聚，奇珍尽归猴王</h3>
+<p>
+悟空将宝贝执在手中，坐在水晶宫殿上，笑道：“多谢贤邻厚意。还有一告：我如今有了兵器，却少一副披挂相趁。索性一并送我一副，一总奉谢。” 龙王为难道：“这个却无。” 悟空道：“‘一客不犯二主。’若没有，我也定不出此门。” 龙王道：“须上仙寻我三个兄弟，或可有。”
+</p>
+<p>
+悟空道：“既如此，快些去请。” 龙王即令鯾太尉撞钟，鼍将军擂鼓。钟鼓响处，果然惊动了南海龙王敖钦、北海龙王敖顺、西海龙王敖闰，三海龙王顷刻齐至。问明缘由后，南海龙王敖钦大怒：“我兄弟们点起兵，拿他不是！” 老龙王劝阻：“莫说拿！那块铁，挽着些儿就死，磕着些儿就亡！挨挨儿皮破，擦擦儿筋伤！”
+</p>
+<p>
+西海龙王敖闰沉吟道：“二哥不可与他动手。且凑副披挂打发他出门，再启表奏告上天，天自诛也。” 北海龙王敖顺道：“说的是。我这里有一双藕丝步云履。” 西海龙王道：“我带了一副锁子黄金甲。” 南海龙王道：“我有一顶凤翅紫金冠。” 老龙王大喜，引入水晶宫相会，以此奉上。
+</p>
+<p>
+悟空将金冠、金甲、云履都穿戴停当，使动如意棒，一路打出去，对众龙笑道：“聒噪！聒噪！” 四海龙王甚是不平，一边商议进表上奏天庭，一边悻悻散去。
+</p>
+
+<h3>五、花果山逞威：龙王告状，天庭侧目</h3>
+<p>
+孙悟空分开水道，径回铁板桥头。只见四健将领众猴在桥边等候，忽见悟空跳出波外，身上更无一点水湿，金灿灿的走上桥来。众猴认得是自家大王，一齐跪下。悟空满面春风，高登宝座，将铁棒竖在当中。
+</p>
+<p>
+众猴不识，都来拿那宝贝，却似蜻蜓撼铁树，分毫也不能禁动。悟空上前，将宝贝掂在手中，叫：“小！小！小！” 即时变成绣花针儿相似，可以塞在耳朵里面藏下。众猴骇然，叫道：“大王！还拿出来耍耍！” 悟空托于掌上，叫：“大！大！大！” 即变得斗来粗细，二丈长短。
+</p>
+<p>
+他弄到欢喜处，跳上桥，走出洞外，将宝贝攥在手中，使一个法天象地的神通，把腰一躬，叫声‘长！’他就长得高万丈，头如泰山，腰如峻岭，眼如闪电，口似血盆，牙如剑戟。手中那棒，上抵三十三天，下至十八层地狱。把满山的虎豹狼虫、七十二洞妖王，都唬得磕头礼拜，战兢兢魄散魂飞。
+</p>
+<p>
+而此刻，东海龙王敖广已联同三海兄弟，写了表章，径上天庭，向玉帝告状去了。一场更大的风暴——“大闹天宫”，已由此悄然拉开了序幕。
+</p>
+
+<h3>六、情节深意：秩序的挑战与力量的宣告</h3>
+<ul>
+  <li><strong>“讲理”的强盗逻辑：</strong>悟空行事有其独特的逻辑——口头“先礼后兵”，实则以绝对武力为后盾，把“邻居有宝，凭本事来取”视作理所当然，彻底无视天庭的等级与产权秩序。</li>
+  <li><strong>金箍棒的象征：</strong>定海神珍本是大禹治水时安定江河的圣物，如今却成为搅动三界秩序的武器，且能随心大小变化，象征悟空拥有一股可颠覆旧秩序、由“心”主宰的力量。</li>
+  <li><strong>对权威的轻蔑：</strong>一句“聒噪”，道尽悟空对龙宫权威的不屑，将龙王的退让视作天经地义，加深双方矛盾。</li>
+  <li><strong>悲剧序幕：</strong>龙王们表面息事宁人、暗中“启表奏天”，既是弱者的求助，也是把悟空推上与天庭全面冲突的轨道，大闹龙宫遂成大闹天宫的预演。</li>
+</ul>
+
+<h3>📊 大闹龙宫情节概览</h3>
+<table style="width:100%; border-collapse: collapse; background:#fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); margin-top:15px;">
+  <thead>
+    <tr style="background:#8b1a1a; color:#000;">
+      <th style="padding:10px; border:1px solid #5a1212; width:22%;">情节阶段</th>
+      <th style="padding:10px; border:1px solid #5a1212; width:38%;">关键事件</th>
+      <th style="padding:10px; border:1px solid #5a1212;">象征 / 深层意义</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="padding:10px; border:1px solid #ddd; font-weight:bold;">事起之因</td>
+      <td style="padding:10px; border:1px solid #ddd;">嫌凡刀不称手，通背老猿献策入海求兵</td>
+      <td style="padding:10px; border:1px solid #ddd;">从“护山为王”走向“扩张武备”，力量欲望升级</td>
+    </tr>
+    <tr style="background:#f9f9f9;">
+      <td style="padding:10px; border:1px solid #ddd; font-weight:bold;">初入龙宫</td>
+      <td style="padding:10px; border:1px solid #ddd;">先礼后兵，连试三件重兵器皆嫌“太轻”</td>
+      <td style="padding:10px; border:1px solid #ddd;">凸显悟空神力超常，也暴露龙宫兵器难以驾驭他的野心</td>
+    </tr>
+    <tr>
+      <td style="padding:10px; border:1px solid #ddd; font-weight:bold;">获得金箍棒</td>
+      <td style="padding:10px; border:1px solid #ddd;">定海神珍铁随心伸缩，化为“如意金箍棒”</td>
+      <td style="padding:10px; border:1px solid #ddd;">安定秩序之物转为破坏秩序之器，昭示旧秩序将被挑战</td>
+    </tr>
+    <tr style="background:#f9f9f9;">
+      <td style="padding:10px; border:1px solid #ddd; font-weight:bold;">强索披挂</td>
+      <td style="padding:10px; border:1px solid #ddd;">四海龙王被迫献上金冠、金甲、云履</td>
+      <td style="padding:10px; border:1px solid #ddd;">悟空以武力改变“分配规则”，权威被迫让步、心存怨愤</td>
+    </tr>
+    <tr>
+      <td style="padding:10px; border:1px solid #ddd; font-weight:bold;">花果山示威</td>
+      <td style="padding:10px; border:1px solid #ddd;">法天象地，棒横三界，震慑群妖群兽</td>
+      <td style="padding:10px; border:1px solid #ddd;">确立“齐天大圣”级别的力量象征，威望扩散至三界</td>
+    </tr>
+    <tr style="background:#f9f9f9;">
+      <td style="padding:10px; border:1px solid #ddd; font-weight:bold;">龙王告天</td>
+      <td style="padding:10px; border:1px solid #ddd;">四海龙王联名上奏玉帝，控诉悟空行径</td>
+      <td style="padding:10px; border:1px solid #ddd;">地方神权将矛盾上交中央，悟空与天庭冲突正式在制度层面被确认</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>思考</h3>
+<div style="background:#fff4d6; padding:20px; border-left:6px solid #C02C3F; border-radius:8px; margin-top:20px;">
+  <p>
+  大闹龙宫是孙悟空从“有力的山大王”迈向“挑战秩序者”的关键一跃：他凭个人神通索宝、索甲，自觉“合情合理”，却在不知不觉中踩碎了龙王与天庭所代表的旧秩序边界。
+  </p>
+  <p>
+  如意金箍棒一旦离开定海之职，三界便再难太平——这既是对个人力量觉醒的颂歌，也是对无视规则后果的隐忧预告。读到这里，不妨思考：如果你是龙王，会如何应对这位“讲理却不守规矩”的孙悟空？如果你是悟空，又是否意识到自己已经推开了一扇无法回头的门？
+  </p>
+</div>
+`,
+
+"肆 · 齐天大圣": `
+<h2>齐天大圣：从招安到再反叛</h2>
+
+<h3>一、序章：来自龙宫的状纸</h3>
+<p>
+孙悟空大闹龙宫、强取金箍宝甲后，东海龙王敖广联合三海兄弟，上表天庭告状。恰在此时，冥司秦广王亦奉表上天，状告孙悟空大闹森罗殿，强销死籍（即勾去猴属名号，实现长生）。
+</p>
+<p>
+两份状纸齐至，玉帝本欲遣将擒拿，但太白金星李长庚出班启奏，主张 “降一道招安圣旨，宣来上界，授以微职……拘束此间。若受天命，后再升赏；若违天命，就此擒拿。” 玉帝准奏，首次招安开始。
+</p>
+
+<h3>二、首次招安：弼马温之辱</h3>
+<p>
+上任与尽职：孙悟空欣然随金星上天，被封为弼马温，职责是看管御马监的天马。他昼夜不睡，滋养马匹，将天马养得肉膘肥满。半月后，他从监官处得知此官乃“未入流”的末等官职，顿时心头火起，咬牙大怒道：“这般藐视老孙！老孙在那花果山，称王称祖，怎么哄我来替他养马？”
+</p>
+<p>
+反下天庭：他耳中取出金箍棒，幌一幌，碗来粗细，一路解数，直打出御马监，径至南天门。众天丁知他受了仙箓，不敢阻拦。他回到花果山，竖起了“齐天大圣”的旌旗，公然与天庭分庭抗礼。
+</p>
+
+<div style="border:1px dashed rgba(192,44,63,0.5); padding:16px 18px; border-radius:10px; background:rgba(255,250,240,0.9); margin:20px 0;">
+  <h3>三、自封大圣：与天庭的首次武力对抗</h3>
+  <p>
+  玉帝闻奏，即封托塔天王李靖为降魔大元帅，哪吒三太子为三坛海会大神，率巨灵神等天兵天将下界擒拿。
+  </p>
+  <p>
+  巨灵神败阵：巨灵神斧劈花果山，悟空出阵，嘲笑其是“脓包”，只一棒就将其斧柄打作两截。
+  </p>
+  <p>
+  哪吒斗法：哪吒变身三头六臂，悟空也变作三头六臂。金箍棒以一化千，千棒如雨；哪吒斩妖剑等六般兵器化千千万，如骤雨冰雹。混战中，悟空拔毫毛变出本相缠斗，真身却绕至哪吒脑后，着左臂一棒打来。哪吒措手不及，负伤败走。
+  </p>
+  <p>
+  天王求和：李天王见势不利，只得收兵回天，启奏玉帝“妖猴神通广大，不能取胜，望添兵剿除”。太白金星再次主和，建议就封他做个“齐天大圣”的空衔，有官无禄，养在天壤之间，收其邪心。玉帝从之，下旨招安，这便是“官封齐天大圣”。
+  </p>
+</div>
+
+<h3>📊 齐天大圣情节概览</h3>
+<table style="width:100%; border-collapse: collapse; background:#fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); margin:10px 0 20px;">
+  <thead>
+    <tr style="background:#8b1a1a; color:#000;">
+      <th style="padding:10px; border:1px solid #5a1212; width:22%;">阶段</th>
+      <th style="padding:10px; border:1px solid #5a1212; width:38%;">关键情节</th>
+      <th style="padding:10px; border:1px solid #5a1212;">核心意义</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="padding:10px; border:1px solid #ddd; font-weight:bold;">状纸上天</td>
+      <td style="padding:10px; border:1px solid #ddd;">龙王、秦广王联名告状，太白金星主张以招安代讨伐</td>
+      <td style="padding:10px; border:1px solid #ddd;">天庭首次试图用“体制内安置”方式解决边缘力量</td>
+    </tr>
+    <tr style="background:#f9f9f9;">
+      <td style="padding:10px; border:1px solid #ddd; font-weight:bold;">弼马温上任</td>
+      <td style="padding:10px; border:1px solid #ddd;">悟空勤勉养马，却发现只是“未入流”小官</td>
+      <td style="padding:10px; border:1px solid #ddd;">身份落差带来屈辱感，引发对等级秩序的强烈不满</td>
+    </tr>
+    <tr>
+      <td style="padding:10px; border:1px solid #ddd; font-weight:bold;">自封大圣</td>
+      <td style="padding:10px; border:1px solid #ddd;">回花果山挂起“齐天大圣”旗号，击败巨灵神、哪吒</td>
+      <td style="padding:10px; border:1px solid #ddd;">以武力证明自身价值，拒绝被动接受天庭的“命名”</td>
+    </tr>
+    <tr style="background:#f9f9f9;">
+      <td style="padding:10px; border:1px solid #ddd; font-weight:bold;">官封大圣</td>
+      <td style="padding:10px; border:1px solid #ddd;">太白金星游说成功，天庭授予“齐天大圣”虚衔</td>
+      <td style="padding:10px; border:1px solid #ddd;">表面妥协、实则怀柔；权威试图用名分驯服反叛者</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>四、官封大圣：有名无禄的逍遥仙</h3>
+<p>
+悟空二次上天，玉帝于蟠桃园右首起一座齐天大圣府，府内设安静、宁神二司，赐御酒金花，着他安心定志，再勿胡为。
+</p>
+<p>
+这“齐天大圣”是个虚职，只名不事，无有俸禄。但悟空却遂心满意，喜地欢天，每日结交天上星宿，不论高低，俱称朋友。今日东游，明日西荡，云来云去，行踪不定。
+</p>
+<p>
+玉帝恐其闲中生事，便命他权管蟠桃园。这一安排，实是祸根之始。
+</p>
+
+<h3>五、祸起蟠桃园：大圣的第二次觉醒与反叛</h3>
+<p>
+偷桃：悟空入园查勘，土地神引见三千六百株仙树。他等不及成熟，便支开随从，脱冠服，爬大树，拣熟透的大桃吃了个饱。此后三二日便设法偷桃，尽享仙家至宝。
+</p>
+<p>
+七衣仙女摘桃：时逢王母娘娘设蟠桃大会，派七衣仙女入园摘桃。却见树上花果稀疏，只有几个毛蒂青皮的。正惊疑间，变作二寸小人儿在树上睡觉的悟空现出本相，掣出金箍棒喝道：“你是哪方怪物，敢大胆偷摘我桃！” 仙女道明缘由，悟空问：“可请我么？” 仙女道：“不曾听得说。” 悟空使定身法定住七仙女，径奔瑶池探看。
+</p>
+<p>
+搅乱蟠桃会：途中遇赤脚大仙，他诈称玉帝让其先赴通明殿演礼，支开大仙。自己变作大仙模样，先至瑶池。见筵席已备，玉液琼浆陈列，便拔毫毛变瞌睡虫迷倒造酒的仙官、力士，就着缸，挨着瓮，放开量，痛饮一番。吃得酩酊大醉，误闯兜率天宫。
+</p>
+<p>
+偷丹：因太上老君正与燃灯古佛讲道，兜率宫无人。悟空见丹房有五个葫芦金丹，倾出来都吃了，如吃炒豆相似。酒醒后，自知闯下大祸，使隐身法逃回花果山。
+</p>
+<p>
+二次反天：回山后，悟空与众猴分享仙酒，又再返瑶池，偷取仙肴仙酒回山，大开“仙酒会”。至此，他犯下偷桃、搅宴、窃丹三桩大罪，与天庭彻底决裂。
+</p>
+`,
+
+"伍 · 反出天庭": `
+<h2>大闹天宫：从羞辱到彻底反出</h2>
+
+<h3>一、导火索：两次羞辱与彻底幻灭</h3>
+<ol>
+  <li>
+    <strong>初次羞辱（弼马温事件）：</strong>孙悟空被招安，却得到一个喂养天马的末流官职“弼马温”。当他得知此职“未入流”时，感到尊严被彻底践踏。这第一次反天，源于对欺骗与轻蔑的本能反抗。
+  </li>
+  <li>
+    <strong>终极幻灭（蟠桃会事件）：</strong>即便获得“齐天大圣”虚名，他仍被天庭核心社交圈排斥。王母蟠桃会遍请诸仙，唯独不请他。这让他意识到，自己从未被这个神圣体系真正接纳，永远是个“异类”。长期的边缘化与刻意的羞辱，成了总爆发的引信。
+  </li>
+</ol>
+
+<h3>二、核心行动：象征性破坏与武力对抗</h3>
+<p>
+孙悟空的反抗是递进式的：
+</p>
+<ul>
+  <li><strong>泄愤与挑衅：</strong>他偷吃蟠桃、仙酒，盗取金丹。这不仅是贪吃，更是对天庭特权制度（长生资源垄断）的故意玷污与挑战。</li>
+  <li><strong>正面战争：</strong>面对天庭讨伐，他单枪匹马迎战十万天兵，击败巨灵神、战平哪吒。与二郎神的变化斗法，展现了其机智与神通。</li>
+  <li><strong>不屈宣言：</strong>即便被擒，刀砍雷劈无效，在炼丹炉中反而炼就火眼金睛。破炉而出后，他直逼凌霄殿，喊出了最根本的质问：“皇帝轮流做，明年到我家。” 这已从个人荣辱，上升为对权力世袭与永恒秩序的质疑。</li>
+</ul>
+
+<h3>📊 大闹天宫冲突结构一览</h3>
+<table style="width:100%; border-collapse: collapse; background:#fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); margin:10px 0 20px;">
+  <thead>
+    <tr style="background:#8b1a1a; color:#000;">
+      <th style="padding:10px; border:1px solid #5a1212; width:20%;">层面</th>
+      <th style="padding:10px; border:1px solid #5a1212; width:40%;">表现</th>
+      <th style="padding:10px; border:1px solid #5a1212;">意义</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="padding:10px; border:1px solid #ddd; font-weight:bold;">个人尊严</td>
+      <td style="padding:10px; border:1px solid #ddd;">弼马温的“未入流”、蟠桃会的“不在邀请之列”</td>
+      <td style="padding:10px; border:1px solid #ddd;">揭示体制对“异类”的轻蔑与排斥，是反叛的最初动因</td>
+    </tr>
+    <tr style="background:#f9f9f9;">
+      <td style="padding:10px; border:1px solid #ddd; font-weight:bold;">资源分配</td>
+      <td style="padding:10px; border:1px solid #ddd;">偷桃、偷酒、盗金丹，直接冲击长生资源的垄断</td>
+      <td style="padding:10px; border:1px solid #ddd;">质疑“谁配长生”的不平等规则，触碰天庭最敏感利益</td>
+    </tr>
+    <tr>
+      <td style="padding:10px; border:1px solid #ddd; font-weight:bold;">武力对抗</td>
+      <td style="padding:10px; border:1px solid #ddd;">大战十万天兵，斗哪吒、战二郎，炼炉成钢</td>
+      <td style="padding:10px; border:1px solid #ddd;">把个人神通推至极致，展现个体与体系正面冲突的巅峰场面</td>
+    </tr>
+    <tr style="background:#f9f9f9;">
+      <td style="padding:10px; border:1px solid #ddd; font-weight:bold;">话语权</td>
+      <td style="padding:10px; border:1px solid #ddd;">“皇帝轮流做，明年到我家”等惊世之语</td>
+      <td style="padding:10px; border:1px solid #ddd;">第一次从制度外公开提出对最高权力更迭的想象与质疑</td>
+    </tr>
+    <tr>
+      <td style="padding:10px; border:1px solid #ddd; font-weight:bold;">最终结果</td>
+      <td style="padding:10px; border:1px solid #ddd;">被如来扣在五指山前，天兵天将加封禁制</td>
+      <td style="padding:10px; border:1px solid #ddd;">反叛被镇压，但其精神烙印被保留下来，等待新的转化与归途</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>三、深层本质：一场注定失败的英雄主义抗争</h3>
+<ol>
+  <li>
+    <strong>对抗的不是神仙，而是“规则”：</strong>孙悟空挑战的是天庭森严的等级、固化的特权以及排他的秩序。他代表的是一种原始的、追求绝对自由与平等的精神。
+  </li>
+  <li>
+    <strong>个人力量的辉煌与局限：</strong>他将个人勇武与神通发挥到极致，场面堪称神话英雄主义的巅峰。但这恰恰衬托出其悲剧性——再强大的个体，在当时也难以撼动一个结构完整、根基深厚的超级系统。
+  </li>
+  <li>
+    <strong>体系的最终收编：</strong>天庭的常规力量无法制服他，最终由体系外的最高力量（如来佛祖）出手，将其镇压。这象征着任何对旧秩序的剧烈颠覆，都会被更强大的终极秩序所整合或压制。
+  </li>
+</ol>
+
+<h3>思考</h3>
+<div style="background:#fff4d6; padding:20px; border-left:6px solid #C02C3F; border-radius:8px; margin-top:20px;">
+  <p>
+  大闹天宫，是孙悟空作为一个“觉醒者”和“反抗者”最为高光的时刻。它始于对个人尊严的捍卫，发展为对不公秩序的惊天反抗，其内核是对“为何我不能”的灵魂发问。
+  </p>
+  <p>
+  这场轰轰烈烈的反抗虽以被镇压告终，但却留下了关于自由、尊严与平等的永恒追问。站在今天再看孙悟空，我们或许可以问自己：在现实生活中，当面对不公与压迫时，我们能否像他一样，至少先勇敢地意识到——“原来，也可以不一样”？
+  </p>
+</div>
+`,
+
+"陆 · 成语典故": `
+
+<h2>大闹天宫中的成语与典故</h2>
+
+<p>
+大闹天宫故事不仅情节精彩，更衍生出许多经典成语和典故，成为中国文化的重要组成部分。以下是故事中出现的主要成语与典故，及其来源和含义。
+</p>
+
+<h3>一、经典成语</h3>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0;">
+
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #C02C3F;">
+<h4>火眼金睛</h4>
+<p><strong>来源：</strong>孙悟空被太上老君放入八卦炉中煅烧七七四十九天，不但没被烧死，反而炼成了能识别妖魔鬼怪的火眼金睛。</p>
+<p><strong>含义：</strong>形容人眼光敏锐，能洞察事物的本质和真相。</p>
+<p><strong>使用场景：</strong>他那双火眼金睛，能识破任何伪装的骗局。</p>
+</div>
+
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #C02C3F;">
+<h4>大闹天宫</h4>
+<p><strong>来源：</strong>孙悟空因不满天庭的待遇，在天宫大打出手，搅乱蟠桃会，偷吃仙丹，与天兵天将展开激烈战斗。</p>
+<p><strong>含义：</strong>比喻人做出声势浩大的反抗或捣乱行为。</p>
+<p><strong>使用场景：</strong>孩子们在游乐场里闹翻了天，简直像孙悟空大闹天宫一样。</p>
+</div>
+
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #C02C3F;">
+<h4>齐天大圣</h4>
+<p><strong>来源：</strong>孙悟空自封的称号，意为与天齐平的大圣，显示其反抗天庭权威的决心。</p>
+<p><strong>含义：</strong>比喻本领高强、不畏权威的人。</p>
+<p><strong>使用场景：</strong>他在数学竞赛中连夺三冠，同学们都称他为数学界的齐天大圣。</p>
+</div>
+
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #C02C3F;">
+<h4>海底捞针</h4>
+<p><strong>来源：</strong>孙悟空大闹东海龙宫时，龙王形容寻找合适的兵器如同海底捞针。</p>
+<p><strong>含义：</strong>比喻极难找到的人或物。</p>
+<p><strong>使用场景：</strong>在茫茫人海中找到多年未见的老同学，简直像海底捞针一样困难。</p>
+</div>
+
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #C02C3F;">
+<h4>十万八千里</h4>
+<p><strong>来源：</strong>孙悟空一个筋斗能翻十万八千里，是他的标志性神通。</p>
+<p><strong>含义：</strong>形容距离非常遥远。</p>
+<p><strong>使用场景：</strong>虽然我们相隔十万八千里，但心始终连在一起。</p>
+</div>
+
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #C02C3F;">
+<h4>孙悟空七十二变</h4>
+<p><strong>来源：</strong>孙悟空在菩提祖师处学得七十二般变化，能随意变换形态。</p>
+<p><strong>含义：</strong>比喻变化多端、神通广大。</p>
+<p><strong>使用场景：</strong>这个骗子的手法如孙悟空七十二变，让人防不胜防。</p>
+</div>
+
+</div>
+
+<h3>二、重要典故</h3>
+
+<div style="background: #fff4d6; padding: 25px; border-radius: 10px; margin: 20px 0;">
+<h4>1. 大闹天宫</h4>
+<p><strong>典故内容：</strong>孙悟空因不满弼马温官职低微，反下天庭，自封齐天大圣。后又因未被邀请参加蟠桃会，大闹天宫，与天兵天将展开激战。</p>
+<p><strong>文化意义：</strong>象征着对权威的挑战和对自由的追求，成为反抗压迫的精神象征。</p>
+</div>
+
+<div style="background: #fff4d6; padding: 25px; border-radius: 10px; margin: 20px 0;">
+<h4>2. 五指山压大圣</h4>
+<p><strong>典故内容：</strong>孙悟空与如来佛祖打赌，若能跳出佛祖手掌心便让玉帝让位。孙悟空一个筋斗翻出十万八千里，却仍未跳出佛祖掌心。如来翻掌一扑，将孙悟空压在五行山下五百年。</p>
+<p><strong>文化意义：</strong>比喻再强大的力量也有其局限性，同时暗示任性妄为终将受到约束。</p>
+</div>
+
+<div style="background: #fff4d6; padding: 25px; border-radius: 10px; margin: 20px 0;">
+<h4>3. 八卦炉中炼大圣</h4>
+<p><strong>典故内容：</strong>太上老君将孙悟空放入八卦炉中煅烧七七四十九天，欲将其炼化。不料孙悟空躲在巽位（风位），不但没被烧死，反而炼成火眼金睛。</p>
+<p><strong>文化意义：</strong>象征着历经磨难反而能获得更强大的能力，体现了"凤凰涅槃"的精神。</p>
+</div>
+
+
+
+<h3>三、文化影响</h3>
+
+<p>
+大闹天宫中的成语与典故，不仅在文学作品中被广泛引用，更融入了日常语言和文化生活。这些成语和典故：
+</p>
+
+<ul>
+<li><strong>丰富了汉语词汇：</strong>为汉语增添了许多生动形象的表达方法。</li>
+<li><strong>传承了文化精神：</strong>通过成语典故，传递了反抗压迫、追求自由等积极价值观。</li>
+<li><strong>增强了文化认同：</strong>成为中华民族共同的文化记忆和精神符号。</li>
+<li><strong>影响了艺术创作：</strong>被改编为电影、动画、戏曲等多种艺术形式，进一步扩大了影响力。</li>
+</ul>
+
+<h3>四、延伸思考</h3>
+
+<div style="background: #e6f7ff; padding: 20px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #1890ff;">
+<p>
+从大闹天宫的成语与典故中，我们可以看到中国传统文化中对英雄主义、反抗精神和个人成长的重视。这些成语不仅是语言的瑰宝，更是文化的载体，承载着中华民族的智慧和价值观。</p>
+<p>
+思考：在现代社会中，如何理解和运用这些传统成语与典故？它们对我们的生活和价值观有什么启示？</p>
+</div>
+
+`
+};
+
+function changeTab(element, title) {
+    const items = document.querySelectorAll('.nav-item');
+    items.forEach(item => item.classList.remove('active'));
+    element.classList.add('active');
+
+    document.getElementById('content-title').innerText = title;
+    document.getElementById('content-body').innerHTML = contentData[title];
+}
+
+window.onload = function() {
+    changeTab(document.querySelector('.nav-item'), '壹 · 石猴出世');
+    updateCompleteButton();
+};
+
+const BadgeManager = {
+    STORAGE_KEY: 'badge_data_v1',
+    
+    getData() {
+        try {
+            const data = localStorage.getItem(this.STORAGE_KEY);
+            return data ? JSON.parse(data) : {
+                unlockedBadges: [],
+                badgeUnlockTime: {},
+                readingProgress: {
+                    xiyou: { stage1: false, stage2: false, stage3: false },
+                    sanguo: { stage1: false, stage2: false, stage3: false },
+                    shuihu: { stage1: false, stage2: false, stage3: false },
+                    honglou: { stage1: false, stage2: false, stage3: false }
+                }
+            };
+        } catch (e) {
+            return {
+                unlockedBadges: [],
+                badgeUnlockTime: {},
+                readingProgress: {
+                    xiyou: { stage1: false, stage2: false, stage3: false },
+                    sanguo: { stage1: false, stage2: false, stage3: false },
+                    shuihu: { stage1: false, stage2: false, stage3: false },
+                    honglou: { stage1: false, stage2: false, stage3: false }
+                }
+            };
+        }
+    },
+    
+    saveData(data) {
+        try {
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+        } catch (e) {
+            console.error('保存勋章数据失败:', e);
+        }
+    },
+    
+    isStageRead(book, stage) {
+        const data = this.getData();
+        return data.readingProgress[book] && data.readingProgress[book]['stage' + stage];
+    },
+    
+    markStageRead(book, stage) {
+        const data = this.getData();
+        if (!data.readingProgress[book]) {
+            data.readingProgress[book] = { stage1: false, stage2: false, stage3: false };
+        }
+        data.readingProgress[book]['stage' + stage] = true;
+        this.saveData(data);
+        return this.checkAndUnlockBadges();
+    },
+    
+    isBookCompleted(book) {
+        const data = this.getData();
+        const progress = data.readingProgress[book];
+        return progress && progress.stage1 && progress.stage2 && progress.stage3;
+    },
+    
+    getCompletedBooksCount() {
+        let count = 0;
+        ['xiyou', 'sanguo', 'shuihu', 'honglou'].forEach(book => {
+            if (this.isBookCompleted(book)) count++;
+        });
+        return count;
+    },
+    
+    checkAndUnlockBadges() {
+        const data = this.getData();
+        const newlyUnlocked = [];
+        
+        const bookBadges = [
+            { id: 'xiyou_reader', name: '西游行者', desc: '完成西游记阅读', book: 'xiyou' },
+            { id: 'sanguo_reader', name: '三国通览', desc: '完成三国演义阅读', book: 'sanguo' },
+            { id: 'shuihu_reader', name: '水浒知音', desc: '完成水浒传阅读', book: 'shuihu' },
+            { id: 'honglou_reader', name: '红楼初探', desc: '完成红楼梦阅读', book: 'honglou' },
+            { id: 'all_books_reader', name: '四大名著通', desc: '完成全部名著阅读', book: 'all' }
+        ];
+        
+        bookBadges.forEach(badge => {
+            if (data.unlockedBadges.includes(badge.id)) return;
+            
+            let shouldUnlock = false;
+            if (badge.book === 'all') {
+                shouldUnlock = this.getCompletedBooksCount() >= 4;
+            } else {
+                shouldUnlock = this.isBookCompleted(badge.book);
+            }
+            
+            if (shouldUnlock) {
+                data.unlockedBadges.push(badge.id);
+                data.badgeUnlockTime[badge.id] = Date.now();
+                newlyUnlocked.push(badge);
+            }
+        });
+        
+        if (newlyUnlocked.length > 0) {
+            this.saveData(data);
+        }
+        
+        return newlyUnlocked;
+    }
+};
+
+function showBadgeNotification(badge) {
+    document.getElementById('badgeName').textContent = badge.name;
+    document.getElementById('badgeDesc').textContent = badge.desc;
+    
+    const card = document.getElementById('badgeCard');
+    const rarityColors = {
+        common: '#d4af37',
+        rare: '#9c27b0',
+        epic: '#ff6b35'
+    };
+    const color = rarityColors[badge.rarity] || rarityColors.common;
+    card.style.border = '4px solid ' + color;
+    card.style.boxShadow = '0 10px 40px ' + color + '80';
+    document.getElementById('badgeName').style.color = color;
+    
+    document.getElementById('badgeNotification').classList.add('show');
+}
+
+function closeBadgeNotification() {
+    document.getElementById('badgeNotification').classList.remove('show');
+}
+
+let autoReadStartTime = Date.now();
+let hasScrolledEnough = false;
+const MIN_READ_TIME = 30000;
+const SCROLL_THRESHOLD = 0.8;
+let autoReadMarked = false;
+
+function initAutoReadTracking() {
+    if (BadgeManager.isStageRead('xiyou', 1)) {
+        autoReadMarked = true;
+        return;
+    }
+    
+    const mainContent = document.querySelector('.main-content');
+    
+    mainContent.addEventListener('scroll', function() {
+        if (autoReadMarked) return;
+        
+        const scrollPercent = (mainContent.scrollTop + mainContent.clientHeight) / mainContent.scrollHeight;
+        if (scrollPercent >= SCROLL_THRESHOLD) {
+            hasScrolledEnough = true;
+            checkAndMarkAutoRead();
+        }
+    });
+    
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden && !autoReadMarked) {
+            checkAndMarkAutoRead();
+        }
+    });
+    
+    window.addEventListener('beforeunload', function() {
+        if (!autoReadMarked) {
+            checkAndMarkAutoRead();
+        }
+    });
+}
+
+function checkAndMarkAutoRead() {
+    if (autoReadMarked) return;
+    
+    const readTime = Date.now() - autoReadStartTime;
+    if (readTime >= MIN_READ_TIME && hasScrolledEnough) {
+        const newlyUnlocked = BadgeManager.markStageRead('xiyou', 1);
+        autoReadMarked = true;
+        
+        if (newlyUnlocked.length > 0) {
+            localStorage.setItem('pending_badge_notification', newlyUnlocked[0].id);
+        }
+    }
+}
+
+window.addEventListener('load', function() {
+    initAutoReadTracking();
+});
+</script>
+
+</body>
+</html>

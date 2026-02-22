@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>水浒传学习站 - 义薄云天</title>
+    <style>
+        /* 1. 基础背景：采用略带水墨感的浅灰色 */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2; 
+            font-family: "Microsoft YaHei", serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 2. 主容器 */
+        .container {
+            display: flex;
+            align-items: center;
+            gap: 120px; /* 增加间距，让排版更有呼吸感 */
+            max-width: 1100px;
+        }
+
+        /* 3. 人物画像区域（建议放置林冲或鲁智深） */
+        .character-box {
+            flex: 1;
+        }
+        .character-box img {
+            width: 420px; 
+            /* 水墨风阴影 */
+            filter: drop-shadow(15px 15px 30px rgba(0,0,0,0.3));
+            transition: transform 0.5s ease;
+        }
+        .character-box img:hover {
+            transform: scale(1.05); /* 鼠标经过图片轻微放大 */
+        }
+
+        /* 4. 按钮导航区域 */
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 35px; /* 按钮之间的垂直间距 */
+        }
+
+        /* 5. 水浒特色按钮样式 */
+        .stage-btn {
+            text-decoration: none;
+            padding: 22px 45px;
+            background: #fff;
+            color: #222;
+            /* 使用朱砂红作为左侧装饰条 */
+            border-left: 6px solid #a22121; 
+            border-radius: 2px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 320px;
+            display: block;
+            position: relative;
+        }
+
+        /* 按钮悬停效果：背景变红，文字变白，向右弹跳 */
+        .stage-btn:hover {
+            transform: translateX(20px);
+            background-color: #a22121;
+            color: #fff;
+            box-shadow: 0 10px 30px rgba(162, 33, 33, 0.4);
+        }
+
+        /* 返回首页按钮 */
+        .back-home {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            text-decoration: none;
+            color: #a22121;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-bottom: 2px solid transparent;
+            transition: border-bottom 0.3s;
+        }
+        .back-home:hover {
+            border-bottom: 2px solid #a22121;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="book.html" class="back-home">← 返回主站</a>
+
+    <div class="container">
+        <div class="character-box">
+            <img src="images/shuihu_hero.png" alt="水浒英雄">
+        </div>
+
+        <div class="nav-menu">
+            <a href="shuihu_stage1.html" class="stage-btn">
+                第一阶段：快意恩仇
+            </a>
+            <a href="shuihu_stage2.html" class="stage-btn">
+                第二阶段：反抗与妥协
+            </a>
+            <a href="shuihu_stage3.html" class="stage-btn">
+                第三阶段：梦碎江湖
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

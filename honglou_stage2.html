@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>烈火烹油 - 红楼梦专题导览</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    display: flex;
+    height: 100vh;
+    font-family: "STKaiti", "Microsoft YaHei", serif;
+    background: linear-gradient(135deg, #fff5f6, #fef6e8);
+}
+
+.sidebar {
+    width: 300px;
+    background: linear-gradient(180deg, #d4708a 0%, #b03060 100%);
+    color: #d4af37;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 5px 0 18px rgba(0,0,0,0.25);
+    border-right: 2px solid #d4af37;
+}
+
+.sidebar h2 {
+    text-align: center;
+    font-size: 1.6rem;
+    margin: 0;
+    padding: 40px 0;
+    background: rgba(0,0,0,0.15);
+    letter-spacing: 4px;
+    color: #d4af37;
+}
+
+.nav-item {
+    padding: 22px 30px;
+    cursor: pointer;
+    transition: 0.3s;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    font-size: 1.1rem;
+    color: #ffe89a;
+}
+
+.nav-item:hover {
+    background: rgba(212,112,138,0.3);
+    padding-left: 45px;
+    color: #fff8e1;
+}
+
+.nav-item.active {
+    background: linear-gradient(90deg, #d4af37, #c9a227);
+    color: #8b1a4a;
+    font-weight: bold;
+}
+
+.main-content {
+    flex: 1;
+    padding: 50px;
+    overflow-y: auto;
+    background-image: url('https://www.transparenttextures.com/patterns/papyrus.png');
+}
+
+.content-box {
+    background: rgba(255, 250, 250, 0.95);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px;
+    border: 1px solid #d4af37;
+    box-shadow: 0 0 25px rgba(0,0,0,0.15);
+    min-height: 80vh;
+}
+
+h1 {
+    color: #b03060;
+    border-left: 8px solid #d4af37;
+    padding-left: 15px;
+}
+
+h2 {
+    color: #b03060;
+    border-bottom: 1px solid #d4af37;
+    padding-bottom: 5px;
+    margin-top: 30px;
+}
+
+h3 {
+    color: #8b1a4a;
+    margin-top: 24px;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed rgba(176,48,96,0.35);
+}
+
+p {
+    line-height: 1.8;
+    text-indent: 2em;
+    font-size: 1.2rem;
+}
+
+.back-link {
+    position: fixed;
+    top: 20px;
+    right: 40px;
+    text-decoration: none;
+    color: #b03060;
+    font-weight: bold;
+    background: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.badge-notification-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.badge-notification-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.badge-notification-card {
+    background: linear-gradient(135deg, #fff9e6, #fff);
+    border-radius: 20px;
+    padding: 40px 50px;
+    text-align: center;
+    max-width: 350px;
+    transform: scale(0.8);
+    transition: transform 0.3s;
+}
+
+.badge-notification-overlay.show .badge-notification-card {
+    transform: scale(1);
+}
+
+.coming-soon {
+    text-align: center;
+    padding: 100px 20px;
+    color: #b03060;
+}
+
+.coming-soon h2 {
+    border: none;
+    font-size: 2rem;
+}
+
+.coming-soon p {
+    font-size: 1.2rem;
+    color: #8b1a4a;
+    line-height: 1.8;
+}
+
+.poem-card {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border: 1px solid #d4af37;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 8px rgba(176,48,96,0.1);
+}
+
+.poem-content {
+    line-height: 2;
+    text-align: center;
+    white-space: pre-wrap;
+    color: #333;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+
+.poem-author {
+    text-align: center;
+    color: #8b1a4a;
+    font-style: italic;
+    margin-bottom: 15px;
+}
+
+.dictation-box {
+    display: none;
+    background: #fef6f6;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px inset #d4af37;
+}
+
+.dictation-input {
+    width: 100%;
+    height: 120px;
+    padding: 10px;
+    border: 1px solid #d4af37;
+    border-radius: 6px;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    resize: vertical;
+    font-family: "STKaiti", "Microsoft YaHei", serif;
+}
+
+.result-display {
+    margin-top: 15px;
+    padding: 15px;
+    border-top: 2px solid #b03060;
+    display: none;
+    word-break: break-all;
+    white-space: normal;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.correct { color: #228b22; }
+.wrong { color: #ff0000; font-weight: bold; text-decoration: underline; }
+
+.btn-group {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.topic-btn {
+    background: linear-gradient(135deg, #d4af37, #c9a227);
+    color: #8b1a4a;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: "STKaiti", "Microsoft YaHei", serif;
+    transition: all 0.3s;
+}
+
+.topic-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(212,175,55,0.3);
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <h2>烈火烹油</h2>
+    <div class="nav-item active" onclick="changeTab(this, '柒 · 元春省亲')">柒·元春省亲</div>
+    <div class="nav-item" onclick="changeTab(this, '捌 · 清虚观打醮')">捌·清虚观打醮</div>
+    <div class="nav-item" onclick="changeTab(this, '玖 · 宝黛定情')">玖·宝黛定情</div>
+    <div class="nav-item" onclick="changeTab(this, '拾 · 金钏投井')">拾·金钏投井</div>
+    <div class="nav-item" onclick="changeTab(this, '拾壹 · 湘云醉卧')">拾壹·湘云醉卧</div>
+    <div class="nav-item" onclick="changeTab(this, '拾贰 · 诗词填空')">拾贰·诗词填空</div>
+</div>
+
+<div class="main-content">
+    <a href="honglou.html" class="back-link">← 返回主页</a>
+
+    <div class="content-box">
+        <h1 id="content-title">壹 · 元春省亲</h1>
+        <div id="content-body">
+            <div class="coming-soon">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="badge-notification-overlay" id="badgeNotification">
+    <div class="badge-notification-card" id="badgeCard">
+        <div style="font-size: 1.5rem; color: #8b4513; margin-bottom: 20px;">🎉 恭喜获得勋章！</div>
+        <div style="font-size: 2.5rem; margin-bottom: 15px;">🎖️</div>
+        <div style="font-size: 1.8rem; font-weight: bold; margin-bottom: 10px;" id="badgeName"></div>
+        <div style="color: #666; margin-bottom: 20px;" id="badgeDesc"></div>
+        <button onclick="closeBadgeNotification()" style="background: #8b4513; color: #fff; border: none; padding: 10px 30px; border-radius: 20px; font-size: 1rem; cursor: pointer;">太棒了！</button>
+    </div>
+</div>
+
+<script>
+const contentData = {
+"柒 · 元春省亲": `
+<h2>一、烈火烹油：贾府的极盛时刻</h2>
+<p>
+贾元春是贾政与王夫人的长女，自幼由贾母教养，后被选入宫，成为贵妃。元春省亲是《红楼梦》中贾府最辉煌的时刻，也是全书规模最宏大的场面之一。为迎接贵妃省亲，贾府特地修建了大观园，极尽奢华之能事。
+</p>
+
+<p>
+然而，在这"烈火烹油，鲜花着锦"的繁华背后，却暗藏着悲凉。元春作为皇妃，表面风光无限，实则身处深宫，身不由己。省亲时她多次落泪，对贾母和王夫人说："当日既送我到那不得见人的去处，好容易今日回家，娘儿们一会，不说说笑笑，反倒哭起来。"这番话道出了深宫女子的孤独与无奈。
+</p>
+
+<h3>二、大观园：为省亲而建的人间仙境</h3>
+<p>
+大观园是专为元春省亲而建的皇家园林，占地广阔，亭台楼阁，山水花木，极尽奢华。园内有怡红院、潇湘馆、蘅芜苑、稻香村等多处院落，每一处都精心设计，各具特色。元春入园后，为各处题匾作诗，并命宝玉和众姐妹也各题一匾一诗。
+</p>
+
+<p>
+大观园不仅是建筑的杰作，更是青春的乐园。省亲之后，元春命宝玉和众姐妹入住园中，让他们在这片净土中暂时远离封建礼教的束缚。然而，这种美好注定是短暂的，大观园的繁华终将散去，正如青春的美好终将逝去。
+</p>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 20px 0;">
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #b03060;">
+<h4 style="color: #b03060;">元春的悲剧</h4>
+<p>• 入宫为妃，身不由己</p>
+<p>• 省亲时多次落泪</p>
+<p>• 深宫寂寞，孤独终老</p>
+</div>
+
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #d4af37;">
+<h4 style="color: #d4af37;">贾府的危机</h4>
+<p>• 为省亲耗尽财力</p>
+<p>• 繁华背后是空虚</p>
+<p>• 盛极必衰的预兆</p>
+</div>
+</div>
+
+<h3>三、省亲过程：规矩森严的骨肉团聚</h3>
+<p>
+元春省亲的过程充满了森严的规矩。先是太监提前来贾府告知时辰，然后是贾母等人按品级穿好朝服，在大门外跪迎。元春的仪仗队浩浩荡荡，前呼后拥，尽显皇家威仪。见到贾母和王夫人时，元春虽满心悲切，却还要遵守君臣之礼，先接受家人的跪拜，然后才以家人之礼相见。
+</p>
+
+<p>
+在省亲过程中，元春处处表现出对家人的牵挂。她询问家中各人的情况，尤其关心宝玉的学业。当她看到宝玉为大观园题的诗时，十分欣慰，称赞他"果进益了"。然而，在这短暂的团聚之后，元春又不得不返回深宫，继续她孤独的生活。
+</p>
+
+<h3>📊 元春省亲时间表</h3>
+<table style="width:100%; border-collapse: collapse; background:#fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
+<thead>
+<tr style="background:#b03060; color:#fff;">
+<th style="padding:12px; border:1px solid #8b1a4a; width:25%;">时间</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">事件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">正月十五</td>
+<td style="padding:10px; border:1px solid #ddd;">元春省亲之日</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">戌初起身</td>
+<td style="padding:10px; border:1px solid #ddd;">元春从宫中出发</td>
+</tr>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">戌时到贾府</td>
+<td style="padding:10px; border:1px solid #ddd;">省亲开始</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">丑时三刻</td>
+<td style="padding:10px; border:1px solid #ddd;">省亲结束，回宫</td>
+</tr>
+</tbody>
+</table>
+
+<h3>思考</h3>
+<div style="background:#fff5f5; padding:20px; border-left:6px solid #b03060; border-radius:8px; margin-top:20px;">
+<p>
+元春省亲是贾府的极盛时刻，却也是盛极必衰的转折点。为了这次省亲，贾府耗尽了财力，却只换得短短几个时辰的团聚。元春的泪水，既流露出对家人的思念，也暗示了她在深宫的孤独与无奈。大观园虽美，却只是为一次省亲而建，这种繁华注定是短暂的。曹雪芹通过省亲这一情节，深刻揭示了封建社会的虚伪与残酷，也为贾府的衰落埋下了伏笔。
+</p>
+</div>
+`,
+
+"捌 · 清虚观打醮": `
+<h2>一、打醮缘起：元春的赏赐与凤姐的张罗</h2>
+<p>
+元春从宫中送出赏赐，让贾府众人去清虚观打醮三天。凤姐本就喜欢热闹，便借此机会张罗着让贾母也去。贾母本是个爱热闹的人，一听要去清虚观，便欣然应允。于是，荣国府的女眷们浩浩荡荡地出发，前往清虚观打醮。
+</p>
+
+<p>
+清虚观打醮本是一件祈福的好事，却不料引发了一系列风波。先是张道士为宝玉提亲，让黛玉心生不快；后是宝玉与黛玉因琐事闹别扭，两人都闹得死去活来。这场打醮，本是为了祈福，却反而惹出了许多是非，正应了"盛极必衰"的道理。
+</p>
+
+<h3>二、张道士提亲：金玉良缘的公开化</h3>
+<p>
+在清虚观，张道士见到宝玉，十分喜爱，便向贾母提起宝玉的亲事。他说有一位小姐，"今年十五岁，生的倒也好个模样儿"，想给宝玉说媒。贾母虽然婉言谢绝了，但这番话却让黛玉听到了，心中十分不快。
+</p>
+
+<p>
+张道士提亲一事，让"金玉良缘"的说法更加公开化。此前，虽然府中已有"金玉良缘"的传言，但并未公开提起。这次张道士当着众人的面提亲，让黛玉感到了威胁，也让她与宝玉之间的矛盾进一步激化。
+</p>
+
+<div style="background: #fef9e6; padding: 25px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #d4af37;">
+<h4 style="color: #d4af37;">贾母对提亲的回应</h4>
+<p style="font-style: italic; line-height: 1.8; text-indent: 0;">
+"上回有个和尚说了，这孩子命里不该早娶，等再大一大儿再定罢。你可如今也打听着，不管他根基富贵，只要模样配得上就好，来告诉我。便是那家子穷，不过给他几两银子罢了。只是模样性格儿难得好的。"
+</p>
+</div>
+
+<h3>三、宝黛闹别扭：心灵的较量</h3>
+<p>
+清虚观打醮后，宝玉与黛玉又因琐事闹起了别扭。先是黛玉说宝玉"见了姐姐就忘了妹妹"，让宝玉心中不快；后是宝玉砸玉，闹得不可开交。两人都用最伤人的话去刺对方，却又都在心里为对方担忧。
+</p>
+
+<p>
+这场闹别扭，表面上是因为小事，实则是两人心灵的较量。宝玉想让黛玉明白自己的心意，却不知道如何表达；黛玉想试探宝玉的真心，却总是用错了方式。两人都深爱着对方，却都不肯先低头，结果只能是两败俱伤。
+</p>
+
+<h3>📊 清虚观打醮主要人物表</h3>
+<table style="width:100%; border-collapse: collapse; background:#fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
+<thead>
+<tr style="background:#b03060; color:#fff;">
+<th style="padding:12px; border:1px solid #8b1a4a; width:20%;">人物</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">角色</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">事件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">贾母</td>
+<td style="padding:10px; border:1px solid #ddd;">组织者</td>
+<td style="padding:10px; border:1px solid #ddd;">带领众人打醮</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">王熙凤</td>
+<td style="padding:10px; border:1px solid #ddd;">张罗者</td>
+<td style="padding:10px; border:1px solid #ddd;">积极组织这次活动</td>
+</tr>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">张道士</td>
+<td style="padding:10px; border:1px solid #ddd;">提亲者</td>
+<td style="padding:10px; border:1px solid #ddd;">为宝玉提亲</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">宝玉/黛玉</td>
+<td style="padding:10px; border:1px solid #ddd;">闹别扭者</td>
+<td style="padding:10px; border:1px solid #ddd;">因提亲一事闹矛盾</td>
+</tr>
+</tbody>
+</table>
+`,
+
+"玖 · 宝黛定情": `
+<h2>一、情窦初开：西厢记的启发</h2>
+<p>
+宝玉在大观园中偷读《西厢记》，被黛玉撞见。黛玉起初好奇，待看到书中内容后，也被深深吸引。两人一同读《西厢记》，书中"愿普天下有情的都成了眷属"的句子，让他们深受启发。宝玉借机用书中的话向黛玉表白，黛玉虽然表面生气，心中却十分欢喜。
+</p>
+
+<p>
+《西厢记》在当时被视为"禁书"，宝玉与黛玉却偷偷阅读，这本身就是对封建礼教的一种叛逆。通过共读《西厢记》，两人的感情迅速升温，从之前的试探与别扭，逐渐走向明确与坚定。这是宝黛爱情发展的重要转折点。
+</p>
+
+<h3>二、宝玉表白：你就是那倾国倾城貌</h3>
+<p>
+读《西厢记》时，宝玉笑着对黛玉说："我就是个'多愁多病身'，你就是那'倾国倾城貌'。"这句话既是玩笑，也是真心的表白。黛玉听后，先是害羞，继而生气，说宝玉"欺负"她，还说要去告诉贾母。宝玉急忙赔礼道歉，说自己"该死"，黛玉这才"扑哧"一声笑了。
+</p>
+
+<p>
+这场表白，虽然以玩笑的方式开场，却让宝黛之间的感情变得明朗化。此前，两人虽然彼此有意，却都没有明说。这次宝玉的表白，虽然黛玉表面上生气，实则已经默认了这份感情。从此，两人的感情进入了一个新的阶段。
+</p>
+
+<div style="background: #fef6f6; padding: 25px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #b03060;">
+<h4 style="color: #b03060;">《西厢记》经典名句</h4>
+<p style="font-style: italic; line-height: 1.8; text-indent: 0;">
+"原来姹紫嫣红开遍，似这般都付与断井颓垣。"<br>
+"良辰美景奈何天，赏心乐事谁家院。"<br>
+"则为你如花美眷，似水流年。"<br>
+"愿普天下有情的都成了眷属。"
+</p>
+</div>
+
+<h3>三、黛玉听曲：如花美眷，似水流年</h3>
+<p>
+宝玉离开后，黛玉独自一人在梨香院墙外，听到里面十二个女孩子唱《牡丹亭》。当听到"原来姹紫嫣红开遍，似这般都付与断井颓垣"时，黛玉心中十分感慨；再听到"良辰美景奈何天，赏心乐事谁家院"时，她更是心动神摇，如醉如痴。
+</p>
+
+<p>
+"则为你如花美眷，似水流年"这句唱词，让黛玉深受触动。她想到自己的青春就像流水一样逝去，而自己的未来却一片迷茫，不禁落下泪来。这场听曲，让黛玉对自己的命运有了更深刻的认识，也让她对与宝玉的感情更加珍惜。
+</p>
+
+<h3>📊 宝黛爱情发展历程</h3>
+<table style="width:100%; border-collapse: collapse; background:#fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
+<thead>
+<tr style="background:#b03060; color:#fff;">
+<th style="padding:12px; border:1px solid #8b1a4a; width:25%;">阶段</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">事件</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">意义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">第一阶段</td>
+<td style="padding:10px; border:1px solid #ddd;">宝黛初见</td>
+<td style="padding:10px; border:1px solid #ddd;">似曾相识，命中注定</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">第二阶段</td>
+<td style="padding:10px; border:1px solid #ddd;">试探与别扭</td>
+<td style="padding:10px; border:1px solid #ddd;">彼此有意，却不知如何表达</td>
+</tr>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">第三阶段</td>
+<td style="padding:10px; border:1px solid #ddd;">共读西厢</td>
+<td style="padding:10px; border:1px solid #ddd;">感情升温，明确心意</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">第四阶段</td>
+<td style="padding:10px; border:1px solid #ddd;">黛玉听曲</td>
+<td style="padding:10px; border:1px solid #ddd;">对命运的深刻认识</td>
+</tr>
+</tbody>
+</table>
+
+<h3>思考</h3>
+<div style="background:#fff5f5; padding:20px; border-left:6px solid #b03060; border-radius:8px; margin-top:20px;">
+<p>
+宝黛定情是《红楼梦》中最动人的情节之一。通过共读《西厢记》和黛玉听曲，两人的感情从试探走向明确，从青涩走向成熟。《西厢记》和《牡丹亭》在当时被视为"禁书"，宝黛却能从中汲取力量，勇敢地追求爱情，这本身就是对封建礼教的叛逆。然而，他们的爱情注定要以悲剧收场，因为在封建社会中，自由爱情是不被允许的。曹雪芹通过这一情节，既歌颂了爱情的美好，也揭示了封建社会的残酷。
+</p>
+</div>
+`,
+
+"拾 · 金钏投井": `
+<h2>一、金钏之死：一个丫鬟的悲剧</h2>
+<p>
+金钏是王夫人身边的大丫鬟，从小在贾府长大，与宝玉关系也很好。一天，宝玉在王夫人房里与金钏开玩笑，金钏说了几句玩笑话，被王夫人听到。王夫人大怒，不仅打了金钏一巴掌，还执意要把她撵出去。金钏不堪受辱，最终投井自尽。
+</p>
+
+<p>
+金钏之死是《红楼梦》中最令人痛心的悲剧之一。她不过是说了几句玩笑话，便付出了生命的代价。这一事件深刻暴露了封建社会的残酷与虚伪，也展现了下层人民的悲惨命运。金钏的死，也让宝玉深受打击，第一次感受到了生命的脆弱与无常。
+</p>
+
+<h3>二、王夫人的虚伪：表面慈善，内心刻薄</h3>
+<p>
+王夫人一向给人以慈善宽厚的印象，但在金钏事件中，她的刻薄与虚伪暴露无遗。她听到金钏说几句玩笑话，便大怒，说金钏"教坏了"宝玉，执意要把她撵出去。任凭金钏如何哀求，她都不为所动。
+</p>
+
+<p>
+王夫人的所作所为，表面上是为了维护宝玉，实则是为了维护自己的形象。她害怕金钏的事传出去，影响自己的名声，便牺牲了金钏。这种虚伪与刻薄，正是封建家长的典型特征。他们表面上慈善宽厚，实则自私冷酷，为了自己的利益，可以牺牲任何人。
+</p>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0;">
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #b03060;">
+<h4 style="color: #b03060;">金钏的悲剧</h4>
+<p>• 从小在贾府长大</p>
+<p>• 因几句玩笑话被撵</p>
+<p>• 不堪受辱，投井自尽</p>
+</div>
+
+<div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #d4af37;">
+<h4 style="color: #d4af37;">王夫人的虚伪</h4>
+<p>• 表面慈善宽厚</p>
+<p>• 实则刻薄冷酷</p>
+<p>• 为名声牺牲金钏</p>
+</div>
+</div>
+
+<h3>三、宝玉的忏悔：第一次感受到生命的脆弱</h3>
+<p>
+金钏之死让宝玉深受打击。他本以为只是几句玩笑话，没想到却导致了金钏的死亡。他既内疚又悔恨，却又无能为力。金钏的死，让他第一次感受到了生命的脆弱与无常，也让他对封建社会有了更深刻的认识。
+</p>
+
+<p>
+后来，宝玉在凤姐生日那天，偷偷跑到水仙庵，在井边祭奠金钏。他没有说什么，只是默默地行礼，表达自己的哀悼与忏悔。这一情节，既展现了宝玉的善良与真情，也揭示了他在封建社会中的无奈与无力。
+</p>
+
+<h3>思考</h3>
+<div style="background:#fff5f5; padding:20px; border-left:6px solid #b03060; border-radius:8px; margin-top:20px;">
+<p>
+金钏之死是《红楼梦》中最令人痛心的悲剧之一。一个年轻鲜活的生命，仅仅因为几句玩笑话，便香消玉殒。这一事件深刻暴露了封建社会的残酷与虚伪，也展现了下层人民的悲惨命运。王夫人的虚伪与刻薄，让我们看到了封建家长的真实面目；宝玉的忏悔与无奈，让我们感受到了封建社会中善良人们的无力。曹雪芹通过这一情节，对封建社会进行了深刻的批判，也表达了对下层人民的深切同情。
+</p>
+</div>
+`,
+
+"拾壹 · 湘云醉卧": `
+<h2>一、湘云的豪爽：最具男儿气的女子</h2>
+<p>
+史湘云是《红楼梦》中最豪爽开朗的女子，她从小父母双亡，由叔叔婶婶抚养长大，但她并没有因此变得多愁善感，反而养成了豪爽开朗的性格。她喜欢穿男装，说话做事都像个男孩子，从不扭扭捏捏。她的这种性格，在大观园的众姐妹中独树一帜，也深受大家的喜爱。
+</p>
+
+<p>
+湘云的豪爽不仅体现在性格上，也体现在才华上。她才思敏捷，诗作豪放洒脱，常常能写出令人拍案叫绝的诗句。她的诗风与黛玉的忧郁、宝钗的含蓄都不同，充满了豪迈之气。这种豪爽的性格与才华，让湘云成为了《红楼梦》中最具魅力的人物之一。
+</p>
+
+<h3>二、醉卧芍药裀：最美丽的画面</h3>
+<p>
+宝玉生日那天，众人在大观园中设宴，为宝玉祝寿。湘云喝醉了，便独自一人跑到芍药丛中，在一个青石板凳上睡着了。她头枕着一包芍药花瓣，周围落满了芍药花，手中还拿着一把扇子，半梦半醒中还在说着酒令。众人找到她时，都被这美丽的画面所打动。
+</p>
+
+<div style="text-align: center; margin: 30px 0;">
+    <img src="images/xiangyun.jpg" style="max-width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border: 3px solid #d4af37;">
+    <p style="text-align: center; margin-top: 12px; color: #8b1a4a; font-style: italic; text-indent: 0;">湘云醉卧芍药裀（费丹旭）</p>
+</div>
+
+<p>
+"湘云醉卧"是《红楼梦》中最美丽的画面之一。芍药花、醉美人、青石板凳，构成了一幅绝美的图画。湘云的醉态，不是丑态，而是一种自然的美，一种豪放的美。她在睡梦中还在说着酒令，更是展现了她真性情的一面。这个画面，也成为了《红楼梦》中最经典的场景之一。
+</p>
+
+<div style="background: #fef9e6; padding: 25px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #d4af37;">
+<h4 style="color: #d4af37;">湘云醉卧原文</h4>
+<p style="font-style: italic; line-height: 1.8; text-indent: 0;">
+"果见湘云卧于山石僻处一个石凳子上，业经香梦沉酣，四面芍药花飞了一身，满头脸衣襟上皆是红香散乱，手中的扇子在地下，也半被落花埋了，一群蜂蝶闹穰穰的围着他，又用鲛帕包了一包芍药花瓣枕着。众人看了，又是爱，又是笑，忙上来推唤搀扶。"
+</p>
+</div>
+
+<h3>三、真性情的可贵：在封建社会中保持自我</h3>
+<p>
+湘云的豪爽与真性情，在封建社会中显得尤为可贵。在那个讲究"女子无才便是德"的时代，湘云却才华横溢；在那个要求女子"三从四德"的时代，湘云却豪爽开朗，从不扭捏作态。她的这种真性情，不仅让她赢得了众人的喜爱，也让她在封建社会中保持了自我。
+</p>
+
+<p>
+然而，湘云的真性情也无法改变她的命运。她虽然豪爽开朗，却依然逃不出封建社会的罗网。她的婚姻虽然美满，却好景不长，丈夫不久便去世，她最终也落得个守寡的下场。曹雪芹通过湘云这一人物，既歌颂了真性情的可贵，也揭示了封建社会的残酷——即使你再优秀再特别，也无法逃脱命运的安排。
+</p>
+
+<h3>📊 史湘云与其他姐妹对比</h3>
+<table style="width:100%; border-collapse: collapse; background:#fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.1);">
+<thead>
+<tr style="background:#b03060; color:#fff;">
+<th style="padding:12px; border:1px solid #8b1a4a; width:20%;">人物</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">性格</th>
+<th style="padding:12px; border:1px solid #8b1a4a;">诗风</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">史湘云</td>
+<td style="padding:10px; border:1px solid #ddd;">豪爽开朗，真性情</td>
+<td style="padding:10px; border:1px solid #ddd;">豪放洒脱，有男儿气</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">林黛玉</td>
+<td style="padding:10px; border:1px solid #ddd;">敏感多疑，多愁善感</td>
+<td style="padding:10px; border:1px solid #ddd;">风流别致，灵动飘逸</td>
+</tr>
+<tr>
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">薛宝钗</td>
+<td style="padding:10px; border:1px solid #ddd;">温婉大方，藏愚守拙</td>
+<td style="padding:10px; border:1px solid #ddd;">含蓄浑厚，稳重典雅</td>
+</tr>
+<tr style="background:#fef6f6;">
+<td style="padding:10px; border:1px solid #ddd; font-weight:bold;">贾探春</td>
+<td style="padding:10px; border:1px solid #ddd;">精明能干，有大家风范</td>
+<td style="padding:10px; border:1px solid #ddd;">豪放洒脱，有气魄</td>
+</tr>
+</tbody>
+</table>
+
+<h3>思考</h3>
+<div style="background:#fff5f5; padding:20px; border-left:6px solid #b03060; border-radius:8px; margin-top:20px;">
+<p>
+"湘云醉卧"是《红楼梦》中最美丽的画面之一。湘云的豪爽与真性情，在封建社会中显得尤为可贵。她不做作，不扭捏，始终保持着自己的真性情。然而，即使是这样一个优秀可爱的女子，也无法逃脱封建社会的罗网。她的婚姻虽然美满，却好景不长，最终落得个守寡的下场。曹雪芹通过湘云这一人物，既歌颂了真性情的可贵，也揭示了封建社会的残酷——在那个时代，没有人能够真正掌握自己的命运。
+</p>
+</div>
+`,
+
+"拾贰 · 诗词填空": `
+<div class="poem-card">
+    <div style="text-align:center; font-weight:bold; font-size:1.3rem; color: #b03060;">《葬花吟》（节选）</div>
+    <div class="poem-author">—— 林黛玉</div>
+    <div id="orig-zhl" class="poem-content">花谢花飞花满天，红消香断有谁怜？
+游丝软系飘春榭，落絮轻沾扑绣帘。
+闺中女儿惜春暮，愁绪满怀无释处。
+手把花锄出绣帘，忍踏落花来复去。
+柳丝榆荚自芳菲，不管桃飘与李飞。
+桃李明年能再发，明年闺中知有谁？</div>
+    <div class="btn-group" id="btn-read-zhl">
+        <button class="topic-btn" onclick="openDict('zhl')">📝 开启默写</button>
+    </div>
+    <div id="box-zhl" class="dictation-box">
+        <textarea id="in-zhl" class="dictation-input" placeholder="请默写诗词..."></textarea>
+        <div class="btn-group">
+            <button class="topic-btn" style="background:#228b22; color:#fff;" onclick="checkPoem('zhl')">✅ 提交批改</button>
+            <button class="topic-btn" style="background:#666; color:#fff;" onclick="closeDict('zhl')">↩️ 返回阅读</button>
+        </div>
+        <div id="res-zhl" class="result-display"></div>
+    </div>
+</div>
+
+<div class="poem-card">
+    <div style="text-align:center; font-weight:bold; font-size:1.3rem; color: #b03060;">《咏白海棠》</div>
+    <div class="poem-author">—— 林黛玉</div>
+    <div id="orig-ybht" class="poem-content">半卷湘帘半掩门，碾冰为土玉为盆。
+偷来梨蕊三分白，借得梅花一缕魂。
+月窟仙人缝缟袂，秋闺怨女拭啼痕。
+娇羞默默同谁诉，倦倚西风夜已昏。</div>
+    <div class="btn-group" id="btn-read-ybht">
+        <button class="topic-btn" onclick="openDict('ybht')">📝 开启默写</button>
+    </div>
+    <div id="box-ybht" class="dictation-box">
+        <textarea id="in-ybht" class="dictation-input" placeholder="请默写诗词..."></textarea>
+        <div class="btn-group">
+            <button class="topic-btn" style="background:#228b22; color:#fff;" onclick="checkPoem('ybht')">✅ 提交批改</button>
+            <button class="topic-btn" style="background:#666; color:#fff;" onclick="closeDict('ybht')">↩️ 返回阅读</button>
+        </div>
+        <div id="res-ybht" class="result-display"></div>
+    </div>
+</div>
+
+<div class="poem-card">
+    <div style="text-align:center; font-weight:bold; font-size:1.3rem; color: #b03060;">《咏菊》</div>
+    <div class="poem-author">—— 林黛玉</div>
+    <div id="orig-yj" class="poem-content">无赖诗魔昏晓侵，绕篱欹石自沉音。
+毫端蕴秀临霜写，口齿噙香对月吟。
+满纸自怜题素怨，片言谁解诉秋心。
+一从陶令平章后，千古高风说到今。</div>
+    <div class="btn-group" id="btn-read-yj">
+        <button class="topic-btn" onclick="openDict('yj')">📝 开启默写</button>
+    </div>
+    <div id="box-yj" class="dictation-box">
+        <textarea id="in-yj" class="dictation-input" placeholder="请默写诗词..."></textarea>
+        <div class="btn-group">
+            <button class="topic-btn" style="background:#228b22; color:#fff;" onclick="checkPoem('yj')">✅ 提交批改</button>
+            <button class="topic-btn" style="background:#666; color:#fff;" onclick="closeDict('yj')">↩️ 返回阅读</button>
+        </div>
+        <div id="res-yj" class="result-display"></div>
+    </div>
+</div>
+
+<div class="poem-card">
+    <div style="text-align:center; font-weight:bold; font-size:1.3rem; color: #b03060;">《秋窗风雨夕》</div>
+    <div class="poem-author">—— 林黛玉</div>
+    <div id="orig-qcfy" class="poem-content">秋花惨淡秋草黄，耿耿秋灯秋夜长。
+已觉秋窗秋不尽，那堪风雨助凄凉！
+助秋风雨来何速！惊破秋窗秋梦续。
+抱得秋情不忍眠，自向秋屏移泪烛。
+泪烛摇摇爇短檠，牵愁照恨动离情。
+谁家秋院无风入？何处秋窗无雨声？
+罗衾不奈秋风力，残漏声催秋雨急。
+连宵脉脉复飕飕，灯前似伴离人泣。
+寒烟小院转萧条，疏竹虚窗时滴沥。
+不知风雨几时休，已教泪洒窗纱湿。</div>
+    <div class="btn-group" id="btn-read-qcfy">
+        <button class="topic-btn" onclick="openDict('qcfy')">📝 开启默写</button>
+    </div>
+    <div id="box-qcfy" class="dictation-box">
+        <textarea id="in-qcfy" class="dictation-input" placeholder="请默写诗词..." style="height: 180px;"></textarea>
+        <div class="btn-group">
+            <button class="topic-btn" style="background:#228b22; color:#fff;" onclick="checkPoem('qcfy')">✅ 提交批改</button>
+            <button class="topic-btn" style="background:#666; color:#fff;" onclick="closeDict('qcfy')">↩️ 返回阅读</button>
+        </div>
+        <div id="res-qcfy" class="result-display"></div>
+    </div>
+</div>
+
+<div class="poem-card">
+    <div style="text-align:center; font-weight:bold; font-size:1.3rem; color: #b03060;">《好了歌》</div>
+    <div class="poem-author">—— 跛足道人</div>
+    <div id="orig-hlg" class="poem-content">世人都晓神仙好，惟有功名忘不了！
+古今将相在何方？荒冢一堆草没了。
+世人都晓神仙好，只有金银忘不了！
+终朝只恨聚无多，及到多时眼闭了。
+世人都晓神仙好，只有姣妻忘不了！
+君生日日说恩情，君死又随人去了。
+世人都晓神仙好，只有儿孙忘不了！
+痴心父母古来多，孝顺儿孙谁见了？</div>
+    <div class="btn-group" id="btn-read-hlg">
+        <button class="topic-btn" onclick="openDict('hlg')">📝 开启默写</button>
+    </div>
+    <div id="box-hlg" class="dictation-box">
+        <textarea id="in-hlg" class="dictation-input" placeholder="请默写诗词..." style="height: 160px;"></textarea>
+        <div class="btn-group">
+            <button class="topic-btn" style="background:#228b22; color:#fff;" onclick="checkPoem('hlg')">✅ 提交批改</button>
+            <button class="topic-btn" style="background:#666; color:#fff;" onclick="closeDict('hlg')">↩️ 返回阅读</button>
+        </div>
+        <div id="res-hlg" class="result-display"></div>
+    </div>
+</div>
+
+<div class="poem-card">
+    <div style="text-align:center; font-weight:bold; font-size:1.3rem; color: #b03060;">《飞鸟各投林》</div>
+    <div class="poem-author">—— 结尾诗</div>
+    <div id="orig-fngtl" class="poem-content">为官的，家业凋零；富贵的，金银散尽。
+有恩的，死里逃生；无情的，分明报应。
+欠命的，命已还；欠泪的，泪已尽。
+冤冤相报实非轻，分离聚合皆前定。
+欲知命短问前生，老来富贵也真侥幸。
+看破的，遁入空门；痴迷的，枉送了性命。
+好一似食尽鸟投林，落了片白茫茫大地真干净！</div>
+    <div class="btn-group" id="btn-read-fngtl">
+        <button class="topic-btn" onclick="openDict('fngtl')">📝 开启默写</button>
+    </div>
+    <div id="box-fngtl" class="dictation-box">
+        <textarea id="in-fngtl" class="dictation-input" placeholder="请默写诗词..." style="height: 150px;"></textarea>
+        <div class="btn-group">
+            <button class="topic-btn" style="background:#228b22; color:#fff;" onclick="checkPoem('fngtl')">✅ 提交批改</button>
+            <button class="topic-btn" style="background:#666; color:#fff;" onclick="closeDict('fngtl')">↩️ 返回阅读</button>
+        </div>
+        <div id="res-fngtl" class="result-display"></div>
+    </div>
+</div>
+`
+};
+
+function changeTab(element, title) {
+    const items = document.querySelectorAll('.nav-item');
+    items.forEach(item => item.classList.remove('active'));
+    element.classList.add('active');
+
+    document.getElementById('content-title').innerText = title;
+    document.getElementById('content-body').innerHTML = contentData[title];
+}
+
+const poemLibrary = {
+    zhl: "花谢花飞花满天，红消香断有谁怜？\n游丝软系飘春榭，落絮轻沾扑绣帘。\n闺中女儿惜春暮，愁绪满怀无释处。\n手把花锄出绣帘，忍踏落花来复去。\n柳丝榆荚自芳菲，不管桃飘与李飞。\n桃李明年能再发，明年闺中知有谁？",
+
+    ybht: "半卷湘帘半掩门，碾冰为土玉为盆。\n偷来梨蕊三分白，借得梅花一缕魂。\n月窟仙人缝缟袂，秋闺怨女拭啼痕。\n娇羞默默同谁诉，倦倚西风夜已昏。",
+
+    yj: "无赖诗魔昏晓侵，绕篱欹石自沉音。\n毫端蕴秀临霜写，口齿噙香对月吟。\n满纸自怜题素怨，片言谁解诉秋心。\n一从陶令平章后，千古高风说到今。",
+
+    qcfy: "秋花惨淡秋草黄，耿耿秋灯秋夜长。\n已觉秋窗秋不尽，那堪风雨助凄凉！\n助秋风雨来何速！惊破秋窗秋梦续。\n抱得秋情不忍眠，自向秋屏移泪烛。\n泪烛摇摇爇短檠，牵愁照恨动离情。\n谁家秋院无风入？何处秋窗无雨声？\n罗衾不奈秋风力，残漏声催秋雨急。\n连宵脉脉复飕飕，灯前似伴离人泣。\n寒烟小院转萧条，疏竹虚窗时滴沥。\n不知风雨几时休，已教泪洒窗纱湿。",
+
+    hlg: "世人都晓神仙好，惟有功名忘不了！\n古今将相在何方？荒冢一堆草没了。\n世人都晓神仙好，只有金银忘不了！\n终朝只恨聚无多，及到多时眼闭了。\n世人都晓神仙好，只有姣妻忘不了！\n君生日日说恩情，君死又随人去了。\n世人都晓神仙好，只有儿孙忘不了！\n痴心父母古来多，孝顺儿孙谁见了？",
+
+    fngtl: "为官的，家业凋零；富贵的，金银散尽。\n有恩的，死里逃生；无情的，分明报应。\n欠命的，命已还；欠泪的，泪已尽。\n冤冤相报实非轻，分离聚合皆前定。\n欲知命短问前生，老来富贵也真侥幸。\n看破的，遁入空门；痴迷的，枉送了性命。\n好一似食尽鸟投林，落了片白茫茫大地真干净！"
+};
+
+function openDict(id) {
+    const box = document.getElementById('box-' + id);
+    const orig = document.getElementById('orig-' + id);
+    const btnRead = document.getElementById('btn-read-' + id);
+    
+    if(box) box.style.display = 'block';
+    if(orig) orig.style.display = 'none';
+    if(btnRead) btnRead.style.display = 'none';
+}
+
+function closeDict(id) {
+    const box = document.getElementById('box-' + id);
+    const orig = document.getElementById('orig-' + id);
+    const btnRead = document.getElementById('btn-read-' + id);
+    const res = document.getElementById('res-' + id);
+    const input = document.getElementById('in-' + id);
+    
+    if(box) box.style.display = 'none';
+    if(orig) orig.style.display = 'block';
+    if(btnRead) btnRead.style.display = 'flex';
+    if(res) {
+        res.style.display = 'none';
+        res.innerHTML = '';
+    }
+    if(input) input.value = '';
+}
+
+function checkPoem(id) {
+    const userRaw = document.getElementById('in-' + id).value;
+    const userClean = userRaw.replace(/[\s\n\r，。？！；：、\.,\?!\uff0c\u3002]/g, '');
+    const targetFull = poemLibrary[id];
+    const resBox = document.getElementById('res-' + id);
+    
+    let htmlResult = "<b style='color:#b03060;'>💡 批改详情：</b><br>";
+    htmlResult += "<div style='word-break: break-all; line-height:2; letter-spacing:1px; background:#fff; padding:15px; border-radius:8px; border:1px solid #d4af37; white-space: pre-wrap; text-align:left;'>";
+    
+    let userIdx = 0;
+    for (let i = 0; i < targetFull.length; i++) {
+        const char = targetFull[i];
+        
+        if (/[\s\n\r，。？！；：、\.,\?!\uff0c\u3002]/.test(char)) {
+            htmlResult += `<span style="color:#999;">${char}</span>`;
+            continue;
+        }
+
+        const userChar = userClean[userIdx] || '';
+        if (userChar === char) {
+            htmlResult += `<span style="color:green;">${char}</span>`;
+        } else {
+            htmlResult += `<span style="color:red; font-weight:bold; text-decoration:underline;">${userChar || '○'}</span>`;
+        }
+        userIdx++;
+    }
+    
+    htmlResult += "</div>";
+    htmlResult += "<p style='font-size:0.85rem; color:#8b1a4a; margin-top:8px;'>注：系统已自动跳过标点符号进行文字比对。</p>";
+    
+    resBox.innerHTML = htmlResult;
+    resBox.style.display = 'block';
+}
+
+window.onload = function() {
+    changeTab(document.querySelector('.nav-item'), '柒 · 元春省亲');
+};
+
+const BadgeManager = {
+    STORAGE_KEY: 'badge_data_v1',
+    
+    getData() {
+        try {
+            const data = localStorage.getItem(this.STORAGE_KEY);
+            return data ? JSON.parse(data) : {
+                unlockedBadges: [],
+                badgeUnlockTime: {},
+                readingProgress: {
+                    xiyou: { stage1: false, stage2: false, stage3: false },
+                    sanguo: { stage1: false, stage2: false, stage3: false },
+                    shuihu: { stage1: false, stage2: false, stage3: false },
+                    honglou: { stage1: false, stage2: false, stage3: false }
+                }
+            };
+        } catch (e) {
+            return {
+                unlockedBadges: [],
+                badgeUnlockTime: {},
+                readingProgress: {
+                    xiyou: { stage1: false, stage2: false, stage3: false },
+                    sanguo: { stage1: false, stage2: false, stage3: false },
+                    shuihu: { stage1: false, stage2: false, stage3: false },
+                    honglou: { stage1: false, stage2: false, stage3: false }
+                }
+            };
+        }
+    },
+    
+    saveData(data) {
+        try {
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+        } catch (e) {
+            console.error('保存勋章数据失败:', e);
+        }
+    },
+    
+    isStageRead(book, stage) {
+        const data = this.getData();
+        return data.readingProgress[book] && data.readingProgress[book]['stage' + stage];
+    },
+    
+    markStageRead(book, stage) {
+        const data = this.getData();
+        if (!data.readingProgress[book]) {
+            data.readingProgress[book] = { stage1: false, stage2: false, stage3: false };
+        }
+        data.readingProgress[book]['stage' + stage] = true;
+        this.saveData(data);
+        return this.checkAndUnlockBadges();
+    },
+    
+    isBookCompleted(book) {
+        const data = this.getData();
+        const progress = data.readingProgress[book];
+        return progress && progress.stage1 && progress.stage2 && progress.stage3;
+    },
+    
+    getCompletedBooksCount() {
+        let count = 0;
+        ['xiyou', 'sanguo', 'shuihu', 'honglou'].forEach(book => {
+            if (this.isBookCompleted(book)) count++;
+        });
+        return count;
+    },
+    
+    checkAndUnlockBadges() {
+        const data = this.getData();
+        const newlyUnlocked = [];
+        
+        const bookBadges = [
+            { id: 'xiyou_reader', name: '西游行者', desc: '完成西游记阅读', book: 'xiyou' },
+            { id: 'sanguo_reader', name: '三国通览', desc: '完成三国演义阅读', book: 'sanguo' },
+            { id: 'shuihu_reader', name: '水浒知音', desc: '完成水浒传阅读', book: 'shuihu' },
+            { id: 'honglou_reader', name: '红楼初探', desc: '完成红楼梦阅读', book: 'honglou' },
+            { id: 'all_books_reader', name: '四大名著通', desc: '完成全部名著阅读', book: 'all' }
+        ];
+        
+        bookBadges.forEach(badge => {
+            if (data.unlockedBadges.includes(badge.id)) return;
+            
+            let shouldUnlock = false;
+            if (badge.book === 'all') {
+                shouldUnlock = this.getCompletedBooksCount() >= 4;
+            } else {
+                shouldUnlock = this.isBookCompleted(badge.book);
+            }
+            
+            if (shouldUnlock) {
+                data.unlockedBadges.push(badge.id);
+                data.badgeUnlockTime[badge.id] = Date.now();
+                newlyUnlocked.push(badge);
+            }
+        });
+        
+        if (newlyUnlocked.length > 0) {
+            this.saveData(data);
+        }
+        
+        return newlyUnlocked;
+    }
+};
+
+let autoReadStartTime = Date.now();
+let hasScrolledEnough = false;
+const MIN_READ_TIME = 30000;
+const SCROLL_THRESHOLD = 0.8;
+let autoReadMarked = false;
+
+function initAutoReadTracking() {
+    if (BadgeManager.isStageRead('honglou', 2)) {
+        autoReadMarked = true;
+        return;
+    }
+    
+    const mainContent = document.querySelector('.main-content');
+    
+    mainContent.addEventListener('scroll', function() {
+        if (autoReadMarked) return;
+        
+        const scrollPercent = (mainContent.scrollTop + mainContent.clientHeight) / mainContent.scrollHeight;
+        if (scrollPercent >= SCROLL_THRESHOLD) {
+            hasScrolledEnough = true;
+            checkAndMarkAutoRead();
+        }
+    });
+    
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden && !autoReadMarked) {
+            checkAndMarkAutoRead();
+        }
+    });
+    
+    window.addEventListener('beforeunload', function() {
+        if (!autoReadMarked) {
+            checkAndMarkAutoRead();
+        }
+    });
+}
+
+function checkAndMarkAutoRead() {
+    if (autoReadMarked) return;
+    
+    const readTime = Date.now() - autoReadStartTime;
+    if (readTime >= MIN_READ_TIME && hasScrolledEnough) {
+        const newlyUnlocked = BadgeManager.markStageRead('honglou', 2);
+        autoReadMarked = true;
+        
+        if (newlyUnlocked.length > 0) {
+            localStorage.setItem('pending_badge_notification', newlyUnlocked[0].id);
+        }
+    }
+}
+
+function showBadgeNotification(badge) {
+    document.getElementById('badgeName').textContent = badge.name;
+    document.getElementById('badgeDesc').textContent = badge.desc;
+    
+    const card = document.getElementById('badgeCard');
+    const rarityColors = {
+        common: '#d4af37',
+        rare: '#9c27b0',
+        epic: '#ff6b35'
+    };
+    const color = rarityColors[badge.rarity] || rarityColors.common;
+    card.style.border = '4px solid ' + color;
+    card.style.boxShadow = '0 10px 40px ' + color + '80';
+    document.getElementById('badgeName').style.color = color;
+    
+    document.getElementById('badgeNotification').classList.add('show');
+}
+
+function closeBadgeNotification() {
+    document.getElementById('badgeNotification').classList.remove('show');
+}
+
+window.addEventListener('load', function() {
+    initAutoReadTracking();
+});
+</script>
+
+</body>
+</html>

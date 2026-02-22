@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>西游记学习站 - 历练成真</title>
+    <style>
+        /* 1. 基础背景：保留淡金色渐变，模拟仙境感 */
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #fffaf0 0%, #ffefd5 100%);
+            font-family: "Microsoft YaHei", serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 2. 主容器：改成左右布局 */
+        .container {
+            display: flex;
+            align-items: center;
+            gap: 100px; /* 画像与按钮之间的间距 */
+            max-width: 1100px;
+        }
+
+        /* 3. 人物画像区域（齐天大圣） */
+        .character-box {
+            flex: 1;
+        }
+        .character-box img {
+            width: 450px; /* 保持大圣画像大小 */
+            /* 保留金色发光阴影 */
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.4));
+            animation: float 4s ease-in-out infinite; /* 保留腾云驾雾动画 */
+        }
+
+        /* 上下浮动动画 */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* 4. 按钮导航区域：改成纵向排列 */
+        .nav-menu {
+            display: flex;
+            flex-direction: column; 
+            gap: 30px; /* 按钮之间的垂直间距 */
+        }
+
+        /* 5. 西游特色按钮样式 */
+        .stage-btn {
+            text-decoration: none;
+            padding: 20px 45px;
+            background: #fff;
+            color: #b8860b; /* 暗金颜色 */
+            /* 金色左边框装饰 */
+            border-left: 6px solid #ffd700; 
+            border-radius: 8px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(218, 165, 32, 0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 320px;
+            display: block;
+            text-align: center;
+        }
+
+        /* 按钮悬停效果：向右平移并变金 */
+        .stage-btn:hover {
+            transform: translateX(15px) scale(1.05);
+            background-color: #ffd700;
+            color: #fff;
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.5);
+        }
+
+        /* 右上角返回按钮 */
+        .back-home {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            text-decoration: none;
+            color: #daa520;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+
+    <div class="container">
+        <div class="character-box">
+            <img src="images/wukong.png" alt="齐天大圣">
+        </div>
+
+        <div class="nav-menu">
+            <a href="xiyou_stage1.html" class="stage-btn">
+                第一阶段：大闹天宫
+            </a>
+            <a href="xiyou_stage2.html" class="stage-btn">
+                第二阶段：取经之路
+            </a>
+            <a href="xiyou_stage3.html" class="stage-btn">
+                第三阶段：终成正果
+            </a>
+        </div>
+    </div>
+    <a href="book.html" class="back-home">← 返回主站</a>
+
+</body>
+</html>

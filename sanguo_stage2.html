@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深究权谋 - 专题导览</title>
+    <style>
+        /* 完全复刻阶段一的经典样式 */
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            font-family: "STKaiti", "Microsoft YaHei", serif;
+            background-color: #e8e2d0;
+        }
+
+        /* 左侧大纲栏 - 延续血色与金色的庄重感 */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(180deg, #4a0404 0%, #2b0202 100%); /* 权谋篇：色调更深沉 */
+            color: #f0e68c;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.3);
+            border-right: 2px solid #d4af37;
+            z-index: 10;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            font-size: 1.6rem;
+            margin: 0;
+            padding: 40px 0;
+            background: rgba(0,0,0,0.3);
+            letter-spacing: 4px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            color: #f0e68c;
+        }
+
+        .nav-item {
+            padding: 22px 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            color: #f0e68c;
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            background: rgba(212, 175, 55, 0.2);
+            padding-left: 45px;
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background: #d4af37;
+            color: #4a0e0e;
+            font-weight: bold;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        /* 右侧内容区 */
+        .main-content {
+            flex: 1;
+            padding: 50px;
+            overflow-y: auto;
+            background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+        }
+
+        .content-box {
+            background: rgba(255, 255, 255, 0.9);
+            max-width: 950px;
+            margin: 0 auto;
+            padding: 60px;
+            border: 1px solid #d2c5a7;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+            position: relative;
+            min-height: 85vh;
+        }
+
+        h1 {
+            color: #4a0404;
+            border-left: 10px solid #4a0404;
+            padding-left: 15px;
+            font-size: 2.2rem;
+            margin-top: 0;
+        }
+
+        h2 { color: #8b1a1a; border-bottom: 2px solid #d2c5a7; padding-bottom: 8px; margin-top: 30px; }
+ p {
+    line-height: 1.8;
+    text-indent: 2em;
+    font-size: 1.2rem;       
+ }
+        .topic-card {
+            background: #fdfaf2;
+            padding: 20px;
+            border: 1px dashed #8b1a1a;
+            margin: 20px 0;
+        }
+
+        .back-link {
+            position: fixed; top: 20px; right: 40px;
+            text-decoration: none; color: #fff;
+            font-weight: bold; background: #8b1a1a;
+            padding: 10px 20px; border-radius: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+
+        .badge-notification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .badge-notification-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .badge-notification-card {
+            background: linear-gradient(135deg, #fff9e6, #fff);
+            border-radius: 20px;
+            padding: 40px 50px;
+            text-align: center;
+            max-width: 350px;
+            transform: scale(0.8);
+            transition: transform 0.3s;
+        }
+
+        .badge-notification-overlay.show .badge-notification-card {
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>深究权谋</h2>
+        <div class="nav-item active" onclick="changeTab(this, '柒 · 地缘战略')">柒 · 地缘战略</div>
+        <div class="nav-item" onclick="changeTab(this, '捌 · 领袖御人')">捌 · 领袖御人</div>
+        <div class="nav-item" onclick="changeTab(this, '玖 · 经济命脉')">玖 · 经济命脉</div>
+        <div class="nav-item" onclick="changeTab(this, '拾 · 外交纵横')">拾 · 外交纵横</div>
+        <div class="nav-item" onclick="changeTab(this, '拾壹 · 权柄更迭')">拾壹 · 权柄更迭</div>
+        <div class="nav-item" onclick="changeTab(this, '拾贰 · 策略复盘')">拾贰 · 策略复盘</div>
+    </div>
+
+    <div class="main-content">
+        <a href="sanguo.html" class="back-link">← 返回首页</a>
+        <div class="content-box" id="content-display">
+            </div>
+    </div>
+
+    <div class="badge-notification-overlay" id="badgeNotification">
+        <div class="badge-notification-card" id="badgeCard">
+            <div style="font-size: 1.5rem; color: #8b4513; margin-bottom: 20px;">🎉 恭喜获得勋章！</div>
+            <div style="font-size: 2.5rem; margin-bottom: 15px;">🎖️</div>
+            <div style="font-size: 1.8rem; font-weight: bold; margin-bottom: 10px;" id="badgeName"></div>
+            <div style="color: #666; margin-bottom: 20px;" id="badgeDesc"></div>
+            <button onclick="closeBadgeNotification()" style="background: #8b4513; color: #fff; border: none; padding: 10px 30px; border-radius: 20px; font-size: 1rem; cursor: pointer;">太棒了！</button>
+        </div>
+    </div>
+
+<script>
+    // 专题数据存放在全局变量中
+    const contentData = {
+'柒 · 地缘战略': `
+        <h1>柒 · 地缘战略：地理博弈与战略死结</h1>
+        <p>在顶级谋略家眼中，地图不是平面的线条，而是<b>资源、运力与容错率</b>的博弈沙盘。阶段二我们将撕开“地理美学”的外壳，直视地缘政治如何锁死国运。</p>
+        
+        <div class="topic-card">
+            <h3>🛡️ 第一核心：战略纵深与“容错率”</h3>
+            <p>在权谋博弈中，<b>纵深决定生死</b>。曹魏坐拥中原与关中，即便汉中失守，它依然有秦岭作为第二道防线；即便荆州关羽北伐，它还有宛、洛作为缓冲。魏国的国策是“以空间换时间”。</p>
+            <p><b>权谋深究：</b>蜀汉一旦丢失荆州，其战略空间被极度压缩。此时的益州不再是“天府之国”，而是一个<b>巨大的战略囚笼</b>。蜀汉面临的是“零容错率”——只要在秦岭一线输掉一次主力，国家便再无翻盘可能。这就是为何诸葛亮北伐必须谨慎，因为他手里握着的是蜀汉唯一的筹码。</p>
+        </div>
+
+        
+
+        <h2>♟️ 三大战略博弈圈：生死线的交火</h2>
+        
+        <div style="background: #fff; padding: 25px; border-left: 5px solid #8b1a1a; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <b style="color: #8b1a1a; font-size: 1.3rem;">1. 秦岭-关中圈：消耗战的黑洞</b>
+            <p>蜀汉北伐的死结在于<b>“有效投射力”</b>。汉中到长安，直线距离虽短，但翻越秦岭的五条古道（子午、傥骆、褒斜、陈仓、祁山）皆是运力黑洞。
+            <br><b>数据推演：</b>蜀军每运出一斤军粮，在路上就要消耗三斤。这意味着魏国司马懿只要守住据点不出战，就能靠地理纵深“活生生饿死”蜀军。这种<b>“地缘贫血”</b>，让蜀汉的军事进攻在数学上变成了不可能完成的任务。</p>
+        </div>
+
+        
+
+        <div style="background: #fff; padding: 25px; border-left: 5px solid #333; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <b style="color: #333; font-size: 1.3rem;">2. 淮南-合肥圈：孙吴的生存幻觉</b>
+            <p>孙权终其一生都在合肥死磕，甚至被称为“十万大军送人头”，其背后是极度冷静的权谋计算：<b>守江必守淮</b>。
+            <br>长江虽险，但如果没有淮河（合肥一带）作为缓冲，曹魏的铁骑可以直接在江北饮马。一旦魏国在江北筑造水师基地，东吴的长江天险将瞬间崩塌。合肥不是孙权想吃，而是他不得不挡住的“门口恶狼”。</p>
+        </div>
+
+        <div style="background: #fff; padding: 25px; border-left: 5px solid #d4af37; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <b style="color: #d4af37; font-size: 1.3rem;">3. 荆州-三峡圈：联盟的结构性脆弱</b>
+            <p>为何孙刘联盟在赤壁后迅速破裂？因为<b>地理利益不可调和</b>。
+            <br>对东吴来说，荆州占据长江上游，蜀汉若据荆州，东吴便如芒刺在背；对蜀汉来说，荆州是《隆中对》中唯一的“东线出口”。这种地缘上的冲突，是任何盟约都无法覆盖的“硬伤”。关羽的牺牲，本质上是死于<b>“两个地缘强权的生存重叠”</b>。</p>
+        </div>
+
+        <h2>🏮 战略结论：为何地缘胜过人谋？</h2>
+        <div class="topic-card" style="background: #f9f9f9; border-style: solid;">
+            <p>1. <b>单点压制：</b> 失去了荆州，蜀汉的进攻从“两路并举”变成了“单点击破”。魏国可以集中全国 80% 的兵力在秦岭一线，这在权谋博弈中叫<b>“力量绝对对冲”</b>。</p>
+            <p>2. <b>地理锁死：</b> 诸葛亮在战术上（木牛流马、八阵图）近乎完美，但他无法改变“秦岭运力极限”。在顶级权谋中，<b>地理优势是无法通过个人的勤奋和战术创新完全弥补的。</b></p>
+        </div>
+
+        <div style="background: #4a0404; color: #f0e68c; padding: 30px; margin-top: 40px; border-radius: 5px; line-height: 2;">
+            <h3 style="margin-top: 0; color: #f0e68c; border-bottom: 1px solid #f0e68c;">📜 幕后推演：子午谷奇谋的博弈真相</h3>
+            <p>魏延建议奇袭长安，诸葛亮拒绝。后世多议论胆量，却忽略了<b>地缘容错率</b>：
+            <br>魏国丢了长安，可以退守潼关，关中依然在握；
+            <br>蜀国丢了这支精锐，则汉中空虚，魏军南下，蜀汉将提前三十年亡国。
+            <br><b>这就是权谋的残酷：</b>强者可以博弈十次，弱者只有一次出手的机会。</p>
+        </div>
+    `,
+'捌 · 领袖御人': `
+        <h1>捌 · 领袖御人：御将、御心与权力枷锁</h1>
+        <p>同样的乱世，三种截然不同的统治逻辑。权谋家不看忠诚的口号，只看<b>利益的分配</b>与<b>人性的操纵</b>。</p>
+        
+        <div class="topic-card">
+            <h3>🗡️ 曹魏：法家权术与“人才工具化”</h3>
+            <p>曹操的“唯才是举”本质上是一场针对门阀势力的<b>政治收割</b>。</p>
+            <p><b>【深度案例：曹操与魏种】</b>
+            <br>兖州叛变时，曹操说：“唯有魏种不弃我。”结果魏种也跑了。后来魏种被擒，部下都以为他死定了，曹操却亲手解开绳索说：“唯才也是举。”
+            <br><b>权谋逻辑：</b>曹操是在演戏吗？不，他在立规矩。他要告诉天下人：只要你有才，即便你背叛过我，我依然能容你。这种“不计私怨”的姿态，本质上是打破了儒家的道德绑架，让所有人变成他权力机器上的螺丝钉。</p>
+        </div>
+
+        
+
+        <h2>🤝 顶级御人之术：三种统治模型的博弈</h2>
+        
+        <div style="background: #fff; padding: 25px; border-left: 5px solid #8b1a1a; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+            <b style="color: #8b1a1a; font-size: 1.3rem;">1. 刘备：情感契约的“终极博弈”</b>
+            <p>刘备的统治逻辑是：<b>将政治目标转化为私人恩情。</b></p>
+            <p style="background:#f9f9f9; padding:15px; border:1px dashed #ccc;">
+                <b>🔥 案例拆解：长坂坡“摔阿斗”</b>
+                <br>赵云拼死救出幼主，刘备接过孩子直接摔在地上，骂道：“为这孺子，几乎损我一员大将！”
+                <br><b>权谋解毒：</b>这是中国史上最高明的“公关”。在那个极其动荡、毫无安全感的时代，刘备通过摔亲儿子的动作，向将领们传递了一个极其震撼的信号：<b>“你们的命比我的血缘更重要。”</b>
+                <br>这本质上是一场“情感对冲”。赵云原本满心愧疚（没护好主母），刘备一摔，瞬间让赵云背负了终生难以偿还的“情感债”。这就是为什么蜀汉将领在绝境中往往能爆发出超常的忠诚度。
+            </p>
+        </div>
+
+        <div style="background: #fff; padding: 25px; border-left: 5px solid #333; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+            <b style="color: #333; font-size: 1.3rem;">2. 孙权：江东合伙人的“制衡平衡木”</b>
+            <p>孙权并不是绝对的独裁者，他更像是江东豪族集团的<b>首席执行官</b>。</p>
+            <p style="background:#f9f9f9; padding:15px; border:1px dashed #ccc;">
+                <b>🔥 案例拆解：孙权与陆逊的“蜜月与血色”</b>
+                <br>夷陵之战，孙权把自己的宝剑交给陆逊，赋予他全权，这是“绝对的信任”。但到了晚年，孙权却因为陆逊介入储位之争，将其活活逼死。
+                <br><b>权谋解毒：</b>孙权的变脸并非老糊涂，而是因为江东的权力结构是“强龙硬压地头蛇”。当陆逊既是三军统帅，又是江东大族的代表时，他已经威胁到了孙家统治的根基。孙权御人的核心是：<b>对外用你，对内防你。</b>他需要的不是忠臣，而是听话的合伙人。
+            </p>
+        </div>
+
+        <div class="topic-card" style="background: #fdfbf7; border: 2px solid #c5a059;">
+            <h3>🧠 权谋高阶课：从“试探”看领袖的格局</h3>
+            <p><b>曹操刺董：</b> 失败后头也不回地逃走，这是“极度的务实”。
+            <br><b>刘备托孤：</b> “君可自取”是真心的吗？不，这是一场最高等级的道德测试。如果诸葛亮有一丝异心，刘备安排在屏风后的刀斧手（或者政治遗嘱）就会瞬间发动。这种“以退为进”，让诸葛亮终生只能选择“鞠躬尽瘁”。</p>
+        </div>
+
+        <div style="background: #4a0404; color: #f0e68c; padding: 30px; margin-top: 40px; border-radius: 5px;">
+            <h3 style="color: #d4af37; margin-top: 0;">📜 权谋笔记</h3>
+            <p>在权谋篇中，我们要明白：
+            <br>1. <b>没有纯粹的信任：</b> 所有的信任都建立在“利益一致”或“无法反抗”的基础上。
+            <br>2. <b>表演即统治：</b> 摔孩子、割发代首、白帝城痛哭，优秀的领袖都具备优秀的演员素养，他们会给手下人做模范。
+            <br>3. <b>权力是不透明的：</b> 像曹操，刘备，孙权之类的领袖永远会留一手。</p>
+        </div>
+    `,
+'玖 · 经济命脉': `
+        <h1>玖 · 经济命脉：血色金权与生存博弈</h1>
+        <p>名将决定一时的胜负，而<b>经济结构</b>决定了权力的终极寿命。权谋家不看浪漫的口号，只看<b>国库的余粮</b>与<b>货币的流向</b>。</p>
+        
+        <div class="topic-card">
+            <h3>💸 蜀汉的“硬通货收割”：直百钱与蜀锦外交</h3>
+            <p>诸葛亮曾感叹：“今民贫国虚，决敌之资，唯仰锦耳。”</p>
+            <p><b>【深度案例：金融收割术】</b>
+            <br>刘备刚入蜀时面临的是财政归零的残局。他采取了顶级谋士刘巴的建议：发行<b>“直百五铢”</b>。
+            <br><b>权谋解毒：</b>这枚钱的重量只比普通铜钱稍重（约8克），却强行规定抵 100 枚旧钱（每枚约3克）使用。这本质上是一场针对益州旧富商的<b>“财富洗劫”</b>。通过这种“金融核弹”，刘备政府瞬间收回了民间所有硬通货，支撑起了早期的军事扩张。而随后的“蜀锦外交”，则是利用高附加值奢侈品收割魏、吴的财富，用“经济剪刀差”对冲地缘劣势。</p>
+        </div>
+
+        <h2>📊 三国综合国力战略对标表</h2>
+        <p>通过下表的数学逻辑，你就能明白为何“益州疲弊”是必输之局：</p>
+
+        <table style="width:100%; border-collapse: collapse; margin: 20px 0; background: #fff; border: 1px solid #8b1a1a;">
+            <tr style="background: #8b1a1a; color: #f0e68c;">
+                <th style="padding: 12px; border: 1px solid #d4af37;">指标</th>
+                <th style="padding: 12px; border: 1px solid #d4af37;">曹魏 (中原)</th>
+                <th style="padding: 12px; border: 1px solid #d4af37;">蜀汉 (巴蜀)</th>
+                <th style="padding: 12px; border: 1px solid #d4af37;">孙吴 (江东)</th>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #d2c5a7; font-weight:bold;">估算人口</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">443 万</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">94 万</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">230 万</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #d2c5a7; font-weight:bold;">常备兵力</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">约 50-60 万</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">约 10 万</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">约 23 万</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #d2c5a7; font-weight:bold;">兵民动员比</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">约 1 : 8 (宽松)</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">约 1 : 9 (极危)</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">约 1 : 10 (中等)</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #d2c5a7; font-weight:bold;">核心经济模式</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">国家垄断屯田制</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">战时外贸集权制</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">家族庄园经济制</td>
+            </tr>
+        </table>
+
+        <div style="background: #fff; padding: 25px; border-left: 5px solid #8b1a1a; margin-top: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+            <b style="color: #8b1a1a; font-size: 1.3rem;">1. 曹魏：屯田制下的“军工复合体”</b>
+            <p>曹操最伟大的权谋不是刺董，而是<b>“屯田”</b>。他将流民转化为国家佃农，由国家提供耕牛种子，丰年上缴 60% 收成。
+            <br><b>权谋深究：</b>这不仅是农业，更是一种<b>人口锁定技术</b>。它让魏国在战火中建立了一套“自动生产”的后勤系统，当蜀军还在为每一袋军粮发愁时，曹魏的粮仓已经实现了制度红利。
+            </p>
+
+            <div style="text-align:center; margin: 25px 0;">
+                <img src="images/tuntian_logic.jpg" alt="屯田制图片" style="max-width:90%; border: 1px solid #ccc; padding: 5px; background: #fff;">
+                <p style="color:#888; font-size: 0.85rem; margin-top: 5px;">屯田制图片</p>
+            </div>
+        </div>
+
+        <div style="background: #fff; padding: 25px; border-left: 5px solid #333; margin-top: 25px;">
+            <b style="color: #333; font-size: 1.3rem;">2. 孙吴：庄园领主制的“隐性分裂”</b>
+            <p>孙吴的经济命脉不在朝廷，而在<b>“世家大族的庄园”</b>里。</p>
+            <p><b>权谋深究：</b>东吴推行“复客”制度，大功臣家族拥有庞大的私人农奴。这些人不向国家交税，只效忠于私人家族（如陆家、顾家）。这种“合伙人制度”导致孙吴在对外扩张时总是虎头蛇尾，因为大族们不愿意损耗自家的私人资产去打一场远在天边的战争。</p>
+        </div>
+
+        <div class="topic-card" style="background: #fdfbf7; border: 2px solid #c5a059; margin-top: 30px;">
+            <h3>🧠 权谋高阶课：为何“大一统”是历史的必然？</h3>
+            <p>诸葛亮在《出师表》中哀叹“益州疲弊”。
+            <br><b>终极真相：</b>到了三国末期，魏、蜀、吴都陷入了不同程度的“内卷”。但曹魏通过<b>“户调制”</b>（按户征收固定的实物税）实现了最稳定的财税机器。当司马家篡夺成果后，他们继承的是一个已经高度整合、拥有完整财税机器的国家。<b>大一统的背后，本质上是先进生产关系对落后、散乱制度的彻底收割。</b></p>
+        </div>
+    `,
+'拾 · 外交纵横': `
+        <h1>拾 · 外交纵横：没有永远的朋友，只有重叠的利益</h1>
+        <p>在权谋家眼中，外交不是为了和平，而是为了<b>在不通过大规模战争的前提下，改变力量对比。</b></p>
+        
+        <div class="topic-card">
+            <h3>💍 联姻陷阱：孙尚香与刘备的“政治监禁”</h3>
+            <p>赤壁之战后，孙权将妹妹嫁给刘备。这在民间传说里是良缘，在权谋中则是<b>“贴身监控”</b>。</p>
+            <p><b>权谋解毒：</b>
+            <br>1. <b>人质逻辑：</b>孙权试图通过联姻，将刘备软禁在吴会，使其玩物丧志，并趁机接管荆州。
+            <br>2. <b>反制之道：</b>诸葛亮利用赵云和“锦囊妙计”，本质上是利用了东吴内部（孙权与国太）的权力缝隙，完成了从“政治绑架”到“安全撤离”的反收割。
+            <br><b>结论：</b>在最高权力层，婚姻只是带刺的锁链。
+            </p>
+        </div>
+
+        <h2>🛡️ 孙刘同盟的“结构性崩塌”推演</h2>
+        <p>为什么赤壁之战的胜利，反而成了孙刘两家决裂的开始？</p>
+
+        <table style="width:100%; border-collapse: collapse; margin: 20px 0; background: #fff; border: 1px solid #4a0404;">
+            <tr style="background: #4a0404; color: #f0e68c;">
+                <th style="padding: 12px; border: 1px solid #d4af37;">外交阶段</th>
+                <th style="padding: 12px; border: 1px solid #d4af37;">表面逻辑</th>
+                <th style="padding: 12px; border: 1px solid #d4af37;">真实权谋目的</th>
+                <th style="padding: 12px; border: 1px solid #d4af37;">破裂诱因</th>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #d2c5a7; font-weight:bold;">赤壁同盟</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">合力抗曹，保全领土</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">借对方的力量消耗曹操主力</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">战后分赃不均（荆州归属）</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #d2c5a7; font-weight:bold;">借荆州博弈</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">暂借立足之地</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">蜀：建立缓冲带；吴：寻找代收租金者</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">蜀汉做大，威胁东吴上游安全</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #d2c5a7; font-weight:bold;">白衣渡江</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">联曹制刘</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">彻底铲除蜀汉在荆州的威胁</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">导致夷陵之战，两家两败俱伤</td>
+            </tr>
+        </table>
+
+        <div style="background: #fff; padding: 25px; border-left: 5px solid #4a0404; margin-top: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+            <b style="color: #4a0404; font-size: 1.3rem;">⚔️ 顶级背刺：吕蒙“白衣渡江”的战略欺骗</b>
+            <p>吕蒙病退、陆逊示弱，这些都不是性格使然，而是典型的<b>外交欺骗</b>。</p>
+            <p><b>权谋深究：</b>吕蒙深知关羽自傲且极其重视地缘防御。东吴通过外交辞令让关羽相信“吴人唯唯诺诺，不敢北顾”，从而诱使关羽抽调了后方最后的一万精锐（防范吴国的预备队）去围攻樊城。
+            <br><b>【外交成本】：</b>这一刀背刺，让东吴拿到了荆州，但也彻底毁掉了《隆中对》中“两路并举”的可能。东吴为了局部的“地盘”，葬送了整体的“伐魏大计”。</p>
+
+        <div class="topic-card" style="background: #fdfbf7; border: 2px solid #c5a059; margin-top: 30px;">
+            <h3>🧠 权谋高阶课：为何“连横”总是败给“合纵”？</h3>
+            <p>在三国的最后阶段，蜀吴即便恢复了同盟，也无法撼动曹魏。
+            <br><b>深度剖析：</b>曹魏的外交策略是<b>“离间”与“持重”</b>。它并不需要通过复杂的盟约去换取生存，它只需要利用孙刘之间的地缘矛盾（荆州、交州），时不时抛出一个诱饵（如封孙权为吴王），就能让盟友变成仇寇。
+            <br><b>结论：</b> 外交的根基是实力。当一方实力足以覆盖另一方的总和时，所有的外交技巧都只是在延缓死亡。
+            </p>
+        </div>
+
+        <div style="background: #4a0404; color: #f0e68c; padding: 25px; margin-top: 40px; border-radius: 2px;">
+            <h3 style="color: #d4af37; margin-top: 0;">📜 权谋笔记：</h3>
+            <p>1. <b>盟约的有效期：</b> 只到双方共同的敌人消失为止。
+            <br>2. <b>示弱的艺术：</b> 陆逊写信赞美关羽，不是因为崇拜，而是因为要给关羽编织一个名为“无敌”的丧钟。
+            <br>3. <b>外交即人谋：</b> 所有的谈判，本质上都是在探测对手的底线。
+            </p>
+        </div>
+
+    `,
+'拾壹 · 权柄更迭': `
+<h1>拾壹 · 权柄更迭：英雄落幕与冷酷收割</h1>
+        <p>三国的终点，不是英雄的赞歌，而是一场蓄谋已久的<b>家族收割</b>。高平陵之变，是司马懿用一生磨出的最后一剑。</p>
+        
+        <div class="topic-card">
+            <h3>🎭 第一幕：起因 —— 两个权力集团的生死竞速</h3>
+            <p>魏明帝曹叡驾崩后，年仅八岁的曹芳继位。此时大魏的权力天平两端，坐着两位势不两立的托孤大臣：</p>
+            <ul>
+                <li><b>大将军曹爽：</b> 曹魏宗室代表。他上台后迅速排挤司马懿，将其明升暗降为无实权的“太傅”，并任用何晏、邓飏等名士大搞改制，试图将司马家的士族根基彻底拔除。</li>
+                <li><b>太傅司马懿：</b> 司马家族的灵魂。面对曹爽的步步紧逼，他选择了最极致的权谋手段——<b>“政治冬眠”</b>。</li>
+            </ul>
+            <p><b>权谋深究：</b>曹爽的失败在于他只看重名义上的职权，却忽略了司马懿在关中军团和中央官僚体系中经营了三十年的<b>隐形资产</b>。</p>
+        </div>
+
+        <h2>♟️ 第二幕：经过 —— 洛阳城下的雷霆一击</h2>
+        <div style="background: #fff; padding: 25px; border-left: 5px solid #1a1a1a; margin-bottom: 25px;">
+            <b style="color: #1a1a1a; font-size: 1.3rem;">1. 影帝级伪装：瞒天过海</b>
+            <p>公元249年正月，司马懿得知曹爽兄弟将陪同皇帝出城祭扫高平陵。此前，他通过“喝粥流襟”的精湛表演让曹爽的间谍相信他已风烛残年。
+            <br><b>【死士布局】：</b>当曹爽沉浸在出巡的威仪中时，一直隐藏在司马师（司马懿长子）府中的<b>三千死士</b>瞬间走上街头。这些死士平日散于民间，关键时刻集结，其组织能力展示了司马家恐怖的渗透力。</p>
+        </div>
+
+        
+
+        <div style="background: #fff; padding: 25px; border-left: 5px solid #8b1a1a; margin-bottom: 25px;">
+            <b style="color: #8b1a1a; font-size: 1.3rem;">2. 洛水之誓：最后的心理防线</b>
+            <p>司马懿控制了洛阳，但他手里没有皇帝。此时，智囊桓范拼死冲出城外，建议曹爽挟天子迁都许昌，号召天下勤王。
+            <br><b>顶级博弈：</b>司马懿深知，一旦打成长久战，自己必死无疑。他派人去洛水边对天发誓：<b>“我司马懿只要兵权，保证你们兄弟富贵一生。”</b>
+            <br><b>曹爽的选择：</b>在生死关头，曹爽暴露了二世祖的软弱。他的一句“我不失为富家翁”，葬送了曹魏政权。他交出了大将军印，以为换回了晚年的安逸，实际上却交出了脖子上的护身符。</p>
+        </div>
+
+<h2>♟️ 第三幕：成都大乱 —— 姜维最后的“绝地翻盘”</h2>
+        <div style="background: #fff; padding: 25px; border-left: 5px solid #8b1a1a; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+            <b style="color: #8b1a1a; font-size: 1.3rem;">顶级离间计：策反钟会</b>
+            <p>在刘禅投降后，孤臣姜维并没放弃，他上演了三国史上最高难度的权谋：<b>假降钟会，密谋复国。</b></p>
+            <p><b>深度剖析：</b>
+            <br>1. <b>借刀杀人：</b>姜维看准了钟会的野心，诱导其诬告邓艾造反。
+            <br>2. <b>反客为主：</b>他试图说服钟会坑杀魏军将领，然后在成都自立为王。姜维的计划是：先让魏军内斗，再寻找机会刺杀钟会，恢复蜀汉。
+            </p>
+            <p style="background:#f9f9f9; padding:15px; border-top:2px solid #333;">
+                <b>🔥 悲剧结局：</b> 
+                由于消息泄露，魏军将领发动兵变。公元264年，姜维在成都宫殿内亲率卫兵与魏军展开惨烈的白刃战，力战身死。死后其胆被剖出，“大如斗”，展示了这位孤臣惊人的意志力。
+            </p>
+        </div>
+
+        <h2>⚖️ 第四幕：结果 —— 鲜血洗染的权力交替</h2>
+        <table style="width:100%; border-collapse: collapse; margin: 20px 0; background: #fff; border: 1px solid #4a0404;">
+            <tr style="background: #4a0404; color: #d4af37;">
+                <th style="padding: 12px; border: 1px solid #d4af37;">人物</th>
+                <th style="padding: 12px; border: 1px solid #d4af37;">高平陵之变后的结局</th>
+                <th style="padding: 12px; border: 1px solid #d4af37;">权谋警示</th>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #d2c5a7; font-weight:bold;">曹爽及其党羽</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">以谋反罪名灭三族，曹魏宗室被屠戮殆尽</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">放弃权力的瞬间，就放弃了生存权</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #d2c5a7; font-weight:bold;">司马师/司马昭</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">接管禁卫军，通过灭蜀、弑君彻底肃清异己</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">二代领袖的铁腕是维持篡位成果的关键</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #d2c5a7; font-weight:bold;">天下名士</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">陷入集体性政治沉默或转向依附司马家</td>
+                <td style="padding: 10px; border: 1px solid #d2c5a7;">公信力的丧失，开启了魏晋清谈的虚无风气</td>
+            </tr>
+        </table>
+
+        <div class="topic-card" style="background: #fdfbf7; border: 2px solid #c5a059; margin-top: 30px;">
+            <h3>🧠 终极总结：何为司马氏的“收割之道”？</h3>
+            <p>司马懿活得够久，他等死了诸葛亮，等死了曹家三代雄主。在权谋博弈中，<b>寿命也是一种资源</b>。
+            <br>1. <b>降维打击：</b> 曹爽玩的是职场内斗，司马懿玩的是生死毁灭。
+            <br>2. <b>信用破产：</b> 司马懿背弃了洛水之誓，虽然赢得了江山，却让“晋”成为了中国历史上公信力最低的王朝之一。
+            </p>
+        </div>
+
+        <div style="background: #4a0404; color: #f0e68c; padding: 30px; margin-top: 40px; border-radius: 5px; text-align: center;">
+            <h3 style="color: #d4af37; margin-top: 0;">📜权谋的终极代价</h3>
+            <p>当最后一位英雄姜维在乱军中被杀，当司马家的马蹄踏碎洛阳的残阳，三国的故事画上了句号。
+        </div>
+    `,
+'拾贰 · 策略复盘': `
+        <h1>拾贰 · 策略复盘：三国权谋实战档案</h1>
+        <p>本章是全站的<b>终极实战智库</b>。通过对三国最具代表性的战役进行复盘，我们能更清晰地看到权谋是如何在天时、地利与人性之间穿针引线的。</p>
+
+        <div class="topic-card">
+            <h2 style="color: #8b1a1a; border-bottom: 2px solid #8b1a1a;">一、赤壁之战——连环妙计的巅峰盛宴</h2>
+            <p>背景：曹操大军压境，孙刘联军岌岌可危，双方隔江对峙。</p>
+            <p><b>• 1. 苦肉计与诈降计</b>
+            <br>关键人物：周瑜、黄盖、阚泽。
+            <br>详细过程：周瑜为让曹操相信投降的诚意，与老将黄盖设下苦肉计。周瑜借故将黄盖当众重责，打得皮开肉绽。随后，黄盖派心腹阚泽潜入曹营，献上诈降书。曹操虽生性多疑，但被黄盖的“惨状”、阚泽的胆识与辩才，以及降书中合情合理的怨愤情绪所打动，最终相信了这场苦肉计。这为后续火攻计划中，黄盖船队得以接近曹营铺平了道路。</p>
+            
+            <p><b>• 2. 连环计</b>
+            <br>关键人物：庞统（凤雏）。
+            <br>详细过程：曹操水军不习水战，将战船首尾相连以图平稳。谋士庞统假意投靠曹操，献上“连环计”，建议用铁环和木板将大船牢牢锁在一起，形成“连环战船”，可彻底解决颠簸问题。曹操采纳此计，船队稳如平地，士兵不再晕船。然而，这一举措也使整个船队失去了机动性，一旦遇火，将无处可逃，为孙刘联军的火攻创造了绝佳条件。</p>
+            
+            <p><b>• 3. 草船借箭</b>
+            <br>关键人物：诸葛亮、鲁肃。
+            <br>详细过程：周瑜欲刁难诸葛亮，命其十日内监造十万支箭。诸葛亮却立下三日完成的军令状。他利用长江夜间大雾弥漫的天时，调集二十条扎满草人的快船，擂鼓呐喊，佯装夜袭。曹操因大雾不敢出战，只得下令水陆弓弩手万箭齐发。诸葛亮不费吹灰之力，便“借”得十五六万支箭，不仅完成任务，更向周瑜和鲁肃展示了自己神鬼莫测的智谋。</p>
+            
+            <p><b>• 4. 火攻计与借东风</b>
+            <br>关键人物：诸葛亮、周瑜。
+            <br>详细过程：火攻是周瑜定下的破曹核心战术。但当时正值冬季，多刮西北风，曹军位于西北方的上游，若放火只会烧到自己。周瑜因此忧愤成疾。诸葛亮探病时点破其心病，自称曾遇异人，可“借”三日三夜东南大风。他于南屏山筑七星坛，登坛作法。是日，果然东南风大作。实际上，诸葛亮精通天文气象，预测了天气变化。“借东风”一举，既解决了火攻的关键技术难题，也彻底奠定了其神机军师的地位。东风起时，黄盖率满载引火之物的船队直冲曹营，火烧连环船，曹军大败。</p>
+            
+            <p style="background: #f9f9f9; padding: 10px; border-left: 4px solid #8b1a1a;"><b>小结：</b>赤壁之战是《三国演义》中计谋最密集、最经典的战役。从苦肉计骗取信任，到连环计锁住敌船，再到借东风提供天时，最终以火攻收尾，环环相扣，缺一不可，堪称谋略教科书。</p>
+        </div>
+
+        <div class="topic-card">
+            <h2 style="color: #8b1a1a; border-bottom: 2px solid #8b1a1a;">二、官渡之战——一击制胜的奇袭战</h2>
+            <p>背景：曹操与袁绍在官渡长期对峙，曹军兵少粮尽，形势危急。</p>
+            <p><b>• 核心计谋：釜底抽薪，奇袭乌巢</b>
+            <br>关键人物：曹操、许攸。
+            <br>详细过程：袁绍谋士许攸因家人犯法被捕，加之献计不被采纳，愤而投奔曹操。他带来了决定胜负的情报：袁绍的粮草辎重，全部囤积在乌巢（今河南封丘西），守将淳于琼防备松懈。许攸献计，若以精兵轻装突袭，烧其粮草，不出三日，袁军必不战自乱。曹操当机立断，放弃正面防守，亲自率领五千精锐，伪装成袁军，连夜奔袭乌巢，四面纵火，将袁绍的粮草焚烧一空。此计直击袁绍大军命脉，前线袁军闻讯军心崩溃，大将张郃、高览临阵倒戈。曹操由此一举扭转战局，以弱胜强，奠定了统一北方的基础。</p>
+        </div>
+
+        <div style="text-align:center; margin: 20px 0;">
+            <img src="images/guandu_strategy.jpg" alt="官渡之战奇袭乌巢路径图" style="max-width:90%; border: 1px solid #ccc;">
+        </div>
+
+        <div class="topic-card">
+            <h2 style="color: #8b1a1a; border-bottom: 2px solid #8b1a1a;">三、夷陵之战——以静制动的后发制人</h2>
+            <p>背景：刘备为报关羽之仇，倾全国之力东征孙权，连营七百里，气势汹汹。</p>
+            <p><b>• 核心计谋：以逸待劳，火烧连营</b>
+            <br>关键人物：陆逊（吴军主帅）。
+            <br>详细过程：面对刘备的复仇大军，年轻将领陆逊被任命为大都督。他采取坚守不出的策略，无论蜀军如何挑战辱骂，都命令吴军避其锋芒，扼守险要。双方相持长达七八个月，蜀军锐气耗尽，士气低落，加之天气炎热，刘备被迫将水军移到岸上，在山林间扎下连绵不绝的营寨。陆逊敏锐地捕捉到战机，趁蜀军疲惫、部署失误之际，发动全面反攻。他命令士兵每人手持一把茅草，夜间接近蜀营，顺风放火。一时间，刘备的四十多座营寨陷入一片火海。吴军趁势猛攻，蜀军全线崩溃。此计完美体现了“避其锋芒，击其惰归”的军事思想。</p>
+            </div>
+            <div style="text-align:center; margin: 25px 0;">
+                <img src="images/yiling_strategy.jpg" alt="夷陵之战火烧连营战略推演图" style="max-width:90%; border: 1px solid #ccc; padding: 5px; background: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                <p style="color:#888; font-size: 0.85rem; margin-top: 5px;">      
+            </div>
+
+        <div class="topic-card">
+            <h2 style="color: #8b1a1a; border-bottom: 2px solid #8b1a1a;">四、空城计——极致的心理博弈</h2>
+            <p>背景：马谡失守街亭，诸葛亮主力分散，西城县仅余老弱残兵，司马懿大军突然兵临城下。</p>
+            <p><b>• 核心计谋：虚者实之，疑兵之计</b>
+            <br>关键人物：诸葛亮、司马懿。
+            <br>详细过程：面对绝境，诸葛亮下令大开四方城门，派老弱士兵洒扫街道，自己则披上鹤氅，戴上纶巾，于城楼上焚香抚琴，神情自若。司马懿大军赶到，见此情景，生性多疑的他立刻怀疑城中有埋伏。他认为诸葛亮一生谨慎，从不弄险，如此大开城门，必有诡计。在儿子司马昭的质疑下，司马懿仍不敢冒险，最终下令全军急速撤退。诸葛亮以此极度冒险的心理战术，吓退了十五万大军，赢得了撤退时间。此计的成功，深深依赖于诸葛亮对司马懿多疑性格的精准把握。</p>
+        </div>
+
+        <div class="topic-card">
+            <h2 style="color: #8b1a1a; border-bottom: 2px solid #8b1a1a;">五、水淹七军——利用天时地利的自然之力</h2>
+            <p>背景：关羽北伐襄樊，围困曹仁，曹操派于禁、庞德率七军精锐救援。</p>
+            <p><b>• 核心计谋：因势利导，水攻破敌</b>
+            <br>关键人物：关羽。
+            <br>详细过程：于禁将大军驻扎在樊城北面的低洼之地。时值秋季，连绵大雨，汉水暴涨。关羽敏锐地察觉到地形和天气带来的战机。他提前准备大量船只，并命令士兵堵塞各处水道。待水位涨至最高时，他下令决堤放水。顷刻间，洪水滔天，于禁的七军全部被淹，人马溺毙无数。于禁被迫投降，庞德被擒杀。此计不费一兵一卒，借助自然之力，使关羽“威震华夏”，达到其军事生涯的顶峰。</p>
+        </div>
+
+        <div class="topic-card">
+            <h2 style="color: #8b1a1a; border-bottom: 2px solid #8b1a1a;">六、智取汉中——心理与信息的双重较量</h2>
+            <p>背景：曹操与刘备争夺汉中，双方僵持不下。</p>
+            <p><b>• 核心计谋：鸡肋之言与疑兵之计</b>
+            <br>关键人物：曹操、杨修 / 诸葛亮、赵云。
+            <br>详细过程：
+            <br>1. 曹操的“鸡肋”：曹操见久攻不下，心中已有退意。夜间口令定为“鸡肋”。主簿杨修听后，立即收拾行装，说：“鸡肋，食之无肉，弃之有味。大王以此比喻汉中，可知要退兵了。”这泄露了军机，也触怒了曹操，最终被借故处死。但“鸡肋”口令本身，反映了曹操进退两难的心理，是一种无意识的心理暗示。
+            <br>2. 赵云的“空营计”：在一次遭遇战中，赵云兵力处于劣势。他下令大开营门，偃旗息鼓。曹军疑有埋伏，不敢进攻而撤退。赵云趁机命军士擂鼓呐喊，用弓弩从后猛射，曹军惊骇自相践踏，大败而回。刘备赞其“子龙一身都是胆也”。此计与空城计异曲同工，以虚张声势震慑敌军。</p>
+        </div>
+
+        <div class="topic-card">
+            <h2 style="color: #8b1a1a; border-bottom: 2px solid #8b1a1a;">七、七擒孟获——政治谋略的典范</h2>
+            <p>背景：刘备死后，南中地区（云南等地）豪强孟获造反，诸葛亮亲征。</p>
+            <p><b>• 核心计谋：攻心为上，心战为尊</b>
+            <br>关键人物：诸葛亮。
+            <br>详细过程：诸葛亮并非单纯追求军事胜利。他对孟获“擒而复纵”，前后达七次。每次擒住孟获后，都带他参观己方营垒，问其是否心服，孟获每次都以各种理由（地形、运气、手下叛变等）不服，诸葛亮便放他回去再战。通过反复的军事胜利和宽宏大量的感化，孟获及其部族的心防被彻底瓦解。第七次被擒后，孟获垂泪道：“公，天威也，南人不复反矣！”从此真心归顺。此计的核心在于彻底收服人心，从根本上解决了后方叛乱问题，为日后北伐奠定了稳定的基础。</p>
+        </div>
+
+        <div style="background: #4a0404; color: #f0e68c; padding: 30px; margin-top: 40px; border-radius: 5px; text-align: center;">
+            <p style="color: #d4af37; font-size: 1.5rem; letter-spacing: 5px;"><b>全专题完 · 权谋之巅</b></p>
+            <p>读懂了三国，也就读懂了千年来从未改变的人性博弈。
+        </div>
+    `,
+    };
+
+    function changeTab(element, title) {
+        // 1. 切换 active 状态
+        const items = document.querySelectorAll('.nav-item');
+        items.forEach(item => item.classList.remove('active'));
+        element.classList.add('active');
+
+        // 2. 渲染内容
+        const display = document.getElementById('content-display');
+        display.innerHTML = contentData[title];
+
+        // 3. 滚动回顶部
+        const mainContent = document.querySelector('.main-content');
+        mainContent.scrollTop = 0;
+    }
+
+    // 页面加载时默认显示第一个
+    window.onload = () => {
+        const firstItem = document.querySelector('.nav-item');
+        changeTab(firstItem, '柒 · 地缘战略');
+    };
+
+    const BadgeManager = {
+        STORAGE_KEY: 'badge_data_v1',
+        
+        getData() {
+            try {
+                const data = localStorage.getItem(this.STORAGE_KEY);
+                return data ? JSON.parse(data) : {
+                    unlockedBadges: [],
+                    badgeUnlockTime: {},
+                    readingProgress: {
+                        xiyou: { stage1: false, stage2: false, stage3: false },
+                        sanguo: { stage1: false, stage2: false, stage3: false },
+                        shuihu: { stage1: false, stage2: false, stage3: false },
+                        honglou: { stage1: false, stage2: false, stage3: false }
+                    }
+                };
+            } catch (e) {
+                return {
+                    unlockedBadges: [],
+                    badgeUnlockTime: {},
+                    readingProgress: {
+                        xiyou: { stage1: false, stage2: false, stage3: false },
+                        sanguo: { stage1: false, stage2: false, stage3: false },
+                        shuihu: { stage1: false, stage2: false, stage3: false },
+                        honglou: { stage1: false, stage2: false, stage3: false }
+                    }
+                };
+            }
+        },
+        
+        saveData(data) {
+            try {
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+            } catch (e) {
+                console.error('保存勋章数据失败:', e);
+            }
+        },
+        
+        isStageRead(book, stage) {
+            const data = this.getData();
+            return data.readingProgress[book] && data.readingProgress[book]['stage' + stage];
+        },
+        
+        markStageRead(book, stage) {
+            const data = this.getData();
+            if (!data.readingProgress[book]) {
+                data.readingProgress[book] = { stage1: false, stage2: false, stage3: false };
+            }
+            data.readingProgress[book]['stage' + stage] = true;
+            this.saveData(data);
+            return this.checkAndUnlockBadges();
+        },
+        
+        isBookCompleted(book) {
+            const data = this.getData();
+            const progress = data.readingProgress[book];
+            return progress && progress.stage1 && progress.stage2 && progress.stage3;
+        },
+        
+        getCompletedBooksCount() {
+            let count = 0;
+            ['xiyou', 'sanguo', 'shuihu', 'honglou'].forEach(book => {
+                if (this.isBookCompleted(book)) count++;
+            });
+            return count;
+        },
+        
+        checkAndUnlockBadges() {
+            const data = this.getData();
+            const newlyUnlocked = [];
+            
+            const bookBadges = [
+                { id: 'xiyou_reader', name: '西游行者', desc: '完成西游记阅读', book: 'xiyou' },
+                { id: 'sanguo_reader', name: '三国通览', desc: '完成三国演义阅读', book: 'sanguo' },
+                { id: 'shuihu_reader', name: '水浒知音', desc: '完成水浒传阅读', book: 'shuihu' },
+                { id: 'honglou_reader', name: '红楼初探', desc: '完成红楼梦阅读', book: 'honglou' },
+                { id: 'all_books_reader', name: '四大名著通', desc: '完成全部名著阅读', book: 'all' }
+            ];
+            
+            bookBadges.forEach(badge => {
+                if (data.unlockedBadges.includes(badge.id)) return;
+                
+                let shouldUnlock = false;
+                if (badge.book === 'all') {
+                    shouldUnlock = this.getCompletedBooksCount() >= 4;
+                } else {
+                    shouldUnlock = this.isBookCompleted(badge.book);
+                }
+                
+                if (shouldUnlock) {
+                    data.unlockedBadges.push(badge.id);
+                    data.badgeUnlockTime[badge.id] = Date.now();
+                    newlyUnlocked.push(badge);
+                }
+            });
+            
+            if (newlyUnlocked.length > 0) {
+                this.saveData(data);
+            }
+            
+            return newlyUnlocked;
+        }
+    };
+
+    let autoReadStartTime = Date.now();
+    let hasScrolledEnough = false;
+    const MIN_READ_TIME = 30000;
+    const SCROLL_THRESHOLD = 0.8;
+    let autoReadMarked = false;
+
+    function initAutoReadTracking() {
+        if (BadgeManager.isStageRead('sanguo', 2)) {
+            autoReadMarked = true;
+            return;
+        }
+        
+        const mainContent = document.querySelector('.main-content');
+        
+        mainContent.addEventListener('scroll', function() {
+            if (autoReadMarked) return;
+            
+            const scrollPercent = (mainContent.scrollTop + mainContent.clientHeight) / mainContent.scrollHeight;
+            if (scrollPercent >= SCROLL_THRESHOLD) {
+                hasScrolledEnough = true;
+                checkAndMarkAutoRead();
+            }
+        });
+        
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && !autoReadMarked) {
+                checkAndMarkAutoRead();
+            }
+        });
+        
+        window.addEventListener('beforeunload', function() {
+            if (!autoReadMarked) {
+                checkAndMarkAutoRead();
+            }
+        });
+    }
+
+    function checkAndMarkAutoRead() {
+        if (autoReadMarked) return;
+        
+        const readTime = Date.now() - autoReadStartTime;
+        if (readTime >= MIN_READ_TIME && hasScrolledEnough) {
+            const newlyUnlocked = BadgeManager.markStageRead('sanguo', 2);
+            autoReadMarked = true;
+            
+            if (newlyUnlocked.length > 0) {
+                localStorage.setItem('pending_badge_notification', newlyUnlocked[0].id);
+            }
+        }
+    }
+
+    function showBadgeNotification(badge) {
+        document.getElementById('badgeName').textContent = badge.name;
+        document.getElementById('badgeDesc').textContent = badge.desc;
+        
+        const card = document.getElementById('badgeCard');
+        const rarityColors = {
+            common: '#d4af37',
+            rare: '#9c27b0',
+            epic: '#ff6b35'
+        };
+        const color = rarityColors[badge.rarity] || rarityColors.common;
+        card.style.border = '4px solid ' + color;
+        card.style.boxShadow = '0 10px 40px ' + color + '80';
+        document.getElementById('badgeName').style.color = color;
+        
+        document.getElementById('badgeNotification').classList.add('show');
+    }
+
+    function closeBadgeNotification() {
+        document.getElementById('badgeNotification').classList.remove('show');
+    }
+
+    window.addEventListener('load', function() {
+        initAutoReadTracking();
+    });
+</script>
+
+</body>
+</html>
