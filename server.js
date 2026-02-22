@@ -1,7 +1,9 @@
+require('dotenv').config();
+
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const crypto = require('crypto');
+const { createClient } = require('@supabase/supabase-js');
 
 const SECRET_KEY = 'honglou-four-classics-2026';
 
@@ -10,46 +12,24 @@ function hashPassword(password) {
 }
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.static('.'));
+app.use(express.static(path.join(__dirname)));
 
-const dbPath = path.join(__dirname, 'users.db');
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) {
-    console.error('数据库连接失败:', err.message);
-  } else {
-    console.log('已连接到 users.db 数据库');
-  }
-});
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_ANON_KEY;
+const supabase = supabaseUrl && supabaseKey 
+  ? createClient(supabaseUrl, supabaseKey)
+  : null;
 
-db.run(`
-  CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )
-`, (err) => {
-  if (err) {
-    console.error('创建表失败:', err.message);
-  } else {
-    console.log('users 表已准备就绪');
-    const hashedPassword = hashPassword('Admin@2026');
-    db.run(`
-      INSERT OR IGNORE INTO users (username, password) VALUES ('admin', ?)
-    `, [hashedPassword], (err) => {
-      if (err) {
-        console.error('插入初始账号失败:', err.message);
-      } else {
-        console.log('初始账号 admin/Admin@2026 已准备就绪');
-      }
-    });
-  }
-});
+if (!supabase) {
+  console.warn('警告: Supabase 环境变量未配置，请设置 SUPABASE_URL 和 SUPABASE_ANON_KEY');
+} else {
+  console.log('Supabase 已连接');
+}
 
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
@@ -59,33 +39,37 @@ app.post('/login', (req, res) => {
     });
   }
 
+  if (!supabase) {
+    return res.status(500).json({ 
+      success: false, 
+      message: '数据库未配置' 
+    });
+  }
+
   const hashedPassword = hashPassword(password);
-  const sql = 'SELECT * FROM users WHERE username = ? AND password = ?';
   
-  db.get(sql, [username, hashedPassword], (err, row) => {
-    if (err) {
-      return res.status(500).json({ 
-        success: false, 
-        message: '登录失败: ' + err.message 
-      });
-    }
-    
-    if (row) {
-      res.json({ 
-        success: true, 
-        message: '登录成功',
-        user: { id: row.id, username: row.username }
-      });
-    } else {
-      res.status(401).json({ 
-        success: false, 
-        message: '用户名或密码错误' 
-      });
-    }
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, username')
+    .eq('username', username)
+    .eq('password', hashedPassword)
+    .single();
+
+  if (error || !data) {
+    return res.status(401).json({ 
+      success: false, 
+      message: '用户名或密码错误' 
+    });
+  }
+
+  res.json({ 
+    success: true, 
+    message: '登录成功',
+    user: { id: data.id, username: data.username }
   });
 });
 
-app.post('/register', (req, res) => {
+app.post('/register', async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
@@ -95,38 +79,52 @@ app.post('/register', (req, res) => {
     });
   }
 
+  if (password.length < 6) {
+    return res.status(400).json({ 
+      success: false, 
+      message: '密码长度至少6位' 
+    });
+  }
+
+  if (!supabase) {
+    return res.status(500).json({ 
+      success: false, 
+      message: '数据库未配置' 
+    });
+  }
+
   const hashedPassword = hashPassword(password);
-  const sql = 'INSERT INTO users (username, password) VALUES (?, ?)';
   
-  db.run(sql, [username, hashedPassword], function(err) {
-    if (err) {
-      if (err.message.includes('UNIQUE constraint failed')) {
-        return res.status(409).json({ 
-          success: false, 
-          message: '用户名已存在' 
-        });
-      }
-      return res.status(500).json({ 
+  const { data, error } = await supabase
+    .from('users')
+    .insert([{ username, password: hashedPassword }])
+    .select()
+    .single();
+
+  if (error) {
+    if (error.code === '23505') {
+      return res.status(409).json({ 
         success: false, 
-        message: '注册失败: ' + err.message 
+        message: '用户名已存在' 
       });
     }
-    
-    res.status(201).json({ 
-      success: true, 
-      message: '注册成功',
-      userId: this.lastID 
+    return res.status(500).json({ 
+      success: false, 
+      message: '注册失败: ' + error.message 
     });
+  }
+
+  res.status(201).json({ 
+    success: true, 
+    message: '注册成功',
+    userId: data.id 
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`服务器已启动: http://localhost:${PORT}`);
-});
-
-process.on('SIGINT', () => {
-  db.close(() => {
-    console.log('数据库连接已关闭');
-    process.exit(0);
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`服务器已启动: http://localhost:${PORT}`);
   });
-});
+}
+
+module.exports = app;
