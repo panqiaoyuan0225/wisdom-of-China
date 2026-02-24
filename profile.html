@@ -375,7 +375,7 @@
     </style>
 </head>
 <body>
-    <a href="home.html" class="back-link">← 返回主页</a>
+    <a href="home" class="back-link">← 返回主页</a>
     
     <h1 class="page-title">个人档案</h1>
     
@@ -1336,14 +1336,14 @@
             if (confirm('确定要退出登录吗？')) {
                 sessionStorage.removeItem('isLoggedIn');
                 sessionStorage.removeItem('currentUser');
-                window.location.href = 'index.html';
+                window.location.href = '/';
             }
         }
 
         function init() {
             const isLoggedIn = sessionStorage.getItem('isLoggedIn');
             if (isLoggedIn !== 'true') {
-                window.location.href = 'index.html';
+                window.location.href = '/';
                 return;
             }
 

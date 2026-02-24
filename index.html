@@ -282,7 +282,7 @@
         </form>
 
         <div class="register-link">
-            <a href="register.html">立即注册，开启你的古典文学之旅</a>
+            <a href="register">立即注册，开启你的古典文学之旅</a>
         </div>
     </div>
 
@@ -292,7 +292,7 @@
             const rememberedUser = localStorage.getItem('rememberedUser');
             
             if (isLoggedIn === 'true') {
-                window.location.href = 'home.html';
+                window.location.href = 'home';
                 return;
             }
 
@@ -331,7 +331,7 @@
                         localStorage.removeItem('rememberedUser');
                     }
 
-                    window.location.href = 'home.html';
+                    window.location.href = 'home';
                 } else {
                     errorMessage.textContent = data.message || '用户名或密码错误';
                     errorMessage.classList.add('show');
