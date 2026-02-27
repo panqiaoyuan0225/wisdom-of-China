@@ -121,17 +121,6 @@
             cursor: pointer;
         }
 
-        .forgot-password {
-            color: #8b4513;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .forgot-password:hover {
-            color: #d4af37;
-            text-decoration: underline;
-        }
-
         .login-btn {
             width: 100%;
             padding: 15px;
@@ -154,26 +143,6 @@
 
         .login-btn:active {
             transform: translateY(0);
-        }
-
-        .divider {
-            display: flex;
-            align-items: center;
-            margin: 30px 0;
-            color: #bbb;
-        }
-
-        .divider::before,
-        .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: #e0e0e0;
-        }
-
-        .divider span {
-            padding: 0 15px;
-            font-size: 0.9rem;
         }
 
         .register-link {
@@ -257,13 +226,13 @@
         </div>
 
         <div class="error-message" id="errorMessage">
-            用户名或密码错误，请重试
+            邮箱或密码错误，请重试
         </div>
 
         <form id="loginForm">
             <div class="form-group">
-                <label for="username">用户名</label>
-                <input type="text" id="username" name="username" placeholder="请输入用户名" required>
+                <label for="email">邮箱</label>
+                <input type="email" id="email" name="email" placeholder="请输入邮箱" required>
             </div>
 
             <div class="form-group">
@@ -297,7 +266,7 @@
             }
 
             if (rememberedUser) {
-                document.getElementById('username').value = rememberedUser;
+                document.getElementById('email').value = rememberedUser;
                 document.getElementById('rememberMe').checked = true;
             }
         }
@@ -305,7 +274,7 @@
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const rememberMe = document.getElementById('rememberMe').checked;
             const errorMessage = document.getElementById('errorMessage');
@@ -316,24 +285,25 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ username, password })
+                    body: JSON.stringify({ email, password })
                 });
 
                 const data = await response.json();
 
                 if (data.success) {
                     sessionStorage.setItem('isLoggedIn', 'true');
-                    sessionStorage.setItem('currentUser', username);
+                    sessionStorage.setItem('currentUser', data.user.username);
+                    sessionStorage.setItem('userEmail', data.user.email);
 
                     if (rememberMe) {
-                        localStorage.setItem('rememberedUser', username);
+                        localStorage.setItem('rememberedUser', email);
                     } else {
                         localStorage.removeItem('rememberedUser');
                     }
 
                     window.location.href = 'home.html';
                 } else {
-                    errorMessage.textContent = data.message || '用户名或密码错误';
+                    errorMessage.textContent = data.message || '邮箱或密码错误';
                     errorMessage.classList.add('show');
                     document.getElementById('password').value = '';
                     document.getElementById('password').focus();
@@ -351,7 +321,7 @@
             }
         });
 
-        document.getElementById('username').addEventListener('input', function() {
+        document.getElementById('email').addEventListener('input', function() {
             document.getElementById('errorMessage').classList.remove('show');
         });
 

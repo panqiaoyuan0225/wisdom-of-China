@@ -190,6 +190,12 @@
             display: block;
         }
 
+        .hint {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 4px;
+        }
+
         @media (max-width: 480px) {
             .login-container {
                 padding: 40px 25px;
@@ -217,13 +223,19 @@
 
         <form id="registerForm">
             <div class="form-group">
-                <label for="username">用户名</label>
-                <input type="text" id="username" name="username" placeholder="请输入用户名" required>
+                <label for="email">邮箱</label>
+                <input type="email" id="email" name="email" placeholder="请输入邮箱" required>
+            </div>
+
+            <div class="form-group">
+                <label for="username">昵称（可选）</label>
+                <input type="text" id="username" name="username" placeholder="请输入昵称（选填）" maxlength="12">
+                <div class="hint">不填写将使用邮箱前缀作为昵称</div>
             </div>
 
             <div class="form-group">
                 <label for="password">密码</label>
-                <input type="password" id="password" name="password" placeholder="请输入密码" required>
+                <input type="password" id="password" name="password" placeholder="请输入密码（至少6位）" required>
             </div>
 
             <div class="form-group">
@@ -243,6 +255,7 @@
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            const email = document.getElementById('email').value.trim();
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
@@ -270,7 +283,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ username, password })
+                    body: JSON.stringify({ email, password, username })
                 });
 
                 const data = await response.json();
@@ -290,6 +303,10 @@
                 errorMessage.textContent = '网络错误，请稍后重试';
                 errorMessage.classList.add('show');
             }
+        });
+
+        document.getElementById('email').addEventListener('input', function() {
+            document.getElementById('errorMessage').classList.remove('show');
         });
 
         document.getElementById('username').addEventListener('input', function() {

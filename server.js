@@ -30,12 +30,12 @@ if (!supabase) {
 }
 
 app.post('/login', async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
-  if (!username || !password) {
+  if (!email || !password) {
     return res.status(400).json({ 
       success: false, 
-      message: '用户名和密码不能为空' 
+      message: '邮箱和密码不能为空' 
     });
   }
 
@@ -50,32 +50,40 @@ app.post('/login', async (req, res) => {
   
   const { data, error } = await supabase
     .from('users')
-    .select('id, username')
-    .eq('username', username)
+    .select('id, email, username')
+    .eq('email', email)
     .eq('password', hashedPassword)
     .single();
 
   if (error || !data) {
     return res.status(401).json({ 
       success: false, 
-      message: '用户名或密码错误' 
+      message: '邮箱或密码错误' 
     });
   }
 
   res.json({ 
     success: true, 
     message: '登录成功',
-    user: { id: data.id, username: data.username }
+    user: { id: data.id, email: data.email, username: data.username || email.split('@')[0] }
   });
 });
 
 app.post('/register', async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password, username } = req.body;
 
-  if (!username || !password) {
+  if (!email || !password) {
     return res.status(400).json({ 
       success: false, 
-      message: '用户名和密码不能为空' 
+      message: '邮箱和密码不能为空' 
+    });
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ 
+      success: false, 
+      message: '请输入有效的邮箱地址' 
     });
   }
 
@@ -94,10 +102,11 @@ app.post('/register', async (req, res) => {
   }
 
   const hashedPassword = hashPassword(password);
+  const displayName = username || email.split('@')[0];
   
   const { data, error } = await supabase
     .from('users')
-    .insert([{ username, password: hashedPassword }])
+    .insert([{ email, password: hashedPassword, username: displayName }])
     .select()
     .single();
 
@@ -105,7 +114,7 @@ app.post('/register', async (req, res) => {
     if (error.code === '23505') {
       return res.status(409).json({ 
         success: false, 
-        message: '用户名已存在' 
+        message: '该邮箱已注册' 
       });
     }
     return res.status(500).json({ 
@@ -122,12 +131,12 @@ app.post('/register', async (req, res) => {
 });
 
 app.post('/sync-stats', async (req, res) => {
-    const { username, totalQuestions, correctAnswers, studyMinutes, masteredCount } = req.body;
+    const { email, totalQuestions, correctAnswers, studyMinutes, masteredCount } = req.body;
 
-    if (!username) {
+    if (!email) {
         return res.status(400).json({ 
             success: false, 
-            message: '用户名不能为空' 
+            message: '邮箱不能为空' 
         });
     }
 
@@ -147,7 +156,7 @@ app.post('/sync-stats', async (req, res) => {
             mastered_count: masteredCount || 0,
             last_sync: new Date().toISOString()
         })
-        .eq('username', username);
+        .eq('email', email);
 
     if (error) {
         return res.status(500).json({ 
