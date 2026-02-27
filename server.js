@@ -273,6 +273,10 @@ app.get('/leaderboard/accuracy', async (req, res) => {
     });
 });
 
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 if (require.main === module) {
     app.listen(PORT, () => {
         console.log(`服务器已启动: http://localhost:${PORT}`);
