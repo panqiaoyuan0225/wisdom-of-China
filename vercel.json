@@ -1,15 +1,5 @@
 {
-  "version": 2,
-  "functions": {
-    "api/**/*.js": {
-      "runtime": "@vercel/node@3"
-    }
-  },
   "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
-    },
     {
       "source": "/login",
       "destination": "/api/login"
@@ -23,8 +13,16 @@
       "destination": "/api/sync-stats"
     },
     {
-      "source": "/leaderboard/(.*)",
-      "destination": "/api/leaderboard/$1"
+      "source": "/leaderboard/rank",
+      "destination": "/api/leaderboard/rank"
+    },
+    {
+      "source": "/leaderboard/time",
+      "destination": "/api/leaderboard/time"
+    },
+    {
+      "source": "/leaderboard/accuracy",
+      "destination": "/api/leaderboard/accuracy"
     }
   ]
 }
