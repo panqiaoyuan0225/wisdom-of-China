@@ -2317,6 +2317,38 @@
                 }
             },
             
+            syncToCloud() {
+                const username = sessionStorage.getItem('currentUser');
+                if (!username) return;
+                
+                const history = this.getAll();
+                let totalQuestions = 0;
+                let correctAnswers = 0;
+                let masteredCount = 0;
+                
+                Object.values(history).forEach(item => {
+                    totalQuestions += item.totalAttempts || 0;
+                    correctAnswers += item.correctCount || 0;
+                    if (item.totalAttempts > 0 && (item.correctCount / item.totalAttempts) >= 0.8) {
+                        masteredCount++;
+                    }
+                });
+                
+                const timeData = JSON.parse(localStorage.getItem('browsing_time_v1') || '{"totalMinutes":0}');
+                
+                fetch('/sync-stats', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username,
+                        totalQuestions,
+                        correctAnswers,
+                        studyMinutes: timeData.totalMinutes || 0,
+                        masteredCount
+                    })
+                }).catch(err => console.error('同步失败:', err));
+            },
+            
             getHistory(question) {
                 const data = this.getAll();
                 const id = this.generateId(question);
@@ -2736,6 +2768,7 @@
             
             if (!isWrongBookMode) {
                 QuestionHistoryManager.recordAttempt(question, isCorrect);
+                QuestionHistoryManager.syncToCloud();
             }
             
             questionStates[currentIndex] = {
@@ -2779,6 +2812,7 @@
             
             if (!isWrongBookMode) {
                 QuestionHistoryManager.recordAttempt(question, isCorrect);
+                QuestionHistoryManager.syncToCloud();
             }
             
             questionStates[currentIndex] = {

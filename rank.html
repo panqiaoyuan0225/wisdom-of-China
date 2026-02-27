@@ -3,25 +3,829 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>排行榜</title>
+    <title>排行榜 - 四大名著经典学习网</title>
     <style>
-        /* 返回按钮样式，仿照xiyou_stage2.html */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "SimSun", sans-serif;
+            background: linear-gradient(135deg, #f5f5dc 0%, #e8e4c9 100%);
+            min-height: 100vh;
+            padding: 20px;
+            padding-top: 70px;
+        }
+
         .back-link {
             position: fixed;
             top: 20px;
             right: 40px;
             text-decoration: none;
-            color: #f0e68c; /* sanguo_stage1.html的按钮颜色 */
+            color: #f0e68c;
             font-weight: bold;
             background: #8b4513;
-            padding: 8px 15px;
+            padding: 10px 20px;
             border-radius: 20px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            color: #8b4513;
+            font-size: 2.2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: #a0522d;
+            font-size: 1rem;
+        }
+
+        .rank-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 25px;
+            border: 2px solid #d4af37;
+            background: white;
+            color: #8b4513;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            background: #fff9e6;
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+            color: white;
+            border-color: #8b4513;
+            box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
+        }
+
+        .tab-btn .tab-icon {
+            font-size: 1.2rem;
+        }
+
+        .leaderboard {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(139, 69, 19, 0.15);
+            overflow: hidden;
+            border: 3px solid #d4af37;
+        }
+
+        .leaderboard-header {
+            background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .leaderboard-header h2 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+
+        .leaderboard-header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .rank-list {
+            padding: 15px;
+        }
+
+        .rank-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #fafafa;
+            border-radius: 12px;
+            transition: all 0.3s;
+            border: 1px solid #eee;
+        }
+
+        .rank-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background: #fff9e6;
+        }
+
+        .rank-item.top-1 {
+            background: linear-gradient(135deg, #fff9e6 0%, #fff5d6 100%);
+            border: 2px solid #ffd700;
+        }
+
+        .rank-item.top-2 {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            border: 2px solid #c0c0c0;
+        }
+
+        .rank-item.top-3 {
+            background: linear-gradient(135deg, #fff5e6 0%, #ffe8cc 100%);
+            border: 2px solid #cd7f32;
+        }
+
+        .rank-item.current-user {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border: 2px solid #4caf50;
+        }
+
+        .rank-position {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #8b4513;
+            flex-shrink: 0;
+        }
+
+        .rank-position.gold {
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .rank-position.silver {
+            color: #c0c0c0;
+            text-shadow: 0 0 10px rgba(192, 192, 192, 0.5);
+        }
+
+        .rank-position.bronze {
+            color: #cd7f32;
+            text-shadow: 0 0 10px rgba(205, 127, 50, 0.5);
+        }
+
+        .rank-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4af37 0%, #f0d78c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 15px;
+            flex-shrink: 0;
+            overflow: hidden;
+            border: 2px solid #d4af37;
+        }
+
+        .rank-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .rank-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .rank-username {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            background: #fff9e6;
+            border: 1px solid #d4af37;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: #8b4513;
+        }
+
+        .rank-badge-icon {
+            width: 18px;
+            height: 18px;
+        }
+
+        .rank-score {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #8b4513;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .rank-score-label {
+            font-size: 0.75rem;
+            color: #999;
+            font-weight: normal;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #999;
+        }
+
+        .empty-state .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+        }
+
+        .my-rank-card {
+            background: linear-gradient(135deg, #fff9e6 0%, #fff5d6 100%);
+            border: 2px solid #d4af37;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .my-rank-card .my-rank-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .my-rank-card .my-rank-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #8b4513;
+        }
+
+        .leaderboard-footer {
+            padding: 20px;
+            text-align: center;
+            color: #999;
+            font-size: 0.85rem;
+            border-top: 1px solid #eee;
+        }
+
+        @media (max-width: 600px) {
+            .page-title {
+                font-size: 1.8rem;
+            }
+
+            .tab-btn {
+                padding: 10px 18px;
+                font-size: 0.9rem;
+            }
+
+            .rank-item {
+                padding: 12px;
+            }
+
+            .rank-position {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+
+            .rank-avatar {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+                margin-right: 10px;
+            }
+
+            .rank-username {
+                font-size: 1rem;
+            }
+
+            .rank-score {
+                font-size: 1.1rem;
+            }
+
+            .back-link {
+                right: 20px;
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
     <a href="home.html" class="back-link">← 返回主页</a>
-    <h1>排行榜</h1>
+
+    <div class="page-header">
+        <h1 class="page-title">🏆 荣誉排行榜</h1>
+        <p class="page-subtitle">学海无涯，唯勤是岸</p>
+    </div>
+
+    <div class="rank-container">
+        <div class="tab-container">
+            <button class="tab-btn active" data-tab="rank" onclick="switchTab('rank')">
+                <span class="tab-icon">⚔️</span>
+                <span>段位排行</span>
+            </button>
+            <button class="tab-btn" data-tab="time" onclick="switchTab('time')">
+                <span class="tab-icon">⏱️</span>
+                <span>学习时长</span>
+            </button>
+            <button class="tab-btn" data-tab="accuracy" onclick="switchTab('accuracy')">
+                <span class="tab-icon">🎯</span>
+                <span>正确率</span>
+            </button>
+        </div>
+
+        <div class="leaderboard" id="leaderboard">
+            <!-- 排行榜内容由JS动态生成 -->
+        </div>
+    </div>
+
+    <script>
+        const RANKS = [
+            { name: '蒙童', icon: 'mengtong', color: '#7CB342', stages: [5, 10, 15], score: 1 },
+            { name: '书生', icon: 'shusheng', color: '#5C6BC0', stages: [20, 28, 36], score: 2 },
+            { name: '秀才', icon: 'xiucai', color: '#81D4FA', stages: [45, 54, 63], score: 3 },
+            { name: '举人', icon: 'juren', color: '#E53935', stages: [70, 77, 84], score: 4 },
+            { name: '进士', icon: 'jinshi', color: '#AB47BC', stages: [88, 92, 96], score: 5 },
+            { name: '翰林', icon: 'hanlin', color: '#00897B', stages: [97, 98, 99], score: 6 },
+            { name: '状元', icon: 'zhuangyuan', color: '#FFD700', stages: [100], score: 7 }
+        ];
+
+        const RANK_ICONS = {
+            mengtong: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="bambooGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#C5E1A5"/><stop offset="50%" style="stop-color:#DCEDC8"/><stop offset="100%" style="stop-color:#C5E1A5"/></linearGradient></defs><line x1="20" y1="35" x2="80" y2="35" stroke="#7CB342" stroke-width="1.5" /><line x1="20" y1="65" x2="80" y2="65" stroke="#7CB342" stroke-width="1.5" /><rect x="22" y="25" width="10" height="50" rx="1.5" fill="url(#bambooGrad)" stroke="#9CCC65" stroke-width="0.5" /><rect x="33" y="25" width="10" height="50" rx="1.5" fill="url(#bambooGrad)" stroke="#9CCC65" stroke-width="0.5" /><rect x="44" y="25" width="10" height="50" rx="1.5" fill="url(#bambooGrad)" stroke="#9CCC65" stroke-width="0.5" /><rect x="55" y="25" width="10" height="50" rx="1.5" fill="url(#bambooGrad)" stroke="#9CCC65" stroke-width="0.5" /><rect x="66" y="25" width="10" height="50" rx="1.5" fill="url(#bambooGrad)" stroke="#9CCC65" stroke-width="0.5" /></svg>`,
+            shusheng: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="brushHandle" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#4E342E"/><stop offset="30%" style="stop-color:#8D6E63"/><stop offset="60%" style="stop-color:#5D4037"/><stop offset="100%" style="stop-color:#3E2723"/></linearGradient><linearGradient id="brushTip" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#666"/><stop offset="70%" style="stop-color:#222"/><stop offset="100%" style="stop-color:#000"/></linearGradient></defs><g transform="rotate(-20 50 50)"><circle cx="50" cy="12" r="1.5" fill="none" stroke="#8D6E63" stroke-width="0.5"/><rect x="47.5" y="14" width="5" height="50" rx="1.5" fill="url(#brushHandle)" /><path d="M47 62 L53 62 L54 68 Q54 70 52 70 L48 70 Q46 70 46 68 Z" fill="#212121" /><rect x="46.5" y="62" width="7" height="1.5" fill="#C0C0C0" opacity="0.3" /><path d="M46 69 Q46 75 44 82 Q43 92 50 95 Q57 92 56 82 Q54 75 54 69 Z" fill="url(#brushTip)" /></g></svg>`,
+            xiucai: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="fanPaper" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#F5F5DC"/><stop offset="50%" style="stop-color:#FFFDE7"/><stop offset="100%" style="stop-color:#F5F5DC"/></linearGradient><linearGradient id="bambooBone" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#795548"/><stop offset="50%" style="stop-color:#A1887F"/><stop offset="100%" style="stop-color:#5D4037"/></linearGradient></defs><path d="M10 75 Q10 25 50 15 Q90 25 90 75 L55 85 Q50 87 45 85 Z" fill="url(#fanPaper)" stroke="#D7CCC8" stroke-width="0.5"/><g stroke="#E0E0E0" stroke-width="0.2" opacity="0.6"><line x1="50" y1="85" x2="20" y2="45" /><line x1="50" y1="85" x2="35" y2="25" /><line x1="50" y1="85" x2="50" y2="15" /><line x1="50" y1="85" x2="65" y2="25" /><line x1="50" y1="85" x2="80" y2="45" /></g><path d="M10 75 L14 78 L50 85 L50 82 Z" fill="url(#bambooBone)" /><path d="M90 75 L86 78 L50 85 L50 82 Z" fill="url(#bambooBone)" /><circle cx="50" cy="85" r="2.5" fill="#3E2723"/><path d="M50 87.5 Q50 92 48 94 M50 87.5 Q50 92 52 94" stroke="#B71C1C" stroke-width="1" fill="none" /></svg>`,
+            juren: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lanternBody" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#D32F2F"/><stop offset="50%" style="stop-color:#FF5252"/><stop offset="100%" style="stop-color:#B71C1C"/></linearGradient><linearGradient id="goldFrame" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#FFD700"/><stop offset="50%" style="stop-color:#FFF176"/><stop offset="100%" style="stop-color:#FFA000"/></linearGradient></defs><path d="M50 5 L50 15" stroke="#424242" stroke-width="1.5" fill="none"/><rect x="42" y="15" width="16" height="4" rx="1" fill="#3E2723"/><path d="M30 20 L70 20 L75 45 L70 70 L30 70 L25 45 Z" fill="url(#lanternBody)" stroke="url(#goldFrame)" stroke-width="1.5"/><text x="50" y="52" text-anchor="middle" font-family="serif" font-size="22" fill="#FFD700" font-weight="900">才</text><rect x="38" y="70" width="24" height="5" rx="1" fill="#3E2723"/><g stroke="#D32F2F" stroke-width="1.2"><path d="M42 75 Q40 88 40 95" fill="none"/><path d="M46 75 Q46 90 46 98" fill="none"/><path d="M50 75 L50 99" fill="none" stroke="#FF5252"/><path d="M54 75 Q54 90 54 98" fill="none"/><path d="M58 75 Q60 88 60 95" fill="none"/></g><circle cx="50" cy="78" r="2.5" fill="url(#goldFrame)"/></svg>`,
+            jinshi: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="towerGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#9575CD"/><stop offset="100%" style="stop-color:#512DA8"/></linearGradient><radialGradient id="petalGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#FFF9C4"/><stop offset="70%" style="stop-color:#F06292"/><stop offset="100%" style="stop-color:#880E4F"/></radialGradient><radialGradient id="centerSun" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#FFF176"/><stop offset="100%" style="stop-color:#FBC02D"/></radialGradient></defs><g transform="translate(50, 55)"><circle cx="0" cy="-12" r="10" fill="url(#petalGrad)" opacity="0.9"/><circle cx="11" cy="-4" r="10" fill="url(#petalGrad)" opacity="0.9"/><circle cx="7" cy="10" r="10" fill="url(#petalGrad)" opacity="0.9"/><circle cx="-7" cy="10" r="10" fill="url(#petalGrad)" opacity="0.9"/><circle cx="-11" cy="-4" r="10" fill="url(#petalGrad)" opacity="0.9"/><circle cx="0" cy="0" r="4.5" fill="url(#centerSun)"/><circle cx="0" cy="0" r="2" fill="#F9A825"/></g></svg>`,
+            hanlin: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00695C"/><stop offset="50%" style="stop-color:#4DB6AC"/><stop offset="100%" style="stop-color:#004D40"/></linearGradient><linearGradient id="silkGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#FFD54F"/><stop offset="100%" style="stop-color:#FF8F00"/></linearGradient></defs><g transform="translate(50, 50)"><path d="M5 0 C 25 -20, 45 0, 30 15 C 20 25, 5 10, 0 0" fill="none" stroke="url(#emeraldGrad)" stroke-width="4" stroke-linecap="round" /><path d="M-5 0 C -25 -20, -45 0, -30 15 C -20 25, -5 10, 0 0" fill="none" stroke="url(#emeraldGrad)" stroke-width="4" stroke-linecap="round" /><circle cx="0" cy="0" r="3" fill="#004D40" /></g></svg>`,
+            zhuangyuan: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="haloGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#FF5252; stop-opacity:0.4"/><stop offset="70%" style="stop-color:#B71C1C; stop-opacity:0.1"/><stop offset="100%" style="stop-color:#B71C1C; stop-opacity:0"/></radialGradient><linearGradient id="goldTop" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#FFF176"/><stop offset="50%" style="stop-color:#FFD700"/><stop offset="100%" style="stop-color:#FFA000"/></linearGradient></defs><circle cx="50" cy="45" r="45" fill="url(#haloGrad)" /><path d="M25 55 Q50 5 75 55" fill="#1A1A1A" stroke="url(#goldTop)" stroke-width="1.5" /><g><rect x="2" y="50" width="30" height="10" rx="2" fill="#111" stroke="url(#goldTop)" stroke-width="1.2" /><rect x="68" y="50" width="30" height="10" rx="2" fill="#111" stroke="url(#goldTop)" stroke-width="1.2" /></g><path d="M32 68 C 32 35, 68 35, 68 68 Z" fill="#1A1A1A" stroke="#333" stroke-width="0.5" /><path d="M31 62 Q50 56 69 62 L68 70 Q50 64 32 70 Z" fill="url(#goldTop)" /><g transform="translate(50, 48)"><circle cx="0" cy="0" r="10" fill="url(#goldTop)" opacity="0.8" /><circle cx="0" cy="0" r="8" fill="#1A1A1A" /><circle cx="0" cy="0" r="6.5" fill="#D32F2F" /></g></svg>`
+        };
+
+        const STORAGE_KEYS = {
+            PROFILE: 'user_profile_v1',
+            TIME: 'browsing_time_v1',
+            HISTORY: 'quiz_history_v1'
+        };
+
+        const TOTAL_QUESTIONS = 800;
+
+        let currentTab = 'rank';
+
+        function getProfileData() {
+            try {
+                const data = localStorage.getItem(STORAGE_KEYS.PROFILE);
+                return data ? JSON.parse(data) : { username: '书友', avatar: null };
+            } catch (e) {
+                return { username: '书友', avatar: null };
+            }
+        }
+
+        function getTimeData() {
+            try {
+                const data = localStorage.getItem(STORAGE_KEYS.TIME);
+                return data ? JSON.parse(data) : { totalMinutes: 0 };
+            } catch (e) {
+                return { totalMinutes: 0 };
+            }
+        }
+
+        function getHistoryData() {
+            try {
+                const data = localStorage.getItem(STORAGE_KEYS.HISTORY);
+                return data ? JSON.parse(data) : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function calculateMastery() {
+            const history = getHistoryData();
+            let mastered = 0;
+            Object.values(history).forEach(item => {
+                if (item.totalAttempts > 0 && (item.correctCount / item.totalAttempts) >= 0.8) {
+                    mastered++;
+                }
+            });
+            return mastered;
+        }
+
+        function getRankByMastery(masteryPercent) {
+            for (let i = RANKS.length - 1; i >= 0; i--) {
+                const rank = RANKS[i];
+                for (let j = rank.stages.length - 1; j >= 0; j--) {
+                    if (masteryPercent >= rank.stages[j]) {
+                        return { rank, stageIndex: j, stageLabel: ['Ⅰ', 'Ⅱ', 'Ⅲ'][j] || '' };
+                    }
+                }
+            }
+            return { rank: RANKS[0], stageIndex: -1, stageLabel: '' };
+        }
+
+        function getQuizStats() {
+            const history = getHistoryData();
+            let total = 0;
+            let correct = 0;
+            Object.values(history).forEach(item => {
+                total += item.totalAttempts || 0;
+                correct += item.correctCount || 0;
+            });
+            return { total, correct, accuracy: total > 0 ? Math.round((correct / total) * 100) : 0 };
+        }
+
+        function saveUserRankToStorage(type, leaderboard) {
+            const currentUsername = sessionStorage.getItem('currentUser');
+            if (!currentUsername) return;
+            
+            let userRankIndex = -1;
+            leaderboard.forEach((item, index) => {
+                if (item.isCurrentUser || item.name === currentUsername) {
+                    userRankIndex = index + 1;
+                }
+            });
+            
+            if (userRankIndex === -1) return;
+            
+            try {
+                const stored = localStorage.getItem('leaderboard_rank_v1');
+                const rankData = stored ? JSON.parse(stored) : { rank: 999, time: 999, accuracy: 999 };
+                
+                if (type === 'rank') {
+                    rankData.rank = userRankIndex;
+                } else if (type === 'time') {
+                    rankData.time = userRankIndex;
+                } else if (type === 'accuracy') {
+                    rankData.accuracy = userRankIndex;
+                }
+                
+                localStorage.setItem('leaderboard_rank_v1', JSON.stringify(rankData));
+                
+                checkAndUnlockRankBadges(rankData);
+            } catch (e) {
+                console.error('保存排名失败:', e);
+            }
+        }
+
+        function checkAndUnlockRankBadges(rankData) {
+            try {
+                const badgeData = localStorage.getItem('badge_data_v1');
+                const data = badgeData ? JSON.parse(badgeData) : { unlockedBadges: [], badgeUnlockTime: {} };
+                
+                const newBadges = [];
+                
+                const badges = [
+                    { id: 'rank_top_10', targetRank: 10 },
+                    { id: 'rank_top_5', targetRank: 5 },
+                    { id: 'rank_top_1', targetRank: 1 },
+                    { id: 'rank_master', targetAll: 10 }
+                ];
+                
+                badges.forEach(badge => {
+                    if (data.unlockedBadges.includes(badge.id)) return;
+                    
+                    let shouldUnlock = false;
+                    if (badge.targetRank) {
+                        shouldUnlock = rankData.rank <= badge.targetRank && rankData.rank > 0;
+                    } else if (badge.targetAll) {
+                        shouldUnlock = rankData.rank <= badge.targetAll && 
+                            rankData.time <= badge.targetAll && 
+                            rankData.accuracy <= badge.targetAll;
+                    }
+                    
+                    if (shouldUnlock) {
+                        data.unlockedBadges.push(badge.id);
+                        data.badgeUnlockTime[badge.id] = Date.now();
+                        newBadges.push(badge.id);
+                    }
+                });
+                
+                if (newBadges.length > 0) {
+                    localStorage.setItem('badge_data_v1', JSON.stringify(data));
+                    localStorage.setItem('pending_badge_notification', newBadges[newBadges.length - 1]);
+                }
+            } catch (e) {
+                console.error('检查勋章失败:', e);
+            }
+        }
+
+        async function fetchLeaderboard(type) {
+            const profile = getProfileData();
+            const timeData = getTimeData();
+            const quizStats = getQuizStats();
+            const mastered = calculateMastery();
+            const masteryPercent = Math.round((mastered / TOTAL_QUESTIONS) * 100);
+            const userRank = getRankByMastery(masteryPercent);
+
+            try {
+                const response = await fetch(`/leaderboard/${type}`);
+                const result = await response.json();
+
+                if (!result.success) {
+                    console.error('获取排行榜失败:', result.message);
+                    return generateLocalLeaderboard(type, profile, timeData, quizStats, mastered, masteryPercent, userRank);
+                }
+
+                const serverData = result.data;
+                const currentUsername = sessionStorage.getItem('currentUser');
+                let leaderboard = [];
+
+                if (type === 'rank') {
+                    leaderboard = serverData.map(user => {
+                        const rank = getRankByMastery(user.score);
+                        return {
+                            name: user.username,
+                            avatar: '👤',
+                            rank: rank,
+                            score: user.score + '%',
+                            scoreLabel: '掌握度',
+                            isCurrentUser: user.username === currentUsername
+                        };
+                    });
+                } else if (type === 'time') {
+                    leaderboard = serverData.map(user => ({
+                        name: user.username,
+                        avatar: '👤',
+                        minutes: user.minutes,
+                        score: formatTime(user.minutes),
+                        scoreLabel: '学习时长',
+                        isCurrentUser: user.username === currentUsername
+                    }));
+                } else if (type === 'accuracy') {
+                    leaderboard = serverData.map(user => ({
+                        name: user.username,
+                        avatar: '👤',
+                        accuracy: user.accuracy,
+                        score: user.accuracy + '%',
+                        scoreLabel: '正确率',
+                        isCurrentUser: user.username === currentUsername
+                    }));
+                }
+
+                const hasCurrentUser = leaderboard.some(item => item.isCurrentUser);
+                if (!hasCurrentUser && currentUsername) {
+                    if (type === 'rank') {
+                        leaderboard.push({
+                            name: currentUsername,
+                            avatar: profile.avatar || '👤',
+                            rank: userRank,
+                            score: masteryPercent + '%',
+                            scoreLabel: '掌握度',
+                            isCurrentUser: true
+                        });
+                        leaderboard.sort((a, b) => {
+                            const scoreA = parseInt(a.score);
+                            const scoreB = parseInt(b.score);
+                            return scoreB - scoreA;
+                        });
+                    } else if (type === 'time') {
+                        leaderboard.push({
+                            name: currentUsername,
+                            avatar: profile.avatar || '👤',
+                            minutes: timeData.totalMinutes,
+                            score: formatTime(timeData.totalMinutes),
+                            scoreLabel: '学习时长',
+                            isCurrentUser: true
+                        });
+                        leaderboard.sort((a, b) => b.minutes - a.minutes);
+                    } else if (type === 'accuracy') {
+                        leaderboard.push({
+                            name: currentUsername,
+                            avatar: profile.avatar || '👤',
+                            accuracy: quizStats.accuracy,
+                            score: quizStats.accuracy + '%',
+                            scoreLabel: '正确率',
+                            isCurrentUser: true
+                        });
+                        leaderboard.sort((a, b) => b.accuracy - a.accuracy);
+                    }
+                }
+
+                saveUserRankToStorage(type, leaderboard);
+
+                return leaderboard;
+            } catch (error) {
+                console.error('网络错误:', error);
+                return generateLocalLeaderboard(type, profile, timeData, quizStats, mastered, masteryPercent, userRank);
+            }
+        }
+
+        function generateLocalLeaderboard(type, profile, timeData, quizStats, mastered, masteryPercent, userRank) {
+            let leaderboard = [];
+            const currentUsername = sessionStorage.getItem('currentUser');
+
+            if (type === 'rank') {
+                leaderboard.push({
+                    name: currentUsername || profile.username,
+                    avatar: profile.avatar || '👤',
+                    rank: userRank,
+                    score: masteryPercent + '%',
+                    scoreLabel: '掌握度',
+                    isCurrentUser: true
+                });
+            } else if (type === 'time') {
+                leaderboard.push({
+                    name: currentUsername || profile.username,
+                    avatar: profile.avatar || '👤',
+                    minutes: timeData.totalMinutes,
+                    score: formatTime(timeData.totalMinutes),
+                    scoreLabel: '学习时长',
+                    isCurrentUser: true
+                });
+            } else if (type === 'accuracy') {
+                leaderboard.push({
+                    name: currentUsername || profile.username,
+                    avatar: profile.avatar || '👤',
+                    accuracy: quizStats.accuracy,
+                    score: quizStats.accuracy + '%',
+                    scoreLabel: '正确率',
+                    isCurrentUser: true
+                });
+            }
+
+            return leaderboard;
+        }
+
+        function formatTime(minutes) {
+            if (minutes >= 60) {
+                const hours = Math.floor(minutes / 60);
+                const mins = minutes % 60;
+                return hours + '小时' + (mins > 0 ? mins + '分' : '');
+            }
+            return minutes + '分钟';
+        }
+
+        function getPositionClass(index) {
+            if (index === 0) return 'top-1';
+            if (index === 1) return 'top-2';
+            if (index === 2) return 'top-3';
+            return '';
+        }
+
+        function getPositionStyle(index) {
+            if (index === 0) return 'gold';
+            if (index === 1) return 'silver';
+            if (index === 2) return 'bronze';
+            return '';
+        }
+
+        function getPositionIcon(index) {
+            if (index === 0) return '🥇';
+            if (index === 1) return '🥈';
+            if (index === 2) return '🥉';
+            return index + 1;
+        }
+
+        async function renderLeaderboard(type) {
+            const container = document.getElementById('leaderboard');
+            
+            container.innerHTML = `
+                <div class="leaderboard-header">
+                    <h2>加载中...</h2>
+                    <p>正在获取排行榜数据</p>
+                </div>
+                <div class="rank-list">
+                    <div class="empty-state">
+                        <div class="empty-icon">⏳</div>
+                        <p>正在加载...</p>
+                    </div>
+                </div>
+            `;
+
+            const leaderboard = await fetchLeaderboard(type);
+
+            const titles = {
+                rank: { title: '段位排行榜', desc: '按知识点掌握度排名' },
+                time: { title: '学习时长排行榜', desc: '勤能补拙，天道酬勤' },
+                accuracy: { title: '正确率排行榜', desc: '精益求精，百发百中' }
+            };
+
+            let html = `
+                <div class="leaderboard-header">
+                    <h2>${titles[type].title}</h2>
+                    <p>${titles[type].desc}</p>
+                </div>
+                <div class="rank-list">
+            `;
+
+            if (leaderboard.length === 0) {
+                html += `
+                    <div class="empty-state">
+                        <div class="empty-icon">🏆</div>
+                        <p>暂无排行数据，快来学习上榜吧！</p>
+                    </div>
+                `;
+            } else {
+                leaderboard.forEach((item, index) => {
+                    const positionClass = getPositionClass(index);
+                    const positionStyle = getPositionStyle(index);
+                    const positionIcon = getPositionIcon(index);
+                    const currentUserClass = item.isCurrentUser ? 'current-user' : '';
+
+                    let badgeHtml = '';
+                    if (type === 'rank' && item.rank) {
+                        const rankName = item.rank.rank.name + (item.rank.stageLabel ? ' ' + item.rank.stageLabel : '');
+                        badgeHtml = `
+                            <span class="rank-badge" style="border-color: ${item.rank.rank.color}; color: ${item.rank.rank.color}">
+                                <span class="rank-badge-icon">${RANK_ICONS[item.rank.rank.icon]}</span>
+                                ${rankName}
+                            </span>
+                        `;
+                    }
+
+                    const avatarContent = item.avatar && item.avatar.startsWith('data:') 
+                        ? `<img src="${item.avatar}" alt="头像">` 
+                        : item.avatar;
+
+                    html += `
+                        <div class="rank-item ${positionClass} ${currentUserClass}">
+                            <div class="rank-position ${positionStyle}">${positionIcon}</div>
+                            <div class="rank-avatar">${avatarContent}</div>
+                            <div class="rank-info">
+                                <div class="rank-username">
+                                    ${item.name}
+                                    ${item.isCurrentUser ? '<span style="font-size:0.8rem;color:#4caf50;">(我)</span>' : ''}
+                                </div>
+                                ${badgeHtml}
+                            </div>
+                            <div class="rank-score">
+                                ${item.score}
+                                <div class="rank-score-label">${item.scoreLabel}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            html += `
+                </div>
+                <div class="leaderboard-footer">
+                    实时更新 · 持续学习，勇攀高峰
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.tab === tab) {
+                    btn.classList.add('active');
+                }
+            });
+
+            renderLeaderboard(tab);
+        }
+
+        async function init() {
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+            if (isLoggedIn !== 'true') {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            await renderLeaderboard('rank');
+        }
+
+        init();
+    </script>
 </body>
 </html>

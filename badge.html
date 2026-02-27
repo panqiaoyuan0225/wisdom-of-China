@@ -443,6 +443,11 @@
         <h2 class="section-title">🏆 名著精通</h2>
         <div class="badge-grid" id="masteryBadges"></div>
     </div>
+    
+    <div class="section">
+        <h2 class="section-title">🥇 排行榜成就</h2>
+        <div class="badge-grid" id="leaderboardBadges"></div>
+    </div>
 
     <div class="notification-overlay" id="notificationOverlay">
         <div class="notification-card" id="notificationCard">
@@ -470,7 +475,11 @@
             { id: 'sanguo_strategists', name: '卧龙凤雏', desc: '三国谋士题掌握', rarity: 'rare', type: 'mastery', category: 'sanguo_strategist', target: 0.8 },
             { id: 'shuihu_heroes', name: '一百零八将', desc: '水浒人物题掌握', rarity: 'rare', type: 'mastery', category: 'shuihu_character', target: 0.8 },
             { id: 'xiyou_plot', name: '九九八十一难', desc: '西游情节题掌握', rarity: 'rare', type: 'mastery', category: 'xiyou_plot', target: 0.8 },
-            { id: 'poetry_master', name: '诗词雅士', desc: '诗词填空题掌握', rarity: 'epic', type: 'mastery', category: 'poetry', target: 0.8 }
+            { id: 'poetry_master', name: '诗词雅士', desc: '诗词填空题掌握', rarity: 'epic', type: 'mastery', category: 'poetry', target: 0.8 },
+            { id: 'rank_top_10', name: '榜上有名', desc: '进入排行榜前10名', rarity: 'common', type: 'leaderboard', targetRank: 10 },
+            { id: 'rank_top_5', name: '五强争霸', desc: '进入排行榜前5名', rarity: 'rare', type: 'leaderboard', targetRank: 5 },
+            { id: 'rank_top_1', name: '独占鳌头', desc: '登顶排行榜第一名', rarity: 'epic', type: 'leaderboard', targetRank: 1 },
+            { id: 'rank_master', name: '榜首常客', desc: '三个排行榜均前10名', rarity: 'epic', type: 'leaderboard', targetAll: 10 }
         ];
 
         const BADGE_ICONS = {
@@ -1000,6 +1009,175 @@
             <path d="M-0.8 12 Q2 22 4.8 12 L2 20 Z" fill="#000"/>
         </g>
     </g>
+</svg>`,
+            
+            rank_top_10: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="paperBase" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" style="stop-color:#fcf5e5"/>
+            <stop offset="100%" style="stop-color:#f2e1b8"/>
+        </linearGradient>
+        
+        <linearGradient id="woodFrame" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" style="stop-color:#8b0000"/>
+            <stop offset="100%" style="stop-color:#4a0000"/>
+        </linearGradient>
+    </defs>
+
+    <rect x="15" y="10" width="70" height="80" rx="2" fill="url(#woodFrame)" />
+    
+    <path d="M15 20 L20 20 L20 10 M80 10 L80 20 L85 20 M15 80 L20 80 L20 90 M80 90 L80 80 L85 80" 
+          stroke="#d4af37" stroke-width="1.5" fill="none" />
+
+    <rect x="20" y="15" width="60" height="70" rx="1" fill="url(#paperBase)" stroke="#d4af37" stroke-width="0.5"/>
+    
+    <line x1="25" y1="20" x2="75" y2="20" stroke="#d4af37" stroke-width="0.3" opacity="0.5"/>
+    <line x1="25" y1="80" x2="75" y2="80" stroke="#d4af37" stroke-width="0.3" opacity="0.5"/>
+
+    <g font-family="Noto Serif SC, SimSun, serif" fill="#3e2723" text-anchor="middle">
+        <text x="50" y="32" font-size="12" font-weight="bold">榜</text>
+        <text x="50" y="46" font-size="12" font-weight="bold">上</text>
+        <text x="50" y="60" font-size="12" font-weight="bold">有</text>
+        <text x="50" y="74" font-size="12" font-weight="bold">名</text>
+    </g>
+
+    <rect x="62" y="65" width="10" height="10" fill="#8b0000" opacity="0.9" rx="1"/>
+    <text x="67" y="72.5" font-family="serif" font-size="6" fill="#fdf5e6" text-anchor="middle" font-weight="bold">榜</text>
+
+    <circle cx="50" cy="8" r="2" fill="#d4af37"/>
+    <line x1="50" y1="0" x2="50" y2="6" stroke="#8b0000" stroke-width="1"/>
+</svg>`,
+            
+            rank_top_5: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="vermilionGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#b22222"/>
+            <stop offset="50%" style="stop-color:#e64a19"/>
+            <stop offset="100%" style="stop-color:#b22222"/>
+        </linearGradient>
+        <linearGradient id="bronzeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#d4af37"/>
+            <stop offset="100%" style="stop-color:#8b4513"/>
+        </linearGradient>
+    </defs>
+    
+    <polygon points="50,5 95,38 78,92 22,92 5,38" 
+             fill="#3e2723" stroke="url(#bronzeGrad)" stroke-width="2"/>
+    
+    <polygon points="50,12 88,40 73,85 27,85 12,40" 
+             fill="url(#vermilionGrad)" stroke="#d4af37" stroke-width="1"/>
+    
+    <path d="M35,25 Q50,15 65,25 M25,45 Q15,60 25,75 M75,45 Q85,60 75,75" 
+          fill="none" stroke="#f0d78c" stroke-width="0.5" opacity="0.6"/>
+
+    <circle cx="50" cy="52" r="22" fill="#fdf5e6" stroke="#d4af37" stroke-width="1.5"/>
+    
+    <g font-family="Noto Serif SC, SimSun, serif" fill="#b22222" text-anchor="middle" font-weight="bold">
+        <text x="50" y="50" font-size="9">五强</text>
+        <text x="50" y="61" font-size="9">争霸</text>
+    </g>
+    
+    <rect x="46" y="70" width="8" height="8" fill="none" stroke="#b22222" stroke-width="0.5"/>
+    <text x="50" y="76" font-family="serif" font-size="4" fill="#b22222" text-anchor="middle">榜</text>
+
+    <circle cx="50" cy="52" r="28" fill="none" stroke="#d4af37" stroke-width="0.5" stroke-dasharray="3,1"/>
+</svg>`,
+            
+            rank_top_1: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="deepGold" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#d4af37"/>
+            <stop offset="50%" style="stop-color:#fcf6ba"/>
+            <stop offset="100%" style="stop-color:#aa771c"/>
+        </linearGradient>
+        
+        <linearGradient id="crimsonGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#a52a2a"/>
+            <stop offset="100%" style="stop-color:#800000"/>
+        </linearGradient>
+    </defs>
+
+    <path d="M20 70 C20 60 35 55 50 55 C65 55 80 60 80 70 L80 85 Q50 95 20 85 Z" 
+          fill="url(#deepGold)" stroke="#8b4513" stroke-width="0.5"/>
+
+    <rect x="25" y="10" width="50" height="70" rx="4" fill="url(#deepGold)" stroke="#8b4513" stroke-width="1"/>
+    
+    <rect x="30" y="15" width="40" height="60" rx="2" fill="url(#crimsonGrad)"/>
+    
+    <path d="M40 10 Q50 0 60 10" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="50" cy="5" r="3" fill="#ff0000" stroke="#8b0000" stroke-width="0.5"/>
+
+    <g font-family="Noto Serif SC, SimSun, serif" fill="#ffd700" text-anchor="middle" font-weight="bold">
+        <text x="50" y="30" font-size="10">独</text>
+        <text x="50" y="42" font-size="10">占</text>
+        <text x="50" y="54" font-size="10">鳌</text>
+        <text x="50" y="66" font-size="10">头</text>
+    </g>
+
+    <rect x="32" y="17" width="36" height="56" rx="1" fill="none" stroke="#ffd700" stroke-width="0.3" opacity="0.6"/>
+
+    <g stroke="#a52a2a" stroke-width="1.2" stroke-linecap="round">
+        <line x1="40" y1="85" x2="40" y2="98"/>
+        <line x1="50" y1="90" x2="50" y2="100"/>
+        <line x1="60" y1="85" x2="60" y2="98"/>
+    </g>
+</svg>`,
+            
+            rank_master: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="deepGold" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#bf953f"/>
+            <stop offset="25%" style="stop-color:#fcf6ba"/>
+            <stop offset="50%" style="stop-color:#b38728"/>
+            <stop offset="75%" style="stop-color:#fcf6ba"/>
+            <stop offset="100%" style="stop-color:#aa771c"/>
+        </linearGradient>
+        
+        <radialGradient id="firstGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#fffde0; stop-opacity:0.6"/>
+            <stop offset="100%" style="stop-color:#ffd700; stop-opacity:0"/>
+        </radialGradient>
+        
+        <linearGradient id="matteRank" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#fdf5e6"/>
+            <stop offset="100%" style="stop-color:#f2e6d0"/>
+        </linearGradient>
+    </defs>
+
+    <g transform="translate(5, 10)">
+        <rect x="0" y="0" width="90" height="25" rx="4" fill="url(#firstGlow)"/>
+        <rect x="2" y="2" width="86" height="21" rx="3" fill="url(#deepGold)" stroke="#8b4513" stroke-width="0.8"/>
+        <path d="M10 5 Q15 0 20 5 M70 5 Q75 0 80 5" fill="none" stroke="#aa771c" stroke-width="0.5" opacity="0.6"/>
+        <g font-family="Noto Serif SC, SimSun, serif" fill="#3e2723" text-anchor="middle" font-weight="bold">
+            <text x="12" y="16" font-size="10">1</text>
+            <text x="45" y="16" font-size="10" letter-spacing="2">榜首常客</text>
+        </g>
+        <circle cx="80" cy="8" r="1.5" fill="#ffffff" opacity="0.9"/>
+        <path d="M5 5 L7 5 M6 4 L6 6" stroke="#ffffff" stroke-width="0.5" opacity="0.8"/>
+    </g>
+
+    <g font-family="Noto Serif SC, SimSun, serif" text-anchor="middle">
+        <g transform="translate(10, 42)">
+            <rect x="0" y="0" width="80" height="12" rx="2" fill="url(#matteRank)" stroke="#b8860b" stroke-width="0.3"/>
+            <text x="10" y="8" font-size="6" fill="#8b4513">4</text>
+            <text x="40" y="8" font-size="6" fill="#333333">挑战者</text>
+        </g>
+        <g transform="translate(10, 56)">
+            <rect x="0" y="0" width="80" height="12" rx="2" fill="url(#matteRank)" stroke="#b8860b" stroke-width="0.3"/>
+            <text x="10" y="8" font-size="6" fill="#8b4513">5</text>
+            <text x="40" y="8" font-size="6" fill="#333333">追随者</text>
+        </g>
+        <g transform="translate(10, 70)">
+            <rect x="0" y="0" width="80" height="12" rx="2" fill="url(#matteRank)" stroke="#b8860b" stroke-width="0.3"/>
+            <text x="10" y="8" font-size="6" fill="#8b4513">6</text>
+            <text x="40" y="8" font-size="6" fill="#333333">新晋书友</text>
+        </g>
+        <g transform="translate(10, 84)">
+            <rect x="0" y="0" width="80" height="12" rx="2" fill="url(#matteRank)" stroke="#b8860b" stroke-width="0.3"/>
+            <text x="10" y="8" font-size="6" fill="#8b4513">7</text>
+            <text x="40" y="8" font-size="6" fill="#333333">默默潜水</text>
+        </g>
+    </g>
 </svg>`
         };
 
@@ -1128,6 +1306,25 @@
                         target: 80,
                         percent: Math.min(100, Math.round(mastery * 100 / 80 * 100))
                     };
+                } else if (badge.type === 'leaderboard') {
+                    const rankData = this.getLeaderboardRank();
+                    const targetRank = badge.targetRank || badge.targetAll || 1;
+                    const currentRank = rankData.rank;
+                    if (badge.targetAll) {
+                        const inTop = (rankData.rank <= targetRank ? 1 : 0) + 
+                            (rankData.time <= targetRank ? 1 : 0) + 
+                            (rankData.accuracy <= targetRank ? 1 : 0);
+                        return {
+                            current: inTop,
+                            target: 3,
+                            percent: Math.round((inTop / 3) * 100)
+                        };
+                    }
+                    return {
+                        current: currentRank <= targetRank ? targetRank : '未上榜',
+                        target: '前' + targetRank + '名',
+                        percent: currentRank <= targetRank ? 100 : 0
+                    };
                 }
                 return { current: 0, target: 1, percent: 0 };
             },
@@ -1171,6 +1368,15 @@
                 return data.unlockedBadges.includes(badgeId);
             },
             
+            getLeaderboardRank() {
+                try {
+                    const data = localStorage.getItem('leaderboard_rank_v1');
+                    return data ? JSON.parse(data) : { rank: 999, time: 999, accuracy: 999 };
+                } catch (e) {
+                    return { rank: 999, time: 999, accuracy: 999 };
+                }
+            },
+            
             checkAndUnlockBadges() {
                 const data = this.getData();
                 const newlyUnlocked = [];
@@ -1192,6 +1398,15 @@
                     } else if (badge.type === 'mastery') {
                         const mastery = this.getCategoryMastery(badge.category);
                         shouldUnlock = mastery >= badge.target;
+                    } else if (badge.type === 'leaderboard') {
+                        const rankData = this.getLeaderboardRank();
+                        if (badge.targetRank) {
+                            shouldUnlock = rankData.rank <= badge.targetRank && rankData.rank > 0;
+                        } else if (badge.targetAll) {
+                            shouldUnlock = rankData.rank <= badge.targetAll && 
+                                rankData.time <= badge.targetAll && 
+                                rankData.accuracy <= badge.targetAll;
+                        }
                     }
                     
                     if (shouldUnlock) {
@@ -1249,6 +1464,7 @@
             const readingBadges = BADGES.filter(b => b.type === 'reading');
             const quizBadges = BADGES.filter(b => b.type === 'quiz');
             const masteryBadges = BADGES.filter(b => b.type === 'mastery');
+            const leaderboardBadges = BADGES.filter(b => b.type === 'leaderboard');
             
             document.getElementById('readingBadges').innerHTML = 
                 readingBadges.map(renderBadgeCard).join('');
@@ -1256,6 +1472,8 @@
                 quizBadges.map(renderBadgeCard).join('');
             document.getElementById('masteryBadges').innerHTML = 
                 masteryBadges.map(renderBadgeCard).join('');
+            document.getElementById('leaderboardBadges').innerHTML = 
+                leaderboardBadges.map(renderBadgeCard).join('');
             
             const data = BadgeManager.getData();
             document.getElementById('unlockedCount').textContent = data.unlockedBadges.length;

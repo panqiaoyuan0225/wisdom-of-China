@@ -121,10 +121,162 @@ app.post('/register', async (req, res) => {
   });
 });
 
+app.post('/sync-stats', async (req, res) => {
+    const { username, totalQuestions, correctAnswers, studyMinutes, masteredCount } = req.body;
+
+    if (!username) {
+        return res.status(400).json({ 
+            success: false, 
+            message: '用户名不能为空' 
+        });
+    }
+
+    if (!supabase) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '数据库未配置' 
+        });
+    }
+
+    const { error } = await supabase
+        .from('users')
+        .update({
+            total_questions: totalQuestions || 0,
+            correct_answers: correctAnswers || 0,
+            study_minutes: studyMinutes || 0,
+            mastered_count: masteredCount || 0,
+            last_sync: new Date().toISOString()
+        })
+        .eq('username', username);
+
+    if (error) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '同步失败: ' + error.message 
+        });
+    }
+
+    res.json({ 
+        success: true, 
+        message: '同步成功' 
+    });
+});
+
+app.get('/leaderboard/rank', async (req, res) => {
+    if (!supabase) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '数据库未配置' 
+        });
+    }
+
+    const { data, error } = await supabase
+        .from('users')
+        .select('username, mastered_count, total_questions, correct_answers')
+        .order('mastered_count', { ascending: false })
+        .limit(50);
+
+    if (error) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '获取排行榜失败' 
+        });
+    }
+
+    const TOTAL_QUESTIONS = 800;
+    const leaderboard = data.map(user => {
+        const masteryPercent = TOTAL_QUESTIONS > 0 
+            ? Math.round((user.mastered_count / TOTAL_QUESTIONS) * 100) 
+            : 0;
+        return {
+            username: user.username,
+            score: masteryPercent,
+            masteredCount: user.mastered_count || 0
+        };
+    });
+
+    res.json({ 
+        success: true, 
+        data: leaderboard 
+    });
+});
+
+app.get('/leaderboard/time', async (req, res) => {
+    if (!supabase) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '数据库未配置' 
+        });
+    }
+
+    const { data, error } = await supabase
+        .from('users')
+        .select('username, study_minutes')
+        .order('study_minutes', { ascending: false })
+        .limit(50);
+
+    if (error) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '获取排行榜失败' 
+        });
+    }
+
+    const leaderboard = data.map(user => ({
+        username: user.username,
+        minutes: user.study_minutes || 0
+    }));
+
+    res.json({ 
+        success: true, 
+        data: leaderboard 
+    });
+});
+
+app.get('/leaderboard/accuracy', async (req, res) => {
+    if (!supabase) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '数据库未配置' 
+        });
+    }
+
+    const { data, error } = await supabase
+        .from('users')
+        .select('username, total_questions, correct_answers')
+        .gte('total_questions', 10)
+        .order('correct_answers', { ascending: false })
+        .limit(50);
+
+    if (error) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '获取排行榜失败' 
+        });
+    }
+
+    const leaderboard = data.map(user => {
+        const accuracy = user.total_questions > 0 
+            ? Math.round((user.correct_answers / user.total_questions) * 100) 
+            : 0;
+        return {
+            username: user.username,
+            accuracy: accuracy,
+            totalQuestions: user.total_questions || 0,
+            correctAnswers: user.correct_answers || 0
+        };
+    }).sort((a, b) => b.accuracy - a.accuracy);
+
+    res.json({ 
+        success: true, 
+        data: leaderboard 
+    });
+});
+
 if (require.main === module) {
-  app.listen(PORT, () => {
-    console.log(`服务器已启动: http://localhost:${PORT}`);
-  });
+    app.listen(PORT, () => {
+        console.log(`服务器已启动: http://localhost:${PORT}`);
+    });
 }
 
 module.exports = app;
