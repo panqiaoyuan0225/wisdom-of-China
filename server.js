@@ -277,6 +277,19 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+app.get('/:page', (req, res) => {
+    const page = req.params.page;
+    if (page.endsWith('.html')) {
+        res.sendFile(path.join(__dirname, page));
+    } else {
+        res.sendFile(path.join(__dirname, page + '.html'));
+    }
+});
+
+app.get('/images/:file', (req, res) => {
+    res.sendFile(path.join(__dirname, 'images', req.params.file));
+});
+
 if (require.main === module) {
     app.listen(PORT, () => {
         console.log(`服务器已启动: http://localhost:${PORT}`);
