@@ -1,30 +1,39 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "rewrites": [
+  "version": 2,
+  "builds": [
     {
-      "source": "/login",
-      "destination": "/api/login"
+      "src": "server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/server.js"
     },
     {
-      "source": "/register",
-      "destination": "/api/register"
+      "src": "/(login|register|sync-stats)",
+      "dest": "/server.js"
     },
     {
-      "source": "/sync-stats",
-      "destination": "/api/sync-stats"
+      "src": "/leaderboard/(.*)",
+      "dest": "/server.js"
     },
     {
-      "source": "/leaderboard/rank",
-      "destination": "/api/leaderboard/rank"
+      "src": "/images/(.*)",
+      "dest": "/images/$1"
     },
     {
-      "source": "/leaderboard/time",
-      "destination": "/api/leaderboard/time"
+      "src": "/(.*)\\.html",
+      "dest": "/$1.html"
     },
     {
-      "source": "/leaderboard/accuracy",
-      "destination": "/api/leaderboard/accuracy"
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
     }
   ]
 }
