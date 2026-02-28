@@ -251,7 +251,14 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
     <script>
+        const SUPABASE_URL = window.SUPABASE_CONFIG.url;
+        const SUPABASE_ANON_KEY = window.SUPABASE_CONFIG.anonKey;
+        const { createClient } = window.supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -278,26 +285,47 @@
             }
 
             try {
-                const response = await fetch('/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, password, username })
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            username: username || email.split('@')[0]
+                        }
+                    }
                 });
 
-                const data = await response.json();
+                if (error) {
+                    if (error.message.includes('already registered')) {
+                        errorMessage.textContent = '该邮箱已注册';
+                    } else {
+                        errorMessage.textContent = error.message || '注册失败';
+                    }
+                    errorMessage.classList.add('show');
+                    return;
+                }
 
-                if (data.success) {
+                if (data.user) {
+                    const displayName = username || email.split('@')[0];
+                    
+                    try {
+                        await supabaseClient
+                            .from('users')
+                            .insert([{
+                                user_id: data.user.id,
+                                email: email,
+                                username: displayName
+                            }]);
+                    } catch (dbError) {
+                        console.log('创建用户记录:', dbError.message);
+                    }
+
                     successMessage.textContent = '注册成功！即将跳转到登录页...';
                     successMessage.classList.add('show');
                     
                     setTimeout(() => {
                         window.location.href = 'index.html';
                     }, 1500);
-                } else {
-                    errorMessage.textContent = data.message || '注册失败';
-                    errorMessage.classList.add('show');
                 }
             } catch (error) {
                 errorMessage.textContent = '网络错误，请稍后重试';

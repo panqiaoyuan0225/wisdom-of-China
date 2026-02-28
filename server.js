@@ -2,14 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const path = require('path');
-const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
-
-const SECRET_KEY = 'honglou-four-classics-2026';
-
-function hashPassword(password) {
-  return crypto.createHmac('sha256', SECRET_KEY).update(password).digest('hex');
-}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,114 +22,13 @@ if (!supabase) {
   console.log('Supabase 已连接');
 }
 
-app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ 
-      success: false, 
-      message: '邮箱和密码不能为空' 
-    });
-  }
-
-  if (!supabase) {
-    return res.status(500).json({ 
-      success: false, 
-      message: '数据库未配置' 
-    });
-  }
-
-  const hashedPassword = hashPassword(password);
-  
-  const { data, error } = await supabase
-    .from('users')
-    .select('id, email, username')
-    .eq('email', email)
-    .eq('password', hashedPassword)
-    .single();
-
-  if (error || !data) {
-    return res.status(401).json({ 
-      success: false, 
-      message: '邮箱或密码错误' 
-    });
-  }
-
-  res.json({ 
-    success: true, 
-    message: '登录成功',
-    user: { id: data.id, email: data.email, username: data.username || email.split('@')[0] }
-  });
-});
-
-app.post('/register', async (req, res) => {
-  const { email, password, username } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ 
-      success: false, 
-      message: '邮箱和密码不能为空' 
-    });
-  }
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    return res.status(400).json({ 
-      success: false, 
-      message: '请输入有效的邮箱地址' 
-    });
-  }
-
-  if (password.length < 6) {
-    return res.status(400).json({ 
-      success: false, 
-      message: '密码长度至少6位' 
-    });
-  }
-
-  if (!supabase) {
-    return res.status(500).json({ 
-      success: false, 
-      message: '数据库未配置' 
-    });
-  }
-
-  const hashedPassword = hashPassword(password);
-  const displayName = username || email.split('@')[0];
-  
-  const { data, error } = await supabase
-    .from('users')
-    .insert([{ email, password: hashedPassword, username: displayName }])
-    .select()
-    .single();
-
-  if (error) {
-    if (error.code === '23505') {
-      return res.status(409).json({ 
-        success: false, 
-        message: '该邮箱已注册' 
-      });
-    }
-    return res.status(500).json({ 
-      success: false, 
-      message: '注册失败: ' + error.message 
-    });
-  }
-
-  res.status(201).json({ 
-    success: true, 
-    message: '注册成功',
-    userId: data.id 
-  });
-});
-
 app.post('/sync-stats', async (req, res) => {
-    const { email, totalQuestions, correctAnswers, studyMinutes, masteredCount } = req.body;
+    const { userId, totalQuestions, correctAnswers, studyMinutes, masteredCount } = req.body;
 
-    if (!email) {
+    if (!userId) {
         return res.status(400).json({ 
             success: false, 
-            message: '邮箱不能为空' 
+            message: '用户ID不能为空' 
         });
     }
 
@@ -156,7 +48,7 @@ app.post('/sync-stats', async (req, res) => {
             mastered_count: masteredCount || 0,
             last_sync: new Date().toISOString()
         })
-        .eq('email', email);
+        .eq('user_id', userId);
 
     if (error) {
         return res.status(500).json({ 

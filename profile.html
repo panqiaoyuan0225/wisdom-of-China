@@ -1465,8 +1465,8 @@
         }
 
         function syncToCloud() {
-            const email = sessionStorage.getItem('userEmail');
-            if (!email) return;
+            const userId = sessionStorage.getItem('userId');
+            if (!userId) return;
             
             const history = ProfileManager.getHistoryData();
             let totalQuestions = 0;
@@ -1487,7 +1487,7 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    email,
+                    userId,
                     totalQuestions,
                     correctAnswers,
                     studyMinutes: timeData.totalMinutes || 0,
