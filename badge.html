@@ -1256,7 +1256,8 @@
             
             getReadingProgress(book) {
                 const data = this.getData();
-                return data.readingProgress[book] || { stage1: false, stage2: false, stage3: false };
+                const progress = data.readingProgress || {};
+                return progress[book] || { stage1: false, stage2: false, stage3: false };
             },
             
             isBookCompleted(book) {
@@ -1274,6 +1275,14 @@
             
             markStageRead(book, stage) {
                 const data = this.getData();
+                if (!data.readingProgress) {
+                    data.readingProgress = {
+                        xiyou: { stage1: false, stage2: false, stage3: false },
+                        sanguo: { stage1: false, stage2: false, stage3: false },
+                        shuihu: { stage1: false, stage2: false, stage3: false },
+                        honglou: { stage1: false, stage2: false, stage3: false }
+                    };
+                }
                 if (!data.readingProgress[book]) {
                     data.readingProgress[book] = { stage1: false, stage2: false, stage3: false };
                 }
