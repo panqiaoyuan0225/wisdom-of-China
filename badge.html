@@ -1194,30 +1194,37 @@
             QUIZ_COUNT_KEY: 'quiz_total_count_v1',
             HISTORY_KEY: 'quiz_history_v1',
             
+            getDefaultData() {
+                return {
+                    unlockedBadges: [],
+                    badgeUnlockTime: {},
+                    readingProgress: {
+                        xiyou: { stage1: false, stage2: false, stage3: false },
+                        sanguo: { stage1: false, stage2: false, stage3: false },
+                        shuihu: { stage1: false, stage2: false, stage3: false },
+                        honglou: { stage1: false, stage2: false, stage3: false }
+                    }
+                };
+            },
+            
             getData() {
+                const defaultData = this.getDefaultData();
                 try {
                     const data = localStorage.getItem(this.STORAGE_KEY);
-                    return data ? JSON.parse(data) : {
-                        unlockedBadges: [],
-                        badgeUnlockTime: {},
+                    if (!data) return defaultData;
+                    const parsed = JSON.parse(data);
+                    return {
+                        unlockedBadges: parsed.unlockedBadges || [],
+                        badgeUnlockTime: parsed.badgeUnlockTime || {},
                         readingProgress: {
-                            xiyou: { stage1: false, stage2: false, stage3: false },
-                            sanguo: { stage1: false, stage2: false, stage3: false },
-                            shuihu: { stage1: false, stage2: false, stage3: false },
-                            honglou: { stage1: false, stage2: false, stage3: false }
+                            xiyou: parsed.readingProgress?.xiyou || { stage1: false, stage2: false, stage3: false },
+                            sanguo: parsed.readingProgress?.sanguo || { stage1: false, stage2: false, stage3: false },
+                            shuihu: parsed.readingProgress?.shuihu || { stage1: false, stage2: false, stage3: false },
+                            honglou: parsed.readingProgress?.honglou || { stage1: false, stage2: false, stage3: false }
                         }
                     };
                 } catch (e) {
-                    return {
-                        unlockedBadges: [],
-                        badgeUnlockTime: {},
-                        readingProgress: {
-                            xiyou: { stage1: false, stage2: false, stage3: false },
-                            sanguo: { stage1: false, stage2: false, stage3: false },
-                            shuihu: { stage1: false, stage2: false, stage3: false },
-                            honglou: { stage1: false, stage2: false, stage3: false }
-                        }
-                    };
+                    return defaultData;
                 }
             },
             
