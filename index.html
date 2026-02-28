@@ -258,10 +258,17 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <script>
+        if (!window.SUPABASE_CONFIG || !window.SUPABASE_CONFIG.url) {
+            document.getElementById('errorMessage').textContent = '配置文件加载失败';
+            document.getElementById('errorMessage').classList.add('show');
+        }
+        
         const SUPABASE_URL = window.SUPABASE_CONFIG.url;
         const SUPABASE_ANON_KEY = window.SUPABASE_CONFIG.anonKey;
         const { createClient } = window.supabase;
         const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        console.log('Supabase 初始化:', SUPABASE_URL ? '成功' : '失败');
 
         function checkLoginStatus() {
             const isLoggedIn = sessionStorage.getItem('isLoggedIn');
@@ -322,11 +329,12 @@
                     window.location.href = 'home.html';
                 }
             } catch (error) {
-                errorMessage.textContent = '网络错误，请稍后重试';
+                console.error('登录错误:', error);
+                errorMessage.textContent = '错误: ' + (error.message || '网络错误');
                 errorMessage.classList.add('show');
                 setTimeout(() => {
                     errorMessage.classList.remove('show');
-                }, 3000);
+                }, 5000);
             }
         });
 
