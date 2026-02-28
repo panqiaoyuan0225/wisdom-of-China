@@ -178,8 +178,14 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.get('/:page', (req, res) => {
+app.get('/:page', (req, res, next) => {
     const page = req.params.page;
+    if (page.endsWith('.js')) {
+        return res.sendFile(path.join(__dirname, page));
+    }
+    if (page.endsWith('.css')) {
+        return res.sendFile(path.join(__dirname, page));
+    }
     if (page.endsWith('.html')) {
         res.sendFile(path.join(__dirname, page));
     } else {
