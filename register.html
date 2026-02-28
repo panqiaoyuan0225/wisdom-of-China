@@ -252,7 +252,12 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-config.js"></script>
+    <script>
+        window.SUPABASE_CONFIG = {
+            url: 'https://icawhplodojtniydplrb.supabase.co',
+            anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImljYXdocGxvZG9qdG5peWRwbHJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2OTc2MzgsImV4cCI6MjA4NzI3MzYzOH0._hzQpBdQ5OjoXv_1ns7BzOmwoDX3tU9wNrRjbivO5xQ'
+        };
+    </script>
     <script>
         const SUPABASE_URL = window.SUPABASE_CONFIG.url;
         const SUPABASE_ANON_KEY = window.SUPABASE_CONFIG.anonKey;
