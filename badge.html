@@ -1433,52 +1433,61 @@
         };
 
         function renderBadgeCard(badge) {
-            const isUnlocked = BadgeManager.isBadgeUnlocked(badge.id);
-            const progress = BadgeManager.getBadgeProgress(badge);
-            const data = BadgeManager.getData();
-            
-            const lockIcon = !isUnlocked ? '<span class="lock-icon">🔒</span>' : '';
-            const unlockTime = isUnlocked && data.badgeUnlockTime[badge.id] 
-                ? `<div class="unlock-time">获得于 ${BadgeManager.formatUnlockTime(data.badgeUnlockTime[badge.id])}</div>` 
-                : '';
-            
-            return `
-                <div class="badge-card ${badge.rarity} ${isUnlocked ? 'unlocked' : 'locked'}">
-                    ${lockIcon}
-                    <div class="badge-icon">${BADGE_ICONS[badge.id]}</div>
-                    <div class="badge-name">${badge.name}</div>
-                    <div class="badge-desc">${badge.desc}</div>
-                    <span class="badge-rarity ${badge.rarity}">${RARITY_NAMES[badge.rarity]}</span>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" style="width: ${progress.percent}%"></div>
+            try {
+                const isUnlocked = BadgeManager.isBadgeUnlocked(badge.id);
+                const progress = BadgeManager.getBadgeProgress(badge);
+                const data = BadgeManager.getData();
+                
+                const lockIcon = !isUnlocked ? '<span class="lock-icon">🔒</span>' : '';
+                const unlockTime = isUnlocked && data.badgeUnlockTime[badge.id] 
+                    ? `<div class="unlock-time">获得于 ${BadgeManager.formatUnlockTime(data.badgeUnlockTime[badge.id])}</div>` 
+                    : '';
+                
+                return `
+                    <div class="badge-card ${badge.rarity} ${isUnlocked ? 'unlocked' : 'locked'}">
+                        ${lockIcon}
+                        <div class="badge-icon">${BADGE_ICONS[badge.id]}</div>
+                        <div class="badge-name">${badge.name}</div>
+                        <div class="badge-desc">${badge.desc}</div>
+                        <span class="badge-rarity ${badge.rarity}">${RARITY_NAMES[badge.rarity]}</span>
+                        <div class="progress-container">
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: ${progress.percent}%"></div>
+                            </div>
+                            <div class="progress-text">${progress.current} / ${progress.target}</div>
                         </div>
-                        <div class="progress-text">${progress.current} / ${progress.target}</div>
+                        ${unlockTime}
                     </div>
-                    ${unlockTime}
-                </div>
-            `;
+                `;
+            } catch (e) {
+                console.error('渲染勋章卡片失败:', badge.id, e);
+                return `<div class="badge-card locked">加载失败</div>`;
+            }
         }
 
         function renderBadges() {
-            const readingBadges = BADGES.filter(b => b.type === 'reading');
-            const quizBadges = BADGES.filter(b => b.type === 'quiz');
-            const masteryBadges = BADGES.filter(b => b.type === 'mastery');
-            const leaderboardBadges = BADGES.filter(b => b.type === 'leaderboard');
-            
-            document.getElementById('readingBadges').innerHTML = 
-                readingBadges.map(renderBadgeCard).join('');
-            document.getElementById('quizBadges').innerHTML = 
-                quizBadges.map(renderBadgeCard).join('');
-            document.getElementById('masteryBadges').innerHTML = 
-                masteryBadges.map(renderBadgeCard).join('');
-            document.getElementById('leaderboardBadges').innerHTML = 
-                leaderboardBadges.map(renderBadgeCard).join('');
-            
-            const data = BadgeManager.getData();
-            document.getElementById('unlockedCount').textContent = data.unlockedBadges.length;
-            document.getElementById('totalQuestions').textContent = BadgeManager.getTotalQuizCount();
-            document.getElementById('readingProgress').textContent = `${BadgeManager.getCompletedBooksCount()}/4`;
+            try {
+                const readingBadges = BADGES.filter(b => b.type === 'reading');
+                const quizBadges = BADGES.filter(b => b.type === 'quiz');
+                const masteryBadges = BADGES.filter(b => b.type === 'mastery');
+                const leaderboardBadges = BADGES.filter(b => b.type === 'leaderboard');
+                
+                document.getElementById('readingBadges').innerHTML = 
+                    readingBadges.map(renderBadgeCard).join('');
+                document.getElementById('quizBadges').innerHTML = 
+                    quizBadges.map(renderBadgeCard).join('');
+                document.getElementById('masteryBadges').innerHTML = 
+                    masteryBadges.map(renderBadgeCard).join('');
+                document.getElementById('leaderboardBadges').innerHTML = 
+                    leaderboardBadges.map(renderBadgeCard).join('');
+                
+                const data = BadgeManager.getData();
+                document.getElementById('unlockedCount').textContent = data.unlockedBadges.length;
+                document.getElementById('totalQuestions').textContent = BadgeManager.getTotalQuizCount();
+                document.getElementById('readingProgress').textContent = `${BadgeManager.getCompletedBooksCount()}/4`;
+            } catch (e) {
+                console.error('渲染勋章失败:', e);
+            }
         }
 
         function showNotification(badge) {
@@ -1528,18 +1537,28 @@
         }
 
         function checkPendingNotification() {
-            const pending = localStorage.getItem('pending_badge_notification');
-            if (pending) {
-                localStorage.removeItem('pending_badge_notification');
-                const badge = BADGES.find(b => b.id === pending);
-                if (badge) {
-                    setTimeout(() => showNotification(badge), 500);
+            try {
+                const pending = localStorage.getItem('pending_badge_notification');
+                if (pending) {
+                    localStorage.removeItem('pending_badge_notification');
+                    const badge = BADGES.find(b => b.id === pending);
+                    if (badge) {
+                        setTimeout(() => showNotification(badge), 500);
+                    }
                 }
+            } catch (e) {
+                console.error('检查通知失败:', e);
             }
         }
 
-        renderBadges();
-        checkPendingNotification();
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                renderBadges();
+                checkPendingNotification();
+            } catch (e) {
+                console.error('初始化失败:', e);
+            }
+        });
     </script>
 </body>
 </html>
