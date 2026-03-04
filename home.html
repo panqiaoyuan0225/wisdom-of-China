@@ -451,11 +451,11 @@
             <form id="feedbackForm" action="https://forminit.com/f/kq5xv541027" method="POST">
                 <div class="feedback-group">
                     <label class="feedback-label">您的邮箱（可选）</label>
-                    <input type="email" class="feedback-input" name="fi-email-contact" placeholder="方便我们回复您">
+                    <input type="email" class="feedback-input" name="contact" placeholder="方便我们回复您">
                 </div>
                 <div class="feedback-group">
                     <label class="feedback-label">反馈内容</label>
-                    <textarea class="feedback-textarea" name="fi-text-message" placeholder="请输入您的反馈或建议..." required></textarea>
+                    <textarea class="feedback-textarea" name="message" placeholder="请输入您的反馈或建议..." required></textarea>
                 </div>
                 <button type="submit" class="feedback-submit" id="feedbackSubmitBtn">提交反馈</button>
             </form>
@@ -568,6 +568,17 @@
             
             const form = document.getElementById('feedbackForm');
             const submitBtn = document.getElementById('feedbackSubmitBtn');
+            const message = form.querySelector('textarea[name="message"]').value.trim();
+            
+            if (!message) {
+                alert('请输入反馈内容');
+                return;
+            }
+            
+            if (message.length < 5) {
+                alert('反馈内容至少需要5个字符');
+                return;
+            }
             
             submitBtn.disabled = true;
             submitBtn.textContent = '提交中...';
