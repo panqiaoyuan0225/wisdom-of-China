@@ -25,6 +25,132 @@
             box-shadow: 5px 0 15px rgba(0,0,0,0.3);
             border-right: 2px solid #8b1a1a;
             z-index: 10;
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1001;
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(180deg, #2d3a3a 0%, #1a2424 100%);
+            border: 2px solid #8b1a1a;
+            border-radius: 8px;
+            cursor: pointer;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .mobile-menu-btn span {
+            display: block;
+            width: 24px;
+            height: 3px;
+            background: #d4af37;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .mobile-menu-btn.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .mobile-menu-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-btn.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar-overlay.show {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: flex;
+            }
+            
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                height: 100vh;
+                z-index: 1000;
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .sidebar-overlay {
+                display: block;
+            }
+            
+            .main-content {
+                padding: 20px 15px !important;
+                padding-top: 70px !important;
+            }
+            
+            .content-box {
+                padding: 25px 20px !important;
+                min-height: auto !important;
+            }
+            
+            h1 {
+                font-size: 1.5rem !important;
+            }
+            
+            h2 {
+                font-size: 1.2rem !important;
+            }
+            
+            p {
+                font-size: 1rem !important;
+            }
+            
+            .back-link {
+                top: 15px !important;
+                right: 15px !important;
+                padding: 6px 12px !important;
+                font-size: 0.9rem !important;
+            }
+            
+            table {
+                font-size: 0.85rem !important;
+            }
+            
+            th, td {
+                padding: 8px !important;
+            }
+            
+            ul, ol {
+                padding-left: 20px !important;
+            }
+            
+            img {
+                max-width: 100% !important;
+                height: auto !important;
+            }
         }
 
         .sidebar h2 {
@@ -153,6 +279,14 @@
 </head>
 <body>
 
+    <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
+
     <div class="sidebar">
         <h2>快意恩仇</h2>
         <div class="nav-item active" onclick="changeTab(this, '壹 · 官逼民反')">壹·官逼民反</div>
@@ -183,6 +317,26 @@
     </div>
 
     <script>
+        function toggleMobileSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const btn = document.getElementById('mobileMenuBtn');
+            
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+            btn.classList.toggle('active');
+        }
+
+        function closeMobileSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const btn = document.getElementById('mobileMenuBtn');
+            
+            sidebar.classList.remove('open');
+            overlay.classList.remove('show');
+            btn.classList.remove('active');
+        }
+
         const contentData = {
 '壹 · 官逼民反': `
                 <p style="line-height: 1.8; text-indent: 2em;">
@@ -571,6 +725,8 @@
             // 匹配键值（兼容侧边栏显示的紧凑格式）
             const dataKey = title.includes('·') ? title : title.replace('·', ' · ');
             body.innerHTML = contentData[dataKey] || `<h2>内容详述</h2><p>关于 ${title} 的考据内容正在整理中...</p>`;
+            
+            closeMobileSidebar();
         }
 
 const heroes = [

@@ -144,9 +144,340 @@
             color: #8b4513;
             font-size: 0.9rem;
         }
+
+        .menu-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .menu-btn {
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: all 0.3s;
+        }
+
+        .menu-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .menu-btn span {
+            width: 5px;
+            height: 5px;
+            background: #333;
+            border-radius: 50%;
+        }
+
+        .menu-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            min-width: 160px;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s;
+        }
+
+        .menu-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .menu-item {
+            display: block;
+            width: 100%;
+            padding: 14px 20px;
+            border: none;
+            background: none;
+            text-align: left;
+            font-size: 1rem;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: "Microsoft YaHei", "SimSun", sans-serif;
+        }
+
+        .menu-item:hover {
+            background: #f5f5dc;
+            color: #8b4513;
+        }
+
+        .menu-item:not(:last-child) {
+            border-bottom: 1px solid #eee;
+        }
+
+        .menu-item.logout {
+            color: #c0392b;
+        }
+
+        .menu-item.logout:hover {
+            background: #fdf2f2;
+            color: #e74c3c;
+        }
+
+        .feedback-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .feedback-modal.show {
+            display: flex;
+        }
+
+        .feedback-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .feedback-title {
+            font-size: 1.5rem;
+            color: #8b4513;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .feedback-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            color: #999;
+            cursor: pointer;
+            border: none;
+            background: none;
+            line-height: 1;
+        }
+
+        .feedback-close:hover {
+            color: #333;
+        }
+
+        .feedback-group {
+            margin-bottom: 20px;
+        }
+
+        .feedback-label {
+            display: block;
+            font-size: 0.95rem;
+            color: #333;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .feedback-input, .feedback-textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: "Microsoft YaHei", sans-serif;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        .feedback-input:focus, .feedback-textarea:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+
+        .feedback-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .feedback-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #d4af37, #f0d78c);
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #5d4037;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .feedback-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .feedback-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .feedback-success {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .feedback-success-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .feedback-success-text {
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        .donate-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .donate-modal.show {
+            display: flex;
+        }
+
+        .donate-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            position: relative;
+            text-align: center;
+        }
+
+        .donate-title {
+            font-size: 1.5rem;
+            color: #8b4513;
+            margin-bottom: 10px;
+        }
+
+        .donate-subtitle {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .donate-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            color: #999;
+            cursor: pointer;
+            border: none;
+            background: none;
+            line-height: 1;
+        }
+
+        .donate-close:hover {
+            color: #333;
+        }
+
+        .donate-qrcode {
+            width: 220px;
+            height: 220px;
+            margin: 0 auto 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .donate-qrcode img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .donate-hint {
+            font-size: 0.9rem;
+            color: #888;
+        }
     </style>
 </head>
 <body>
+    <div class="menu-container">
+        <button class="menu-btn" id="menuBtn" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="menu-dropdown" id="menuDropdown">
+            <button class="menu-item logout" onclick="handleLogout()">退出登录</button>
+            <button class="menu-item" onclick="handleDonate()">赞助开发者</button>
+            <button class="menu-item" onclick="handleFeedback()">反馈与建议</button>
+        </div>
+    </div>
+
+    <div class="feedback-modal" id="feedbackModal">
+        <div class="feedback-content">
+            <button class="feedback-close" onclick="closeFeedbackModal()">&times;</button>
+            <h2 class="feedback-title">反馈与建议</h2>
+            <form id="feedbackForm" action="https://forminit.com/f/kq5xv541027" method="POST">
+                <div class="feedback-group">
+                    <label class="feedback-label">您的邮箱（可选）</label>
+                    <input type="email" class="feedback-input" name="fi-email-contact" placeholder="方便我们回复您">
+                </div>
+                <div class="feedback-group">
+                    <label class="feedback-label">反馈内容</label>
+                    <textarea class="feedback-textarea" name="fi-text-message" placeholder="请输入您的反馈或建议..." required></textarea>
+                </div>
+                <button type="submit" class="feedback-submit" id="feedbackSubmitBtn">提交反馈</button>
+            </form>
+            <div class="feedback-success" id="feedbackSuccess" style="display: none;">
+                <div class="feedback-success-icon">✅</div>
+                <div class="feedback-success-text">感谢您的反馈！</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="donate-modal" id="donateModal">
+        <div class="donate-content">
+            <button class="donate-close" onclick="closeDonateModal()">&times;</button>
+            <h2 class="donate-title">☕ 赞助开发者</h2>
+            <p class="donate-subtitle">感谢您的支持，让项目持续发展</p>
+            <div class="donate-qrcode">
+                <img src="images/zanzhuma.jpg" alt="赞助二维码">
+            </div>
+            <p class="donate-hint">扫码支持开发者</p>
+        </div>
+    </div>
+
     <h1>四大名著经典学习网</h1>
     <a href="level.html" class="rank-badge" id="rankBadge">
         <div class="rank-badge-icon" id="rankBadgeIcon"></div>
@@ -181,6 +512,93 @@
     </div>
 
     <script>
+        function toggleMenu() {
+            const dropdown = document.getElementById('menuDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        document.addEventListener('click', function(event) {
+            const menuContainer = document.querySelector('.menu-container');
+            const dropdown = document.getElementById('menuDropdown');
+            if (!menuContainer.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        function handleLogout() {
+            if (confirm('确定要退出登录吗？')) {
+                sessionStorage.removeItem('isLoggedIn');
+                sessionStorage.removeItem('currentUser');
+                sessionStorage.removeItem('userId');
+                window.location.href = 'index.html';
+            }
+        }
+
+        function handleDonate() {
+            document.getElementById('donateModal').classList.add('show');
+            document.getElementById('menuDropdown').classList.remove('show');
+        }
+
+        function closeDonateModal() {
+            document.getElementById('donateModal').classList.remove('show');
+        }
+
+        document.getElementById('donateModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDonateModal();
+            }
+        });
+
+        function handleFeedback() {
+            document.getElementById('feedbackModal').classList.add('show');
+            document.getElementById('menuDropdown').classList.remove('show');
+        }
+
+        function closeFeedbackModal() {
+            document.getElementById('feedbackModal').classList.remove('show');
+            document.getElementById('feedbackForm').reset();
+            document.getElementById('feedbackForm').style.display = 'block';
+            document.getElementById('feedbackSuccess').style.display = 'none';
+            document.getElementById('feedbackSubmitBtn').disabled = false;
+            document.getElementById('feedbackSubmitBtn').textContent = '提交反馈';
+        }
+
+        async function submitFeedback(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('feedbackForm');
+            const submitBtn = document.getElementById('feedbackSubmitBtn');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = '提交中...';
+            
+            try {
+                const formData = new FormData(form);
+                
+                const response = await fetch('https://forminit.com/f/kq5xv541027', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    form.style.display = 'none';
+                    document.getElementById('feedbackSuccess').style.display = 'block';
+                } else {
+                    throw new Error('提交失败');
+                }
+            } catch (error) {
+                alert('提交失败，请稍后重试');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '提交反馈';
+            }
+        }
+
+        document.getElementById('feedbackModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeFeedbackModal();
+            }
+        });
+
         const RANKS = [
             { name: '蒙童', icon: 'mengtong', color: '#7CB342', stages: [5, 10, 15] },
             { name: '书生', icon: 'shusheng', color: '#5C6BC0', stages: [20, 28, 36] },

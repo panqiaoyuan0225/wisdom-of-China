@@ -301,24 +301,6 @@
             text-align: right;
         }
 
-        .logout-btn {
-            max-width: 800px;
-            margin: 0 auto 30px;
-            padding: 15px;
-            background: #c0392b;
-            color: #fff;
-            border: none;
-            border-radius: 15px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .logout-btn:hover {
-            background: #e74c3c;
-            transform: translateY(-2px);
-        }
-
         @media (max-width: 600px) {
             .profile-header {
                 flex-direction: column;
@@ -448,8 +430,6 @@
             </div>
         </div>
     </div>
-
-    <button class="logout-btn" id="logoutBtn" onclick="handleLogout()">退出登录</button>
 
     <script>
         const PROFILE_STORAGE_KEY = 'user_profile_v1';
