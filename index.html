@@ -228,6 +228,8 @@
         <div class="error-message" id="errorMessage">
             邮箱或密码错误，请重试
         </div>
+        <div class="success-message" id="successMessage" style="background: #f1f8e9; border: 1px solid #c5e1a5; color: #33691e; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; display: none; text-align: center;">
+        </div>
 
         <form id="loginForm">
             <div class="form-group">
@@ -279,6 +281,8 @@
             const isLoggedIn = sessionStorage.getItem('isLoggedIn');
             const rememberedUser = localStorage.getItem('rememberedUser');
             
+            checkEmailConfirmation();
+            
             if (isLoggedIn === 'true') {
                 window.location.href = 'home.html';
                 return;
@@ -287,6 +291,40 @@
             if (rememberedUser) {
                 document.getElementById('email').value = rememberedUser;
                 document.getElementById('rememberMe').checked = true;
+            }
+        }
+
+        async function checkEmailConfirmation() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const successMessage = document.getElementById('successMessage');
+            
+            if (urlParams.get('confirmed') === 'true') {
+                successMessage.textContent = '邮箱确认成功！请登录您的账号';
+                successMessage.style.display = 'block';
+                window.history.replaceState({}, document.title, window.location.pathname);
+                return;
+            }
+
+            const accessToken = urlParams.get('access_token');
+            const refreshToken = urlParams.get('refresh_token');
+            const type = urlParams.get('type');
+            
+            if (accessToken && type === 'signup') {
+                try {
+                    const { data, error } = await supabaseClient.auth.setSession({
+                        access_token: accessToken,
+                        refresh_token: refreshToken
+                    });
+                    
+                    if (!error) {
+                        successMessage.textContent = '邮箱确认成功！请登录您的账号';
+                        successMessage.style.display = 'block';
+                    }
+                } catch (e) {
+                    console.log('会话设置:', e.message);
+                }
+                
+                window.history.replaceState({}, document.title, window.location.pathname);
             }
         }
 

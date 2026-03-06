@@ -294,6 +294,7 @@
                     email: email,
                     password: password,
                     options: {
+                        emailRedirectTo: window.location.origin + '/index.html',
                         data: {
                             username: username || email.split('@')[0]
                         }
