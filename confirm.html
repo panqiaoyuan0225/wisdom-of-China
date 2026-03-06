@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>邮箱确认 - 四大名著经典学习网</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "SimSun", sans-serif;
+            background: linear-gradient(135deg, #f5f5dc 0%, #e8e4c9 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .confirm-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(139, 69, 19, 0.15);
+            padding: 50px 40px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .confirm-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #8b4513, #d4af37, #8b4513);
+        }
+
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .icon.success {
+            animation: bounce 0.5s ease;
+        }
+
+        .icon.loading {
+            animation: spin 1s linear infinite;
+        }
+
+        .icon.error {
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        h1 {
+            color: #8b4513;
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+        }
+
+        p {
+            color: #666;
+            font-size: 1rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .login-btn {
+            display: inline-block;
+            padding: 15px 50px;
+            background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
+        }
+
+        .countdown {
+            color: #999;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        .countdown span {
+            color: #8b4513;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="confirm-container">
+        <div class="icon loading" id="icon">⏳</div>
+        <h1 id="title">正在确认邮箱...</h1>
+        <p id="message">请稍候，正在验证您的邮箱地址</p>
+        <div id="action" style="display: none;">
+            <a href="index.html" class="login-btn">立即登录</a>
+            <p class="countdown"><span id="countdown">5</span> 秒后自动跳转</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        window.SUPABASE_CONFIG = {
+            url: 'https://icawhplodojtniydplrb.supabase.co',
+            anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImljYXdocGxvZG9qdG5peWRwbHJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2OTc2MzgsImV4cCI6MjA4NzI3MzYzOH0._hzQpBdQ5OjoXv_1ns7BzOmwoDX3tU9wNrRjbivO5xQ'
+        };
+
+        const SUPABASE_URL = window.SUPABASE_CONFIG.url;
+        const SUPABASE_ANON_KEY = window.SUPABASE_CONFIG.anonKey;
+        const { createClient } = window.supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const icon = document.getElementById('icon');
+        const title = document.getElementById('title');
+        const message = document.getElementById('message');
+        const action = document.getElementById('action');
+        const countdownEl = document.getElementById('countdown');
+
+        async function confirmEmail() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token_hash = urlParams.get('token_hash');
+            const type = urlParams.get('type');
+            const access_token = urlParams.get('access_token');
+            const refresh_token = urlParams.get('refresh_token');
+
+            try {
+                if (token_hash && type === 'signup') {
+                    const { error } = await supabaseClient.auth.verifyOtp({
+                        token_hash: token_hash,
+                        type: 'signup'
+                    });
+
+                    if (error) throw error;
+                    showSuccess();
+                } else if (access_token && refresh_token) {
+                    const { error } = await supabaseClient.auth.setSession({
+                        access_token: access_token,
+                        refresh_token: refresh_token
+                    });
+
+                    if (error) throw error;
+                    showSuccess();
+                } else {
+                    showError('无效的确认链接');
+                }
+            } catch (error) {
+                console.error('确认错误:', error);
+                showError(error.message || '确认失败，请重试');
+            }
+        }
+
+        function showSuccess() {
+            icon.textContent = '✅';
+            icon.className = 'icon success';
+            title.textContent = '邮箱确认成功！';
+            message.textContent = '您的邮箱已成功验证，现在可以登录您的账号了。';
+            action.style.display = 'block';
+            startCountdown();
+        }
+
+        function showError(errorMsg) {
+            icon.textContent = '❌';
+            icon.className = 'icon error';
+            title.textContent = '确认失败';
+            message.textContent = errorMsg;
+            action.innerHTML = '<a href="index.html" class="login-btn">返回登录</a>';
+            action.style.display = 'block';
+        }
+
+        function startCountdown() {
+            let seconds = 5;
+            const timer = setInterval(() => {
+                seconds--;
+                countdownEl.textContent = seconds;
+                if (seconds <= 0) {
+                    clearInterval(timer);
+                    window.location.href = 'index.html';
+                }
+            }, 1000);
+        }
+
+        confirmEmail();
+    </script>
+</body>
+</html>
