@@ -2318,8 +2318,9 @@
             },
             
             syncToCloud() {
+                const userId = sessionStorage.getItem('userId');
                 const username = sessionStorage.getItem('currentUser');
-                if (!username) return;
+                if (!userId && !username) return;
                 
                 const history = this.getAll();
                 let totalQuestions = 0;
@@ -2340,6 +2341,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
+                        userId,
                         username,
                         totalQuestions,
                         correctAnswers,
@@ -2347,6 +2349,125 @@
                         masteredCount
                     })
                 }).catch(err => console.error('同步失败:', err));
+                
+                this.syncQuizDataToCloud();
+            },
+            
+            syncQuizDataToCloud() {
+                const userId = sessionStorage.getItem('userId');
+                const username = sessionStorage.getItem('currentUser');
+                if (!userId && !username) return;
+                
+                const quizData = {
+                    history: this.getAll(),
+                    wrongBook: WrongBookManager.getAll(),
+                    categoryStats: JSON.parse(localStorage.getItem('category_stats_v1') || '{}'),
+                    mastery: JSON.parse(localStorage.getItem('category_mastery_v1') || '{}'),
+                    browsingTime: JSON.parse(localStorage.getItem('browsing_time_v1') || '{"totalMinutes":0}'),
+                    badgeData: JSON.parse(localStorage.getItem('badge_data_v1') || '{}'),
+                    syncTime: Date.now()
+                };
+                
+                fetch('/sync-quiz-data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId,
+                        username,
+                        quizData
+                    })
+                }).catch(err => console.error('同步答题数据失败:', err));
+            },
+            
+            async loadQuizDataFromCloud() {
+                const userId = sessionStorage.getItem('userId');
+                const username = sessionStorage.getItem('currentUser');
+                if (!userId && !username) return false;
+                
+                try {
+                    const response = await fetch(`/load-quiz-data?userId=${userId || ''}&username=${encodeURIComponent(username || '')}`);
+                    const result = await response.json();
+                    
+                    if (result.success && result.data) {
+                        const cloudData = result.data;
+                        const localHistory = this.getAll();
+                        
+                        if (cloudData.history) {
+                            const mergedHistory = this.mergeHistory(localHistory, cloudData.history);
+                            this.save(mergedHistory);
+                        }
+                        
+                        if (cloudData.wrongBook) {
+                            const localWrongBook = WrongBookManager.getAll();
+                            const mergedWrongBook = this.mergeWrongBook(localWrongBook, cloudData.wrongBook);
+                            WrongBookManager.save(mergedWrongBook);
+                        }
+                        
+                        if (cloudData.categoryStats) {
+                            localStorage.setItem('category_stats_v1', JSON.stringify(cloudData.categoryStats));
+                        }
+                        
+                        if (cloudData.mastery) {
+                            localStorage.setItem('category_mastery_v1', JSON.stringify(cloudData.mastery));
+                        }
+                        
+                        if (cloudData.browsingTime) {
+                            const localTime = JSON.parse(localStorage.getItem('browsing_time_v1') || '{"totalMinutes":0}');
+                            const mergedTime = {
+                                totalMinutes: Math.max(localTime.totalMinutes || 0, cloudData.browsingTime.totalMinutes || 0)
+                            };
+                            localStorage.setItem('browsing_time_v1', JSON.stringify(mergedTime));
+                        }
+                        
+                        if (cloudData.badgeData) {
+                            localStorage.setItem('badge_data_v1', JSON.stringify(cloudData.badgeData));
+                        }
+                        
+                        console.log('云端数据加载成功');
+                        return true;
+                    }
+                } catch (err) {
+                    console.error('加载云端数据失败:', err);
+                }
+                return false;
+            },
+            
+            mergeHistory(local, cloud) {
+                const merged = { ...cloud };
+                
+                for (const [id, localItem] of Object.entries(local)) {
+                    if (!merged[id]) {
+                        merged[id] = localItem;
+                    } else {
+                        merged[id] = {
+                            totalAttempts: Math.max(localItem.totalAttempts || 0, merged[id].totalAttempts || 0),
+                            correctCount: Math.max(localItem.correctCount || 0, merged[id].correctCount || 0),
+                            wrongCount: Math.max(localItem.wrongCount || 0, merged[id].wrongCount || 0),
+                            lastAttemptTime: Math.max(localItem.lastAttemptTime || 0, merged[id].lastAttemptTime || 0)
+                        };
+                    }
+                }
+                
+                return merged;
+            },
+            
+            mergeWrongBook(local, cloud) {
+                const merged = [...cloud];
+                const cloudIds = new Set(cloud.map(item => item.id));
+                
+                for (const localItem of local) {
+                    if (!cloudIds.has(localItem.id)) {
+                        merged.push(localItem);
+                    } else {
+                        const cloudIndex = merged.findIndex(item => item.id === localItem.id);
+                        if (cloudIndex >= 0) {
+                            merged[cloudIndex].count = Math.max(localItem.count || 1, merged[cloudIndex].count || 1);
+                            merged[cloudIndex].timestamp = Math.max(localItem.timestamp || 0, merged[cloudIndex].timestamp || 0);
+                        }
+                    }
+                }
+                
+                return merged;
             },
             
             getHistory(question) {
@@ -3237,7 +3358,19 @@
             }
         }
 
-        updateHistoryStats();
+        async function initQuizPage() {
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
+            const userId = sessionStorage.getItem('userId');
+            const username = sessionStorage.getItem('currentUser');
+            
+            if (isLoggedIn && (userId || username)) {
+                await QuestionHistoryManager.loadQuizDataFromCloud();
+            }
+            
+            updateHistoryStats();
+        }
+
+        initQuizPage();
     </script>
 </body>
 </html>

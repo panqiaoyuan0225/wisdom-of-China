@@ -77,11 +77,13 @@ body {
     background: rgba(0, 0, 0, 0.5);
     z-index: 999;
     opacity: 0;
+    pointer-events: none;
     transition: opacity 0.3s;
 }
 
 .sidebar-overlay.show {
     opacity: 1;
+    pointer-events: auto;
 }
 
 @media (max-width: 768px) {
@@ -979,7 +981,6 @@ function changeTab(element, title) {
 
 window.onload = function() {
     changeTab(document.querySelector('.nav-item'), '壹 · 石猴出世');
-    updateCompleteButton();
 };
 
 const BadgeManager = {
@@ -1022,6 +1023,9 @@ const BadgeManager = {
     
     isStageRead(book, stage) {
         const data = this.getData();
+        if (!data.readingProgress) {
+            return false;
+        }
         return data.readingProgress[book] && data.readingProgress[book]['stage' + stage];
     },
     
