@@ -1348,13 +1348,65 @@
             }
         }
 
+        let cloudStats = null;
+
+        async function init() {
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+            if (isLoggedIn !== 'true') {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const profileData = ProfileManager.getProfileData();
+            const currentUser = sessionStorage.getItem('currentUser');
+            const userId = sessionStorage.getItem('userId');
+            
+            displayAvatar(profileData.avatar);
+            document.getElementById('usernameDisplay').textContent = currentUser || profileData.username;
+            
+            if (userId) {
+                await loadFromCloud(userId);
+            }
+            
+            renderStats();
+            renderRank();
+            renderBadges();
+            renderReadingProgress();
+        }
+
+        async function loadFromCloud(userId) {
+            try {
+                const response = await fetch(`/load-user-stats?userId=${userId}`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success && result.data) {
+                        cloudStats = result.data;
+                    }
+                }
+            } catch (err) {
+                console.error('从云端加载数据失败:', err);
+            }
+        }
+
         function renderStats() {
-            const quizStats = ProfileManager.getTotalQuizCount();
-            const accuracy = quizStats.total > 0 
-                ? Math.round((quizStats.correct / quizStats.total) * 100) 
+            let totalQuestions, correctAnswers, studyMinutes;
+            
+            if (cloudStats) {
+                totalQuestions = cloudStats.total_questions || 0;
+                correctAnswers = cloudStats.correct_answers || 0;
+                studyMinutes = cloudStats.study_minutes || 0;
+            } else {
+                const quizStats = ProfileManager.getTotalQuizCount();
+                totalQuestions = quizStats.total;
+                correctAnswers = quizStats.correct;
+                studyMinutes = ProfileManager.updateBrowsingTime();
+            }
+            
+            const accuracy = totalQuestions > 0 
+                ? Math.round((correctAnswers / totalQuestions) * 100) 
                 : 0;
             
-            document.getElementById('totalQuestions').textContent = quizStats.total;
+            document.getElementById('totalQuestions').textContent = totalQuestions;
             document.getElementById('accuracy').textContent = accuracy + '%';
             
             const badgeData = ProfileManager.getBadgeData();
@@ -1363,18 +1415,53 @@
             const readingProgress = ProfileManager.getReadingProgress();
             document.getElementById('booksCompleted').textContent = readingProgress.completed + '/4';
             
-            const totalMinutes = ProfileManager.updateBrowsingTime();
-            if (totalMinutes >= 60) {
-                const hours = Math.floor(totalMinutes / 60);
-                const mins = totalMinutes % 60;
+            if (studyMinutes >= 60) {
+                const hours = Math.floor(studyMinutes / 60);
+                const mins = studyMinutes % 60;
                 document.getElementById('totalTime').textContent = hours + '小时' + (mins > 0 ? mins + '分' : '');
             } else {
-                document.getElementById('totalTime').textContent = totalMinutes + '分钟';
+                document.getElementById('totalTime').textContent = studyMinutes + '分钟';
             }
         }
 
         function renderRank() {
-            const rankInfo = ProfileManager.getRank();
+            let masteredCount;
+            
+            if (cloudStats && cloudStats.mastered_count !== undefined) {
+                masteredCount = cloudStats.mastered_count;
+            } else {
+                const history = ProfileManager.getHistoryData();
+                masteredCount = 0;
+                Object.values(history).forEach(item => {
+                    if (item.totalAttempts > 0 && (item.correctCount / item.totalAttempts) >= 0.8) {
+                        masteredCount++;
+                    }
+                });
+            }
+            
+            const TOTAL_QUESTIONS = 800;
+            const percent = Math.round((masteredCount / TOTAL_QUESTIONS) * 100);
+            
+            let rankInfo = null;
+            for (let i = RANKS.length - 1; i >= 0; i--) {
+                const rank = RANKS[i];
+                for (let j = rank.stages.length - 1; j >= 0; j--) {
+                    if (percent >= rank.stages[j]) {
+                        rankInfo = {
+                            rank: rank,
+                            stageIndex: j,
+                            stageLabel: ['Ⅰ', 'Ⅱ', 'Ⅲ'][j] || ''
+                        };
+                        break;
+                    }
+                }
+                if (rankInfo) break;
+            }
+            
+            if (!rankInfo) {
+                rankInfo = { rank: RANKS[0], stageIndex: -1, stageLabel: '' };
+            }
+            
             const rankName = rankInfo.rank.name + (rankInfo.stageLabel ? ' ' + rankInfo.stageLabel : '');
             
             document.getElementById('rankIcon').innerHTML = RANK_ICONS[rankInfo.rank.icon];
@@ -1414,34 +1501,6 @@
                 document.getElementById(book + 'Progress').style.width = progress.percent + '%';
                 document.getElementById(book + 'Status').textContent = progress.completed ? '已完成' : progress.stages + '/3';
             });
-        }
-
-        function handleLogout() {
-            if (confirm('确定要退出登录吗？')) {
-                sessionStorage.removeItem('isLoggedIn');
-                sessionStorage.removeItem('currentUser');
-                window.location.href = 'index.html';
-            }
-        }
-
-        function init() {
-            const isLoggedIn = sessionStorage.getItem('isLoggedIn');
-            if (isLoggedIn !== 'true') {
-                window.location.href = 'index.html';
-                return;
-            }
-
-            const profileData = ProfileManager.getProfileData();
-            const currentUser = sessionStorage.getItem('currentUser');
-            
-            displayAvatar(profileData.avatar);
-            document.getElementById('usernameDisplay').textContent = currentUser || profileData.username;
-            
-            renderStats();
-            renderRank();
-            renderBadges();
-            renderReadingProgress();
-            syncToCloud();
         }
 
         function syncToCloud() {

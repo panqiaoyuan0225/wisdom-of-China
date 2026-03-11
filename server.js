@@ -189,6 +189,65 @@ app.get('/load-quiz-data', async (req, res) => {
     });
 });
 
+app.get('/load-user-stats', async (req, res) => {
+    const { userId, username } = req.query;
+
+    if (!userId && !username) {
+        return res.status(400).json({ 
+            success: false, 
+            message: '用户ID或用户名不能为空' 
+        });
+    }
+
+    if (!supabase) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '数据库未配置' 
+        });
+    }
+
+    let targetUserId = userId;
+    if (!targetUserId && username) {
+        const { data: user, error: findError } = await supabase
+            .from('users')
+            .select('user_id')
+            .eq('username', username)
+            .single();
+        
+        if (findError || !user) {
+            return res.status(404).json({ 
+                success: false, 
+                message: '用户不存在' 
+            });
+        }
+        targetUserId = user.user_id;
+    }
+
+    const { data, error } = await supabase
+        .from('users')
+        .select('total_questions, correct_answers, study_minutes, mastered_count, last_sync')
+        .eq('user_id', targetUserId)
+        .single();
+
+    if (error) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '加载失败: ' + error.message 
+        });
+    }
+
+    res.json({ 
+        success: true, 
+        data: {
+            total_questions: data?.total_questions || 0,
+            correct_answers: data?.correct_answers || 0,
+            study_minutes: data?.study_minutes || 0,
+            mastered_count: data?.mastered_count || 0,
+            last_sync: data?.last_sync || null
+        }
+    });
+});
+
 app.get('/leaderboard/rank', async (req, res) => {
     if (!supabase) {
         return res.status(500).json({ 
