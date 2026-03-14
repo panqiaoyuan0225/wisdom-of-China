@@ -85,11 +85,11 @@
         p {
             color: #666;
             font-size: 1rem;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             line-height: 1.6;
         }
 
-        .login-btn {
+        .btn {
             display: inline-block;
             padding: 15px 50px;
             background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
@@ -100,11 +100,24 @@
             font-weight: bold;
             transition: all 0.3s;
             box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
+            border: none;
+            cursor: pointer;
+            margin: 5px;
         }
 
-        .login-btn:hover {
+        .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
         }
 
         .countdown {
@@ -117,6 +130,65 @@
             color: #8b4513;
             font-weight: bold;
         }
+
+        .error-tips {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+            font-size: 0.9rem;
+            color: #856404;
+        }
+
+        .error-tips h3 {
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .error-tips ul {
+            margin-left: 20px;
+        }
+
+        .error-tips li {
+            margin: 5px 0;
+        }
+
+        .resend-form {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .resend-form input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+        }
+
+        .resend-form input:focus {
+            outline: none;
+            border-color: #8b4513;
+        }
+
+        .resend-form .btn {
+            width: 100%;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .loading-text {
+            color: #8b4513;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -124,9 +196,25 @@
         <div class="icon loading" id="icon">⏳</div>
         <h1 id="title">正在确认邮箱...</h1>
         <p id="message">请稍候，正在验证您的邮箱地址</p>
-        <div id="action" style="display: none;">
-            <a href="index.html" class="login-btn">立即登录</a>
+        
+        <div id="success-action" class="hidden">
+            <a href="index.html" class="btn">立即登录</a>
             <p class="countdown"><span id="countdown">5</span> 秒后自动跳转</p>
+        </div>
+
+        <div id="error-action" class="hidden">
+            <div class="error-tips" id="error-tips">
+                <h3>💡 可能的原因：</h3>
+                <ul id="error-reasons"></ul>
+            </div>
+            <button class="btn" id="retry-btn" onclick="retryConfirm()">重试确认</button>
+            <button class="btn btn-secondary" onclick="toggleResendForm()">重新发送确认邮件</button>
+            
+            <div class="resend-form hidden" id="resend-form">
+                <input type="email" id="resend-email" placeholder="请输入您的邮箱地址">
+                <button class="btn" id="resend-btn" onclick="resendConfirmation()">发送确认邮件</button>
+                <p class="loading-text hidden" id="resend-loading">正在发送...</p>
+            </div>
         </div>
     </div>
 
@@ -145,11 +233,69 @@
         const icon = document.getElementById('icon');
         const title = document.getElementById('title');
         const message = document.getElementById('message');
-        const action = document.getElementById('action');
+        const successAction = document.getElementById('success-action');
+        const errorAction = document.getElementById('error-action');
+        const errorTips = document.getElementById('error-tips');
+        const errorReasons = document.getElementById('error-reasons');
         const countdownEl = document.getElementById('countdown');
+        const resendForm = document.getElementById('resend-form');
+        const resendEmail = document.getElementById('resend-email');
+        const resendLoading = document.getElementById('resend-loading');
+        const retryBtn = document.getElementById('retry-btn');
+
+        let lastError = null;
+        let urlParams = null;
+
+        function getErrorType(error) {
+            const errorMsg = error?.message?.toLowerCase() || '';
+            const errorCode = error?.code || '';
+            
+            if (errorMsg.includes('expired') || errorCode === 'otp_expired') {
+                return {
+                    type: 'expired',
+                    title: '链接已过期',
+                    message: '确认链接已过期，请重新发送确认邮件。',
+                    reasons: ['确认链接有效期为24小时', '链接可能已超过有效期']
+                };
+            }
+            
+            if (errorMsg.includes('invalid') || errorMsg.includes('token') || errorCode === 'invalid_token') {
+                return {
+                    type: 'invalid',
+                    title: '链接无效',
+                    message: '确认链接无效，请检查链接是否完整。',
+                    reasons: ['链接可能被截断或损坏', '请确保完整复制了链接', '链接可能已被使用过']
+                };
+            }
+            
+            if (errorMsg.includes('already') || errorMsg.includes('confirmed')) {
+                return {
+                    type: 'already_confirmed',
+                    title: '邮箱已确认',
+                    message: '您的邮箱已经确认过了，可以直接登录。',
+                    reasons: ['此邮箱已完成验证']
+                };
+            }
+
+            if (errorMsg.includes('network') || errorMsg.includes('fetch')) {
+                return {
+                    type: 'network',
+                    title: '网络错误',
+                    message: '网络连接失败，请检查网络后重试。',
+                    reasons: ['网络连接不稳定', '服务器暂时无法访问']
+                };
+            }
+            
+            return {
+                type: 'unknown',
+                title: '确认失败',
+                message: error?.message || '确认过程中出现错误，请重试。',
+                reasons: ['未知错误，请稍后重试', '如问题持续，请联系客服']
+            };
+        }
 
         async function confirmEmail() {
-            const urlParams = new URLSearchParams(window.location.search);
+            urlParams = new URLSearchParams(window.location.search);
             const token_hash = urlParams.get('token_hash');
             const type = urlParams.get('type');
             const access_token = urlParams.get('access_token');
@@ -173,11 +319,56 @@
                     if (error) throw error;
                     showSuccess();
                 } else {
-                    showError('无效的确认链接');
+                    const error = new Error('无效的确认链接');
+                    error.type = 'invalid_link';
+                    throw error;
                 }
             } catch (error) {
                 console.error('确认错误:', error);
-                showError(error.message || '确认失败，请重试');
+                lastError = error;
+                showError(error);
+            }
+        }
+
+        async function retryConfirm() {
+            retryBtn.disabled = true;
+            retryBtn.textContent = '正在重试...';
+            
+            icon.textContent = '⏳';
+            icon.className = 'icon loading';
+            title.textContent = '正在重试...';
+            message.textContent = '请稍候';
+            errorAction.classList.add('hidden');
+
+            try {
+                const token_hash = urlParams.get('token_hash');
+                const type = urlParams.get('type');
+                const access_token = urlParams.get('access_token');
+                const refresh_token = urlParams.get('refresh_token');
+
+                if (token_hash && type === 'signup') {
+                    const { error } = await supabaseClient.auth.verifyOtp({
+                        token_hash: token_hash,
+                        type: 'signup'
+                    });
+                    if (error) throw error;
+                    showSuccess();
+                } else if (access_token && refresh_token) {
+                    const { error } = await supabaseClient.auth.setSession({
+                        access_token: access_token,
+                        refresh_token: refresh_token
+                    });
+                    if (error) throw error;
+                    showSuccess();
+                } else {
+                    throw new Error('无效的确认链接');
+                }
+            } catch (error) {
+                console.error('重试错误:', error);
+                showError(error);
+            } finally {
+                retryBtn.disabled = false;
+                retryBtn.textContent = '重试确认';
             }
         }
 
@@ -186,17 +377,81 @@
             icon.className = 'icon success';
             title.textContent = '邮箱确认成功！';
             message.textContent = '您的邮箱已成功验证，现在可以登录您的账号了。';
-            action.style.display = 'block';
+            successAction.classList.remove('hidden');
+            errorAction.classList.add('hidden');
             startCountdown();
         }
 
-        function showError(errorMsg) {
+        function showError(error) {
+            const errorInfo = getErrorType(error);
+            
             icon.textContent = '❌';
             icon.className = 'icon error';
-            title.textContent = '确认失败';
-            message.textContent = errorMsg;
-            action.innerHTML = '<a href="index.html" class="login-btn">返回登录</a>';
-            action.style.display = 'block';
+            title.textContent = errorInfo.title;
+            message.textContent = errorInfo.message;
+            
+            errorReasons.innerHTML = errorInfo.reasons.map(r => `<li>${r}</li>`).join('');
+            
+            if (errorInfo.type === 'already_confirmed') {
+                errorTips.classList.add('hidden');
+                retryBtn.classList.add('hidden');
+            } else {
+                errorTips.classList.remove('hidden');
+                retryBtn.classList.remove('hidden');
+            }
+            
+            successAction.classList.add('hidden');
+            errorAction.classList.remove('hidden');
+        }
+
+        function toggleResendForm() {
+            resendForm.classList.toggle('hidden');
+            if (!resendForm.classList.contains('hidden')) {
+                resendEmail.focus();
+            }
+        }
+
+        async function resendConfirmation() {
+            const email = resendEmail.value.trim();
+            
+            if (!email) {
+                alert('请输入邮箱地址');
+                return;
+            }
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                alert('请输入有效的邮箱地址');
+                return;
+            }
+
+            const resendBtn = document.getElementById('resend-btn');
+            resendBtn.disabled = true;
+            resendBtn.textContent = '发送中...';
+            resendLoading.classList.remove('hidden');
+
+            try {
+                const { error } = await supabaseClient.auth.resend({
+                    type: 'signup',
+                    email: email
+                });
+
+                if (error) throw error;
+
+                icon.textContent = '📧';
+                icon.className = 'icon success';
+                title.textContent = '邮件已发送！';
+                message.textContent = `确认邮件已发送至 ${email}，请查收邮件并点击确认链接。`;
+                errorAction.classList.add('hidden');
+                resendForm.classList.add('hidden');
+                
+            } catch (error) {
+                console.error('重发邮件错误:', error);
+                alert('发送失败：' + (error.message || '请稍后重试'));
+            } finally {
+                resendBtn.disabled = false;
+                resendBtn.textContent = '发送确认邮件';
+                resendLoading.classList.add('hidden');
+            }
         }
 
         function startCountdown() {
