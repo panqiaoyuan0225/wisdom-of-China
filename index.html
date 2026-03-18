@@ -145,6 +145,29 @@
             transform: translateY(0);
         }
 
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            background: linear-gradient(135deg, #a0522d 0%, #8b4513 100%);
+        }
+
+        .login-btn .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         .register-link {
             text-align: center;
             color: #666;
@@ -249,7 +272,7 @@
                 </label>
             </div>
 
-            <button type="submit" class="login-btn">登 录</button>
+            <button type="submit" class="login-btn" id="loginBtn">登 录</button>
         </form>
 
         <div class="register-link">
@@ -328,13 +351,24 @@
             }
         }
 
+        const loginBtn = document.getElementById('loginBtn');
+        let isLoggingIn = false;
+
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            if (isLoggingIn) {
+                return;
+            }
             
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const rememberMe = document.getElementById('rememberMe').checked;
             const errorMessage = document.getElementById('errorMessage');
+
+            isLoggingIn = true;
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<span class="loading-spinner"></span>登录中...';
 
             try {
                 const { data, error } = await supabaseClient.auth.signInWithPassword({
@@ -373,11 +407,15 @@
                 }
             } catch (error) {
                 console.error('登录错误:', error);
-                errorMessage.textContent = '错误: ' + (error.message || '网络错误');
+                errorMessage.textContent = '错误：' + (error.message || '网络错误');
                 errorMessage.classList.add('show');
                 setTimeout(() => {
                     errorMessage.classList.remove('show');
                 }, 5000);
+            } finally {
+                isLoggingIn = false;
+                loginBtn.disabled = false;
+                loginBtn.textContent = '登 录';
             }
         });
 
