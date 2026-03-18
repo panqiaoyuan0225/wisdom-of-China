@@ -5,144 +5,361 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>四大名著经典学习网</title>
     <style>
+        :root {
+            --primary-brown: #8b4513;
+            --secondary-brown: #a0522d;
+            --gold: #d4af37;
+            --light-gold: #f0d78c;
+            --paper-bg: #f5f5dc;
+            --paper-dark: #efe8d0;
+            --ink-black: #2c2c2c;
+            --cinnabar-red: #c41e3a;
+            --bamboo-green: #7CB342;
+            --indigo: #5C6BC0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: "Microsoft YaHei", "SimSun", sans-serif;
-            background-color: #f5f5dc;
-            text-align: center;
-            padding: 20px;
-            margin: 0;
+            background: 
+                linear-gradient(135deg, rgba(245,245,220,0.95) 0%, rgba(239,232,208,0.95) 100%),
+                url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
+            padding: 0;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(124, 179, 66, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .falling-leaves {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
             overflow: hidden;
         }
 
-        h1 {
-            color: #8b4513;
-            font-size: 2.5rem;
-            margin-bottom: 40px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        .leaf {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            opacity: 0.6;
+            animation: fall linear infinite;
         }
 
-        .button-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(2, 1fr);
-            gap: 30px;
-            max-width: 700px;
-            width: 100%;
-            padding: 30px;
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg) translateX(100px);
+                opacity: 0;
+            }
         }
 
-        .btn {
-            text-decoration: none;
-            background-color: white;
-            color: #d4af37;
-            border: 3px solid #333;
-            border-radius: 15px;
-            font-weight: bold;
-            transition: all 0.3s;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        .header-decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, 
+                var(--primary-brown) 0%, 
+                var(--gold) 25%, 
+                var(--cinnabar-red) 50%, 
+                var(--gold) 75%, 
+                var(--primary-brown) 100%);
+            z-index: 100;
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 10;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            aspect-ratio: 1;
+            min-height: 100vh;
+            padding: 40px 20px 80px;
             width: 100%;
-            max-width: 180px;
-            margin: 0 auto;
+            max-width: 1200px;
         }
 
-        .btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-            border-color: #d4af37;
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 20px;
+            animation: fadeInDown 0.8s ease;
         }
 
-        .btn .emoji {
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-title {
             font-size: 3rem;
+            color: var(--primary-brown);
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
             margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
         }
 
-        .btn .text {
+        .main-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .subtitle {
             font-size: 1.2rem;
-            color: #d4af37;
+            color: var(--secondary-brown);
+            margin-top: 20px;
+            letter-spacing: 3px;
         }
 
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
-                margin-bottom: 30px;
-            }
-            .button-container {
-                gap: 20px;
-                padding: 20px;
-                max-width: 500px;
-            }
-            .btn {
-                max-width: 140px;
-            }
-            .btn .emoji {
-                font-size: 2.5rem;
-                margin-bottom: 8px;
-            }
-            .btn .text {
-                font-size: 1rem;
-            }
+        .welcome-text {
+            font-size: 1.1rem;
+            color: var(--ink-black);
+            margin-top: 15px;
+            background: rgba(255,255,255,0.6);
+            padding: 10px 25px;
+            border-radius: 20px;
+            display: inline-block;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        @media (max-width: 480px) {
-            .button-container {
-                gap: 15px;
-                padding: 15px;
+        .rank-section {
+            margin: 30px 0 40px;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
             }
-            .btn {
-                max-width: 120px;
-            }
-            .btn .emoji {
-                font-size: 2rem;
-                margin-bottom: 5px;
-            }
-            .btn .text {
-                font-size: 0.9rem;
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
 
         .rank-badge {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
             background: linear-gradient(135deg, #fff9e6, #fff5d6);
-            border: 2px solid #d4af37;
-            border-radius: 25px;
-            padding: 8px 20px;
-            margin-bottom: 20px;
+            border: 3px solid var(--gold);
+            border-radius: 50px;
+            padding: 15px 35px;
             text-decoration: none;
             transition: all 0.3s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rank-badge::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
         }
 
         .rank-badge:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.4);
         }
 
         .rank-badge-icon {
-            width: 32px;
-            height: 32px;
+            width: 50px;
+            height: 50px;
+            position: relative;
+            z-index: 1;
         }
 
         .rank-badge-text {
-            font-size: 1rem;
+            font-size: 1.2rem;
             font-weight: bold;
-            color: #8b4513;
+            color: var(--primary-brown);
+            position: relative;
+            z-index: 1;
         }
 
         .rank-badge-arrow {
-            color: #8b4513;
+            color: var(--gold);
+            font-size: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-container {
+            margin-top: 15px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--light-gold));
+            border-radius: 10px;
+            transition: width 1s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: progressShine 2s infinite;
+        }
+
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-text {
+            text-align: center;
             font-size: 0.9rem;
+            color: var(--secondary-brown);
+            margin-top: 8px;
+        }
+
+        .button-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 25px;
+            width: 100%;
+            max-width: 750px;
+            padding: 20px;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .btn {
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary-brown) 0%, var(--secondary-brown) 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 6px 20px rgba(139, 69, 19, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1;
+            width: 100%;
+            max-width: 200px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(139, 69, 19, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(-4px) scale(1);
+        }
+
+        .btn .emoji {
+            font-size: 3.5rem;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .btn .text {
+            font-size: 1.2rem;
+            color: white;
+            letter-spacing: 2px;
         }
 
         .menu-container {
@@ -153,43 +370,48 @@
         }
 
         .menu-btn {
-            width: 40px;
-            height: 40px;
-            background: transparent;
-            border: none;
+            width: 45px;
+            height: 45px;
+            background: white;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
             cursor: pointer;
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 5px;
             transition: all 0.3s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .menu-btn:hover {
             transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
         }
 
         .menu-btn span {
             width: 5px;
             height: 5px;
-            background: #333;
+            background: var(--primary-brown);
             border-radius: 50%;
+            transition: all 0.3s;
         }
 
         .menu-dropdown {
             position: absolute;
-            top: 50px;
+            top: 60px;
             right: 0;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            min-width: 160px;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            min-width: 180px;
             overflow: hidden;
             opacity: 0;
             visibility: hidden;
             transform: translateY(-10px);
             transition: all 0.3s;
+            border: 2px solid var(--gold);
         }
 
         .menu-dropdown.show {
@@ -201,33 +423,57 @@
         .menu-item {
             display: block;
             width: 100%;
-            padding: 14px 20px;
+            padding: 15px 25px;
             border: none;
             background: none;
             text-align: left;
             font-size: 1rem;
-            color: #333;
+            color: var(--ink-black);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
             font-family: "Microsoft YaHei", "SimSun", sans-serif;
         }
 
         .menu-item:hover {
-            background: #f5f5dc;
-            color: #8b4513;
+            background: linear-gradient(90deg, var(--paper-bg), transparent);
+            color: var(--primary-brown);
+            padding-left: 30px;
         }
 
         .menu-item:not(:last-child) {
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
         }
 
         .menu-item.logout {
-            color: #c0392b;
+            color: var(--cinnabar-red);
         }
 
         .menu-item.logout:hover {
-            background: #fdf2f2;
+            background: linear-gradient(90deg, #fdf2f2, transparent);
             color: #e74c3c;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, transparent, rgba(139, 69, 19, 0.05));
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .footer-text {
+            color: var(--secondary-brown);
+            font-size: 0.9rem;
+        }
+
+        .footer-divider {
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 10px auto;
         }
 
         .feedback-modal {
@@ -249,18 +495,19 @@
 
         .feedback-content {
             background: white;
-            border-radius: 16px;
-            padding: 30px;
+            border-radius: 20px;
+            padding: 35px;
             width: 90%;
-            max-width: 450px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-width: 480px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
             position: relative;
+            border: 2px solid var(--gold);
         }
 
         .feedback-title {
-            font-size: 1.5rem;
-            color: #8b4513;
-            margin-bottom: 20px;
+            font-size: 1.6rem;
+            color: var(--primary-brown);
+            margin-bottom: 25px;
             text-align: center;
         }
 
@@ -268,16 +515,17 @@
             position: absolute;
             top: 15px;
             right: 20px;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             color: #999;
             cursor: pointer;
             border: none;
             background: none;
             line-height: 1;
+            transition: color 0.3s;
         }
 
         .feedback-close:hover {
-            color: #333;
+            color: var(--primary-brown);
         }
 
         .feedback-group {
@@ -286,17 +534,17 @@
 
         .feedback-label {
             display: block;
-            font-size: 0.95rem;
-            color: #333;
-            margin-bottom: 8px;
+            font-size: 1rem;
+            color: var(--ink-black);
+            margin-bottom: 10px;
             font-weight: bold;
         }
 
         .feedback-input, .feedback-textarea {
             width: 100%;
-            padding: 12px 15px;
+            padding: 14px 18px;
             border: 2px solid #ddd;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 1rem;
             font-family: "Microsoft YaHei", sans-serif;
             transition: border-color 0.3s;
@@ -305,30 +553,31 @@
 
         .feedback-input:focus, .feedback-textarea:focus {
             outline: none;
-            border-color: #d4af37;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
         }
 
         .feedback-textarea {
-            min-height: 120px;
+            min-height: 140px;
             resize: vertical;
         }
 
         .feedback-submit {
             width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #d4af37, #f0d78c);
+            padding: 15px;
+            background: linear-gradient(135deg, var(--gold), var(--light-gold));
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 1.1rem;
             font-weight: bold;
-            color: #5d4037;
+            color: var(--primary-brown);
             cursor: pointer;
             transition: all 0.3s;
         }
 
         .feedback-submit:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
         }
 
         .feedback-submit:disabled {
@@ -340,17 +589,23 @@
 
         .feedback-success {
             text-align: center;
-            padding: 40px 20px;
+            padding: 50px 20px;
         }
 
         .feedback-success-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
+            font-size: 4.5rem;
+            margin-bottom: 25px;
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
         }
 
         .feedback-success-text {
-            font-size: 1.2rem;
-            color: #333;
+            font-size: 1.3rem;
+            color: var(--ink-black);
         }
 
         .donate-modal {
@@ -372,50 +627,36 @@
 
         .donate-content {
             background: white;
-            border-radius: 16px;
-            padding: 30px;
+            border-radius: 20px;
+            padding: 35px;
             width: 90%;
-            max-width: 400px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-width: 420px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
             position: relative;
             text-align: center;
+            border: 2px solid var(--gold);
         }
 
         .donate-title {
-            font-size: 1.5rem;
-            color: #8b4513;
-            margin-bottom: 10px;
+            font-size: 1.6rem;
+            color: var(--primary-brown);
+            margin-bottom: 12px;
         }
 
         .donate-subtitle {
-            font-size: 0.95rem;
+            font-size: 1rem;
             color: #666;
-            margin-bottom: 20px;
-        }
-
-        .donate-close {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 1.5rem;
-            color: #999;
-            cursor: pointer;
-            border: none;
-            background: none;
-            line-height: 1;
-        }
-
-        .donate-close:hover {
-            color: #333;
+            margin-bottom: 25px;
         }
 
         .donate-qrcode {
-            width: 220px;
-            height: 220px;
-            margin: 0 auto 15px;
-            border-radius: 10px;
+            width: 240px;
+            height: 240px;
+            margin: 0 auto 20px;
+            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            border: 3px solid var(--gold);
         }
 
         .donate-qrcode img {
@@ -425,12 +666,107 @@
         }
 
         .donate-hint {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: #888;
+        }
+
+        .donate-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.8rem;
+            color: #999;
+            cursor: pointer;
+            border: none;
+            background: none;
+            line-height: 1;
+            transition: color 0.3s;
+        }
+
+        .donate-close:hover {
+            color: var(--primary-brown);
+        }
+
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .button-container {
+                gap: 20px;
+                padding: 15px;
+                max-width: 500px;
+            }
+
+            .btn {
+                max-width: 150px;
+            }
+
+            .btn .emoji {
+                font-size: 2.8rem;
+            }
+
+            .btn .text {
+                font-size: 1rem;
+            }
+
+            .rank-badge {
+                padding: 12px 25px;
+            }
+
+            .rank-badge-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .rank-badge-text {
+                font-size: 1rem;
+            }
+
+            .menu-btn {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 20px 15px 60px;
+            }
+
+            .main-title {
+                font-size: 1.8rem;
+            }
+
+            .button-container {
+                gap: 15px;
+                padding: 10px;
+            }
+
+            .btn {
+                max-width: 130px;
+                padding: 15px;
+            }
+
+            .btn .emoji {
+                font-size: 2.5rem;
+            }
+
+            .btn .text {
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="header-decoration"></div>
+
+    <div class="falling-leaves" id="fallingLeaves"></div>
+
     <div class="menu-container">
         <button class="menu-btn" id="menuBtn" onclick="toggleMenu()">
             <span></span>
@@ -478,40 +814,81 @@
         </div>
     </div>
 
-    <h1>四大名著经典学习网</h1>
-    <a href="level.html" class="rank-badge" id="rankBadge">
-        <div class="rank-badge-icon" id="rankBadgeIcon"></div>
-        <span class="rank-badge-text" id="rankBadgeText">加载中...</span>
-        <span class="rank-badge-arrow">›</span>
-    </a>
-    <div class="button-container">
-        <a href="book.html" class="btn">
-            <span class="emoji">📚</span>
-            <span class="text">名著阅读</span>
-        </a>
-        <a href="rank.html" class="btn">
-            <span class="emoji">🏆</span>
-            <span class="text">排行榜</span>
-        </a>
-        <a href="badge.html" class="btn">
-            <span class="emoji">🎖️</span>
-            <span class="text">勋章墙</span>
-        </a>
-        <a href="level.html" class="btn">
-            <span class="emoji">⚔️</span>
-            <span class="text">段位</span>
-        </a>
-        <a href="quiz.html" class="btn">
-            <span class="emoji">✏️</span>
-            <span class="text">答题练习</span>
-        </a>
-        <a href="profile.html" class="btn">
-            <span class="emoji">👤</span>
-            <span class="text">个人档案</span>
-        </a>
+    <div class="main-container">
+        <div class="welcome-section">
+            <h1 class="main-title">四大名著经典学习网</h1>
+            <p class="subtitle">品读经典 · 传承文化</p>
+            <div class="welcome-text" id="welcomeText">欢迎回来</div>
+        </div>
+
+        <div class="rank-section">
+            <a href="level.html" class="rank-badge" id="rankBadge">
+                <div class="rank-badge-icon" id="rankBadgeIcon"></div>
+                <span class="rank-badge-text" id="rankBadgeText">加载中...</span>
+                <span class="rank-badge-arrow">›</span>
+            </a>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <div class="progress-text" id="progressText">加载中...</div>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <a href="book.html" class="btn">
+                <span class="emoji">📚</span>
+                <span class="text">名著阅读</span>
+            </a>
+            <a href="rank.html" class="btn">
+                <span class="emoji">🏆</span>
+                <span class="text">排行榜</span>
+            </a>
+            <a href="badge.html" class="btn">
+                <span class="emoji">🎖️</span>
+                <span class="text">勋章墙</span>
+            </a>
+            <a href="level.html" class="btn">
+                <span class="emoji">⚔️</span>
+                <span class="text">段位</span>
+            </a>
+            <a href="quiz.html" class="btn">
+                <span class="emoji">✏️</span>
+                <span class="text">答题练习</span>
+            </a>
+            <a href="profile.html" class="btn">
+                <span class="emoji">👤</span>
+                <span class="text">个人档案</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-text">传承经典文化 · 弘扬民族精神</div>
+        <div class="footer-divider"></div>
+        <div class="footer-text">© 2026 四大名著经典学习网</div>
     </div>
 
     <script>
+        function createFallingLeaves() {
+            const container = document.getElementById('fallingLeaves');
+            const leafCount = 8;
+            const emojis = ['🍃', '🎋', '', ''];
+
+            for (let i = 0; i < leafCount; i++) {
+                const leaf = document.createElement('div');
+                leaf.className = 'leaf';
+                leaf.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                leaf.style.left = Math.random() * 100 + '%';
+                leaf.style.animationDelay = Math.random() * 10 + 's';
+                leaf.style.animationDuration = (15 + Math.random() * 10) + 's';
+                leaf.style.fontSize = (15 + Math.random() * 10) + 'px';
+                container.appendChild(leaf);
+            }
+        }
+
+        createFallingLeaves();
+
         function toggleMenu() {
             const dropdown = document.getElementById('menuDropdown');
             dropdown.classList.toggle('show');
@@ -579,7 +956,7 @@
             }
             
             if (message.length < 5) {
-                alert('反馈内容至少需要5个字符');
+                alert('反馈内容至少需要 5 个字符');
                 return;
             }
             
@@ -937,6 +1314,22 @@
             return { rank: RANKS[0], stageIndex: -1, stageLabel: '' };
         }
 
+        function getNextRankThreshold(currentRankIndex, currentStageIndex) {
+            if (currentRankIndex >= RANKS.length - 1 && currentStageIndex >= RANKS[currentRankIndex].stages.length - 1) {
+                return 100;
+            }
+            
+            if (currentStageIndex < RANKS[currentRankIndex].stages.length - 1) {
+                return RANKS[currentRankIndex].stages[currentStageIndex + 1];
+            }
+            
+            if (currentRankIndex < RANKS.length - 1) {
+                return RANKS[currentRankIndex + 1].stages[0];
+            }
+            
+            return 100;
+        }
+
         function updateRankBadge() {
             const mastered = calculateMastery();
             const percent = Math.round((mastered / TOTAL_QUESTIONS) * 100);
@@ -946,8 +1339,37 @@
             document.getElementById('rankBadgeText').textContent = rankName;
             document.getElementById('rankBadgeIcon').innerHTML = RANK_ICONS[currentRank.rank.icon];
             document.getElementById('rankBadge').style.borderColor = currentRank.rank.color;
+            
+            document.getElementById('progressFill').style.width = percent + '%';
+            document.getElementById('progressText').textContent = `已掌握 ${mastered}/${TOTAL_QUESTIONS} 题 (${percent}%)`;
+            
+            const currentRankIndex = RANKS.findIndex(r => r.name === currentRank.rank.name);
+            const nextThreshold = getNextRankThreshold(currentRankIndex, currentRank.stageIndex);
+            const nextRankName = currentRankIndex >= RANKS.length - 1 ? '状元' : 
+                (currentRank.stageIndex < RANKS[currentRankIndex].stages.length - 1 ? 
+                    currentRank.rank.name + ' ' + ['Ⅰ', 'Ⅱ', 'Ⅲ'][currentRank.stageIndex + 1] :
+                    RANKS[currentRankIndex + 1].name);
+            
+            const remaining = nextThreshold - percent;
+            if (remaining > 0) {
+                document.getElementById('progressText').textContent += ` · 再完成 ${Math.ceil(remaining * TOTAL_QUESTIONS / 100)} 题可升级${nextRankName}`;
+            } else {
+                document.getElementById('progressText').textContent += ` · 已达到最高等级`;
+            }
         }
 
+        function updateWelcomeText() {
+            const currentUser = sessionStorage.getItem('currentUser');
+            const welcomeText = document.getElementById('welcomeText');
+            
+            if (currentUser) {
+                welcomeText.textContent = `欢迎回来，${currentUser}！`;
+            } else {
+                welcomeText.textContent = '欢迎学习四大名著经典';
+            }
+        }
+
+        updateWelcomeText();
         updateRankBadge();
     </script>
 </body>
