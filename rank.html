@@ -825,6 +825,18 @@
             await renderLeaderboard('rank');
         }
 
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'quiz_history_v1') {
+                renderLeaderboard(currentTab);
+            }
+        });
+
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                renderLeaderboard(currentTab);
+            }
+        });
+
         init();
     </script>
 </body>

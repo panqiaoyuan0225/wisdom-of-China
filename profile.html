@@ -1537,6 +1537,18 @@
 
         init();
 
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'quiz_history_v1' || e.key === 'badge_data_v1' || e.key === 'browsing_time_v1') {
+                init();
+            }
+        });
+
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                init();
+            }
+        });
+
         setInterval(() => {
             ProfileManager.updateBrowsingTime();
         }, 60000);

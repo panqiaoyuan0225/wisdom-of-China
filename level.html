@@ -716,6 +716,20 @@
             });
         }
 
+        window.addEventListener('storage', function(e) {
+            if (e.key === STORAGE_KEY) {
+                renderCurrentRank();
+                renderRanksGrid();
+            }
+        });
+
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                renderCurrentRank();
+                renderRanksGrid();
+            }
+        });
+
         renderCurrentRank();
         renderRanksGrid();
     </script>

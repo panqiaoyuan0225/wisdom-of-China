@@ -1571,6 +1571,20 @@
             renderBadges();
             checkPendingNotification();
         });
+
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'quiz_history_v1' || e.key === 'badge_data_v1') {
+                renderBadges();
+                checkPendingNotification();
+            }
+        });
+
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                renderBadges();
+                checkPendingNotification();
+            }
+        });
     </script>
 </body>
 </html>

@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>四大名著争议话题</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "SimSun", sans-serif;
+            background: linear-gradient(135deg, #f5f5dc 0%, #efe8d0 50%, #e8dcc0 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(139, 69, 19, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 25px;
+            right: 40px;
+            text-decoration: none;
+            color: #f5f5dc;
+            font-weight: 600;
+            background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+            padding: 14px 28px;
+            border-radius: 30px;
+            box-shadow: 
+                0 4px 15px rgba(139, 69, 19, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+        }
+
+        .back-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 8px 25px rgba(139, 69, 19, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            background: linear-gradient(135deg, #a0522d 0%, #8b4513 100%);
+        }
+
+        .back-link:active {
+            transform: translateY(-1px);
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 60px 20px;
+            width: 100%;
+            max-width: 1200px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-title {
+            color: #8b4513;
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(139, 69, 19, 0.1);
+            position: relative;
+            animation: fadeInDown 0.8s ease;
+            letter-spacing: 4px;
+        }
+
+        .page-subtitle {
+            color: #a0522d;
+            font-size: 1.1rem;
+            margin-bottom: 50px;
+            opacity: 0.8;
+            animation: fadeInUp 0.8s ease 0.2s backwards;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #d4af37, #8b4513, #d4af37, transparent);
+            border-radius: 2px;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .content-placeholder {
+            padding: 0;
+            max-width: 100%;
+            width: 100%;
+        }
+
+        .button-row {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .topic-btn {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(145deg, #ffffff 0%, #faf8f0 100%);
+            border: none;
+            border-radius: 24px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #5a3d2b;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 
+                0 10px 30px rgba(139, 69, 19, 0.12),
+                0 1px 8px rgba(139, 69, 19, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+            line-height: 1.5;
+            animation: fadeInUp 0.6s ease backwards;
+        }
+
+        .topic-btn:nth-child(1) { animation-delay: 0.1s; }
+        .topic-btn:nth-child(2) { animation-delay: 0.2s; }
+        .topic-btn:nth-child(3) { animation-delay: 0.3s; }
+
+        .topic-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+            border-radius: 50%;
+        }
+
+        .topic-btn:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 
+                0 20px 50px rgba(139, 69, 19, 0.2),
+                0 8px 20px rgba(139, 69, 19, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            color: #3d2517;
+        }
+
+        .topic-btn:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .topic-btn:active {
+            transform: translateY(-6px) scale(0.98);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .topic-icon {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            display: block;
+            filter: drop-shadow(0 2px 4px rgba(139, 69, 19, 0.2));
+        }
+
+        .topic-btn-text {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .topic-number {
+            position: absolute;
+            top: 12px;
+            right: 15px;
+            font-size: 0.75rem;
+            color: #d4af37;
+            font-weight: 700;
+            opacity: 0.6;
+        }
+
+        #content-area {
+            animation: fadeIn 0.5s ease;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 30px 0;
+            gap: 15px;
+        }
+
+        .divider-line {
+            width: 80px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #d4af37, transparent);
+        }
+
+        .divider-icon {
+            color: #d4af37;
+            font-size: 1.2rem;
+            opacity: 0.6;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .back-link {
+                top: 15px;
+                right: 15px;
+                padding: 10px 18px;
+                font-size: 0.9rem;
+            }
+
+            .page-title {
+                font-size: 1.8rem;
+                margin-bottom: 15px;
+                letter-spacing: 2px;
+            }
+
+            .page-subtitle {
+                font-size: 0.95rem;
+                margin-bottom: 35px;
+            }
+
+            .button-row {
+                gap: 20px;
+            }
+
+            .topic-btn {
+                width: 160px;
+                height: 160px;
+                font-size: 0.95rem;
+                padding: 20px;
+                border-radius: 20px;
+            }
+
+            .topic-icon {
+                font-size: 2.2rem;
+                margin-bottom: 10px;
+            }
+
+            .topic-number {
+                top: 10px;
+                right: 12px;
+                font-size: 0.7rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .page-subtitle {
+                font-size: 0.85rem;
+            }
+
+            .topic-btn {
+                width: 140px;
+                height: 140px;
+                font-size: 0.85rem;
+                padding: 15px;
+            }
+
+            .topic-icon {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="home.html" class="back-link">← 返回主页</a>
+
+    <div class="main-container">
+        <h1 class="page-title">四大名著争议话题</h1>
+        <p class="page-subtitle">探索经典文学中的未解之谜</p>
+        <div class="content-placeholder">
+            <div class="button-row">
+                <button class="topic-btn" onclick="showContent(1)">
+                    <span class="topic-number">01</span>
+                    <span class="topic-icon">👑</span>
+                    <span class="topic-btn-text">刘备仁义形象研究</span>
+                </button>
+                <button class="topic-btn" onclick="showContent(2)">
+                    <span class="topic-number">02</span>
+                    <span class="topic-icon">⚔️</span>
+                    <span class="topic-btn-text">宋江人物形象深度分析</span>
+                </button>
+                <button class="topic-btn" onclick="showContent(3)">
+                    <span class="topic-number">03</span>
+                    <span class="topic-icon">📜</span>
+                    <span class="topic-btn-text">水浒传作者争议研究</span>
+                </button>
+            </div>
+            <div id="content-area" style="display: none; margin-top: 40px; width: 100%;"></div>
+        </div>
+    </div>
+
+    <script>
+        function showContent(num) {
+            const contentArea = document.getElementById('content-area');
+            if (num === 2) {
+                contentArea.style.display = 'block';
+                contentArea.innerHTML = document.getElementById('songjiang-content').innerHTML;
+            } else if (num === 1) {
+                contentArea.style.display = 'block';
+                contentArea.innerHTML = document.getElementById('liubei-content').innerHTML;
+            } else if (num === 3) {
+                contentArea.style.display = 'block';
+                contentArea.innerHTML = document.getElementById('author-content').innerHTML;
+                setTimeout(function() {
+                    initAuthorChart();
+                }, 100);
+            }
+        }
+
+        function initAuthorChart() {
+            const canvas = document.getElementById('authorChart');
+            if (canvas && !canvas.chart) {
+                const ctx = canvas.getContext('2d');
+                canvas.chart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['施耐庵说', '罗贯中说', '施罗合著说', '其他观点'],
+                        datasets: [{
+                            data: [45, 20, 30, 5],
+                            backgroundColor: [
+                                'rgba(168, 85, 247, 0.7)',
+                                'rgba(245, 158, 11, 0.7)',
+                                'rgba(244, 63, 94, 0.7)',
+                                'rgba(107, 114, 128, 0.7)'
+                            ],
+                            borderColor: [
+                                'rgba(168, 85, 247, 1)',
+                                'rgba(245, 158, 11, 1)',
+                                'rgba(244, 63, 94, 1)',
+                                'rgba(107, 114, 128, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    font: {
+                                        family: "'Noto Sans SC', sans-serif"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+
+    <div id="songjiang-content" style="display: none;">
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        <style>
+            .songjiang-card {
+                background-color: white;
+                border: 1px solid #E5E7EB;
+                border-radius: 1.25rem;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+                transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+                overflow: hidden;
+                position: relative;
+                margin-bottom: 20px;
+            }
+            .songjiang-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            }
+            .highlight-gradient-blue {
+                background: linear-gradient(135deg, rgba(59, 130, 246, 0), rgba(59, 130, 246, 0.05));
+            }
+            .highlight-gradient-green {
+                background: linear-gradient(135deg, rgba(16, 185, 129, 0), rgba(16, 185, 129, 0.05));
+            }
+            .highlight-gradient-purple {
+                background: linear-gradient(135deg, rgba(139, 92, 246, 0), rgba(139, 92, 246, 0.05));
+            }
+            .highlight-gradient-amber {
+                background: linear-gradient(135deg, rgba(245, 158, 11, 0), rgba(245, 158, 11, 0.05));
+            }
+            .highlight-gradient-red {
+                background: linear-gradient(135deg, rgba(239, 68, 68, 0), rgba(239, 68, 68, 0.05));
+            }
+            .highlight-gradient-teal {
+                background: linear-gradient(135deg, rgba(20, 184, 166, 0), rgba(20, 184, 166, 0.05));
+            }
+            .icon-circle {
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 20px;
+                flex-shrink: 0;
+            }
+            .timeline-item::before {
+                content: '';
+                position: absolute;
+                left: -10px;
+                top: 10px;
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background-color: #3B82F6;
+            }
+            .timeline-line::before {
+                content: '';
+                position: absolute;
+                left: -6px;
+                top: 18px;
+                width: 2px;
+                height: calc(100% - 8px);
+                background-color: #E5E7EB;
+            }
+            .quote-mark {
+                font-size: 6rem;
+                line-height: 1;
+                color: rgba(59, 130, 246, 0.1);
+                position: absolute;
+                top: -1rem;
+                left: 1rem;
+                z-index: 0;
+            }
+            .content-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 20px;
+            }
+        </style>
+        <div style="max-width: 1280px; margin: 0 auto; padding: 20px;">
+            <!-- 主标题卡片 -->
+            <div class="songjiang-card p-8 md:p-12" style="text-align: center;">
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-blue"></div>
+                <div style="position: relative; z-index: 10;">
+                    <div style="color: #6366f1; font-weight: 500; margin-bottom: 0.5rem;">A Study of Song Jiang's Character</div>
+                    <h1 style="font-size: 2.5rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem;">忠义枷锁下的悲剧灵魂</h1>
+                    <p style="font-size: 1.25rem; color: #4b5563;">《水浒传》宋江人物形象深度分析</p>
+                    <div style="margin-top: 2rem; display: flex; justify-content: center; align-items: center; gap: 1rem; color: #6b7280; flex-wrap: wrap;">
+                        <span><i class="fa-solid fa-book-open" style="margin-right: 0.5rem;"></i>文学研究</span>
+                        <span><i class="fa-solid fa-scroll" style="margin-right: 0.5rem;"></i>古典小说</span>
+                        <span><i class="fa-solid fa-user-graduate" style="margin-right: 0.5rem;"></i>人物分析</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <!-- 引言卡片 -->
+                <div class="songjiang-card" style="grid-column: span 2; padding: 2rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-green"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <div style="color: #059669; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center;">
+                            <i class="fa-solid fa-quote-left" style="margin-right: 0.5rem;"></i>引言
+                        </div>
+                        <div class="quote-mark">"</div>
+                        <p style="color: #374151; font-size: 1.125rem; line-height: 1.75; position: relative; z-index: 1;">
+                            在《水浒传》这部中国古典文学的璀璨星河中，宋江无疑是最具争议性和复杂性的核心人物。他既是郓城县衙中谨小慎微的押司，也是江湖上声名远播的"及时雨"；既是梁山一百单八将的掌舵人，也是将义军推向招安之路的决策者；既是"忠义"伦理的践行者，也是封建体制的牺牲品。
+                        </p>
+                        <div style="margin-top: 1.5rem; text-align: right;">
+                            <span style="color: #059669; font-weight: 500;">忠义与背叛的矛盾体</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 身份标签卡片 -->
+                <div class="songjiang-card" style="grid-column: span 2; padding: 1.5rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-purple"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem;">多重身份的叠加</h3>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <div style="display: flex; align-items: center; padding: 0.75rem; background: rgba(139, 92, 246, 0.1); border-radius: 0.5rem;">
+                                <div class="icon-circle" style="background: #8b5cf6; margin-right: 1rem;">
+                                    <i class="fa-solid fa-scale-balanced"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">郓城押司</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">体制内的小吏，谨小慎微</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; padding: 0.75rem; background: rgba(139, 92, 246, 0.1); border-radius: 0.5rem;">
+                                <div class="icon-circle" style="background: #8b5cf6; margin-right: 1rem;">
+                                    <i class="fa-solid fa-cloud-showers-heavy"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">及时雨</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">江湖上的义士，声名远播</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; padding: 0.75rem; background: rgba(139, 92, 246, 0.1); border-radius: 0.5rem;">
+                                <div class="icon-circle" style="background: #8b5cf6; margin-right: 1rem;">
+                                    <i class="fa-solid fa-users"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">梁山首领</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">一百单八将的掌舵人</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 核心特质卡片 -->
+                <div class="songjiang-card" style="padding: 1.5rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-amber"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem;">核心特质</h3>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.875rem; font-weight: 500; color: #374151;">忠义</span>
+                                    <span style="font-size: 0.875rem; color: #6b7280;">95%</span>
+                                </div>
+                                <div style="width: 100%; background: #e5e7eb; border-radius: 9999px; height: 0.5rem;">
+                                    <div style="background: #f59e0b; height: 0.5rem; border-radius: 9999px; width: 95%;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.875rem; font-weight: 500; color: #374151;">权谋</span>
+                                    <span style="font-size: 0.875rem; color: #6b7280;">85%</span>
+                                </div>
+                                <div style="width: 100%; background: #e5e7eb; border-radius: 9999px; height: 0.5rem;">
+                                    <div style="background: #f59e0b; height: 0.5rem; border-radius: 9999px; width: 85%;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.875rem; font-weight: 500; color: #374151;">理想主义</span>
+                                    <span style="font-size: 0.875rem; color: #6b7280;">75%</span>
+                                </div>
+                                <div style="width: 100%; background: #e5e7eb; border-radius: 9999px; height: 0.5rem;">
+                                    <div style="background: #f59e0b; height: 0.5rem; border-radius: 9999px; width: 75%;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.875rem; font-weight: 500; color: #374151;">悲剧性</span>
+                                    <span style="font-size: 0.875rem; color: #6b7280;">90%</span>
+                                </div>
+                                <div style="width: 100%; background: #e5e7eb; border-radius: 9999px; height: 0.5rem;">
+                                    <div style="background: #f59e0b; height: 0.5rem; border-radius: 9999px; width: 90%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 命运转折点卡片 -->
+                <div class="songjiang-card" style="padding: 1.5rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-red"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem;">命运转折点</h3>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <div class="timeline-item timeline-line" style="position: relative; padding-left: 1.5rem;">
+                                <h4 style="font-weight: 600; color: #1f2937;">私放晁盖</h4>
+                                <p style="font-size: 0.875rem; color: #6b7280;">义气的体现</p>
+                            </div>
+                            <div class="timeline-item timeline-line" style="position: relative; padding-left: 1.5rem;">
+                                <h4 style="font-weight: 600; color: #1f2937;">怒杀阎婆惜</h4>
+                                <p style="font-size: 0.875rem; color: #6b7280;">被逼上梁山</p>
+                            </div>
+                            <div class="timeline-item timeline-line" style="position: relative; padding-left: 1.5rem;">
+                                <h4 style="font-weight: 600; color: #1f2937;">浔阳楼题反诗</h4>
+                                <p style="font-size: 0.875rem; color: #6b7280;">内心世界的展现</p>
+                            </div>
+                            <div class="timeline-item" style="position: relative; padding-left: 1.5rem;">
+                                <h4 style="font-weight: 600; color: #1f2937;">接受招安</h4>
+                                <p style="font-size: 0.875rem; color: #6b7280;">悲剧的开端</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 形象矛盾卡片 -->
+                <div class="songjiang-card" style="grid-column: span 2; padding: 2rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-blue"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1.5rem;">形象矛盾</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                            <div style="text-align: center;">
+                                <div style="position: absolute; opacity: 0.1; font-size: 8rem; color: #3B82F6; z-index: 0;">
+                                    <i class="fa-solid fa-circle-user"></i>
+                                </div>
+                                <h4 style="font-weight: bold; color: #1f2937; margin-bottom: 0.5rem;">外貌描写</h4>
+                                <p style="color: #6b7280; font-size: 0.875rem; line-height: 1.5;">
+                                    "眼如丹凤，眉似卧蚕。滴溜溜两耳悬珠，明皎皎双睛点漆。坐定时浑如虎相，走动时有若狼形。"
+                                </p>
+                                <div style="margin-top: 1rem; color: #3B82F6; font-weight: 500;">仪表堂堂</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="position: absolute; opacity: 0.1; font-size: 8rem; color: #3B82F6; z-index: 0;">
+                                    <i class="fa-solid fa-masks-theater"></i>
+                                </div>
+                                <h4 style="font-weight: bold; color: #1f2937; margin-bottom: 0.5rem;">实际形象</h4>
+                                <p style="color: #6b7280; font-size: 0.875rem; line-height: 1.5;">
+                                    "面黑身矮"，被人称为"黑宋江"，与理想形象形成巨大反差。
+                                </p>
+                                <div style="margin-top: 1rem; color: #3B82F6; font-weight: 500;">现实卑微</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 社会背景卡片 -->
+                <div class="songjiang-card" style="grid-column: span 2; padding: 2rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-green"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem;">北宋末年社会背景</h3>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="display: flex; align-items: flex-start;">
+                                <div class="icon-circle" style="background: #10b981; margin-right: 1rem; margin-top: 0.25rem;">
+                                    <i class="fa-solid fa-crown"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">政治腐败</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">蔡京、童贯、高俅、杨戬四大奸臣把持朝政，卖官鬻爵，陷害忠良。</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start;">
+                                <div class="icon-circle" style="background: #10b981; margin-right: 1rem; margin-top: 0.25rem;">
+                                    <i class="fa-solid fa-wheat-awn"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">经济困境</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">土地兼并严重，"花石纲"暴政，江南百姓苦不堪言，"家有一石，破家荡产"。</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start;">
+                                <div class="icon-circle" style="background: #10b981; margin-right: 1rem; margin-top: 0.25rem;">
+                                    <i class="fa-solid fa-fire-flame-curved"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">农民起义</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">方腊起义、宋江起义等此起彼伏，社会矛盾激化。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 忠义观念卡片 -->
+                <div class="songjiang-card" style="grid-column: span 2; padding: 2rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-purple"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1.5rem;">忠义观念的矛盾</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                            <div style="padding: 1rem; background: rgba(139, 92, 246, 0.1); border-radius: 0.5rem;">
+                                <div style="display: flex; align-items: center; margin-bottom: 0.75rem;">
+                                    <div class="icon-circle" style="background: #8b5cf6; margin-right: 0.75rem;">
+                                        <i class="fa-solid fa-flag"></i>
+                                    </div>
+                                    <h4 style="font-weight: bold; color: #1f2937;">忠君思想</h4>
+                                </div>
+                                <p style="font-size: 0.875rem; color: #6b7280;">
+                                    对封建朝廷的绝对忠诚，即使被逼上梁山后，仍以"罪臣"自居，从未放弃"效忠朝廷"的念头。
+                                </p>
+                            </div>
+                            <div style="padding: 1rem; background: rgba(139, 92, 246, 0.1); border-radius: 0.5rem;">
+                                <div style="display: flex; align-items: center; margin-bottom: 0.75rem;">
+                                    <div class="icon-circle" style="background: #8b5cf6; margin-right: 0.75rem;">
+                                        <i class="fa-solid fa-handshake"></i>
+                                    </div>
+                                    <h4 style="font-weight: bold; color: #1f2937;">兄弟情义</h4>
+                                </div>
+                                <p style="font-size: 0.875rem; color: #6b7280;">
+                                    对梁山弟兄的兄弟情义，为维护与晁盖之间的兄弟情谊，宋江怒杀阎婆惜，体现了他性格中的义。
+                                </p>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(239, 68, 68, 0.1); border-radius: 0.5rem; border-left: 4px solid #f87171;">
+                            <p style="font-size: 0.875rem; color: #374151;">
+                                <strong>矛盾核心：</strong>当朝廷招安后，将梁山好汉视为"异己力量"，处处设防、时时猜忌。在征讨方腊的过程中，梁山好汉伤亡惨重，宋江为了忠而牺牲义，看似践行了封建伦理的"忠义"准则，实则是对弟兄们的背叛。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 招安决策卡片 -->
+                <div class="songjiang-card" style="padding: 2rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-amber"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem;">招安决策动机</h3>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="display: flex; align-items: flex-start;">
+                                <div class="icon-circle" style="background: #f59e0b; margin-right: 0.75rem; margin-top: 0.25rem;">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">个人层面</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">对被刻上金印的罪人身份耿耿于怀，希望洗刷身份，重新回到"体制内"。</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start;">
+                                <div class="icon-circle" style="background: #f59e0b; margin-right: 0.75rem; margin-top: 0.25rem;">
+                                    <i class="fa-solid fa-users-viewfinder"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">整体利益</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">深知梁山坐吃山空、劫掠地方并非长久之计，招安是回归主流社会的唯一正途。</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start;">
+                                <div class="icon-circle" style="background: #f59e0b; margin-right: 0.75rem; margin-top: 0.25rem;">
+                                    <i class="fa-solid fa-compass"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">价值观驱动</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">把自己看作大宋子民，招安被视为回归正统尽忠报国的途径。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 领导能力卡片 -->
+                <div class="songjiang-card" style="padding: 2rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-teal"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem;">领导能力</h3>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="display: flex; align-items: flex-start;">
+                                <div class="icon-circle" style="background: #14b8a6; margin-right: 0.75rem; margin-top: 0.25rem;">
+                                    <i class="fa-solid fa-brain"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">知人善任</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">能看透每个人的性格与需求，并将他们完美地"粘合"在一起。</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start;">
+                                <div class="icon-circle" style="background: #14b8a6; margin-right: 0.75rem; margin-top: 0.25rem;">
+                                    <i class="fa-solid fa-sitemap"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">制度建设</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">为梁山搭建清晰的层级分工，马军、步军、水军各司其职。</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start;">
+                                <div class="icon-circle" style="background: #14b8a6; margin-right: 0.75rem; margin-top: 0.25rem;">
+                                    <i class="fa-solid fa-chess-king"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">权谋手段</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">善于通过"天降石碣"等手段解决梁山发展中的现实难题。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 历史评价卡片 -->
+                <div class="songjiang-card" style="grid-column: span 2; padding: 2rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-blue"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1.5rem;">历史评价演变</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            <div style="padding: 1rem; background: rgba(59, 130, 246, 0.1); border-radius: 0.5rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <h4 style="font-weight: 600; color: #1f2937;">宋元时期</h4>
+                                    <span style="font-size: 0.75rem; background: rgba(59, 130, 246, 0.2); color: #1e40af; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">初步定型</span>
+                                </div>
+                                <p style="font-size: 0.875rem; color: #6b7280;">在《大宋宣和遗事》等早期文献中，宋江已被描绘为有义气、有谋略的起义领袖。</p>
+                            </div>
+                            <div style="padding: 1rem; background: rgba(59, 130, 246, 0.1); border-radius: 0.5rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <h4 style="font-weight: 600; color: #1f2937;">明清时期</h4>
+                                    <span style="font-size: 0.75rem; background: rgba(59, 130, 246, 0.2); color: #1e40af; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">分化评价</span>
+                                </div>
+                                <p style="font-size: 0.875rem; color: #6b7280;">一些文人将宋江视为忠义典范，另一些则批评其招安行为，认为背叛了梁山兄弟。</p>
+                            </div>
+                            <div style="padding: 1rem; background: rgba(59, 130, 246, 0.1); border-radius: 0.5rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <h4 style="font-weight: 600; color: #1f2937;">近现代</h4>
+                                    <span style="font-size: 0.75rem; background: rgba(59, 130, 246, 0.2); color: #1e40af; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">争议加剧</span>
+                                </div>
+                                <p style="font-size: 0.875rem; color: #6b7280;">受西方思想文化冲击，宋江褪去道德完美的英雄外衣，成为讽刺和取笑的对象。</p>
+                            </div>
+                            <div style="padding: 1rem; background: rgba(59, 130, 246, 0.1); border-radius: 0.5rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <h4 style="font-weight: 600; color: #1f2937;">当代</h4>
+                                    <span style="font-size: 0.75rem; background: rgba(59, 130, 246, 0.2); color: #1e40af; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">学术研究</span>
+                                </div>
+                                <p style="font-size: 0.875rem; color: #6b7280;">学者普遍认为，宋江既有革命性的一面，同时又有妥协性的一面。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 文学价值卡片 -->
+                <div class="songjiang-card" style="grid-column: span 2; padding: 2rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-green"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1.5rem;">文学价值与艺术成就</h3>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="display: flex; align-items: flex-start;">
+                                <div class="icon-circle" style="background: #10b981; margin-right: 1rem; margin-top: 0.25rem;">
+                                    <i class="fa-solid fa-cubes"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">复杂性的典型意义</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">宋江是行走在儒家忠义纲常裂缝中的悲剧先知，他的挣扎映射着中国传统社会难以化解的结构性矛盾。</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start;">
+                                <div class="icon-circle" style="background: #10b981; margin-right: 1rem; margin-top: 0.25rem;">
+                                    <i class="fa-solid fa-gem"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">多面性的艺术魅力</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">宋江的道德准则以"忠义"为核心，但"忠"与"义"的指向却存在根本冲突。</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start;">
+                                <div class="icon-circle" style="background: #10b981; margin-right: 1rem; margin-top: 0.25rem;">
+                                    <i class="fa-solid fa-infinity"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">永恒的生命力</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">宋江形象的复杂性、多面性和矛盾性，令其焕发出永久的艺术生命力。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 结论卡片 -->
+                <div class="songjiang-card" style="grid-column: span 2; padding: 2rem 3rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-purple"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <div style="color: #7c3aed; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center;">
+                            <i class="fa-solid fa-lightbulb" style="margin-right: 0.5rem;"></i>结论
+                        </div>
+                        <div class="quote-mark">"</div>
+                        <p style="color: #374151; font-size: 1.125rem; line-height: 1.75; position: relative; z-index: 1; margin-bottom: 1.5rem;">
+                            宋江既不是单纯的好人，也不是单纯的坏人，而是一个充满矛盾的复杂人物。他的"忠义"观念体现了中国传统文化中"忠"与"义"的深刻矛盾，他的招安选择反映了在特定历史条件下农民起义的历史局限性。
+                        </p>
+                        <p style="color: #374151; font-size: 1.125rem; line-height: 1.75; position: relative; z-index: 1; margin-bottom: 1.5rem;">
+                            施耐庵通过宋江想要表达的，不是简单的是非判断，而是对人性、社会和历史的深刻反思。宋江的悲剧，既是个人的悲剧，也是时代的悲剧。他的形象提醒我们，在面对复杂的社会现实时，我们需要有清醒的认识和正确的选择；在追求理想的过程中，我们需要坚持道德的底线，同时也要有面对现实的勇气。
+                        </p>
+                        <div style="margin-top: 2rem; text-align: right;">
+                            <span style="color: #7c3aed; font-weight: 500;">忠义枷锁下的悲剧灵魂</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="author-content" style="display: none;">
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        <style>
+            .author-card {
+                background-color: white;
+                border: 1px solid #E5E7EB;
+                border-radius: 1.25rem;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+                transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+                overflow: hidden;
+                position: relative;
+                margin-bottom: 20px;
+            }
+            .author-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            }
+            .highlight-gradient-blue {
+                background: linear-gradient(135deg, rgba(59, 130, 246, 0), rgba(59, 130, 246, 0.05));
+            }
+            .highlight-gradient-green {
+                background: linear-gradient(135deg, rgba(34, 197, 94, 0), rgba(34, 197, 94, 0.05));
+            }
+            .highlight-gradient-purple {
+                background: linear-gradient(135deg, rgba(168, 85, 247, 0), rgba(168, 85, 247, 0.05));
+            }
+            .highlight-gradient-amber {
+                background: linear-gradient(135deg, rgba(245, 158, 11, 0), rgba(245, 158, 11, 0.05));
+            }
+            .highlight-gradient-rose {
+                background: linear-gradient(135deg, rgba(244, 63, 94, 0), rgba(244, 63, 94, 0.05));
+            }
+            .author-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 20px;
+            }
+        </style>
+        <div style="max-width: 1280px; margin: 0 auto; padding: 20px;">
+            <div class="author-card p-8" style="text-align: center;">
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-blue"></div>
+                <div style="position: relative; z-index: 10;">
+                    <h1 style="font-size: 2.5rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem;">《水浒传》作者争议研究</h1>
+                    <p style="font-size: 1.125rem; color: #4b5563; line-height: 1.75;">中国古典四大名著之一，其作者问题却成为文学史上最大的悬案之一。从明代至今，施耐庵说、罗贯中说、施罗合著说等各种观点相互交锋，形成了一个复杂的学术谱系。</p>
+                </div>
+            </div>
+            <div class="author-grid">
+                <div class="author-card" style="grid-column: span 2; padding: 1.5rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-green"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem; display: flex; align-items: center;">
+                            <i class="fa-solid fa-chart-pie" style="color: #22c55e; margin-right: 0.5rem;"></i>主要观点分布
+                        </h3>
+                        <div style="height: 250px;">
+                            <canvas id="authorChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="author-card" style="padding: 1.5rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-purple"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <div style="display: flex; align-items: center; margin-bottom: 0.75rem;">
+                            <i class="fa-solid fa-feather-pointed" style="color: #a855f7; font-size: 1.5rem; margin-right: 0.75rem;"></i>
+                            <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937;">施耐庵说</h3>
+                        </div>
+                        <p style="color: #6b7280; margin-bottom: 1rem;">主流观点，最早见于高儒《百川书志》(1540年)："《忠义水浒传》一百卷，钱塘施耐庵的本，罗贯中编次。"</p>
+                        <div style="background: rgba(168, 85, 247, 0.1); padding: 0.75rem; border-radius: 0.5rem;">
+                            <p style="font-size: 0.875rem; color: #7c3aed;"><strong>争议焦点：</strong>施耐庵身份真实性存疑，生平资料极少，关键文物多被鉴定为伪造。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="author-card" style="padding: 1.5rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-amber"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <div style="display: flex; align-items: center; margin-bottom: 0.75rem;">
+                            <i class="fa-solid fa-scroll" style="color: #f59e0b; font-size: 1.5rem; margin-right: 0.75rem;"></i>
+                            <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937;">罗贯中说</h3>
+                        </div>
+                        <p style="color: #6b7280; margin-bottom: 1rem;">早期重要观点，田汝成《西湖游览志余》记载："钱塘罗贯中本者...编撰小说数十种，而《水浒传》叙宋江等事。"</p>
+                        <div style="background: rgba(245, 158, 11, 0.1); padding: 0.75rem; border-radius: 0.5rem;">
+                            <p style="font-size: 0.875rem; color: #b45309;"><strong>文本证据：</strong>早期115回本署名"东源罗贯中编辑"，语言风格与《平妖传》有相似之处。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="author-card" style="padding: 1.5rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-rose"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <div style="display: flex; align-items: center; margin-bottom: 0.75rem;">
+                            <i class="fa-solid fa-handshake" style="color: #f43f5e; font-size: 1.5rem; margin-right: 0.75rem;"></i>
+                            <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937;">施罗合著说</h3>
+                        </div>
+                        <p style="color: #6b7280; margin-bottom: 1rem;">学术界流行观点，嘉靖郭勋本、万历容与堂本、袁无涯本均署名"施耐庵集撰、罗贯中纂修"。</p>
+                        <div style="background: rgba(244, 63, 94, 0.1); padding: 0.75rem; border-radius: 0.5rem;">
+                            <p style="font-size: 0.875rem; color: #be123c;"><strong>分工模式：</strong>施作罗编、施作罗续、施作罗改等多种假说。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="author-card" style="grid-column: span 2; padding: 1.5rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-blue"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem; display: flex; align-items: center;">
+                            <i class="fa-solid fa-map-location-dot" style="color: #3b82f6; margin-right: 0.5rem;"></i>施耐庵籍贯争议
+                        </h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            <div style="background: rgba(59, 130, 246, 0.1); padding: 1rem; border-radius: 0.5rem;">
+                                <h4 style="font-weight: 600; color: #1e40af; margin-bottom: 0.5rem;">兴化说 (主流)</h4>
+                                <p style="font-size: 0.875rem; color: #1e3a8a;">《兴化县续志》记载施耐庵为"白驹场人"，施耐庵纪念馆馆长黄俶成支持此说。</p>
+                            </div>
+                            <div style="background: rgba(59, 130, 246, 0.1); padding: 1rem; border-radius: 0.5rem;">
+                                <h4 style="font-weight: 600; color: #1e40af; margin-bottom: 0.5rem;">钱塘说</h4>
+                                <p style="font-size: 0.875rem; color: #1e3a8a;">田汝成、汪道昆、胡应麟、王圻等明代学者一致肯定施耐庵是"钱塘人""越人""武林人"。</p>
+                            </div>
+                            <div style="background: rgba(59, 130, 246, 0.1); padding: 1rem; border-radius: 0.5rem;">
+                                <h4 style="font-weight: 600; color: #1e40af; margin-bottom: 0.5rem;">苏州说</h4>
+                                <p style="font-size: 0.875rem; color: #1e3a8a;">认为施耐庵祖籍苏州，后迁居兴化，是孔子七十二弟子之一施之常的后裔。</p>
+                            </div>
+                            <div style="background: rgba(59, 130, 246, 0.1); padding: 1rem; border-radius: 0.5rem;">
+                                <h4 style="font-weight: 600; color: #1e40af; margin-bottom: 0.5rem;">淮安说</h4>
+                                <p style="font-size: 0.875rem; color: #1e3a8a;">《中国人名大辞典》明确记载施耐庵为"元淮安人"，王道生所撰墓志铭称其长居淮安。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="author-card" style="grid-column: span 2; padding: 1.5rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-purple"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem; display: flex; align-items: center;">
+                            <i class="fa-solid fa-book-open" style="color: #a855f7; margin-right: 0.5rem;"></i>版本学视角：作者署名演变
+                        </h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                            <div style="text-align: center; padding: 1rem; background: rgba(168, 85, 247, 0.1); border-radius: 0.5rem;">
+                                <div style="font-weight: bold; color: #1f2937; margin-bottom: 0.5rem;">明嘉靖年间</div>
+                                <p style="font-size: 0.875rem; color: #6b7280;">郭勋本首次署名"施耐庵集撰、罗贯中纂修"</p>
+                            </div>
+                            <div style="text-align: center; padding: 1rem; background: rgba(168, 85, 247, 0.1); border-radius: 0.5rem;">
+                                <div style="font-weight: bold; color: #1f2937; margin-bottom: 0.5rem;">明万历年间</div>
+                                <p style="font-size: 0.875rem; color: #6b7280;">容与堂本、袁无涯本延续"施罗合著"署名</p>
+                            </div>
+                            <div style="text-align: center; padding: 1rem; background: rgba(168, 85, 247, 0.1); border-radius: 0.5rem;">
+                                <div style="font-weight: bold; color: #1f2937; margin-bottom: 0.5rem;">金圣叹本</div>
+                                <p style="font-size: 0.875rem; color: #6b7280;">腰斩《水浒传》，只保留前七十回，署名施耐庵</p>
+                            </div>
+                            <div style="text-align: center; padding: 1rem; background: rgba(168, 85, 247, 0.1); border-radius: 0.5rem;">
+                                <div style="font-weight: bold; color: #1f2937; margin-bottom: 0.5rem;">当代版本</div>
+                                <p style="font-size: 0.875rem; color: #6b7280;">人民文学出版社等主流版本均署名"施耐庵、罗贯中著"</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="author-card" style="grid-column: span 2; padding: 1.5rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-amber"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem; display: flex; align-items: center;">
+                            <i class="fa-solid fa-magnifying-glass" style="color: #f59e0b; margin-right: 0.5rem;"></i>文本分析与内证
+                        </h3>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <div style="display: flex; align-items: flex-start;">
+                                <i class="fa-solid fa-check-circle" style="color: #f59e0b; margin-top: 0.25rem; margin-right: 0.5rem;"></i>
+                                <div>
+                                    <p style="font-weight: 500; color: #1f2937;">语言风格统一性</p>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">全书白话语言风格统一，但包含多种方言成分</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start;">
+                                <i class="fa-solid fa-check-circle" style="color: #f59e0b; margin-top: 0.25rem; margin-right: 0.5rem;"></i>
+                                <div>
+                                    <p style="font-weight: 500; color: #1f2937;">地理知识矛盾</p>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">对北方地理描写准确，对南方地理相对模糊，暗示作者可能是北方人</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start;">
+                                <i class="fa-solid fa-check-circle" style="color: #f59e0b; margin-top: 0.25rem; margin-right: 0.5rem;"></i>
+                                <div>
+                                    <p style="font-weight: 500; color: #1f2937;">情节前后矛盾</p>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">部分情节存在前后不一致，可能经过多次修改或多人创作</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="author-card" style="grid-column: span 2; padding: 1.5rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-rose"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem; display: flex; align-items: center;">
+                            <i class="fa-solid fa-clock-rotate-left" style="color: #f43f5e; margin-right: 0.5rem;"></i>历史评价演变
+                        </h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                            <div style="text-align: center; padding: 1rem; background: rgba(244, 63, 94, 0.1); border-radius: 0.5rem;">
+                                <div style="font-weight: bold; color: #1f2937; margin-bottom: 0.5rem;">明代</div>
+                                <p style="font-size: 0.875rem; color: #6b7280;">文献记载施耐庵为作者，罗贯中为编次者</p>
+                            </div>
+                            <div style="text-align: center; padding: 1rem; background: rgba(244, 63, 94, 0.1); border-radius: 0.5rem;">
+                                <div style="font-weight: bold; color: #1f2937; margin-bottom: 0.5rem;">清代</div>
+                                <p style="font-size: 0.875rem; color: #6b7280;">金圣叹腰斩《水浒传》，确立施耐庵独著地位</p>
+                            </div>
+                            <div style="text-align: center; padding: 1rem; background: rgba(244, 63, 94, 0.1); border-radius: 0.5rem;">
+                                <div style="font-weight: bold; color: #1f2937; margin-bottom: 0.5rem;">民国时期</div>
+                                <p style="font-size: 0.875rem; color: #6b7280;">胡适、鲁迅等学者引入现代学术方法，对作者问题进行系统考察</p>
+                            </div>
+                            <div style="text-align: center; padding: 1rem; background: rgba(244, 63, 94, 0.1); border-radius: 0.5rem;">
+                                <div style="font-weight: bold; color: #1f2937; margin-bottom: 0.5rem;">当代</div>
+                                <p style="font-size: 0.875rem; color: #6b7280;">刘世德、石昌渝等学者从多维度深入研究，争议仍在继续</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="author-card" style="grid-column: span 2; padding: 2rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-blue"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.5rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem;">结论</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                            <div>
+                                <p style="color: #374151; line-height: 1.75; margin-bottom: 1rem;">《水浒传》作者问题是中国文学史上的一大悬案，施耐庵说、罗贯中说、施罗合著说以及其他各种观点都有一定的依据，但也都存在难以克服的困难。这种复杂性反映了古代长篇小说成书过程的特殊性。</p>
+                                <p style="color: #374151; line-height: 1.75;">施耐庵作为《水浒传》主要作者的地位已经得到学术界的普遍认可，这不仅有明代文献的支持，也符合作品的艺术水准。但施耐庵的真实身份仍然是一个谜，需要更多的史料发现和研究。</p>
+                            </div>
+                            <div>
+                                <p style="color: #374151; line-height: 1.75; margin-bottom: 1rem;">罗贯中与《水浒传》的关系不容忽视。无论他是作为编次者、合作者还是其他身份，都对《水浒传》的最终定型做出了重要贡献。"施耐庵集撰、罗贯中纂修"的署名方式虽然可能不完全反映创作的真实情况，但至少体现了历史的某种真实。</p>
+                                <p style="color: #374151; line-height: 1.75;">《水浒传》的成书是一个复杂的历史过程，可能经历了从民间传说到文人创作、从口头文学到书面文学的演变。在这个过程中，施耐庵、罗贯中以及无数不知名的民间艺人都可能做出了贡献。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="liubei-content" style="display: none;">
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        <style>
+            .liubei-card {
+                background-color: white;
+                border: 1px solid #E5E7EB;
+                border-radius: 1.25rem;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+                transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+                overflow: hidden;
+                position: relative;
+                margin-bottom: 20px;
+            }
+            .liubei-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            }
+            .highlight-gradient-blue {
+                background: linear-gradient(135deg, rgba(59, 130, 246, 0), rgba(59, 130, 246, 0.05));
+            }
+            .highlight-gradient-green {
+                background: linear-gradient(135deg, rgba(16, 185, 129, 0), rgba(16, 185, 129, 0.05));
+            }
+            .highlight-gradient-purple {
+                background: linear-gradient(135deg, rgba(139, 92, 246, 0), rgba(139, 92, 246, 0.05));
+            }
+            .highlight-gradient-amber {
+                background: linear-gradient(135deg, rgba(245, 158, 11, 0), rgba(245, 158, 11, 0.05));
+            }
+            .highlight-gradient-red {
+                background: linear-gradient(135deg, rgba(239, 68, 68, 0), rgba(239, 68, 68, 0.05));
+            }
+            .highlight-gradient-teal {
+                background: linear-gradient(135deg, rgba(20, 184, 166, 0), rgba(20, 184, 166, 0.05));
+            }
+            .icon-circle {
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 20px;
+                flex-shrink: 0;
+            }
+            .quote-mark {
+                font-size: 6rem;
+                line-height: 1;
+                color: rgba(59, 130, 246, 0.1);
+                position: absolute;
+                top: -1rem;
+                left: 1rem;
+                z-index: 0;
+            }
+            .content-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 20px;
+            }
+        </style>
+        <div style="max-width: 1280px; margin: 0 auto; padding: 20px;">
+            <!-- 主标题卡片 -->
+            <div class="liubei-card p-8 md:p-12" style="text-align: center;">
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-blue"></div>
+                <div style="position: relative; z-index: 10;">
+                    <div style="color: #6366f1; font-weight: 500; margin-bottom: 0.5rem;">A Study of Liu Bei's Character</div>
+                    <h1 style="font-size: 2.5rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem;">仁义之君的复杂面相</h1>
+                    <p style="font-size: 1.25rem; color: #4b5563;">《三国演义》刘备人物形象深度分析</p>
+                    <div style="margin-top: 2rem; display: flex; justify-content: center; align-items: center; gap: 1rem; color: #6b7280; flex-wrap: wrap;">
+                        <span><i class="fa-solid fa-book-open" style="margin-right: 0.5rem;"></i>文学研究</span>
+                        <span><i class="fa-solid fa-scroll" style="margin-right: 0.5rem;"></i>古典小说</span>
+                        <span><i class="fa-solid fa-user-graduate" style="margin-right: 0.5rem;"></i>人物分析</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <!-- 引言卡片 -->
+                <div class="liubei-card" style="grid-column: span 2; padding: 2rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-green"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <div style="color: #059669; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center;">
+                            <i class="fa-solid fa-quote-left" style="margin-right: 0.5rem;"></i>引言
+                        </div>
+                        <div class="quote-mark">"</div>
+                        <p style="color: #374151; font-size: 1.125rem; line-height: 1.75; position: relative; z-index: 1;">
+                            在《三国演义》这部中国古典文学的不朽巨著中，刘备作为蜀汉的开国皇帝，被塑造为一个以"仁义"著称的君主形象。他"携民渡江"、"三顾茅庐"、"摔阿斗以买人心"等事迹，构成了其"仁义之君"的经典形象。然而，深入分析刘备的言行，我们会发现其"仁义"背后隐藏着复杂的政治智慧和权谋手段。
+                        </p>
+                        <div style="margin-top: 1.5rem; text-align: right;">
+                            <span style="color: #059669; font-weight: 500;">仁义与权谋的辩证统一</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 身份标签卡片 -->
+                <div class="liubei-card" style="grid-column: span 2; padding: 1.5rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-purple"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem;">多重身份的叠加</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            <div style="display: flex; align-items: center; padding: 0.75rem; background: rgba(139, 92, 246, 0.1); border-radius: 0.5rem;">
+                                <div class="icon-circle" style="background: #8b5cf6; margin-right: 1rem;">
+                                    <i class="fa-solid fa-crown"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">汉室宗亲</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">中山靖王之后，正统血脉</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; padding: 0.75rem; background: rgba(139, 92, 246, 0.1); border-radius: 0.5rem;">
+                                <div class="icon-circle" style="background: #8b5cf6; margin-right: 1rem;">
+                                    <i class="fa-solid fa-hand-holding-heart"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">仁义之君</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">以德服人，爱民如子</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; padding: 0.75rem; background: rgba(139, 92, 246, 0.1); border-radius: 0.5rem;">
+                                <div class="icon-circle" style="background: #8b5cf6; margin-right: 1rem;">
+                                    <i class="fa-solid fa-chess-king"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">蜀汉昭烈帝</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">三分天下，建立蜀汉</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 核心特质卡片 -->
+                <div class="liubei-card" style="padding: 1.5rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-amber"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem;">核心特质</h3>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.875rem; font-weight: 500; color: #374151;">仁义</span>
+                                    <span style="font-size: 0.875rem; color: #6b7280;">90%</span>
+                                </div>
+                                <div style="width: 100%; background: #e5e7eb; border-radius: 9999px; height: 0.5rem;">
+                                    <div style="background: #f59e0b; height: 0.5rem; border-radius: 9999px; width: 90%;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.875rem; font-weight: 500; color: #374151;">智谋</span>
+                                    <span style="font-size: 0.875rem; color: #6b7280;">75%</span>
+                                </div>
+                                <div style="width: 100%; background: #e5e7eb; border-radius: 9999px; height: 0.5rem;">
+                                    <div style="background: #f59e0b; height: 0.5rem; border-radius: 9999px; width: 75%;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.875rem; font-weight: 500; color: #374151;">隐忍</span>
+                                    <span style="font-size: 0.875rem; color: #6b7280;">85%</span>
+                                </div>
+                                <div style="width: 100%; background: #e5e7eb; border-radius: 9999px; height: 0.5rem;">
+                                    <div style="background: #f59e0b; height: 0.5rem; border-radius: 9999px; width: 85%;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.875rem; font-weight: 500; color: #374151;">复杂性</span>
+                                    <span style="font-size: 0.875rem; color: #6b7280;">95%</span>
+                                </div>
+                                <div style="width: 100%; background: #e5e7eb; border-radius: 9999px; height: 0.5rem;">
+                                    <div style="background: #f59e0b; height: 0.5rem; border-radius: 9999px; width: 95%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 命运转折点卡片 -->
+                <div class="liubei-card" style="padding: 1.5rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-red"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem;">命运转折点</h3>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <div style="display: flex; align-items: flex-start;">
+                                <div class="icon-circle" style="background: #ef4444; margin-right: 0.75rem; margin-top: 0.25rem; width: 32px; height: 32px; font-size: 14px;">1</div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">桃园结义</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">与关羽、张飞结为兄弟</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start;">
+                                <div class="icon-circle" style="background: #ef4444; margin-right: 0.75rem; margin-top: 0.25rem; width: 32px; height: 32px; font-size: 14px;">2</div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">三顾茅庐</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">得诸葛亮辅佐</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start;">
+                                <div class="icon-circle" style="background: #ef4444; margin-right: 0.75rem; margin-top: 0.25rem; width: 32px; height: 32px; font-size: 14px;">3</div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">入主益州</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">建立蜀汉基业</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start;">
+                                <div class="icon-circle" style="background: #ef4444; margin-right: 0.75rem; margin-top: 0.25rem; width: 32px; height: 32px; font-size: 14px;">4</div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">夷陵之战</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">兵败白帝城托孤</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 仁义形象分析卡片 -->
+                <div class="liubei-card" style="grid-column: span 2; padding: 1.5rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-blue"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem; display: flex; align-items: center;">
+                            <i class="fa-solid fa-hand-holding-heart" style="color: #3b82f6; margin-right: 0.5rem;"></i>仁义形象的经典表现
+                        </h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            <div style="background: rgba(59, 130, 246, 0.1); padding: 1rem; border-radius: 0.5rem;">
+                                <h4 style="font-weight: 600; color: #1e40af; margin-bottom: 0.5rem;">携民渡江</h4>
+                                <p style="font-size: 0.875rem; color: #1e3a8a;">曹操大军压境，刘备不忍抛弃百姓，携十万民众渡江撤退，虽行军缓慢，却彰显其爱民之心。</p>
+                            </div>
+                            <div style="background: rgba(59, 130, 246, 0.1); padding: 1rem; border-radius: 0.5rem;">
+                                <h4 style="font-weight: 600; color: #1e40af; margin-bottom: 0.5rem;">三顾茅庐</h4>
+                                <p style="font-size: 0.875rem; color: #1e3a8a;">三次登门拜访诸葛亮，展现其求贤若渴、礼贤下士的诚意与胸襟。</p>
+                            </div>
+                            <div style="background: rgba(59, 130, 246, 0.1); padding: 1rem; border-radius: 0.5rem;">
+                                <h4 style="font-weight: 600; color: #1e40af; margin-bottom: 0.5rem;">摔阿斗</h4>
+                                <p style="font-size: 0.875rem; color: #1e3a8a;">赵云救回阿斗，刘备摔子以示"为汝这孺子，几损我一员大将"，收买人心。</p>
+                            </div>
+                            <div style="background: rgba(59, 130, 246, 0.1); padding: 1rem; border-radius: 0.5rem;">
+                                <h4 style="font-weight: 600; color: #1e40af; margin-bottom: 0.5rem;">白帝托孤</h4>
+                                <p style="font-size: 0.875rem; color: #1e3a8a;">临终托孤诸葛亮，以国事相托，展现其信任与胸襟。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 仁义与权谋卡片 -->
+                <div class="liubei-card" style="grid-column: span 2; padding: 1.5rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-purple"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem; display: flex; align-items: center;">
+                            <i class="fa-solid fa-yin-yang" style="color: #a855f7; margin-right: 0.5rem;"></i>仁义与权谋的辩证关系
+                        </h3>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="display: flex; align-items: flex-start;">
+                                <div class="icon-circle" style="background: #a855f7; margin-right: 1rem; margin-top: 0.25rem;">
+                                    <i class="fa-solid fa-lightbulb"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">仁义作为政治资本</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">刘备的"仁义"不仅是道德品质，更是一种政治资本。在那个群雄并起的时代，"仁义"成为他区别于曹操"奸雄"形象的重要标签，吸引了大量人才归附。</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start;">
+                                <div class="icon-circle" style="background: #a855f7; margin-right: 1rem; margin-top: 0.25rem;">
+                                    <i class="fa-solid fa-chess"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">隐忍与韬光养晦</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">刘备善于隐忍，在曹操麾下时"种菜浇园"，在袁绍处时"韬光养晦"，这种隐忍不是懦弱，而是等待时机的智慧。</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start;">
+                                <div class="icon-circle" style="background: #a855f7; margin-right: 1rem; margin-top: 0.25rem;">
+                                    <i class="fa-solid fa-masks-theater"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: #1f2937;">"摔阿斗"的争议</h4>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">"摔阿斗"一事历来争议颇多。有人认为这是刘备真情的流露，有人则认为这是精心设计的"买人心"之举。无论如何，这一行为确实达到了笼络赵云的效果。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 历史评价演变卡片 -->
+                <div class="liubei-card" style="grid-column: span 2; padding: 1.5rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-amber"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem; display: flex; align-items: center;">
+                            <i class="fa-solid fa-clock-rotate-left" style="color: #f59e0b; margin-right: 0.5rem;"></i>历史评价演变
+                        </h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                            <div style="text-align: center; padding: 1rem; background: rgba(245, 158, 11, 0.1); border-radius: 0.5rem;">
+                                <div style="font-weight: bold; color: #1f2937; margin-bottom: 0.5rem;">《三国志》</div>
+                                <p style="font-size: 0.875rem; color: #6b7280;">陈寿评价"先主之弘毅宽厚，知人待士，盖有高祖之风"</p>
+                            </div>
+                            <div style="text-align: center; padding: 1rem; background: rgba(245, 158, 11, 0.1); border-radius: 0.5rem;">
+                                <div style="font-weight: bold; color: #1f2937; margin-bottom: 0.5rem;">《三国演义》</div>
+                                <p style="font-size: 0.875rem; color: #6b7280;">罗贯中将其塑造为"仁义之君"的典范</p>
+                            </div>
+                            <div style="text-align: center; padding: 1rem; background: rgba(245, 158, 11, 0.1); border-radius: 0.5rem;">
+                                <div style="font-weight: bold; color: #1f2937; margin-bottom: 0.5rem;">近现代</div>
+                                <p style="font-size: 0.875rem; color: #6b7280;">鲁迅评价"刘备之德近乎伪"</p>
+                            </div>
+                            <div style="text-align: center; padding: 1rem; background: rgba(245, 158, 11, 0.1); border-radius: 0.5rem;">
+                                <div style="font-weight: bold; color: #1f2937; margin-bottom: 0.5rem;">当代</div>
+                                <p style="font-size: 0.875rem; color: #6b7280;">学者普遍认为刘备形象具有复杂性和多面性</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 文学价值卡片 -->
+                <div class="liubei-card" style="grid-column: span 2; padding: 1.5rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-green"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.25rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem; display: flex; align-items: center;">
+                            <i class="fa-solid fa-gem" style="color: #10b981; margin-right: 0.5rem;"></i>文学价值与艺术成就
+                        </h3>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <div style="display: flex; align-items: flex-start;">
+                                <i class="fa-solid fa-check-circle" style="color: #10b981; margin-top: 0.25rem; margin-right: 0.5rem;"></i>
+                                <div>
+                                    <p style="font-weight: 500; color: #1f2937;">理想君主形象的塑造</p>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">刘备形象寄托了中国传统文化中对理想君主的期待：仁爱、宽厚、礼贤下士、爱民如子。</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start;">
+                                <i class="fa-solid fa-check-circle" style="color: #10b981; margin-top: 0.25rem; margin-right: 0.5rem;"></i>
+                                <div>
+                                    <p style="font-weight: 500; color: #1f2937;">与曹操形象的对照</p>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">刘备的"仁义"与曹操的"奸雄"形成鲜明对照，体现了作者"拥刘反曹"的价值取向。</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start;">
+                                <i class="fa-solid fa-check-circle" style="color: #10b981; margin-top: 0.25rem; margin-right: 0.5rem;"></i>
+                                <div>
+                                    <p style="font-weight: 500; color: #1f2937;">复杂人性的展现</p>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">刘备形象并非单一的"仁义"，而是融合了权谋、隐忍、智慧等多种特质，展现了复杂的人性。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 结论卡片 -->
+                <div class="liubei-card" style="grid-column: span 2; padding: 2rem;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" class="highlight-gradient-purple"></div>
+                    <div style="position: relative; z-index: 10;">
+                        <h3 style="font-size: 1.5rem; font-weight: bold; color: #1f2937; margin-bottom: 1rem;">结论</h3>
+                        <div class="quote-mark">"</div>
+                        <p style="color: #374151; font-size: 1.125rem; line-height: 1.75; position: relative; z-index: 1; margin-bottom: 1rem;">
+                            刘备的"仁义"形象是《三国演义》中最具代表性的人物塑造之一。这一形象既是对历史人物的文学加工，也是作者理想君主观念的投射。刘备的"仁义"并非简单的道德标签，而是与其政治智慧、权谋手段相辅相成的复合特质。
+                        </p>
+                        <p style="color: #374151; font-size: 1.125rem; line-height: 1.75; position: relative; z-index: 1; margin-bottom: 1rem;">
+                            从文学角度来看，刘备形象的成功在于其复杂性和多面性。他既是"仁义之君"，又是善于权谋的政治家；既是爱民如子的长者，又是能够忍辱负重的英雄。这种复杂性使得刘备形象超越了简单的善恶二元对立，成为中国古代文学中具有深刻内涵的经典人物。
+                        </p>
+                        <p style="color: #374151; font-size: 1.125rem; line-height: 1.75; position: relative; z-index: 1;">
+                            刘备形象的塑造，体现了中国传统文化中对理想政治人物的期待：既要有仁爱之心，又要有经世之才；既要坚守道德底线，又要懂得权变之术。这种期待，至今仍具有深刻的启示意义。
+                        </p>
+                        <div style="margin-top: 1.5rem; text-align: right;">
+                            <span style="color: #7c3aed; font-weight: 500;">仁义之君的复杂面相</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

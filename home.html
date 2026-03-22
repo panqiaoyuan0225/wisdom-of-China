@@ -105,7 +105,7 @@
 
         .main-container {
             position: relative;
-            z-index: 10;
+            z-index: 20;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -113,13 +113,28 @@
             min-height: 100vh;
             padding: 40px 20px 80px;
             width: 100%;
-            max-width: 1200px;
+            max-width: 1400px;
         }
 
         .welcome-section {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
             animation: fadeInDown 0.8s ease;
+        }
+
+        .content-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 60px;
+            width: 100%;
+        }
+
+        .right-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 40px;
         }
 
         @keyframes fadeInDown {
@@ -164,20 +179,98 @@
         .welcome-text {
             font-size: 1.1rem;
             color: var(--ink-black);
-            margin-top: 15px;
             background: rgba(255,255,255,0.6);
             padding: 10px 25px;
             border-radius: 20px;
             display: inline-block;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 100;
+            animation: fadeInLeft 0.8s ease;
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .rank-section {
-            margin: 30px 0 40px;
+            margin: 0;
             animation: fadeInUp 0.8s ease 0.2s both;
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-width: 320px;
+            padding: 30px 20px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .topic-button-container {
+            margin-top: 25px;
+            width: 100%;
+            animation: fadeInUp 0.8s ease 0.6s both;
+        }
+
+        .topic-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.5);
+            border-radius: 20px;
+            padding: 30px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .topic-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .topic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.4);
+        }
+
+        .topic-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .topic-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-brown);
+            position: relative;
+            z-index: 1;
         }
 
         @keyframes fadeInUp {
@@ -301,11 +394,11 @@
 
         .button-container {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(2, 1fr);
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(3, 1fr);
             gap: 25px;
             width: 100%;
-            max-width: 750px;
+            max-width: 500px;
             padding: 20px;
             animation: fadeInUp 0.8s ease 0.4s both;
         }
@@ -385,7 +478,7 @@
             flex-direction: row;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 3px;
             transition: all 0.3s;
         }
 
@@ -462,6 +555,7 @@
             padding: 20px;
             text-align: center;
             border-top: 1px solid rgba(212, 175, 55, 0.2);
+            z-index: 5;
         }
 
         .footer-text {
@@ -687,7 +781,34 @@
             color: var(--primary-brown);
         }
 
+        @media (max-width: 1024px) {
+            .content-wrapper {
+                flex-direction: column;
+                align-items: center;
+                gap: 30px;
+            }
+
+            .right-section {
+                width: 100%;
+                max-width: 400px;
+            }
+
+            .rank-section {
+                min-width: auto;
+                width: 100%;
+            }
+
+            .topic-button-container {
+                margin-top: 20px;
+                max-width: 400px;
+            }
+        }
+
         @media (max-width: 768px) {
+            .welcome-section {
+                margin-bottom: 30px;
+            }
+
             .main-title {
                 font-size: 2.2rem;
             }
@@ -699,11 +820,11 @@
             .button-container {
                 gap: 20px;
                 padding: 15px;
-                max-width: 500px;
+                max-width: 350px;
             }
 
             .btn {
-                max-width: 150px;
+                max-width: 160px;
             }
 
             .btn .emoji {
@@ -812,28 +933,15 @@
         </div>
     </div>
 
+    <div class="welcome-text" id="welcomeText">欢迎回来</div>
     <div class="main-container">
         <div class="welcome-section">
             <h1 class="main-title">四大名著经典学习网</h1>
             <p class="subtitle">品读经典 · 传承文化</p>
-            <div class="welcome-text" id="welcomeText">欢迎回来</div>
         </div>
 
-        <div class="rank-section">
-            <a href="level.html" class="rank-badge" id="rankBadge">
-                <div class="rank-badge-icon" id="rankBadgeIcon"></div>
-                <span class="rank-badge-text" id="rankBadgeText">加载中...</span>
-                <span class="rank-badge-arrow">›</span>
-            </a>
-            <div class="progress-container">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-                </div>
-                <div class="progress-text" id="progressText">加载中...</div>
-            </div>
-        </div>
-
-        <div class="button-container">
+        <div class="content-wrapper">
+            <div class="button-container">
             <a href="book.html" class="btn">
                 <span class="emoji">📚</span>
                 <span class="text">名著阅读</span>
@@ -859,6 +967,36 @@
                 <span class="text">个人档案</span>
             </a>
         </div>
+
+        <div class="right-section">
+            <div class="rank-section">
+                <a href="level.html" class="rank-badge" id="rankBadge">
+                    <div class="rank-badge-icon" id="rankBadgeIcon"></div>
+                    <span class="rank-badge-text" id="rankBadgeText">加载中...</span>
+                    <span class="rank-badge-arrow">›</span>
+                </a>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">加载中...</div>
+                </div>
+            </div>
+
+            <div class="topic-button-container">
+                <a href="topic.html" class="topic-card">
+                    <span class="topic-icon">💬</span>
+                    <span class="topic-text">四大名著争议话题</span>
+                </a>
+            </div>
+
+            <div class="topic-button-container" style="margin-top: 25px;">
+                <a href="original.html" class="topic-card">
+                    <span class="topic-icon">📖</span>
+                    <span class="topic-text">四大名著整本原文</span>
+                </a>
+            </div>
+        </div>
     </div>
 
     <div class="footer">
@@ -871,7 +1009,7 @@
         function createFallingLeaves() {
             const container = document.getElementById('fallingLeaves');
             const leafCount = 8;
-            const emojis = ['🍃', '🎋', '', ''];
+            const emojis = ['🍃',  '', ''];
 
             for (let i = 0; i < leafCount; i++) {
                 const leaf = document.createElement('div');
@@ -1366,6 +1504,18 @@
                 welcomeText.textContent = '欢迎学习四大名著经典';
             }
         }
+
+        window.addEventListener('storage', function(e) {
+            if (e.key === STORAGE_KEY) {
+                updateRankBadge();
+            }
+        });
+
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                updateRankBadge();
+            }
+        });
 
         updateWelcomeText();
         updateRankBadge();
