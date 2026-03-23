@@ -2111,7 +2111,7 @@
             
             save(data) {
                 try {
-                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+                    window.DataManager.saveData(this.STORAGE_KEY, data);
                 } catch (e) {
                     console.error('保存错题本失败:', e);
                 }
@@ -2205,7 +2205,7 @@
             
             save(data) {
                 try {
-                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+                    window.DataManager.saveData(this.STORAGE_KEY, data);
                 } catch (e) {
                     console.error('保存答题历史失败:', e);
                 }
@@ -2299,7 +2299,7 @@
                         stats[category].correct++;
                     }
                     
-                    localStorage.setItem(CATEGORY_STATS_KEY, JSON.stringify(stats));
+                    window.DataManager.saveData(CATEGORY_STATS_KEY, stats);
                     
                     const mastery = stats[category].total > 0 
                         ? stats[category].correct / stats[category].total 
@@ -2311,163 +2311,22 @@
                         masteryData = JSON.parse(masterySaved);
                     }
                     masteryData[category] = mastery;
-                    localStorage.setItem(MASTERY_KEY, JSON.stringify(masteryData));
+                    window.DataManager.saveData(MASTERY_KEY, masteryData);
                 } catch (e) {
                     console.error('更新分类掌握度失败:', e);
                 }
             },
             
             syncToCloud() {
-                const userId = sessionStorage.getItem('userId');
-                const username = sessionStorage.getItem('currentUser');
-                if (!userId && !username) return;
-                
-                const history = this.getAll();
-                let totalQuestions = 0;
-                let correctAnswers = 0;
-                let masteredCount = 0;
-                
-                Object.values(history).forEach(item => {
-                    totalQuestions += item.totalAttempts || 0;
-                    correctAnswers += item.correctCount || 0;
-                    if (item.totalAttempts > 0 && (item.correctCount / item.totalAttempts) >= 0.8) {
-                        masteredCount++;
-                    }
-                });
-                
-                const timeData = JSON.parse(localStorage.getItem('browsing_time_v1') || '{"totalMinutes":0}');
-                
-                fetch('/sync-stats', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        userId,
-                        username,
-                        totalQuestions,
-                        correctAnswers,
-                        studyMinutes: timeData.totalMinutes || 0,
-                        masteredCount
-                    })
-                }).catch(err => console.error('同步失败:', err));
-                
-                this.syncQuizDataToCloud();
+                window.DataManager.syncToCloud();
             },
             
             syncQuizDataToCloud() {
-                const userId = sessionStorage.getItem('userId');
-                const username = sessionStorage.getItem('currentUser');
-                if (!userId && !username) return;
-                
-                const quizData = {
-                    history: this.getAll(),
-                    wrongBook: WrongBookManager.getAll(),
-                    categoryStats: JSON.parse(localStorage.getItem('category_stats_v1') || '{}'),
-                    mastery: JSON.parse(localStorage.getItem('category_mastery_v1') || '{}'),
-                    browsingTime: JSON.parse(localStorage.getItem('browsing_time_v1') || '{"totalMinutes":0}'),
-                    badgeData: JSON.parse(localStorage.getItem('badge_data_v1') || '{}'),
-                    syncTime: Date.now()
-                };
-                
-                fetch('/sync-quiz-data', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        userId,
-                        username,
-                        quizData
-                    })
-                }).catch(err => console.error('同步答题数据失败:', err));
+                window.DataManager.syncToCloud();
             },
             
             async loadQuizDataFromCloud() {
-                const userId = sessionStorage.getItem('userId');
-                const username = sessionStorage.getItem('currentUser');
-                if (!userId && !username) return false;
-                
-                try {
-                    const response = await fetch(`/load-quiz-data?userId=${userId || ''}&username=${encodeURIComponent(username || '')}`);
-                    const result = await response.json();
-                    
-                    if (result.success && result.data) {
-                        const cloudData = result.data;
-                        const localHistory = this.getAll();
-                        
-                        if (cloudData.history) {
-                            const mergedHistory = this.mergeHistory(localHistory, cloudData.history);
-                            this.save(mergedHistory);
-                        }
-                        
-                        if (cloudData.wrongBook) {
-                            const localWrongBook = WrongBookManager.getAll();
-                            const mergedWrongBook = this.mergeWrongBook(localWrongBook, cloudData.wrongBook);
-                            WrongBookManager.save(mergedWrongBook);
-                        }
-                        
-                        if (cloudData.categoryStats) {
-                            localStorage.setItem('category_stats_v1', JSON.stringify(cloudData.categoryStats));
-                        }
-                        
-                        if (cloudData.mastery) {
-                            localStorage.setItem('category_mastery_v1', JSON.stringify(cloudData.mastery));
-                        }
-                        
-                        if (cloudData.browsingTime) {
-                            const localTime = JSON.parse(localStorage.getItem('browsing_time_v1') || '{"totalMinutes":0}');
-                            const mergedTime = {
-                                totalMinutes: Math.max(localTime.totalMinutes || 0, cloudData.browsingTime.totalMinutes || 0)
-                            };
-                            localStorage.setItem('browsing_time_v1', JSON.stringify(mergedTime));
-                        }
-                        
-                        if (cloudData.badgeData) {
-                            localStorage.setItem('badge_data_v1', JSON.stringify(cloudData.badgeData));
-                        }
-                        
-                        console.log('云端数据加载成功');
-                        return true;
-                    }
-                } catch (err) {
-                    console.error('加载云端数据失败:', err);
-                }
-                return false;
-            },
-            
-            mergeHistory(local, cloud) {
-                const merged = { ...cloud };
-                
-                for (const [id, localItem] of Object.entries(local)) {
-                    if (!merged[id]) {
-                        merged[id] = localItem;
-                    } else {
-                        merged[id] = {
-                            totalAttempts: Math.max(localItem.totalAttempts || 0, merged[id].totalAttempts || 0),
-                            correctCount: Math.max(localItem.correctCount || 0, merged[id].correctCount || 0),
-                            wrongCount: Math.max(localItem.wrongCount || 0, merged[id].wrongCount || 0),
-                            lastAttemptTime: Math.max(localItem.lastAttemptTime || 0, merged[id].lastAttemptTime || 0)
-                        };
-                    }
-                }
-                
-                return merged;
-            },
-            
-            mergeWrongBook(local, cloud) {
-                const merged = [...cloud];
-                const cloudIds = new Set(cloud.map(item => item.id));
-                
-                for (const localItem of local) {
-                    if (!cloudIds.has(localItem.id)) {
-                        merged.push(localItem);
-                    } else {
-                        const cloudIndex = merged.findIndex(item => item.id === localItem.id);
-                        if (cloudIndex >= 0) {
-                            merged[cloudIndex].count = Math.max(localItem.count || 1, merged[cloudIndex].count || 1);
-                            merged[cloudIndex].timestamp = Math.max(localItem.timestamp || 0, merged[cloudIndex].timestamp || 0);
-                        }
-                    }
-                }
-                
-                return merged;
+                return await window.DataManager.loadFromCloud();
             },
             
             getHistory(question) {
@@ -3195,7 +3054,7 @@
             
             saveData(data) {
                 try {
-                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+                    window.DataManager.saveData(this.STORAGE_KEY, data);
                 } catch (e) {
                     console.error('保存勋章数据失败:', e);
                 }
@@ -3241,7 +3100,7 @@
                         mastery = JSON.parse(data);
                     }
                     mastery[category] = value;
-                    localStorage.setItem(this.MASTERY_KEY, JSON.stringify(mastery));
+                    window.DataManager.saveData(this.MASTERY_KEY, mastery);
                 } catch (e) {}
             },
             
@@ -3281,7 +3140,7 @@
             const newlyUnlocked = BadgeChecker.checkAndUnlockBadges();
             
             if (newlyUnlocked.length > 0) {
-                localStorage.setItem('pending_badge_notification', newlyUnlocked[0].id);
+                window.DataManager.saveData('pending_badge_notification', newlyUnlocked[0].id);
                 showBadgeNotification(newlyUnlocked[0]);
             }
         }

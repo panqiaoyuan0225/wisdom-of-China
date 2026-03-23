@@ -494,7 +494,7 @@
                     rankData.accuracy = userRankIndex;
                 }
                 
-                localStorage.setItem('leaderboard_rank_v1', JSON.stringify(rankData));
+                window.DataManager.saveData('leaderboard_rank_v1', rankData);
                 
                 checkAndUnlockRankBadges(rankData);
             } catch (e) {
@@ -536,8 +536,8 @@
                 });
                 
                 if (newBadges.length > 0) {
-                    localStorage.setItem('badge_data_v1', JSON.stringify(data));
-                    localStorage.setItem('pending_badge_notification', newBadges[newBadges.length - 1]);
+                    window.DataManager.saveData('badge_data_v1', data);
+                    window.DataManager.saveData('pending_badge_notification', newBadges[newBadges.length - 1]);
                 }
             } catch (e) {
                 console.error('检查勋章失败:', e);

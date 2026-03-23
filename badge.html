@@ -1228,7 +1228,7 @@
             
             saveData(data) {
                 try {
-                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+                    window.DataManager.saveData(this.STORAGE_KEY, data);
                 } catch (e) {
                     console.error('保存勋章数据失败:', e);
                 }
@@ -1373,7 +1373,7 @@
                         mastery = JSON.parse(data);
                     }
                     mastery[category] = value;
-                    localStorage.setItem('category_mastery_v1', JSON.stringify(mastery));
+                    window.DataManager.saveData('category_mastery_v1', mastery);
                 } catch (e) {
                     console.error('保存分类掌握度失败:', e);
                 }
@@ -1556,7 +1556,7 @@
             try {
                 const pending = localStorage.getItem('pending_badge_notification');
                 if (pending) {
-                    localStorage.removeItem('pending_badge_notification');
+                    window.DataManager.saveData('pending_badge_notification', null);
                     const badge = BADGES.find(b => b.id === pending);
                     if (badge) {
                         setTimeout(() => showNotification(badge), 500);

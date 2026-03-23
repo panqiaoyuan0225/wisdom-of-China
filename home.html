@@ -1038,11 +1038,34 @@
             }
         });
 
-        function handleLogout() {
+        async function handleLogout() {
             if (confirm('确定要退出登录吗？')) {
+                const userId = sessionStorage.getItem('userId');
+                const username = sessionStorage.getItem('currentUser');
+                
+                if (userId || username) {
+                    try {
+                        await window.DataManager.syncToCloud();
+                    } catch (e) {
+                        console.error('同步数据失败:', e);
+                    }
+                }
+                
+                localStorage.removeItem('quiz_history_v1');
+                localStorage.removeItem('wrong_book_v1');
+                localStorage.removeItem('category_stats_v1');
+                localStorage.removeItem('category_mastery_v1');
+                localStorage.removeItem('browsing_time_v1');
+                localStorage.removeItem('badge_data_v1');
+                localStorage.removeItem('leaderboard_rank_v1');
+                localStorage.removeItem('profile_data_v1');
+                localStorage.removeItem('pending_badge_notification');
+                
                 sessionStorage.removeItem('isLoggedIn');
                 sessionStorage.removeItem('currentUser');
                 sessionStorage.removeItem('userId');
+                sessionStorage.removeItem('userEmail');
+                
                 window.location.href = 'index.html';
             }
         }
@@ -1517,8 +1540,13 @@
             }
         });
 
-        updateWelcomeText();
-        updateRankBadge();
+        async function initData() {
+            updateWelcomeText();
+            await window.DataManager.loadFromCloud();
+            updateRankBadge();
+        }
+
+        initData();
     </script>
 </body>
 </html>

@@ -1193,7 +1193,7 @@
 
             saveProfileData(data) {
                 try {
-                    localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(data));
+                    window.DataManager.saveData(PROFILE_STORAGE_KEY, data);
                 } catch (e) {
                     console.error('保存用户数据失败:', e);
                 }
@@ -1228,7 +1228,7 @@
 
             saveTimeData(data) {
                 try {
-                    localStorage.setItem(TIME_STORAGE_KEY, JSON.stringify(data));
+                    window.DataManager.saveData(TIME_STORAGE_KEY, data);
                 } catch (e) {
                     console.error('保存时间数据失败:', e);
                 }

@@ -1207,7 +1207,7 @@ const BadgeManager = {
     
     saveData(data) {
         try {
-            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+            window.DataManager.saveData(this.STORAGE_KEY, data);
         } catch (e) {
             console.error('保存勋章数据失败:', e);
         }
@@ -1328,7 +1328,7 @@ function checkAndMarkAutoRead() {
         autoReadMarked = true;
         
         if (newlyUnlocked.length > 0) {
-            localStorage.setItem('pending_badge_notification', newlyUnlocked[0].id);
+            window.DataManager.saveData('pending_badge_notification', newlyUnlocked[0].id);
         }
     }
 }
