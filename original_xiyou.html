@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>四大名著整本原文 - 西游记</title>
+    <style>
+        :root {
+            --primary-brown: #8b4513;
+            --secondary-brown: #a0522d;
+            --gold: #d4af37;
+            --light-gold: #f0d78c;
+            --paper-bg: #f5f5dc;
+            --paper-dark: #efe8d0;
+            --ink-black: #2c2c2c;
+            --cinnabar-red: #c41e3a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "SimSun", sans-serif;
+            background: linear-gradient(135deg, rgba(245,245,220,0.95) 0%, rgba(239,232,208,0.95) 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #D2691E 0%, #CD853F 50%, #8b4513 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-bottom: 4px solid var(--gold);
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: 3px;
+        }
+
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.95;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .nav-container {
+            background: linear-gradient(to bottom, #fff, var(--paper-bg));
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-bottom: 2px solid var(--gold);
+        }
+
+        .nav-btn {
+            padding: 14px 30px;
+            border: 2px solid var(--primary-brown);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 17px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            background: linear-gradient(to bottom, var(--paper-bg), var(--paper-dark));
+            color: var(--primary-brown);
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(to bottom, #D2691E, #CD853F);
+            color: white;
+            border-color: var(--gold);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:hover:not(.active) {
+            background: linear-gradient(to bottom, var(--light-gold), var(--paper-dark));
+            transform: translateY(-1px);
+        }
+
+        .content-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 50px 40px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            line-height: 2.2;
+            font-size: 19px;
+            border: 1px solid var(--light-gold);
+        }
+
+        .chapter-title {
+            font-size: 2.2em;
+            color: #D2691E;
+            text-align: center;
+            margin: 60px 0 35px;
+            padding: 20px 0;
+            border-top: 4px double var(--gold);
+            border-bottom: 4px double var(--gold);
+            font-weight: bold;
+            letter-spacing: 3px;
+            text-shadow: 1px 1px 2px rgba(210, 105, 30, 0.2);
+            background: linear-gradient(to bottom, rgba(245, 245, 220, 0.3), rgba(239, 232, 208, 0.3));
+            border-radius: 4px;
+        }
+
+        .content-text {
+            text-indent: 2em;
+            margin-bottom: 25px;
+            color: var(--ink-black);
+            text-align: justify;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            font-size: 20px;
+            color: var(--primary-brown);
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .control-btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: 2px solid var(--gold);
+            background: linear-gradient(to bottom, #D2691E, #CD853F);
+            color: white;
+            font-size: 26px;
+            cursor: pointer;
+            box-shadow: 3px 3px 8px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .back-home {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: linear-gradient(to bottom, var(--paper-bg), var(--paper-dark));
+            color: var(--primary-brown);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.15);
+            border: 2px solid var(--primary-brown);
+            transition: all 0.3s ease;
+        }
+
+        .back-home:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <a href="home.html" class="back-home">← 返回首页</a>
+
+    <div class="header">
+        <h1>西游记</h1>
+        <p>吴承恩 著</p>
+    </div>
+
+    <div class="nav-container">
+        <a href="original.html" class="nav-btn">红楼梦</a>
+        <a href="original_sanguo.html" class="nav-btn">三国演义</a>
+        <a href="original_xiyou.html" class="nav-btn active">西游记</a>
+        <a href="original_shuihu.html" class="nav-btn">水浒传</a>
+    </div>
+
+    <div class="content-container" id="content">
+        <div class="loading">
+            <p style="font-size: 24px; margin-bottom: 20px;">📖 正在加载原文...</p>
+            <p style="color: #999;">首次加载可能需要几秒钟</p>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="control-btn" onclick="scrollUp()">↑</button>
+        <button class="control-btn" onclick="scrollDown()">↓</button>
+    </div>
+
+    <script>
+        async function loadContent() {
+            const contentDiv = document.getElementById('content');
+            try {
+                const response = await fetch('epub_content/西游记.txt');
+                const text = await response.text();
+                const processed = processContent(text);
+                contentDiv.innerHTML = processed;
+            } catch (error) {
+                contentDiv.innerHTML = `<div style="text-align:center;padding:50px;"><h2 style="color:#D2691E;">加载失败</h2><p style="margin-top:20px;">${error.message}</p></div>`;
+            }
+        }
+
+        function processContent(text) {
+            const lines = text.split('\n');
+            let html = '';
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                // 精确检测章回标题：必须是"第X回"开头，后面跟着标题内容
+                const chapterMatch = line.match(/^第[零一二三四五六七八九十百千]+回 [^。！？]+$/);
+                if (chapterMatch) {
+                    html += `<h2 class="chapter-title">${line}</h2>`;
+                    continue; // 跳过后续处理
+                }
+                // 正文段落
+                if (line.length > 10) {
+                    html += `<p class="content-text">${line}</p>`;
+                }
+            }
+            return html || '<p class="content-text">暂无内容</p>';
+        }
+
+        function scrollUp() { window.scrollBy({ top: -600, behavior: 'smooth' }); }
+        function scrollDown() { window.scrollBy({ top: 600, behavior: 'smooth' }); }
+        window.onload = loadContent;
+    </script>
+</body>
+</html>
