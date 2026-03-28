@@ -1,10 +1,5 @@
 {
   "version": 2,
-  "functions": {
-    "server.js": {
-      "includeFiles": "epub_content/**"
-    }
-  },
   "builds": [
     {
       "src": "server.js",
@@ -12,6 +7,14 @@
     }
   ],
   "routes": [
+    {
+      "src": "/epub_content/(.*)",
+      "dest": "/epub_content/$1"
+    },
+    {
+      "src": "/images/(.*)",
+      "dest": "/images/$1"
+    },
     {
       "src": "/sync-stats",
       "methods": ["POST"],
