@@ -18,15 +18,15 @@
     {
       "src": "/sync-stats",
       "methods": ["POST"],
-      "dest": "/server.js"
+      "dest": "server.js"
     },
     {
       "src": "/leaderboard/(.*)",
-      "dest": "/server.js"
+      "dest": "server.js"
     },
     {
       "src": "/(.*)",
-      "dest": "/server.js"
+      "dest": "server.js"
     }
   ]
 }
