@@ -2,12 +2,7 @@
   "version": 2,
   "functions": {
     "server.js": {
-      "includeFiles": [
-        "epub_content/**",
-        "images/**",
-        "*.html",
-        "supabase-config.js"
-      ]
+      "includeFiles": "epub_content/**"
     }
   },
   "builds": [
