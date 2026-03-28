@@ -4,6 +4,18 @@
     {
       "src": "server.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "epub_content/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "images/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.html",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -18,15 +30,26 @@
     {
       "src": "/sync-stats",
       "methods": ["POST"],
-      "dest": "server.js"
+      "dest": "/server.js"
+    },
+    {
+      "src": "/load-quiz-data",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/load-user-stats",
+      "dest": "/server.js"
     },
     {
       "src": "/leaderboard/(.*)",
-      "dest": "server.js"
+      "dest": "/server.js"
+    },
+    {
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "server.js"
+      "dest": "/server.js"
     }
   ]
 }
