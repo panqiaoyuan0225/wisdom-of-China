@@ -363,6 +363,10 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+app.get('/epub_content/:file', (req, res) => {
+    res.sendFile(path.join(__dirname, 'epub_content', req.params.file));
+});
+
 app.get('/:page', (req, res, next) => {
     const page = req.params.page;
     if (page.endsWith('.js')) {
