@@ -203,7 +203,7 @@
         async function loadContent() {
             const contentDiv = document.getElementById('content');
             try {
-                const response = await fetch('epub_content/西游记.txt');
+                const response = await fetch('./epub_content/西游记.txt');
                 const text = await response.text();
                 const processed = processContent(text);
                 contentDiv.innerHTML = processed;

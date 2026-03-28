@@ -265,7 +265,7 @@
             const contentDiv = document.getElementById('content');
             
             try {
-                const response = await fetch('epub_content/红楼梦.txt');
+                const response = await fetch('./epub_content/红楼梦.txt');
                 const text = await response.text();
                 
                 const processed = processContent(text);
