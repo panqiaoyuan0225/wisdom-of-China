@@ -882,6 +882,7 @@
             }
         }
     </style>
+    <script src="supabase-config.js"></script>
 </head>
 <body>
     <div class="falling-leaves" id="fallingLeaves"></div>
@@ -1045,7 +1046,9 @@
                 
                 if (userId || username) {
                     try {
-                        await window.DataManager.syncToCloud();
+                        if (window.DataManager && typeof window.DataManager.syncToCloud === 'function') {
+                            await window.DataManager.syncToCloud();
+                        }
                     } catch (e) {
                         console.error('同步数据失败:', e);
                     }
@@ -1542,7 +1545,18 @@
 
         async function initData() {
             updateWelcomeText();
-            await window.DataManager.loadFromCloud();
+            
+            // 确保 DataManager 已加载
+            if (window.DataManager && typeof window.DataManager.loadFromCloud === 'function') {
+                try {
+                    await window.DataManager.loadFromCloud();
+                } catch (error) {
+                    console.error('加载数据失败:', error);
+                }
+            } else {
+                console.warn('DataManager 未加载，跳过云端数据同步');
+            }
+            
             updateRankBadge();
         }
 

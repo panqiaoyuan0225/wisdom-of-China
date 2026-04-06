@@ -347,6 +347,7 @@
             }
         }
     </style>
+    <script src="supabase-config.js"></script>
 </head>
 <body>
     <a href="home.html" class="back-link">← 返回主页</a>
@@ -494,7 +495,11 @@
                     rankData.accuracy = userRankIndex;
                 }
                 
-                window.DataManager.saveData('leaderboard_rank_v1', rankData);
+                if (window.DataManager && typeof window.DataManager.saveData === 'function') {
+                    window.DataManager.saveData('leaderboard_rank_v1', rankData);
+                } else {
+                    localStorage.setItem('leaderboard_rank_v1', JSON.stringify(rankData));
+                }
                 
                 checkAndUnlockRankBadges(rankData);
             } catch (e) {

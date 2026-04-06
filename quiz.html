@@ -937,6 +937,7 @@
             }
         }
     </style>
+    <script src="supabase-config.js"></script>
 </head>
 <body>
     <a href="home.html" class="back-link">← 返回主页</a>
@@ -2095,6 +2096,32 @@
         let isWrongBookMode = false;
         let currentFilter = 'all';
 
+        // 安全调用 DataManager 的辅助函数
+        function safeSaveData(key, value) {
+            if (window.DataManager && typeof window.DataManager.saveData === 'function') {
+                window.DataManager.saveData(key, value);
+            } else {
+                if (typeof value === 'object') {
+                    localStorage.setItem(key, JSON.stringify(value));
+                } else {
+                    localStorage.setItem(key, value);
+                }
+            }
+        }
+
+        async function safeSyncToCloud() {
+            if (window.DataManager && typeof window.DataManager.syncToCloud === 'function') {
+                await window.DataManager.syncToCloud();
+            }
+        }
+
+        async function safeLoadFromCloud() {
+            if (window.DataManager && typeof window.DataManager.loadFromCloud === 'function') {
+                return await window.DataManager.loadFromCloud();
+            }
+            return null;
+        }
+
         // 错题本管理器
         const WrongBookManager = {
             STORAGE_KEY: 'quiz_wrong_book_v1',
@@ -2111,7 +2138,7 @@
             
             save(data) {
                 try {
-                    window.DataManager.saveData(this.STORAGE_KEY, data);
+                    safeSaveData(this.STORAGE_KEY, data);
                 } catch (e) {
                     console.error('保存错题本失败:', e);
                 }
@@ -2205,7 +2232,7 @@
             
             save(data) {
                 try {
-                    window.DataManager.saveData(this.STORAGE_KEY, data);
+                    safeSaveData(this.STORAGE_KEY, data);
                 } catch (e) {
                     console.error('保存答题历史失败:', e);
                 }
@@ -2299,7 +2326,7 @@
                         stats[category].correct++;
                     }
                     
-                    window.DataManager.saveData(CATEGORY_STATS_KEY, stats);
+                    safeSaveData(CATEGORY_STATS_KEY, stats);
                     
                     const mastery = stats[category].total > 0 
                         ? stats[category].correct / stats[category].total 
@@ -2311,22 +2338,22 @@
                         masteryData = JSON.parse(masterySaved);
                     }
                     masteryData[category] = mastery;
-                    window.DataManager.saveData(MASTERY_KEY, masteryData);
+                    safeSaveData(MASTERY_KEY, masteryData);
                 } catch (e) {
                     console.error('更新分类掌握度失败:', e);
                 }
             },
             
             syncToCloud() {
-                window.DataManager.syncToCloud();
+                safeSyncToCloud();
             },
             
             syncQuizDataToCloud() {
-                window.DataManager.syncToCloud();
+                safeSyncToCloud();
             },
             
             async loadQuizDataFromCloud() {
-                return await window.DataManager.loadFromCloud();
+                return await safeLoadFromCloud();
             },
             
             getHistory(question) {
@@ -3054,7 +3081,7 @@
             
             saveData(data) {
                 try {
-                    window.DataManager.saveData(this.STORAGE_KEY, data);
+                    safeSaveData(this.STORAGE_KEY, data);
                 } catch (e) {
                     console.error('保存勋章数据失败:', e);
                 }
@@ -3100,7 +3127,7 @@
                         mastery = JSON.parse(data);
                     }
                     mastery[category] = value;
-                    window.DataManager.saveData(this.MASTERY_KEY, mastery);
+                    safeSaveData(this.MASTERY_KEY, mastery);
                 } catch (e) {}
             },
             
@@ -3140,7 +3167,7 @@
             const newlyUnlocked = BadgeChecker.checkAndUnlockBadges();
             
             if (newlyUnlocked.length > 0) {
-                window.DataManager.saveData('pending_badge_notification', newlyUnlocked[0].id);
+                safeSaveData('pending_badge_notification', newlyUnlocked[0].id);
                 showBadgeNotification(newlyUnlocked[0]);
             }
         }
