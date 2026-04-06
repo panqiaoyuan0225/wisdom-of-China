@@ -541,8 +541,13 @@
                 });
                 
                 if (newBadges.length > 0) {
-                    window.DataManager.saveData('badge_data_v1', data);
-                    window.DataManager.saveData('pending_badge_notification', newBadges[newBadges.length - 1]);
+                    if (window.DataManager && typeof window.DataManager.saveData === 'function') {
+                        window.DataManager.saveData('badge_data_v1', data);
+                        window.DataManager.saveData('pending_badge_notification', newBadges[newBadges.length - 1]);
+                    } else {
+                        localStorage.setItem('badge_data_v1', JSON.stringify(data));
+                        localStorage.setItem('pending_badge_notification', newBadges[newBadges.length - 1]);
+                    }
                 }
             } catch (e) {
                 console.error('检查勋章失败:', e);
