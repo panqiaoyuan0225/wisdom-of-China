@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>积分商城 - 四大名著经典学习网</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "SimSun", sans-serif;
+            background: linear-gradient(135deg, #f5f5dc 0%, #e8e4c9 100%);
+            min-height: 100vh;
+            padding: 20px;
+            padding-top: 80px;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            right: 40px;
+            text-decoration: none;
+            color: #f5f5dc;
+            font-weight: bold;
+            background: #8b4513;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .page-title {
+            text-align: center;
+            color: #8b4513;
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .points-card {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .points-label {
+            font-size: 1rem;
+            color: #8B4513;
+            margin-bottom: 10px;
+        }
+
+        .points-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #8B4513;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .points-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #8B4513;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #A0522D;
+        }
+
+        .tabs {
+            max-width: 900px;
+            margin: 0 auto 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 25px;
+            border: 2px solid #8b4513;
+            background: white;
+            color: #8b4513;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #8b4513;
+            color: white;
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .shop-grid {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .item-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .item-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .item-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #8b4513;
+            margin-bottom: 10px;
+        }
+
+        .item-desc {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .item-price {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #8B4513;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .buy-btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background: #8b4513;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .buy-btn:hover:not(:disabled) {
+            background: #a0522d;
+            transform: translateY(-2px);
+        }
+
+        .buy-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .my-items {
+            max-width: 900px;
+            margin: 40px auto 0;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .my-items-title {
+            font-size: 1.3rem;
+            color: #8b4513;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f5f5dc;
+        }
+
+        .my-items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .owned-item {
+            background: #f5f5dc;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .owned-item-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .owned-item-icon {
+            font-size: 1.5rem;
+        }
+
+        .owned-item-name {
+            font-weight: bold;
+            color: #8b4513;
+        }
+
+        .owned-item-count {
+            background: #8b4513;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+
+        .empty-items {
+            text-align: center;
+            color: #999;
+            padding: 30px;
+        }
+
+        .history-section {
+            max-width: 900px;
+            margin: 40px auto 0;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .history-title {
+            font-size: 1.3rem;
+            color: #8b4513;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f5f5dc;
+        }
+
+        .history-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f5f5dc;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-reason {
+            color: #333;
+        }
+
+        .history-points {
+            font-weight: bold;
+        }
+
+        .history-points.positive {
+            color: #4CAF50;
+        }
+
+        .history-points.negative {
+            color: #f44336;
+        }
+
+        .history-time {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        @media (max-width: 600px) {
+            .page-title {
+                font-size: 1.8rem;
+            }
+
+            .points-value {
+                font-size: 2.5rem;
+            }
+
+            .shop-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="home.html" class="back-link">← 返回主页</a>
+
+    <h1 class="page-title">🏪 积分商城</h1>
+
+    <div class="points-card">
+        <div class="points-label">当前积分</div>
+        <div class="points-value" id="totalPoints">0</div>
+        <div class="points-stats">
+            <div class="stat-item">
+                <div class="stat-value" id="todayPoints">0</div>
+                <div class="stat-label">今日获得</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalItems">0</div>
+                <div class="stat-label">拥有道具</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('quiz')">答题道具</button>
+        <button class="tab-btn" onclick="showTab('appearance')">外观道具</button>
+        <button class="tab-btn" onclick="showTab('function')">功能道具</button>
+        <button class="tab-btn" onclick="showTab('package')">礼包</button>
+    </div>
+
+    <div class="shop-grid" id="shopGrid">
+        <!-- 道具卡片将动态生成 -->
+    </div>
+
+    <div class="my-items">
+        <h2 class="my-items-title">🎒 我的道具</h2>
+        <div class="my-items-grid" id="myItemsGrid">
+            <!-- 已购道具将动态生成 -->
+        </div>
+    </div>
+
+    <div class="history-section">
+        <h2 class="history-title">📜 积分记录</h2>
+        <div class="history-list" id="historyList">
+            <!-- 积分记录将动态生成 -->
+        </div>
+    </div>
+
+    <script src="supabase-config.js"></script>
+    <script>
+        // 积分管理器
+        const PointsManager = {
+            STORAGE_KEY: 'user_points_v1',
+            
+            getData() {
+                try {
+                    const data = localStorage.getItem(this.STORAGE_KEY);
+                    return data ? JSON.parse(data) : {
+                        totalPoints: 0,
+                        todayPoints: 0,
+                        lastDate: '',
+                        pointsHistory: [],
+                        ownedItems: {},
+                        streak: 0
+                    };
+                } catch (e) {
+                    return {
+                        totalPoints: 0,
+                        todayPoints: 0,
+                        lastDate: '',
+                        pointsHistory: [],
+                        ownedItems: {},
+                        streak: 0
+                    };
+                }
+            },
+            
+            saveData(data) {
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+                // 同步到云端
+                if (window.DataManager && typeof window.DataManager.syncToCloud === 'function') {
+                    window.DataManager.syncToCloud();
+                }
+            },
+            
+            getTotalPoints() {
+                return this.getData().totalPoints;
+            },
+            
+            addPoints(points, reason) {
+                const data = this.getData();
+                const today = new Date().toDateString();
+                
+                if (data.lastDate !== today) {
+                    data.todayPoints = 0;
+                    data.lastDate = today;
+                }
+                
+                data.totalPoints += points;
+                data.todayPoints += points;
+                data.pointsHistory.unshift({
+                    points: points,
+                    reason: reason,
+                    time: Date.now()
+                });
+                
+                if (data.pointsHistory.length > 100) {
+                    data.pointsHistory = data.pointsHistory.slice(0, 100);
+                }
+                
+                this.saveData(data);
+                return data.totalPoints;
+            },
+            
+            spendPoints(points, reason) {
+                const data = this.getData();
+                if (data.totalPoints < points) return false;
+                
+                data.totalPoints -= points;
+                data.pointsHistory.unshift({
+                    points: -points,
+                    reason: reason,
+                    time: Date.now()
+                });
+                
+                this.saveData(data);
+                return true;
+            },
+            
+            getOwnedItems() {
+                return this.getData().ownedItems || {};
+            },
+            
+            addItem(itemId) {
+                const data = this.getData();
+                if (!data.ownedItems) data.ownedItems = {};
+                data.ownedItems[itemId] = (data.ownedItems[itemId] || 0) + 1;
+                this.saveData(data);
+            },
+            
+            useItem(itemId) {
+                const data = this.getData();
+                if (!data.ownedItems || !data.ownedItems[itemId] || data.ownedItems[itemId] <= 0) {
+                    return false;
+                }
+                data.ownedItems[itemId]--;
+                this.saveData(data);
+                return true;
+            }
+        };
+
+        // 道具数据
+        const ITEMS = {
+            quiz: [
+                { id: 'hint', name: '答案提示', icon: '💡', price: 50, desc: '显示正确答案提示', usage: '每题限用1次' },
+                { id: 'eliminate', name: '排除干扰', icon: '🚫', price: 80, desc: '排除2个错误选项', usage: '仅选择题可用' },
+                { id: 'skip', name: '跳过题目', icon: '⏭️', price: 100, desc: '跳过当前题目不计分', usage: '每套题限用3次' },
+                { id: 'double', name: '双倍积分', icon: '⭐', price: 150, desc: '下次答题积分翻倍', usage: '持续10分钟' },
+                { id: 'revive', name: '复活卡', icon: '🔄', price: 200, desc: '答错后重新答题', usage: '每题限用1次' }
+            ],
+            appearance: [
+                { id: 'frame_scroll', name: '头像框-书卷', icon: '📜', price: 300, desc: '古典书卷头像框', usage: '永久' },
+                { id: 'frame_plum', name: '头像框-梅花', icon: '🌸', price: 500, desc: '精美梅花头像框', usage: '永久' },
+                { id: 'nickname_glow', name: '昵称特效', icon: '✨', price: 200, desc: '昵称发光效果', usage: '30天' }
+            ],
+            function: [
+                { id: 'wrong_reset', name: '错题重置卡', icon: '🗑️', price: 100, desc: '清空错题本', usage: '每周限用1次' },
+                { id: 'points_protect', name: '积分保护卡', icon: '🛡️', price: 300, desc: '24小时内答题不计负分', usage: '每日限用1次' }
+            ],
+            package: [
+                { id: 'daily_pack', name: '每日礼包', icon: '🎁', price: 100, desc: '提示×2、排除×1', usage: '每日限购1次' },
+                { id: 'weekly_pack', name: '周卡礼包', icon: '📦', price: 800, desc: '所有基础道具×7', usage: '每周限购1次' }
+            ]
+        };
+
+        let currentTab = 'quiz';
+
+        function showTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            renderShop();
+        }
+
+        function renderShop() {
+            const grid = document.getElementById('shopGrid');
+            const items = ITEMS[currentTab];
+            const totalPoints = PointsManager.getTotalPoints();
+            
+            grid.innerHTML = items.map(item => `
+                <div class="item-card">
+                    <div class="item-icon">${item.icon}</div>
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-desc">${item.desc}<br><small style="color:#999">${item.usage}</small></div>
+                    <div class="item-price">🪙 ${item.price}</div>
+                    <button class="buy-btn" onclick="buyItem('${item.id}', ${item.price}, '${item.name}')" ${totalPoints < item.price ? 'disabled' : ''}>
+                        ${totalPoints < item.price ? '积分不足' : '购买'}
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function buyItem(itemId, price, name) {
+            if (!confirm(`确定花费 ${price} 积分购买 ${name} 吗？`)) return;
+            
+            if (PointsManager.spendPoints(price, `购买 ${name}`)) {
+                PointsManager.addItem(itemId);
+                alert('购买成功！');
+                updateDisplay();
+                renderShop();
+                renderMyItems();
+            } else {
+                alert('积分不足！');
+            }
+        }
+
+        function renderMyItems() {
+            const grid = document.getElementById('myItemsGrid');
+            const ownedItems = PointsManager.getOwnedItems();
+            
+            const allItems = [...ITEMS.quiz, ...ITEMS.appearance, ...ITEMS.function, ...ITEMS.package];
+            
+            const ownedList = Object.entries(ownedItems).filter(([_, count]) => count > 0);
+            
+            if (ownedList.length === 0) {
+                grid.innerHTML = '<div class="empty-items">暂无道具，快去购买吧！</div>';
+                return;
+            }
+            
+            grid.innerHTML = ownedList.map(([itemId, count]) => {
+                const item = allItems.find(i => i.id === itemId);
+                if (!item) return '';
+                return `
+                    <div class="owned-item">
+                        <div class="owned-item-info">
+                            <span class="owned-item-icon">${item.icon}</span>
+                            <span class="owned-item-name">${item.name}</span>
+                        </div>
+                        <span class="owned-item-count">×${count}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const data = PointsManager.getData();
+            const history = data.pointsHistory || [];
+            
+            if (history.length === 0) {
+                list.innerHTML = '<div class="empty-items">暂无记录</div>';
+                return;
+            }
+            
+            list.innerHTML = history.slice(0, 50).map(item => {
+                const date = new Date(item.time);
+                const timeStr = `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+                const isPositive = item.points > 0;
+                return `
+                    <div class="history-item">
+                        <div>
+                            <div class="history-reason">${item.reason}</div>
+                            <div class="history-time">${timeStr}</div>
+                        </div>
+                        <div class="history-points ${isPositive ? 'positive' : 'negative'}">
+                            ${isPositive ? '+' : ''}${item.points}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateDisplay() {
+            const data = PointsManager.getData();
+            const today = new Date().toDateString();
+            const todayPoints = data.lastDate === today ? data.todayPoints : 0;
+            
+            document.getElementById('totalPoints').textContent = data.totalPoints;
+            document.getElementById('todayPoints').textContent = todayPoints;
+            
+            const ownedItems = data.ownedItems || {};
+            const totalCount = Object.values(ownedItems).reduce((sum, count) => sum + count, 0);
+            document.getElementById('totalItems').textContent = totalCount;
+        }
+
+        // 初始化
+        updateDisplay();
+        renderShop();
+        renderMyItems();
+        renderHistory();
+    </script>
+</body>
+</html>

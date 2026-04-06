@@ -386,6 +386,79 @@
             line-height: 1.6;
         }
 
+        /* 道具栏样式 */
+        .items-bar {
+            background: rgba(255,255,255,0.9);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 2px solid #FFD700;
+        }
+
+        .items-bar-title {
+            font-weight: bold;
+            color: #8B4513;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .items-bar-grid {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .item-slot {
+            background: linear-gradient(135deg, #f5f5dc, #e8e4c9);
+            border: 2px solid #d4af37;
+            border-radius: 10px;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 100px;
+        }
+
+        .item-slot:hover:not(.disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3);
+        }
+
+        .item-slot.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .item-slot .icon {
+            font-size: 1.3rem;
+        }
+
+        .item-slot .name {
+            font-size: 0.85rem;
+            color: #8B4513;
+        }
+
+        .item-slot .count {
+            background: #8B4513;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+        }
+
+        .item-slot.empty {
+            border: 2px dashed #ccc;
+            background: transparent;
+            cursor: default;
+        }
+
+        .item-slot.empty:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
         .quiz-actions {
             display: flex;
             gap: 15px;
@@ -1050,6 +1123,14 @@
         <div class="analysis-box" id="analysisBox">
             <div class="analysis-title">📝 解析</div>
             <div class="analysis-text" id="analysisText">解析内容</div>
+        </div>
+        
+        <!-- 道具栏 -->
+        <div class="items-bar" id="itemsBar">
+            <div class="items-bar-title">🎒 道具栏</div>
+            <div class="items-bar-grid" id="itemsBarGrid">
+                <!-- 道具将动态生成 -->
+            </div>
         </div>
         
         <div class="quiz-actions">
@@ -2122,6 +2203,339 @@
             return null;
         }
 
+        // 积分管理器
+        const PointsManager = {
+            STORAGE_KEY: 'user_points_v1',
+            
+            getData() {
+                try {
+                    const data = localStorage.getItem(this.STORAGE_KEY);
+                    return data ? JSON.parse(data) : {
+                        totalPoints: 0,
+                        todayPoints: 0,
+                        lastDate: '',
+                        pointsHistory: [],
+                        streak: 0  // 连击次数
+                    };
+                } catch (e) {
+                    return {
+                        totalPoints: 0,
+                        todayPoints: 0,
+                        lastDate: '',
+                        pointsHistory: [],
+                        streak: 0
+                    };
+                }
+            },
+            
+            saveData(data) {
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+                // 同步到云端
+                if (window.DataManager && typeof window.DataManager.syncToCloud === 'function') {
+                    window.DataManager.syncToCloud();
+                }
+            },
+            
+            addPoints(points, reason) {
+                const data = this.getData();
+                const today = new Date().toDateString();
+                
+                if (data.lastDate !== today) {
+                    data.todayPoints = 0;
+                    data.lastDate = today;
+                }
+                
+                data.totalPoints += points;
+                data.todayPoints += points;
+                data.pointsHistory.unshift({
+                    points: points,
+                    reason: reason,
+                    time: Date.now()
+                });
+                
+                // 只保留最近100条记录
+                if (data.pointsHistory.length > 100) {
+                    data.pointsHistory = data.pointsHistory.slice(0, 100);
+                }
+                
+                this.saveData(data);
+                this.showPointsNotification(points, reason);
+                return data.totalPoints;
+            },
+            
+            getTotalPoints() {
+                return this.getData().totalPoints;
+            },
+            
+            getStreak() {
+                return this.getData().streak || 0;
+            },
+            
+            incrementStreak() {
+                const data = this.getData();
+                data.streak = (data.streak || 0) + 1;
+                this.saveData(data);
+                return data.streak;
+            },
+            
+            resetStreak() {
+                const data = this.getData();
+                data.streak = 0;
+                this.saveData(data);
+            },
+            
+            showPointsNotification(points, reason) {
+                // 创建积分提示
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: linear-gradient(135deg, #FFD700, #FFA500);
+                    color: #8B4513;
+                    padding: 15px 25px;
+                    border-radius: 10px;
+                    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+                    z-index: 10000;
+                    font-weight: bold;
+                    animation: slideInRight 0.5s ease;
+                `;
+                notification.innerHTML = `+${points} 积分<br><small>${reason}</small>`;
+                
+                // 添加动画样式
+                if (!document.getElementById('pointsNotificationStyle')) {
+                    const style = document.createElement('style');
+                    style.id = 'pointsNotificationStyle';
+                    style.textContent = `
+                        @keyframes slideInRight {
+                            from { transform: translateX(100px); opacity: 0; }
+                            to { transform: translateX(0); opacity: 1; }
+                        }
+                        @keyframes slideOutRight {
+                            from { transform: translateX(0); opacity: 1; }
+                            to { transform: translateX(100px); opacity: 0; }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+                
+                document.body.appendChild(notification);
+                
+                // 3秒后移除
+                setTimeout(() => {
+                    notification.style.animation = 'slideOutRight 0.5s ease';
+                    setTimeout(() => notification.remove(), 500);
+                }, 3000);
+            },
+            
+            getOwnedItems() {
+                return this.getData().ownedItems || {};
+            },
+            
+            addItem(itemId) {
+                const data = this.getData();
+                if (!data.ownedItems) data.ownedItems = {};
+                data.ownedItems[itemId] = (data.ownedItems[itemId] || 0) + 1;
+                this.saveData(data);
+            },
+            
+            useItem(itemId) {
+                const data = this.getData();
+                if (!data.ownedItems || !data.ownedItems[itemId] || data.ownedItems[itemId] <= 0) {
+                    return false;
+                }
+                data.ownedItems[itemId]--;
+                this.saveData(data);
+                return true;
+            },
+            
+            getItemCount(itemId) {
+                const ownedItems = this.getOwnedItems();
+                return ownedItems[itemId] || 0;
+            }
+        };
+
+        // 道具效果管理
+        const ItemEffects = {
+            doublePointsActive: false,
+            doublePointsExpiry: 0,
+            
+            // 使用答案提示
+            useHint() {
+                if (!PointsManager.useItem('hint')) {
+                    alert('没有答案提示道具！');
+                    return false;
+                }
+                
+                const question = currentQuestions[currentIndex];
+                if (question.type === 'choice') {
+                    alert(`提示：正确答案是 ${question.a}`);
+                } else {
+                    alert(`提示：正确答案是 ${question.a}`);
+                }
+                updateItemsBar();
+                return true;
+            },
+            
+            // 使用排除干扰
+            useEliminate() {
+                if (!PointsManager.useItem('eliminate')) {
+                    alert('没有排除干扰道具！');
+                    return false;
+                }
+                
+                const question = currentQuestions[currentIndex];
+                if (question.type !== 'choice') {
+                    alert('此道具仅适用于选择题！');
+                    return false;
+                }
+                
+                // 排除2个错误选项
+                const correctIndex = question.a.charCodeAt(0) - 65;
+                const options = document.querySelectorAll('.option-item:not(.disabled)');
+                let eliminated = 0;
+                
+                options.forEach((opt, i) => {
+                    if (i !== correctIndex && eliminated < 2) {
+                        opt.style.opacity = '0.3';
+                        opt.style.textDecoration = 'line-through';
+                        eliminated++;
+                    }
+                });
+                
+                updateItemsBar();
+                return true;
+            },
+            
+            // 使用跳过题目
+            useSkip() {
+                if (!PointsManager.useItem('skip')) {
+                    alert('没有跳过题目道具！');
+                    return false;
+                }
+                
+                skipQuestion();
+                updateItemsBar();
+                return true;
+            },
+            
+            // 使用双倍积分
+            useDouble() {
+                if (!PointsManager.useItem('double')) {
+                    alert('没有双倍积分道具！');
+                    return false;
+                }
+                
+                this.doublePointsActive = true;
+                this.doublePointsExpiry = Date.now() + 10 * 60 * 1000; // 10分钟
+                
+                alert('双倍积分已激活！持续10分钟');
+                updateItemsBar();
+                return true;
+            },
+            
+            // 使用复活卡
+            useRevive() {
+                if (!PointsManager.useItem('revive')) {
+                    alert('没有复活卡道具！');
+                    return false;
+                }
+                
+                if (!answered) {
+                    alert('请先答题再使用复活卡！');
+                    return false;
+                }
+                
+                // 重置当前题目状态
+                answered = false;
+                score = Math.max(0, score - 1);
+                
+                const question = currentQuestions[currentIndex];
+                renderQuestion(question);
+                updateItemsBar();
+                return true;
+            },
+            
+            // 检查双倍积分是否有效
+            isDoubleActive() {
+                if (this.doublePointsActive && Date.now() < this.doublePointsExpiry) {
+                    return true;
+                }
+                this.doublePointsActive = false;
+                return false;
+            }
+        };
+
+        // 道具信息
+        const ITEM_INFO = {
+            hint: { name: '答案提示', icon: '💡' },
+            eliminate: { name: '排除干扰', icon: '🚫' },
+            skip: { name: '跳过题目', icon: '⏭️' },
+            double: { name: '双倍积分', icon: '⭐' },
+            revive: { name: '复活卡', icon: '🔄' }
+        };
+
+        // 更新道具栏显示
+        function updateItemsBar() {
+            const grid = document.getElementById('itemsBarGrid');
+            if (!grid) return;
+            
+            const ownedItems = PointsManager.getOwnedItems();
+            const items = ['hint', 'eliminate', 'skip', 'double', 'revive'];
+            
+            grid.innerHTML = items.map(itemId => {
+                const count = ownedItems[itemId] || 0;
+                const info = ITEM_INFO[itemId];
+                const disabled = count <= 0 || answered;
+                
+                return `
+                    <div class="item-slot ${disabled ? 'disabled' : ''}" onclick="${disabled ? '' : `useItem('${itemId}')`}">
+                        <span class="icon">${info.icon}</span>
+                        <span class="name">${info.name}</span>
+                        <span class="count">×${count}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 监听 storage 变化，实时更新道具栏
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'user_points_v1') {
+                updateItemsBar();
+            }
+        });
+
+        // 页面获得焦点时也更新道具栏
+        window.addEventListener('focus', function() {
+            updateItemsBar();
+        });
+
+        // 使用道具
+        function useItem(itemId) {
+            if (answered && itemId !== 'revive') {
+                alert('本题已作答，无法使用道具！');
+                return;
+            }
+            
+            switch(itemId) {
+                case 'hint':
+                    ItemEffects.useHint();
+                    break;
+                case 'eliminate':
+                    ItemEffects.useEliminate();
+                    break;
+                case 'skip':
+                    ItemEffects.useSkip();
+                    break;
+                case 'double':
+                    ItemEffects.useDouble();
+                    break;
+                case 'revive':
+                    ItemEffects.useRevive();
+                    break;
+            }
+        }
+
         // 错题本管理器
         const WrongBookManager = {
             STORAGE_KEY: 'quiz_wrong_book_v1',
@@ -2515,6 +2929,7 @@
             document.getElementById('resultContainer').classList.remove('active');
             document.getElementById('quizContainer').classList.add('active');
             
+            updateItemsBar();
             showQuestion();
         }
 
@@ -2768,9 +3183,37 @@
                 if (!isWrongBookMode) {
                     WrongBookManager.add(question, settings.mode, 'wrong', labels[index]);
                 }
+                // 答错也得少量积分
+                PointsManager.addPoints(2, '答题参与');
+                PointsManager.resetStreak();
             } else {
                 score++;
                 WrongBookManager.removeByQuestion(question);
+                
+                // 计算积分
+                let points = 10;  // 基础积分
+                const streak = PointsManager.incrementStreak();
+                
+                // 连击奖励
+                if (streak >= 20) {
+                    points += 300;
+                } else if (streak >= 10) {
+                    points += 120;
+                } else if (streak >= 5) {
+                    points += 50;
+                }
+                
+                // 检查双倍积分
+                if (ItemEffects.isDoubleActive()) {
+                    points *= 2;
+                    PointsManager.addPoints(points, `双倍积分！答对题目`);
+                } else {
+                    let reason = '答对题目';
+                    if (streak >= 20) reason = `完美连击！连续答对${streak}题`;
+                    else if (streak >= 10) reason = `超级连击！连续答对${streak}题`;
+                    else if (streak >= 5) reason = `连击奖励！连续答对${streak}题`;
+                    PointsManager.addPoints(points, reason);
+                }
             }
             
             if (!isWrongBookMode) {
@@ -2810,11 +3253,30 @@
                 score++;
                 input.classList.add('correct');
                 WrongBookManager.removeByQuestion(question);
+                
+                // 计算积分
+                let points = 10;
+                const streak = PointsManager.incrementStreak();
+                
+                if (streak >= 20) {
+                    points += 300;
+                    PointsManager.addPoints(points, `完美连击！连续答对${streak}题`);
+                } else if (streak >= 10) {
+                    points += 120;
+                    PointsManager.addPoints(points, `超级连击！连续答对${streak}题`);
+                } else if (streak >= 5) {
+                    points += 50;
+                    PointsManager.addPoints(points, `连击奖励！连续答对${streak}题`);
+                } else {
+                    PointsManager.addPoints(points, '答对题目');
+                }
             } else {
                 input.classList.add('wrong');
                 if (!isWrongBookMode) {
                     WrongBookManager.add(question, settings.mode, 'wrong', userAnswer);
                 }
+                PointsManager.addPoints(2, '答题参与');
+                PointsManager.resetStreak();
             }
             
             if (!isWrongBookMode) {
@@ -2872,6 +3334,13 @@
                 <div>${question.a}</div>
             `;
             document.getElementById('optionsList').appendChild(answerReveal);
+            
+            // 简答题完成即得积分
+            if (userAnswer.length > 10) {
+                PointsManager.addPoints(8, '简答题作答');
+            } else {
+                PointsManager.addPoints(5, '简答题作答');
+            }
             
             if (autoShowAnalysis) {
                 document.getElementById('analysisText').textContent = question.note || '暂无解析';
@@ -2944,6 +3413,14 @@
             document.getElementById('resultText').textContent = `正确率：${percentage}%`;
             
             document.getElementById('progressFill').style.width = '100%';
+            
+            // 完成一套题目的积分奖励
+            PointsManager.addPoints(30, '完成一套题目');
+            
+            // 全对奖励
+            if (score === currentQuestions.length) {
+                PointsManager.addPoints(100, '完美通关！全部答对');
+            }
             
             checkAndNotifyBadges();
         }

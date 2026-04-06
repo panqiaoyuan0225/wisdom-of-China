@@ -32,6 +32,7 @@ window.DataManager = {
             badgeData: JSON.parse(localStorage.getItem('badge_data_v1') || '{}'),
             profileData: JSON.parse(localStorage.getItem('profile_data_v1') || '{}'),
             pendingBadge: localStorage.getItem('pending_badge_notification') || null,
+            pointsData: JSON.parse(localStorage.getItem('user_points_v1') || '{"totalPoints":0,"todayPoints":0,"lastDate":"","pointsHistory":[],"ownedItems":{},"streak":0}'),
             syncTime: Date.now()
         };
 
@@ -117,6 +118,13 @@ window.DataManager = {
                 if (cloudData.profileData) localStorage.setItem('profile_data_v1', JSON.stringify(cloudData.profileData));
                 if (cloudData.pendingBadge) localStorage.setItem('pending_badge_notification', cloudData.pendingBadge);
                 
+                // 合并积分数据
+                if (cloudData.pointsData) {
+                    const localPoints = JSON.parse(localStorage.getItem('user_points_v1') || '{"totalPoints":0,"todayPoints":0,"lastDate":"","pointsHistory":[],"ownedItems":{},"streak":0}');
+                    const mergedPoints = this.mergePoints(localPoints, cloudData.pointsData);
+                    localStorage.setItem('user_points_v1', JSON.stringify(mergedPoints));
+                }
+                
                 console.log('已从云端加载并合并最新数据');
                 return true;
             }
@@ -157,6 +165,47 @@ window.DataManager = {
                 }
             }
         }
+        return merged;
+    },
+
+    mergePoints(local, cloud) {
+        // 合并积分数据：取较大的总积分
+        const merged = {
+            totalPoints: Math.max(local.totalPoints || 0, cloud.totalPoints || 0),
+            todayPoints: local.todayPoints || 0,
+            lastDate: local.lastDate || cloud.lastDate || '',
+            streak: Math.max(local.streak || 0, cloud.streak || 0),
+            ownedItems: { ...cloud.ownedItems },
+            pointsHistory: [...(cloud.pointsHistory || [])]
+        };
+        
+        // 合并拥有的道具：取较大数量
+        if (local.ownedItems) {
+            for (const [itemId, count] of Object.entries(local.ownedItems)) {
+                if (!merged.ownedItems[itemId] || count > merged.ownedItems[itemId]) {
+                    merged.ownedItems[itemId] = count;
+                }
+            }
+        }
+        
+        // 合并积分历史：去重并按时间排序
+        const localHistory = local.pointsHistory || [];
+        const cloudHistorySet = new Set((cloud.pointsHistory || []).map(h => h.time));
+        
+        for (const item of localHistory) {
+            if (!cloudHistorySet.has(item.time)) {
+                merged.pointsHistory.push(item);
+            }
+        }
+        
+        // 按时间排序
+        merged.pointsHistory.sort((a, b) => b.time - a.time);
+        
+        // 只保留最近100条记录
+        if (merged.pointsHistory.length > 100) {
+            merged.pointsHistory = merged.pointsHistory.slice(0, 100);
+        }
+        
         return merged;
     }
 };

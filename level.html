@@ -239,55 +239,117 @@
     </div>
 
     <script>
+        // 积分数据管理
+        const PointsManager = {
+            STORAGE_KEY: 'user_points_v1',
+            
+            getData() {
+                try {
+                    const data = localStorage.getItem(this.STORAGE_KEY);
+                    return data ? JSON.parse(data) : {
+                        totalPoints: 0,
+                        todayPoints: 0,
+                        lastDate: '',
+                        pointsHistory: []
+                    };
+                } catch (e) {
+                    return {
+                        totalPoints: 0,
+                        todayPoints: 0,
+                        lastDate: '',
+                        pointsHistory: []
+                    };
+                }
+            },
+            
+            saveData(data) {
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+                // 同步到云端
+                if (window.DataManager && typeof window.DataManager.syncToCloud === 'function') {
+                    window.DataManager.syncToCloud();
+                }
+            },
+            
+            addPoints(points, reason) {
+                const data = this.getData();
+                const today = new Date().toDateString();
+                
+                if (data.lastDate !== today) {
+                    data.todayPoints = 0;
+                    data.lastDate = today;
+                }
+                
+                data.totalPoints += points;
+                data.todayPoints += points;
+                data.pointsHistory.unshift({
+                    points: points,
+                    reason: reason,
+                    time: Date.now()
+                });
+                
+                // 只保留最近100条记录
+                if (data.pointsHistory.length > 100) {
+                    data.pointsHistory = data.pointsHistory.slice(0, 100);
+                }
+                
+                this.saveData(data);
+                return data.totalPoints;
+            },
+            
+            getTotalPoints() {
+                return this.getData().totalPoints;
+            }
+        };
+
         const RANKS = [
             {
                 name: '蒙童',
                 icon: 'mengtong',
                 color: '#7CB342',
                 bgColor: '#E8F5E9',
-                stages: [5, 10, 15]
+                stages: [300, 600, 900]  // 积分阈值
             },
             {
                 name: '书生',
                 icon: 'shusheng',
                 color: '#5C6BC0',
                 bgColor: '#E8EAF6',
-                stages: [20, 28, 36]
+                stages: [1300, 1800, 2400]
             },
             {
                 name: '秀才',
                 icon: 'xiucai',
                 color: '#81D4FA',
                 bgColor: '#E1F5FE',
-                stages: [45, 54, 63]
+                stages: [3500, 4500, 5500]
             },
             {
                 name: '举人',
                 icon: 'juren',
                 color: '#E53935',
                 bgColor: '#FFEBEE',
-                stages: [70, 77, 84]
+                stages: [7000, 8000, 9000]
             },
             {
                 name: '进士',
                 icon: 'jinshi',
                 color: '#AB47BC',
                 bgColor: '#F3E5F5',
-                stages: [88, 92, 96]
+                stages: [11000, 12500, 14000]
             },
             {
                 name: '翰林',
                 icon: 'hanlin',
                 color: '#00897B',
                 bgColor: '#E0F2F1',
-                stages: [97, 98, 99]
+                stages: [16000, 17500, 19000]
             },
             {
                 name: '状元',
                 icon: 'zhuangyuan',
                 color: '#FFD700',
                 bgColor: '#FFFDE7',
-                stages: [100]
+                stages: [20000]  // 状元只有一个阶段
             }
         ];
 
@@ -589,11 +651,14 @@
             return mastered;
         }
 
-        function getRankByMastery(masteryPercent) {
+        function getRankByPoints() {
+            // 基于积分判断段位
+            const totalPoints = PointsManager.getTotalPoints();
+            
             for (let i = RANKS.length - 1; i >= 0; i--) {
                 const rank = RANKS[i];
                 for (let j = rank.stages.length - 1; j >= 0; j--) {
-                    if (masteryPercent >= rank.stages[j]) {
+                    if (totalPoints >= rank.stages[j]) {
                         return {
                             rank: rank,
                             stageIndex: j,
@@ -611,10 +676,10 @@
             };
         }
 
-        function getNextTarget(currentPercent) {
+        function getNextTarget(currentPoints) {
             for (const rank of RANKS) {
                 for (let i = 0; i < rank.stages.length; i++) {
-                    if (currentPercent < rank.stages[i]) {
+                    if (currentPoints < rank.stages[i]) {
                         return {
                             target: rank.stages[i],
                             rank: rank,
@@ -627,10 +692,9 @@
         }
 
         function renderCurrentRank() {
-            const mastered = calculateMastery();
-            const percent = Math.round((mastered / TOTAL_QUESTIONS) * 100);
-            const currentRank = getRankByMastery(percent);
-            const nextTarget = getNextTarget(percent);
+            const totalPoints = PointsManager.getTotalPoints();
+            const currentRank = getRankByPoints();
+            const nextTarget = getNextTarget(totalPoints);
             
             const rankName = currentRank.rank.name + (currentRank.stageLabel ? ' ' + currentRank.stageLabel : '');
             document.getElementById('currentRankName').textContent = rankName;
@@ -639,7 +703,7 @@
             document.getElementById('currentRankIcon').innerHTML = RANK_ICONS[currentRank.rank.icon];
             
             const progressText = nextTarget 
-                ? `距离 ${nextTarget.rank.name} ${['Ⅰ', 'Ⅱ', 'Ⅲ'][nextTarget.stage - 1]} 还需掌握 ${Math.ceil((nextTarget.target / 100) * TOTAL_QUESTIONS) - mastered} 题`
+                ? `距离 ${nextTarget.rank.name} ${['Ⅰ', 'Ⅱ', 'Ⅲ'][nextTarget.stage - 1]} 还需 ${nextTarget.target - totalPoints} 积分`
                 : '已达到最高段位！';
             document.getElementById('rankProgressText').textContent = progressText;
             
@@ -649,7 +713,7 @@
                     ? currentRank.rank.stages[currentRank.stageIndex] 
                     : 0;
                 const range = nextTarget.target - prevTarget;
-                const current = percent - prevTarget;
+                const current = totalPoints - prevTarget;
                 progressPercent = Math.round((current / range) * 100);
             } else {
                 progressPercent = 100;
@@ -659,23 +723,22 @@
             progressBar.style.width = progressPercent + '%';
             progressBar.style.background = currentRank.rank.color;
             
-            document.getElementById('progressCurrent').textContent = `已掌握 ${mastered} 题`;
-            document.getElementById('progressTotal').textContent = `共 ${TOTAL_QUESTIONS} 题 (${percent}%)`;
+            document.getElementById('progressCurrent').textContent = `当前积分 ${totalPoints}`;
+            document.getElementById('progressTotal').textContent = nextTarget ? `目标 ${nextTarget.target} 积分` : '已达最高';
             
             const card = document.getElementById('currentRankCard');
             card.style.borderColor = currentRank.rank.color;
         }
 
         function renderRanksGrid() {
-            const mastered = calculateMastery();
-            const percent = Math.round((mastered / TOTAL_QUESTIONS) * 100);
-            const currentRank = getRankByMastery(percent);
+            const totalPoints = PointsManager.getTotalPoints();
+            const currentRank = getRankByPoints();
             
             const grid = document.getElementById('ranksGrid');
             grid.innerHTML = '';
             
             RANKS.forEach((rank, rankIndex) => {
-                const isUnlocked = percent >= rank.stages[0];
+                const isUnlocked = totalPoints >= rank.stages[0];
                 const isCurrent = currentRank.rank === rank;
                 
                 const item = document.createElement('div');
@@ -688,9 +751,8 @@
                 if (rank.stages.length > 1) {
                     stagesHtml = '<div class="rank-stages">';
                     rank.stages.forEach((stage, i) => {
-                        const stagePercent = stage;
                         let dotClass = 'stage-dot';
-                        if (percent >= stagePercent) {
+                        if (totalPoints >= stage) {
                             if (currentRank.rank === rank && currentRank.stageIndex === i) {
                                 dotClass += ' current';
                             } else {
@@ -708,7 +770,7 @@
                     ${lockIcon}
                     <div class="rank-icon-small">${RANK_ICONS[rank.icon]}</div>
                     <div class="rank-name-small" style="color: ${rank.color}">${rank.name}</div>
-                    <div class="rank-requirement">掌握 ${rank.stages[rank.stages.length - 1]}%</div>
+                    <div class="rank-requirement">${rank.stages[rank.stages.length - 1]} 积分</div>
                     ${stagesHtml}
                 `;
                 

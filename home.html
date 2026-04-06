@@ -894,6 +894,7 @@
             <span></span>
         </button>
         <div class="menu-dropdown" id="menuDropdown">
+            <button class="menu-item" onclick="window.location.href='shop.html'">🏪 积分商城</button>
             <button class="menu-item logout" onclick="handleLogout()">退出登录</button>
             <button class="menu-item" onclick="handleDonate()">赞助开发者</button>
             <button class="menu-item" onclick="handleFeedback()">反馈与建议</button>
@@ -935,6 +936,20 @@
     </div>
 
     <div class="welcome-text" id="welcomeText">欢迎回来</div>
+    
+    <!-- 积分显示卡片 -->
+    <div style="max-width: 600px; margin: 0 auto 20px; background: linear-gradient(135deg, #FFD700, #FFA500); border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div style="font-size: 0.9rem; color: #8B4513;">当前积分</div>
+                <div style="font-size: 2rem; font-weight: bold; color: #8B4513;" id="homePointsDisplay">0</div>
+            </div>
+            <a href="shop.html" style="background: #8B4513; color: white; padding: 10px 20px; border-radius: 20px; text-decoration: none; font-weight: bold; transition: all 0.3s;" onmouseover="this.style.background='#A0522D'" onmouseout="this.style.background='#8B4513'">
+                🏪 商城
+            </a>
+        </div>
+    </div>
+    
     <div class="main-container">
         <div class="welcome-section">
             <h1 class="main-title">四大名著经典学习网</h1>
@@ -1531,9 +1546,51 @@
             }
         }
 
+        // 积分管理器
+        const PointsManager = {
+            STORAGE_KEY: 'user_points_v1',
+            
+            getData() {
+                try {
+                    const data = localStorage.getItem(this.STORAGE_KEY);
+                    return data ? JSON.parse(data) : {
+                        totalPoints: 0,
+                        todayPoints: 0,
+                        lastDate: '',
+                        pointsHistory: [],
+                        ownedItems: {},
+                        streak: 0
+                    };
+                } catch (e) {
+                    return {
+                        totalPoints: 0,
+                        todayPoints: 0,
+                        lastDate: '',
+                        pointsHistory: [],
+                        ownedItems: {},
+                        streak: 0
+                    };
+                }
+            },
+            
+            getTotalPoints() {
+                return this.getData().totalPoints;
+            }
+        };
+
+        function updatePointsDisplay() {
+            const pointsDisplay = document.getElementById('homePointsDisplay');
+            if (pointsDisplay) {
+                pointsDisplay.textContent = PointsManager.getTotalPoints();
+            }
+        }
+
         window.addEventListener('storage', function(e) {
             if (e.key === STORAGE_KEY) {
                 updateRankBadge();
+            }
+            if (e.key === 'user_points_v1') {
+                updatePointsDisplay();
             }
         });
 
@@ -1545,6 +1602,7 @@
 
         async function initData() {
             updateWelcomeText();
+            updatePointsDisplay();
             
             // 确保 DataManager 已加载
             if (window.DataManager && typeof window.DataManager.loadFromCloud === 'function') {
