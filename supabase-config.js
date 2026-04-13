@@ -4,14 +4,86 @@ window.SUPABASE_CONFIG = {
 };
 
 window.DataManager = {
+    isLoading: false,
+    syncTimer: null,
+    
+    // 所有的存储键名
+    STORAGE_KEYS: [
+        'quiz_history_v1',
+        'quiz_wrong_book_v1',
+        'category_stats_v1',
+        'category_mastery_v1',
+        'browsing_time_v1',
+        'badge_data_v1',
+        'user_profile_v1',
+        'pending_badge_notification',
+        'user_points_v1',
+        'leaderboard_rank_v1',
+        'last_user_id' // 新增：用于跟踪本地数据所属用户
+    ],
+
+    // 清理所有本地数据
+    clearLocalData() {
+        console.log('正在清理本地数据...');
+        if (this.syncTimer) {
+            clearTimeout(this.syncTimer);
+            this.syncTimer = null;
+        }
+        
+        // 清理已知的键
+        this.STORAGE_KEYS.forEach(key => localStorage.removeItem(key));
+        
+        // 额外安全保障：清理所有可能相关的旧数据
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && (key.includes('v1') || key.includes('quiz') || key.includes('user_') || key.includes('badge'))) {
+                keysToRemove.push(key);
+            }
+        }
+        keysToRemove.forEach(key => localStorage.removeItem(key));
+        
+        console.log('本地数据已完全清理');
+    },
+
+    // 检查本地数据是否属于当前用户
+    checkUserMatch() {
+        const currentUserId = sessionStorage.getItem('userId');
+        const lastUserId = localStorage.getItem('last_user_id');
+        
+        // 如果没有当前登录用户，不执行操作
+        if (!currentUserId) return true;
+        
+        // 如果本地没有记录上次用户ID，或者上次ID与当前不符
+        if (lastUserId && lastUserId !== currentUserId) {
+            console.warn('检测到账号切换，正在清理旧账号残留数据');
+            this.clearLocalData();
+            localStorage.setItem('last_user_id', currentUserId);
+            return false;
+        }
+        
+        // 更新最后一次使用的用户ID
+        localStorage.setItem('last_user_id', currentUserId);
+        return true;
+    },
+
     // 数据保存到本地并同步到云端
     async saveData(key, value) {
+        // 在保存任何新数据前，确保用户匹配
+        this.checkUserMatch();
+
         if (typeof value === 'object') {
             localStorage.setItem(key, JSON.stringify(value));
         } else {
             localStorage.setItem(key, value);
         }
         
+        // 如果正在加载数据，则不触发同步
+        if (this.isLoading) return;
+
+        const userId = sessionStorage.getItem('userId');
+        if (!userId) return; // 未登录不同步
+
         // 延迟同步，避免频繁请求
         if (this.syncTimer) clearTimeout(this.syncTimer);
         this.syncTimer = setTimeout(() => this.syncToCloud(), 2000);
@@ -19,18 +91,27 @@ window.DataManager = {
 
     // 数据同步到云端
     async syncToCloud() {
+        if (this.isLoading) return;
+        
         const userId = sessionStorage.getItem('userId');
         const username = sessionStorage.getItem('currentUser');
-        if (!userId && !username) return;
+        if (!userId) return;
+
+        // 同步前检查用户ID匹配，防止同步了错误的数据
+        const lastUserId = localStorage.getItem('last_user_id');
+        if (lastUserId && lastUserId !== userId) {
+            console.error('用户ID不匹配，取消同步以防止数据污染');
+            return;
+        }
 
         const quizData = {
             history: JSON.parse(localStorage.getItem('quiz_history_v1') || '{}'),
-            wrongBook: JSON.parse(localStorage.getItem('wrong_book_v1') || '[]'),
+            wrongBook: JSON.parse(localStorage.getItem('quiz_wrong_book_v1') || '[]'),
             categoryStats: JSON.parse(localStorage.getItem('category_stats_v1') || '{}'),
             mastery: JSON.parse(localStorage.getItem('category_mastery_v1') || '{}'),
             browsingTime: JSON.parse(localStorage.getItem('browsing_time_v1') || '{"totalMinutes":0}'),
             badgeData: JSON.parse(localStorage.getItem('badge_data_v1') || '{}'),
-            profileData: JSON.parse(localStorage.getItem('profile_data_v1') || '{}'),
+            profileData: JSON.parse(localStorage.getItem('user_profile_v1') || '{}'),
             pendingBadge: localStorage.getItem('pending_badge_notification') || null,
             pointsData: JSON.parse(localStorage.getItem('user_points_v1') || '{"totalPoints":0,"todayPoints":0,"lastDate":"","pointsHistory":[],"ownedItems":{},"streak":0}'),
             syncTime: Date.now()
@@ -59,7 +140,8 @@ window.DataManager = {
                     totalQuestions,
                     correctAnswers,
                     studyMinutes: quizData.browsingTime.totalMinutes || 0,
-                    masteredCount
+                    masteredCount,
+                    totalPoints: quizData.pointsData?.totalPoints || 0
                 })
             });
 
@@ -77,37 +159,46 @@ window.DataManager = {
     },
 
     // 从云端加载数据
-    async loadFromCloud() {
+    // forceOverwrite: 是否强制覆盖本地数据（登录时应为 true）
+    async loadFromCloud(forceOverwrite = false) {
         const userId = sessionStorage.getItem('userId');
         const username = sessionStorage.getItem('currentUser');
-        if (!userId && !username) return;
+        if (!userId) return;
 
+        // 登录时或账号切换时，强制检查用户匹配
+        const isUserMatch = this.checkUserMatch();
+        // 如果账号不匹配，即使 forceOverwrite 为 false，我们也应该视为 true，因为本地数据是别人的
+        const finalForceOverwrite = forceOverwrite || !isUserMatch;
+
+        this.isLoading = true;
         try {
-            const response = await fetch(`/load-quiz-data?userId=${userId || ''}&username=${encodeURIComponent(username || '')}`);
+            const response = await fetch(`/load-quiz-data?userId=${userId}&username=${encodeURIComponent(username || '')}`);
             const result = await response.json();
             
             if (result.success && result.data) {
                 const cloudData = result.data;
                 
-                // 合并历史记录
+                // 设置标志，防止加载过程中的写入触发同步
+                
+                // 合并或覆盖历史记录
                 if (cloudData.history) {
-                    const localHistory = JSON.parse(localStorage.getItem('quiz_history_v1') || '{}');
+                    const localHistory = finalForceOverwrite ? {} : JSON.parse(localStorage.getItem('quiz_history_v1') || '{}');
                     const mergedHistory = this.mergeHistory(localHistory, cloudData.history);
                     localStorage.setItem('quiz_history_v1', JSON.stringify(mergedHistory));
                 }
                 
-                // 合并错题本
+                // 合并或覆盖错题本
                 if (cloudData.wrongBook) {
-                    const localWrongBook = JSON.parse(localStorage.getItem('wrong_book_v1') || '[]');
+                    const localWrongBook = finalForceOverwrite ? [] : JSON.parse(localStorage.getItem('quiz_wrong_book_v1') || '[]');
                     const mergedWrongBook = this.mergeWrongBook(localWrongBook, cloudData.wrongBook);
-                    localStorage.setItem('wrong_book_v1', JSON.stringify(mergedWrongBook));
+                    localStorage.setItem('quiz_wrong_book_v1', JSON.stringify(mergedWrongBook));
                 }
                 
                 if (cloudData.categoryStats) localStorage.setItem('category_stats_v1', JSON.stringify(cloudData.categoryStats));
                 if (cloudData.mastery) localStorage.setItem('category_mastery_v1', JSON.stringify(cloudData.mastery));
                 
                 if (cloudData.browsingTime) {
-                    const localTime = JSON.parse(localStorage.getItem('browsing_time_v1') || '{"totalMinutes":0}');
+                    const localTime = finalForceOverwrite ? {totalMinutes:0} : JSON.parse(localStorage.getItem('browsing_time_v1') || '{"totalMinutes":0}');
                     const mergedTime = {
                         totalMinutes: Math.max(localTime.totalMinutes || 0, cloudData.browsingTime.totalMinutes || 0)
                     };
@@ -115,21 +206,26 @@ window.DataManager = {
                 }
                 
                 if (cloudData.badgeData) localStorage.setItem('badge_data_v1', JSON.stringify(cloudData.badgeData));
-                if (cloudData.profileData) localStorage.setItem('profile_data_v1', JSON.stringify(cloudData.profileData));
+                if (cloudData.profileData) localStorage.setItem('user_profile_v1', JSON.stringify(cloudData.profileData));
                 if (cloudData.pendingBadge) localStorage.setItem('pending_badge_notification', cloudData.pendingBadge);
                 
-                // 合并积分数据
+                // 合并或覆盖积分数据
                 if (cloudData.pointsData) {
-                    const localPoints = JSON.parse(localStorage.getItem('user_points_v1') || '{"totalPoints":0,"todayPoints":0,"lastDate":"","pointsHistory":[],"ownedItems":{},"streak":0}');
+                    const localPoints = finalForceOverwrite ? {"totalPoints":0,"todayPoints":0,"lastDate":"","pointsHistory":[],"ownedItems":{},"streak":0} : JSON.parse(localStorage.getItem('user_points_v1') || '{"totalPoints":0,"todayPoints":0,"lastDate":"","pointsHistory":[],"ownedItems":{},"streak":0}');
                     const mergedPoints = this.mergePoints(localPoints, cloudData.pointsData);
                     localStorage.setItem('user_points_v1', JSON.stringify(mergedPoints));
                 }
                 
-                console.log('已从云端加载并合并最新数据');
+                // 确保 last_user_id 被设置
+                localStorage.setItem('last_user_id', userId);
+                
+                console.log(finalForceOverwrite ? '已从云端加载并覆盖本地数据' : '已从云端加载并合并最新数据');
                 return true;
             }
         } catch (e) {
             console.error('从云端加载数据失败:', e);
+        } finally {
+            this.isLoading = false;
         }
         return false;
     },

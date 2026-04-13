@@ -23,7 +23,7 @@ if (!supabase) {
 }
 
 app.post('/sync-stats', async (req, res) => {
-    const { userId, username, totalQuestions, correctAnswers, studyMinutes, masteredCount } = req.body;
+    const { userId, username, totalQuestions, correctAnswers, studyMinutes, masteredCount, totalPoints } = req.body;
 
     if (!userId && !username) {
         return res.status(400).json({ 
@@ -56,15 +56,21 @@ app.post('/sync-stats', async (req, res) => {
         targetUserId = user.user_id;
     }
 
+    const updateData = {
+        total_questions: totalQuestions || 0,
+        correct_answers: correctAnswers || 0,
+        study_minutes: studyMinutes || 0,
+        mastered_count: masteredCount || 0,
+        last_sync: new Date().toISOString()
+    };
+    
+    if (totalPoints !== undefined) {
+        updateData.total_points = totalPoints;
+    }
+
     const { error } = await supabase
         .from('users')
-        .update({
-            total_questions: totalQuestions || 0,
-            correct_answers: correctAnswers || 0,
-            study_minutes: studyMinutes || 0,
-            mastered_count: masteredCount || 0,
-            last_sync: new Date().toISOString()
-        })
+        .update(updateData)
         .eq('user_id', targetUserId);
 
     if (error) {
@@ -258,8 +264,8 @@ app.get('/leaderboard/rank', async (req, res) => {
 
     const { data, error } = await supabase
         .from('users')
-        .select('username, mastered_count, total_questions, correct_answers')
-        .order('mastered_count', { ascending: false })
+        .select('username, total_points, mastered_count')
+        .order('total_points', { ascending: false })
         .limit(50);
 
     if (error) {
@@ -269,14 +275,10 @@ app.get('/leaderboard/rank', async (req, res) => {
         });
     }
 
-    const TOTAL_QUESTIONS = 800;
     const leaderboard = data.map(user => {
-        const masteryPercent = TOTAL_QUESTIONS > 0 
-            ? Math.round((user.mastered_count / TOTAL_QUESTIONS) * 100) 
-            : 0;
         return {
             username: user.username,
-            score: masteryPercent,
+            score: user.total_points || 0,
             masteredCount: user.mastered_count || 0
         };
     });

@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="images/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>排行榜 - 四大名著经典学习网</title>
     <style>
@@ -360,8 +361,8 @@
     <div class="rank-container">
         <div class="tab-container">
             <button class="tab-btn active" data-tab="rank" onclick="switchTab('rank')">
-                <span class="tab-icon">⚔️</span>
-                <span>段位排行</span>
+                <span class="tab-icon">⭐</span>
+                <span>积分排行</span>
             </button>
             <button class="tab-btn" data-tab="time" onclick="switchTab('time')">
                 <span class="tab-icon">⏱️</span>
@@ -380,13 +381,13 @@
 
     <script>
         const RANKS = [
-            { name: '蒙童', icon: 'mengtong', color: '#7CB342', stages: [5, 10, 15], score: 1 },
-            { name: '书生', icon: 'shusheng', color: '#5C6BC0', stages: [20, 28, 36], score: 2 },
-            { name: '秀才', icon: 'xiucai', color: '#81D4FA', stages: [45, 54, 63], score: 3 },
-            { name: '举人', icon: 'juren', color: '#E53935', stages: [70, 77, 84], score: 4 },
-            { name: '进士', icon: 'jinshi', color: '#AB47BC', stages: [88, 92, 96], score: 5 },
-            { name: '翰林', icon: 'hanlin', color: '#00897B', stages: [97, 98, 99], score: 6 },
-            { name: '状元', icon: 'zhuangyuan', color: '#FFD700', stages: [100], score: 7 }
+            { name: '蒙童', icon: 'mengtong', color: '#7CB342', stages: [300, 600, 900] },
+            { name: '书生', icon: 'shusheng', color: '#5C6BC0', stages: [1300, 1800, 2400] },
+            { name: '秀才', icon: 'xiucai', color: '#81D4FA', stages: [3500, 4500, 5500] },
+            { name: '举人', icon: 'juren', color: '#E53935', stages: [7000, 8000, 9000] },
+            { name: '进士', icon: 'jinshi', color: '#AB47BC', stages: [11000, 12500, 14000] },
+            { name: '翰林', icon: 'hanlin', color: '#00897B', stages: [16000, 17500, 19000] },
+            { name: '状元', icon: 'zhuangyuan', color: '#FFD700', stages: [20000] }
         ];
 
         const RANK_ICONS = {
@@ -402,12 +403,44 @@
         const STORAGE_KEYS = {
             PROFILE: 'user_profile_v1',
             TIME: 'browsing_time_v1',
-            HISTORY: 'quiz_history_v1'
+            HISTORY: 'quiz_history_v1',
+            POINTS: 'user_points_v1'
         };
 
         const TOTAL_QUESTIONS = 800;
 
         let currentTab = 'rank';
+
+        const PointsManager = {
+            STORAGE_KEY: 'user_points_v1',
+            
+            getData() {
+                try {
+                    const data = localStorage.getItem(this.STORAGE_KEY);
+                    return data ? JSON.parse(data) : {
+                        totalPoints: 0,
+                        todayPoints: 0,
+                        lastDate: '',
+                        pointsHistory: [],
+                        ownedItems: {},
+                        streak: 0
+                    };
+                } catch (e) {
+                    return {
+                        totalPoints: 0,
+                        todayPoints: 0,
+                        lastDate: '',
+                        pointsHistory: [],
+                        ownedItems: {},
+                        streak: 0
+                    };
+                }
+            },
+            
+            getTotalPoints() {
+                return this.getData().totalPoints || 0;
+            }
+        };
 
         function getProfileData() {
             try {
@@ -447,11 +480,11 @@
             return mastered;
         }
 
-        function getRankByMastery(masteryPercent) {
+        function getRankByPoints(points) {
             for (let i = RANKS.length - 1; i >= 0; i--) {
                 const rank = RANKS[i];
                 for (let j = rank.stages.length - 1; j >= 0; j--) {
-                    if (masteryPercent >= rank.stages[j]) {
+                    if (points >= rank.stages[j]) {
                         return { rank, stageIndex: j, stageLabel: ['Ⅰ', 'Ⅱ', 'Ⅲ'][j] || '' };
                     }
                 }
@@ -558,9 +591,8 @@
             const profile = getProfileData();
             const timeData = getTimeData();
             const quizStats = getQuizStats();
-            const mastered = calculateMastery();
-            const masteryPercent = Math.round((mastered / TOTAL_QUESTIONS) * 100);
-            const userRank = getRankByMastery(masteryPercent);
+            const totalPoints = PointsManager.getTotalPoints();
+            const userRank = getRankByPoints(totalPoints);
 
             try {
                 const response = await fetch(`/leaderboard/${type}`);
@@ -568,7 +600,7 @@
 
                 if (!result.success) {
                     console.error('获取排行榜失败:', result.message);
-                    return generateLocalLeaderboard(type, profile, timeData, quizStats, mastered, masteryPercent, userRank);
+                    return generateLocalLeaderboard(type, profile, timeData, quizStats, totalPoints, userRank);
                 }
 
                 const serverData = result.data;
@@ -577,13 +609,14 @@
 
                 if (type === 'rank') {
                     leaderboard = serverData.map(user => {
-                        const rank = getRankByMastery(user.score);
+                        const rank = getRankByPoints(user.score);
                         return {
                             name: user.username,
                             avatar: '👤',
                             rank: rank,
-                            score: user.score + '%',
-                            scoreLabel: '掌握度',
+                            points: user.score,
+                            score: user.score + ' 积分',
+                            scoreLabel: '总积分',
                             isCurrentUser: user.username === currentUsername
                         };
                     });
@@ -614,15 +647,12 @@
                             name: currentUsername,
                             avatar: profile.avatar || '👤',
                             rank: userRank,
-                            score: masteryPercent + '%',
-                            scoreLabel: '掌握度',
+                            points: totalPoints,
+                            score: totalPoints + ' 积分',
+                            scoreLabel: '总积分',
                             isCurrentUser: true
                         });
-                        leaderboard.sort((a, b) => {
-                            const scoreA = parseInt(a.score);
-                            const scoreB = parseInt(b.score);
-                            return scoreB - scoreA;
-                        });
+                        leaderboard.sort((a, b) => b.points - a.points);
                     } else if (type === 'time') {
                         leaderboard.push({
                             name: currentUsername,
@@ -651,11 +681,11 @@
                 return leaderboard;
             } catch (error) {
                 console.error('网络错误:', error);
-                return generateLocalLeaderboard(type, profile, timeData, quizStats, mastered, masteryPercent, userRank);
+                return generateLocalLeaderboard(type, profile, timeData, quizStats, totalPoints, userRank);
             }
         }
 
-        function generateLocalLeaderboard(type, profile, timeData, quizStats, mastered, masteryPercent, userRank) {
+        function generateLocalLeaderboard(type, profile, timeData, quizStats, totalPoints, userRank) {
             let leaderboard = [];
             const currentUsername = sessionStorage.getItem('currentUser');
 
@@ -664,8 +694,9 @@
                     name: currentUsername || profile.username,
                     avatar: profile.avatar || '👤',
                     rank: userRank,
-                    score: masteryPercent + '%',
-                    scoreLabel: '掌握度',
+                    points: totalPoints,
+                    score: totalPoints + ' 积分',
+                    scoreLabel: '总积分',
                     isCurrentUser: true
                 });
             } else if (type === 'time') {
@@ -740,7 +771,7 @@
             const leaderboard = await fetchLeaderboard(type);
 
             const titles = {
-                rank: { title: '段位排行榜', desc: '按知识点掌握度排名' },
+                rank: { title: '积分排行榜', desc: '按总积分排名，勤学苦练积少成多' },
                 time: { title: '学习时长排行榜', desc: '勤能补拙，天道酬勤' },
                 accuracy: { title: '正确率排行榜', desc: '精益求精，百发百中' }
             };
@@ -836,7 +867,7 @@
         }
 
         window.addEventListener('storage', function(e) {
-            if (e.key === 'quiz_history_v1') {
+            if (e.key === 'quiz_history_v1' || e.key === 'user_points_v1') {
                 renderLeaderboard(currentTab);
             }
         });

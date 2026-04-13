@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="images/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>积分商城 - 四大名著经典学习网</title>
     <style>
@@ -612,10 +613,17 @@
         }
 
         // 初始化
-        updateDisplay();
-        renderShop();
-        renderMyItems();
-        renderHistory();
+        async function init() {
+            if (window.DataManager && typeof window.DataManager.loadFromCloud === 'function') {
+                await DataManager.loadFromCloud();
+            }
+            updateDisplay();
+            renderShop();
+            renderMyItems();
+            renderHistory();
+        }
+
+        init();
     </script>
 </body>
 </html>

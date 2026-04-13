@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="images/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>段位</title>
     <style>
@@ -238,6 +239,7 @@
         <div class="ranks-grid" id="ranksGrid"></div>
     </div>
 
+    <script src="supabase-config.js"></script>
     <script>
         // 积分数据管理
         const PointsManager = {
@@ -792,8 +794,15 @@
             }
         });
 
-        renderCurrentRank();
-        renderRanksGrid();
+        async function init() {
+            if (window.DataManager && typeof window.DataManager.loadFromCloud === 'function') {
+                await DataManager.loadFromCloud();
+            }
+            renderCurrentRank();
+            renderRanksGrid();
+        }
+
+        init();
     </script>
 </body>
 </html>

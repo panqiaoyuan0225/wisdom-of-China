@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="images/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>登录 - 四大名著经典学习网</title>
     <style>
@@ -281,12 +282,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        window.SUPABASE_CONFIG = {
-            url: 'https://icawhplodojtniydplrb.supabase.co',
-            anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImljYXdocGxvZG9qdG5peWRwbHJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2OTc2MzgsImV4cCI6MjA4NzI3MzYzOH0._hzQpBdQ5OjoXv_1ns7BzOmwoDX3tU9wNrRjbivO5xQ'
-        };
-    </script>
+    <script src="supabase-config.js"></script>
     <script>
         if (!window.SUPABASE_CONFIG || !window.SUPABASE_CONFIG.url) {
             document.getElementById('errorMessage').textContent = '配置文件加载失败';
@@ -390,14 +386,10 @@
                 if (data.user) {
                     const username = data.user.user_metadata?.username || email.split('@')[0];
                     
-                    localStorage.removeItem('quiz_history_v1');
-                    localStorage.removeItem('wrong_book_v1');
-                    localStorage.removeItem('category_stats_v1');
-                    localStorage.removeItem('category_mastery_v1');
-                    localStorage.removeItem('browsing_time_v1');
-                    localStorage.removeItem('badge_data_v1');
-                    localStorage.removeItem('leaderboard_rank_v1');
-                    localStorage.removeItem('profile_data_v1');
+                    // 清理本地数据，防止账号间混淆
+                    if (window.DataManager && typeof window.DataManager.clearLocalData === 'function') {
+                        window.DataManager.clearLocalData();
+                    }
 
                     sessionStorage.setItem('isLoggedIn', 'true');
                     sessionStorage.setItem('currentUser', username);
@@ -412,7 +404,8 @@
 
                     await syncUserProfile(data.user.id, username, email);
                     
-                    await loadUserDataFromCloud(data.user.id, username);
+                    // 强制覆盖模式拉取云端数据
+                    await loadUserDataFromCloud(data.user.id, username, true);
 
                     window.location.href = 'home.html';
                 }
@@ -452,9 +445,9 @@
             }
         }
 
-        async function loadUserDataFromCloud(userId, username) {
+        async function loadUserDataFromCloud(userId, username, force = false) {
             try {
-                const success = await window.DataManager.loadFromCloud();
+                const success = await window.DataManager.loadFromCloud(force);
                 if (success) {
                     console.log('云端数据加载成功');
                 }
