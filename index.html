@@ -146,6 +146,39 @@
             transform: translateY(0);
         }
 
+        .guest-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #7CB342 0%, #5C6BC0 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(124, 179, 66, 0.3);
+            margin-top: 15px;
+        }
+
+        .guest-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(124, 179, 66, 0.4);
+            background: linear-gradient(135deg, #5C6BC0 0%, #7CB342 100%);
+        }
+
+        .guest-btn:active {
+            transform: translateY(0);
+        }
+
+        .guest-hint {
+            text-align: center;
+            color: #999;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
         .login-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
@@ -275,6 +308,9 @@
 
             <button type="submit" class="login-btn" id="loginBtn">登 录</button>
         </form>
+
+        <button class="guest-btn" id="guestBtn" onclick="enterAsGuest()">👤 游客模式进入</button>
+        <div class="guest-hint">游客仅可使用「名著阅读」和「原文阅读」功能</div>
 
         <div class="register-link">
             <a href="register.html">立即注册，开启你的古典文学之旅</a>
@@ -463,6 +499,13 @@
         document.getElementById('password').addEventListener('input', function() {
             document.getElementById('errorMessage').classList.remove('show');
         });
+
+        function enterAsGuest() {
+            sessionStorage.setItem('isGuest', 'true');
+            sessionStorage.setItem('isLoggedIn', 'true');
+            sessionStorage.setItem('currentUser', '游客');
+            window.location.href = 'home.html';
+        }
 
         checkLoginStatus();
     </script>

@@ -959,31 +959,31 @@
 
         <div class="content-wrapper">
             <div class="button-container">
-            <a href="book.html" class="btn">
+            <a href="book.html" class="btn" data-require-auth="false">
                 <span class="emoji">📚</span>
                 <span class="text">名著阅读</span>
             </a>
-            <a href="rank.html" class="btn">
+            <a href="rank.html" class="btn" data-require-auth="true">
                 <span class="emoji">🏆</span>
                 <span class="text">排行榜</span>
             </a>
-            <a href="badge.html" class="btn">
+            <a href="badge.html" class="btn" data-require-auth="true">
                 <span class="emoji">🎖️</span>
                 <span class="text">勋章墙</span>
             </a>
-            <a href="level.html" class="btn">
+            <a href="level.html" class="btn" data-require-auth="true">
                 <span class="emoji">⚔️</span>
                 <span class="text">段位</span>
             </a>
-            <a href="quiz.html" class="btn">
+            <a href="quiz.html" class="btn" data-require-auth="true">
                 <span class="emoji">✏️</span>
                 <span class="text">答题练习</span>
             </a>
-            <a href="profile.html" class="btn">
+            <a href="profile.html" class="btn" data-require-auth="true">
                 <span class="emoji">👤</span>
                 <span class="text">个人档案</span>
             </a>
-            <a href="shop.html" class="btn">
+            <a href="shop.html" class="btn" data-require-auth="true">
                 <span class="emoji">🏪</span>
                 <span class="text">积分商城</span>
             </a>
@@ -991,7 +991,7 @@
 
         <div class="right-section">
             <div class="rank-section">
-                <a href="level.html" class="rank-badge" id="rankBadge">
+                <a href="level.html" class="rank-badge" id="rankBadge" data-require-auth="true">
                     <div class="rank-badge-icon" id="rankBadgeIcon"></div>
                     <span class="rank-badge-text" id="rankBadgeText">加载中...</span>
                     <span class="rank-badge-arrow">›</span>
@@ -1005,14 +1005,14 @@
             </div>
 
             <div class="topic-button-container">
-                <a href="topic.html" class="topic-card">
+                <a href="topic.html" class="topic-card" data-require-auth="true">
                     <span class="topic-icon">💬</span>
                     <span class="topic-text">四大名著争议话题</span>
                 </a>
             </div>
 
             <div class="topic-button-container" style="margin-top: 25px;">
-                <a href="original.html" class="topic-card">
+                <a href="original.html" class="topic-card" data-require-auth="false">
                     <span class="topic-icon">📖</span>
                     <span class="topic-text">四大名著整本原文</span>
                 </a>
@@ -1027,6 +1027,39 @@
     </div>
 
     <script>
+        function checkGuestAccess() {
+            const isGuest = sessionStorage.getItem('isGuest') === 'true';
+            if (!isGuest) return;
+
+            document.querySelectorAll('[data-require-auth="true"]').forEach(el => {
+                el.style.opacity = '0.5';
+                el.style.pointerEvents = 'none';
+                el.style.cursor = 'not-allowed';
+                el.style.position = 'relative';
+                
+                el.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    alert('游客模式无法使用此功能，请先登录');
+                }, true);
+                
+                if (el.classList.contains('rank-badge')) {
+                    el.querySelector('.rank-badge-text').textContent = '请登录';
+                    el.querySelector('.rank-badge-icon').innerHTML = '';
+                }
+            });
+
+            const progressText = document.getElementById('progressText');
+            if (progressText) {
+                progressText.textContent = '游客模式，部分功能受限';
+            }
+
+            const welcomeText = document.getElementById('welcomeText');
+            if (welcomeText) {
+                welcomeText.textContent = '欢迎，游客！';
+            }
+        }
+
         function createFallingLeaves() {
             const container = document.getElementById('fallingLeaves');
             const leafCount = 8;
@@ -1096,6 +1129,7 @@
                 sessionStorage.removeItem('currentUser');
                 sessionStorage.removeItem('userId');
                 sessionStorage.removeItem('userEmail');
+                sessionStorage.removeItem('isGuest');
                 
                 window.location.href = 'index.html';
             }
@@ -1658,11 +1692,15 @@
         });
 
         async function initData() {
-            window.DataManager.checkUserMatch(); // 在初始化数据前检查用户匹配
+            checkGuestAccess();
+            
+            const isGuest = sessionStorage.getItem('isGuest') === 'true';
+            if (isGuest) return;
+            
+            window.DataManager.checkUserMatch();
             updateWelcomeText();
             updatePointsDisplay();
             
-            // 确保 DataManager 已加载
             if (window.DataManager && typeof window.DataManager.loadFromCloud === 'function') {
                 try {
                     const success = await window.DataManager.loadFromCloud();
