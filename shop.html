@@ -496,6 +496,20 @@
                 this.saveData(data);
             },
             
+            addAppearanceItem(itemId) {
+                const data = this.getData();
+                if (!data.ownedAppearance) data.ownedAppearance = [];
+                if (!data.ownedAppearance.includes(itemId)) {
+                    data.ownedAppearance.push(itemId);
+                }
+                this.saveData(data);
+            },
+            
+            hasAppearanceItem(itemId) {
+                const data = this.getData();
+                return (data.ownedAppearance || []).includes(itemId);
+            },
+            
             useItem(itemId) {
                 const data = this.getData();
                 if (!data.ownedItems || !data.ownedItems[itemId] || data.ownedItems[itemId] <= 0) {
@@ -586,18 +600,25 @@
             const grid = document.getElementById('shopGrid');
             const items = ITEMS[currentTab];
             const totalPoints = PointsManager.getTotalPoints();
+            const ownedAppearance = PointsManager.getData().ownedAppearance || [];
             
-            grid.innerHTML = items.map(item => `
-                <div class="item-card">
-                    <div class="item-icon">${item.icon}</div>
-                    <div class="item-name">${item.name}</div>
-                    <div class="item-desc">${item.desc}<br><small style="color:#999">${item.usage}</small></div>
-                    <div class="item-price">🪙 ${item.price}</div>
-                    <button class="buy-btn" onclick="buyItem('${item.id}', ${item.price}, '${item.name}')" ${totalPoints < item.price ? 'disabled' : ''}>
-                        ${totalPoints < item.price ? '积分不足' : '购买'}
-                    </button>
-                </div>
-            `).join('');
+            grid.innerHTML = items.map(item => {
+                const isAppearance = item.id.startsWith('frame_') || item.id === 'nickname_glow';
+                const alreadyOwned = isAppearance && ownedAppearance.includes(item.id);
+                const canBuy = !alreadyOwned && totalPoints >= item.price;
+                
+                return `
+                    <div class="item-card">
+                        <div class="item-icon">${item.icon}</div>
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-desc">${item.desc}<br><small style="color:#999">${item.usage}</small></div>
+                        <div class="item-price">🪙 ${item.price}</div>
+                        <button class="buy-btn" onclick="buyItem('${item.id}', ${item.price}, '${item.name}')" ${!canBuy ? 'disabled' : ''}>
+                            ${alreadyOwned ? '已拥有' : (totalPoints < item.price ? '积分不足' : '购买')}
+                        </button>
+                    </div>
+                `;
+            }).join('');
         }
 
         function buyItem(itemId, price, name) {
@@ -618,6 +639,9 @@
                         PointsManager.addItem('revive');
                     }
                     alert('购买成功！获得所有基础道具×7');
+                } else if (itemId.startsWith('frame_') || itemId === 'nickname_glow') {
+                    PointsManager.addAppearanceItem(itemId);
+                    alert('购买成功！请前往个人档案使用外观道具');
                 } else {
                     PointsManager.addItem(itemId);
                     alert('购买成功！');
@@ -633,40 +657,54 @@
         function renderMyItems() {
             const grid = document.getElementById('myItemsGrid');
             const ownedItems = PointsManager.getOwnedItems();
+            const ownedAppearance = PointsManager.getData().ownedAppearance || [];
             const appearance = PointsManager.getAppearance();
             
             const allItems = [...ITEMS.quiz, ...ITEMS.appearance, ...ITEMS.function, ...ITEMS.package];
             
             const ownedList = Object.entries(ownedItems).filter(([_, count]) => count > 0);
+            const appearanceList = ownedAppearance.filter(id => id.startsWith('frame_') || id === 'nickname_glow');
             
-            if (ownedList.length === 0) {
+            if (ownedList.length === 0 && appearanceList.length === 0) {
                 grid.innerHTML = '<div class="empty-items">暂无道具，快去购买吧！</div>';
                 return;
             }
             
-            grid.innerHTML = ownedList.map(([itemId, count]) => {
+            let html = '';
+            
+            appearanceList.forEach(itemId => {
                 const item = allItems.find(i => i.id === itemId);
-                if (!item) return '';
+                if (!item) return;
                 
-                const isAppearance = itemId.startsWith('frame_') || itemId === 'nickname_glow';
+                const isActive = (itemId.startsWith('frame_') && appearance.frame === itemId) ||
+                                (itemId === 'nickname_glow' && appearance.nicknameEffect === itemId && Date.now() < (appearance.nicknameExpiry || 0));
+                
+                html += `
+                    <div class="owned-item" style="background: linear-gradient(135deg, #fff9e6 0%, #fff5d6 100%); border: 2px solid #d4af37;">
+                        <div class="owned-item-info">
+                            <span class="owned-item-icon">${item.icon}</span>
+                            <span class="owned-item-name">${item.name}</span>
+                        </div>
+                        <div class="owned-item-actions">
+                            ${isActive ? '<span class="active-tag">使用中</span>' : '<span style="color:#8b4513;font-size:0.8rem;">前往档案使用</span>'}
+                            <span class="owned-item-count" style="background:#d4af37;">永久</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            ownedList.forEach(([itemId, count]) => {
+                const item = allItems.find(i => i.id === itemId);
+                if (!item) return;
+                
                 const isFunction = itemId === 'wrong_reset' || itemId === 'points_protect';
-                const isActive = isAppearance && (
-                    (itemId.startsWith('frame_') && appearance.frame === itemId) ||
-                    (itemId === 'nickname_glow' && appearance.nicknameEffect === itemId && Date.now() < (appearance.nicknameExpiry || 0))
-                );
                 
                 let actionBtn = '';
-                if (isAppearance) {
-                    if (isActive) {
-                        actionBtn = '<span class="active-tag">使用中</span>';
-                    } else {
-                        actionBtn = `<button class="use-btn" onclick="useAppearanceItem('${itemId}')">使用</button>`;
-                    }
-                } else if (isFunction) {
+                if (isFunction) {
                     actionBtn = `<button class="use-btn" onclick="useFunctionItem('${itemId}')">使用</button>`;
                 }
                 
-                return `
+                html += `
                     <div class="owned-item">
                         <div class="owned-item-info">
                             <span class="owned-item-icon">${item.icon}</span>
@@ -678,17 +716,9 @@
                         </div>
                     </div>
                 `;
-            }).join('');
-        }
-        
-        function useAppearanceItem(itemId) {
-            if (PointsManager.useAppearanceItem(itemId)) {
-                const item = [...ITEMS.appearance].find(i => i.id === itemId);
-                alert(`${item ? item.name : '外观道具'}已激活！`);
-                renderMyItems();
-            } else {
-                alert('道具数量不足！');
-            }
+            });
+            
+            grid.innerHTML = html;
         }
         
         function useFunctionItem(itemId) {
@@ -736,7 +766,8 @@
             document.getElementById('todayPoints').textContent = todayPoints;
             
             const ownedItems = data.ownedItems || {};
-            const totalCount = Object.values(ownedItems).reduce((sum, count) => sum + count, 0);
+            const ownedAppearance = data.ownedAppearance || [];
+            const totalCount = Object.values(ownedItems).reduce((sum, count) => sum + count, 0) + ownedAppearance.length;
             document.getElementById('totalItems').textContent = totalCount;
         }
 

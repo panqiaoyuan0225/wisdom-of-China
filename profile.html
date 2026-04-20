@@ -88,11 +88,90 @@
         }
 
         .avatar.frame_scroll {
-            box-shadow: 0 0 0 6px #8B4513, 0 0 0 10px #D2691E, 0 0 0 14px #8B4513;
+            position: relative;
+            box-shadow: 
+                0 0 0 4px #8B4513,
+                0 0 0 8px #D2691E,
+                0 0 0 12px #8B4513,
+                0 0 0 14px #D4AF37,
+                0 0 20px rgba(212, 175, 55, 0.4);
+        }
+        
+        .avatar.frame_scroll::before {
+            content: '📜';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 16px;
+            z-index: 10;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+        }
+        
+        .avatar.frame_scroll::after {
+            content: '📜';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%) rotate(180deg);
+            font-size: 16px;
+            z-index: 10;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
         }
 
         .avatar.frame_plum {
-            box-shadow: 0 0 0 6px #FFB7C5, 0 0 0 10px #FF69B4, 0 0 0 14px #FFB7C5;
+            position: relative;
+            box-shadow: 
+                0 0 0 4px #FFB7C5,
+                0 0 0 8px #FF69B4,
+                0 0 0 12px #FFB7C5,
+                0 0 0 14px #C71585,
+                0 0 25px rgba(255, 105, 180, 0.5);
+            animation: plumGlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes plumGlow {
+            0%, 100% {
+                box-shadow: 
+                    0 0 0 4px #FFB7C5,
+                    0 0 0 8px #FF69B4,
+                    0 0 0 12px #FFB7C5,
+                    0 0 0 14px #C71585,
+                    0 0 25px rgba(255, 105, 180, 0.5);
+            }
+            50% {
+                box-shadow: 
+                    0 0 0 4px #FFB7C5,
+                    0 0 0 8px #FF69B4,
+                    0 0 0 12px #FFB7C5,
+                    0 0 0 14px #C71585,
+                    0 0 35px rgba(255, 105, 180, 0.7);
+            }
+        }
+        
+        .avatar.frame_plum::before {
+            content: '🌸';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            font-size: 20px;
+            z-index: 10;
+            animation: floatFlower 2s ease-in-out infinite;
+        }
+        
+        .avatar.frame_plum::after {
+            content: '🌸';
+            position: absolute;
+            bottom: -10px;
+            right: -10px;
+            font-size: 20px;
+            z-index: 10;
+            animation: floatFlower 2s ease-in-out infinite 0.5s;
+        }
+        
+        @keyframes floatFlower {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-3px) rotate(10deg); }
         }
 
         .username.glow-effect {
@@ -1507,15 +1586,15 @@
                 
                 const pointsData = JSON.parse(data);
                 console.log('积分数据:', pointsData);
-                const ownedItems = pointsData.ownedItems || {};
-                console.log('拥有的道具:', ownedItems);
+                const ownedAppearance = pointsData.ownedAppearance || [];
+                console.log('拥有的外观道具:', ownedAppearance);
                 const appearance = pointsData.activeAppearance || {};
                 console.log('激活的外观:', appearance);
                 
                 const items = [
-                    { id: 'frame_scroll', name: '头像框-书卷' },
-                    { id: 'frame_plum', name: '头像框-梅花' },
-                    { id: 'nickname_glow', name: '昵称特效' }
+                    { id: 'frame_scroll', name: '头像框-书卷', icon: '📜' },
+                    { id: 'frame_plum', name: '头像框-梅花', icon: '🌸' },
+                    { id: 'nickname_glow', name: '昵称特效', icon: '✨' }
                 ];
                 
                 items.forEach(item => {
@@ -1525,18 +1604,18 @@
                         return;
                     }
                     
-                    const count = ownedItems[item.id] || 0;
+                    const isOwned = ownedAppearance.includes(item.id);
                     const isActive = (item.id.startsWith('frame_') && appearance.frame === item.id) ||
                                     (item.id === 'nickname_glow' && appearance.nicknameEffect === item.id && Date.now() < (appearance.nicknameExpiry || 0));
                     
-                    console.log(item.name, '数量:', count, '是否激活:', isActive);
+                    console.log(item.name, '是否拥有:', isOwned, '是否激活:', isActive);
                     
                     if (isActive) {
                         statusEl.className = 'appearance-status active';
                         statusEl.innerHTML = '使用中';
-                    } else if (count > 0) {
+                    } else if (isOwned) {
                         statusEl.className = 'appearance-status owned';
-                        statusEl.innerHTML = `<button class="appearance-use-btn" onclick="useAppearanceItem('${item.id}')">使用 (${count})</button>`;
+                        statusEl.innerHTML = `<button class="appearance-use-btn" onclick="useAppearanceItem('${item.id}')">使用</button>`;
                     } else {
                         statusEl.className = 'appearance-status not-owned';
                         statusEl.innerHTML = '未拥有';
@@ -1553,15 +1632,12 @@
                 if (!data) return;
                 
                 const pointsData = JSON.parse(data);
-                const ownedItems = pointsData.ownedItems || {};
+                const ownedAppearance = pointsData.ownedAppearance || [];
                 
-                if (!ownedItems[itemId] || ownedItems[itemId] <= 0) {
-                    alert('道具数量不足！');
+                if (!ownedAppearance.includes(itemId)) {
+                    alert('未拥有此外观道具！');
                     return;
                 }
-                
-                ownedItems[itemId]--;
-                pointsData.ownedItems = ownedItems;
                 
                 if (!pointsData.activeAppearance) {
                     pointsData.activeAppearance = { frame: null, nicknameEffect: null, nicknameExpiry: null };
@@ -1569,14 +1645,14 @@
                 
                 if (itemId === 'frame_scroll' || itemId === 'frame_plum') {
                     pointsData.activeAppearance.frame = itemId;
+                    alert('头像框已激活！');
                 } else if (itemId === 'nickname_glow') {
                     pointsData.activeAppearance.nicknameEffect = itemId;
                     pointsData.activeAppearance.nicknameExpiry = Date.now() + 30 * 24 * 60 * 60 * 1000;
+                    alert('昵称特效已激活！');
                 }
                 
                 localStorage.setItem('user_points_v1', JSON.stringify(pointsData));
-                
-                alert('外观道具已激活！');
                 
                 location.reload();
             } catch (e) {

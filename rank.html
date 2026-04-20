@@ -205,14 +205,108 @@
             font-size: 1.5rem;
             margin-right: 15px;
             flex-shrink: 0;
-            overflow: hidden;
+            overflow: visible;
             border: 2px solid #d4af37;
+            position: relative;
+        }
+        
+        .rank-avatar-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .rank-avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+        
+        .rank-avatar.frame_scroll {
+            box-shadow: 
+                0 0 0 3px #8B4513,
+                0 0 0 5px #D2691E,
+                0 0 0 7px #8B4513,
+                0 0 0 8px #D4AF37,
+                0 0 12px rgba(212, 175, 55, 0.4);
+        }
+        
+        .rank-avatar.frame_scroll::before {
+            content: '📜';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            z-index: 10;
+        }
+        
+        .rank-avatar.frame_scroll::after {
+            content: '📜';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%) rotate(180deg);
+            font-size: 10px;
+            z-index: 10;
+        }
+
+        .rank-avatar.frame_plum {
+            box-shadow: 
+                0 0 0 3px #FFB7C5,
+                0 0 0 5px #FF69B4,
+                0 0 0 7px #FFB7C5,
+                0 0 0 8px #C71585,
+                0 0 15px rgba(255, 105, 180, 0.5);
+            animation: plumGlowRank 3s ease-in-out infinite;
+        }
+        
+        @keyframes plumGlowRank {
+            0%, 100% {
+                box-shadow: 
+                    0 0 0 3px #FFB7C5,
+                    0 0 0 5px #FF69B4,
+                    0 0 0 7px #FFB7C5,
+                    0 0 0 8px #C71585,
+                    0 0 15px rgba(255, 105, 180, 0.5);
+            }
+            50% {
+                box-shadow: 
+                    0 0 0 3px #FFB7C5,
+                    0 0 0 5px #FF69B4,
+                    0 0 0 7px #FFB7C5,
+                    0 0 0 8px #C71585,
+                    0 0 20px rgba(255, 105, 180, 0.7);
+            }
+        }
+        
+        .rank-avatar.frame_plum::before {
+            content: '🌸';
+            position: absolute;
+            top: -7px;
+            left: -7px;
+            font-size: 12px;
+            z-index: 10;
+            animation: floatFlowerRank 2s ease-in-out infinite;
+        }
+        
+        .rank-avatar.frame_plum::after {
+            content: '🌸';
+            position: absolute;
+            bottom: -7px;
+            right: -7px;
+            font-size: 12px;
+            z-index: 10;
+            animation: floatFlowerRank 2s ease-in-out infinite 0.5s;
+        }
+        
+        @keyframes floatFlowerRank {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-2px) rotate(10deg); }
         }
 
         .rank-info {
@@ -451,6 +545,17 @@
                 return { username: '书友', avatar: null };
             }
         }
+        
+        function getAppearanceData() {
+            try {
+                const data = localStorage.getItem(STORAGE_KEYS.POINTS);
+                if (!data) return { frame: null };
+                const pointsData = JSON.parse(data);
+                return pointsData.activeAppearance || { frame: null };
+            } catch (e) {
+                return { frame: null };
+            }
+        }
 
         function getTimeData() {
             try {
@@ -594,6 +699,7 @@
             const quizStats = getQuizStats();
             const totalPoints = PointsManager.getTotalPoints();
             const userRank = getRankByPoints(totalPoints);
+            const userAppearance = getAppearanceData();
 
             try {
                 const response = await fetch(`/leaderboard/${type}`);
@@ -601,7 +707,7 @@
 
                 if (!result.success) {
                     console.error('获取排行榜失败:', result.message);
-                    return generateLocalLeaderboard(type, profile, timeData, quizStats, totalPoints, userRank);
+                    return generateLocalLeaderboard(type, profile, timeData, quizStats, totalPoints, userRank, userAppearance);
                 }
 
                 const serverData = result.data;
@@ -618,7 +724,8 @@
                             points: user.score,
                             score: user.score + ' 积分',
                             scoreLabel: '总积分',
-                            isCurrentUser: user.username === currentUsername
+                            isCurrentUser: user.username === currentUsername,
+                            frame: user.username === currentUsername ? userAppearance.frame : null
                         };
                     });
                 } else if (type === 'time') {
@@ -628,7 +735,8 @@
                         minutes: user.minutes,
                         score: formatTime(user.minutes),
                         scoreLabel: '学习时长',
-                        isCurrentUser: user.username === currentUsername
+                        isCurrentUser: user.username === currentUsername,
+                        frame: user.username === currentUsername ? userAppearance.frame : null
                     }));
                 } else if (type === 'accuracy') {
                     leaderboard = serverData.map(user => ({
@@ -637,7 +745,8 @@
                         accuracy: user.accuracy,
                         score: user.accuracy + '%',
                         scoreLabel: '正确率',
-                        isCurrentUser: user.username === currentUsername
+                        isCurrentUser: user.username === currentUsername,
+                        frame: user.username === currentUsername ? userAppearance.frame : null
                     }));
                 }
 
@@ -651,7 +760,8 @@
                             points: totalPoints,
                             score: totalPoints + ' 积分',
                             scoreLabel: '总积分',
-                            isCurrentUser: true
+                            isCurrentUser: true,
+                            frame: userAppearance.frame
                         });
                         leaderboard.sort((a, b) => b.points - a.points);
                     } else if (type === 'time') {
@@ -661,7 +771,8 @@
                             minutes: timeData.totalMinutes,
                             score: formatTime(timeData.totalMinutes),
                             scoreLabel: '学习时长',
-                            isCurrentUser: true
+                            isCurrentUser: true,
+                            frame: userAppearance.frame
                         });
                         leaderboard.sort((a, b) => b.minutes - a.minutes);
                     } else if (type === 'accuracy') {
@@ -671,7 +782,8 @@
                             accuracy: quizStats.accuracy,
                             score: quizStats.accuracy + '%',
                             scoreLabel: '正确率',
-                            isCurrentUser: true
+                            isCurrentUser: true,
+                            frame: userAppearance.frame
                         });
                         leaderboard.sort((a, b) => b.accuracy - a.accuracy);
                     }
@@ -682,11 +794,11 @@
                 return leaderboard;
             } catch (error) {
                 console.error('网络错误:', error);
-                return generateLocalLeaderboard(type, profile, timeData, quizStats, totalPoints, userRank);
+                return generateLocalLeaderboard(type, profile, timeData, quizStats, totalPoints, userRank, userAppearance);
             }
         }
 
-        function generateLocalLeaderboard(type, profile, timeData, quizStats, totalPoints, userRank) {
+        function generateLocalLeaderboard(type, profile, timeData, quizStats, totalPoints, userRank, userAppearance) {
             let leaderboard = [];
             const currentUsername = sessionStorage.getItem('currentUser');
 
@@ -698,7 +810,8 @@
                     points: totalPoints,
                     score: totalPoints + ' 积分',
                     scoreLabel: '总积分',
-                    isCurrentUser: true
+                    isCurrentUser: true,
+                    frame: userAppearance ? userAppearance.frame : null
                 });
             } else if (type === 'time') {
                 leaderboard.push({
@@ -707,7 +820,8 @@
                     minutes: timeData.totalMinutes,
                     score: formatTime(timeData.totalMinutes),
                     scoreLabel: '学习时长',
-                    isCurrentUser: true
+                    isCurrentUser: true,
+                    frame: userAppearance ? userAppearance.frame : null
                 });
             } else if (type === 'accuracy') {
                 leaderboard.push({
@@ -716,7 +830,8 @@
                     accuracy: quizStats.accuracy,
                     score: quizStats.accuracy + '%',
                     scoreLabel: '正确率',
-                    isCurrentUser: true
+                    isCurrentUser: true,
+                    frame: userAppearance ? userAppearance.frame : null
                 });
             }
 
@@ -813,11 +928,15 @@
                     const avatarContent = item.avatar && item.avatar.startsWith('data:') 
                         ? `<img src="${item.avatar}" alt="头像">` 
                         : item.avatar;
+                    
+                    const frameClass = item.frame ? item.frame : '';
 
                     html += `
                         <div class="rank-item ${positionClass} ${currentUserClass}">
                             <div class="rank-position ${positionStyle}">${positionIcon}</div>
-                            <div class="rank-avatar">${avatarContent}</div>
+                            <div class="rank-avatar ${frameClass}">
+                                <div class="rank-avatar-inner">${avatarContent}</div>
+                            </div>
                             <div class="rank-info">
                                 <div class="rank-username">
                                     ${item.name}
