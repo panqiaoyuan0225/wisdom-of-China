@@ -34,16 +34,6 @@
             --light-gold: #3a3a5a;
         }
 
-        .sepia-mode {
-            --bg-color: #f4ecd8;
-            --text-color: #5c4b37;
-            --card-bg: #faf6eb;
-            --sidebar-bg: linear-gradient(to bottom, #faf6eb, #f4ecd8);
-            --paper-bg: #f4ecd8;
-            --paper-dark: #e8dfc8;
-            --ink-black: #5c4b37;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -146,12 +136,15 @@
             border: none;
             background: transparent;
             color: var(--primary-brown);
-            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
             border-radius: 4px;
             transition: all 0.2s;
         }
+
+        .font-btn[data-size="small"] { font-size: 12px; }
+        .font-btn[data-size="medium"] { font-size: 15px; }
+        .font-btn[data-size="large"] { font-size: 18px; }
 
         .font-btn:hover, .font-btn.active {
             background: var(--primary-brown);
@@ -649,8 +642,7 @@
         function saveSettings() {
             const settings = {
                 fontSize: document.querySelector('.font-btn.active')?.dataset.size || 'medium',
-                mode: document.body.classList.contains('dark-mode') ? 'dark' : 
-                      document.body.classList.contains('sepia-mode') ? 'sepia' : 'light'
+                mode: document.body.classList.contains('dark-mode') ? 'dark' : 'light'
             };
             localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
         }
@@ -667,25 +659,24 @@
         }
 
         function cycleMode() {
-            const modes = ['', 'dark-mode', 'sepia-mode'];
-            const icons = ['☀️', '🌙', '📖'];
-            const currentMode = document.body.className;
-            const currentIndex = modes.indexOf(currentMode);
-            const nextIndex = (currentIndex + 1) % modes.length;
-            
-            document.body.className = modes[nextIndex];
-            document.getElementById('modeBtn').textContent = icons[nextIndex];
+            const isDark = document.body.classList.contains('dark-mode');
+            if (isDark) {
+                document.body.classList.remove('dark-mode');
+                document.getElementById('modeBtn').textContent = '☀️';
+            } else {
+                document.body.classList.add('dark-mode');
+                document.getElementById('modeBtn').textContent = '🌙';
+            }
             saveSettings();
         }
 
         function applyMode(mode, save = true) {
-            const modes = ['', 'dark-mode', 'sepia-mode'];
-            const icons = ['☀️', '🌙', '📖'];
-            const index = modes.indexOf(mode);
-            
-            if (index >= 0) {
-                document.body.className = modes[index];
-                document.getElementById('modeBtn').textContent = icons[index];
+            if (mode === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('modeBtn').textContent = '🌙';
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.getElementById('modeBtn').textContent = '☀️';
             }
             if (save) saveSettings();
         }
@@ -739,27 +730,76 @@
             let html = '';
             let chapters = [];
             let wordCount = 0;
+            let currentParagraph = '';
+            const expectedChapters = 120;
+            const chapterRegex = /^第[零一二三四五六七八九十百千○０-９0-9]+回/;
+            const titleSuffixes = ['诗曰：', '词曰：', '古风一首：', '返回总目录', '《满庭芳》：', '[1]', '[2]', '[3]'];
+
+            function cleanTitle(title) {
+                let cleaned = title;
+                for (const suffix of titleSuffixes) {
+                    const idx = cleaned.indexOf(suffix);
+                    if (idx > 0) {
+                        cleaned = cleaned.substring(0, idx).trim();
+                    }
+                }
+                return cleaned;
+            }
+
+            function flushParagraph() {
+                if (currentParagraph.trim()) {
+                    html += `<p class="content-text">${currentParagraph.trim()}</p>`;
+                    wordCount += currentParagraph.length;
+                    currentParagraph = '';
+                }
+            }
             
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i].trim();
-                if (!line) continue;
                 
-                const chapterMatch = line.match(/^第[零一二三四五六七八九十百千]+回 [^。！？]+$/);
-                if (chapterMatch) {
-                    chapters.push({
-                        title: line,
-                        index: chapters.length,
-                        id: `chapter-${chapters.length}`
-                    });
-                    html += `<h2 class="chapter-title" id="chapter-${chapters.length - 1}">${line}</h2>`;
+                if (!line) {
+                    flushParagraph();
                     continue;
                 }
                 
-                if (line.length > 10) {
-                    html += `<p class="content-text">${line}</p>`;
-                    wordCount += line.length;
+                if (chapterRegex.test(line)) {
+                    flushParagraph();
+                    
+                    let chapterTitle = cleanTitle(line);
+                    let j = i + 1;
+
+                    while (j < lines.length) {
+                        const nextLine = lines[j].trim();
+                        if (!nextLine) {
+                            j++;
+                            continue;
+                        }
+                        if (nextLine.length < 20 && !nextLine.includes('。') && !chapterRegex.test(nextLine)) {
+                            chapterTitle += nextLine;
+                            j++;
+                        } else {
+                            break;
+                        }
+                    }
+
+                    chapterTitle = cleanTitle(chapterTitle);
+                    
+                    if (chapterTitle.length > 0 && chapterTitle.length < 80) {
+                        chapters.push({
+                            title: chapterTitle,
+                            index: chapters.length,
+                            id: `chapter-${chapters.length}`
+                        });
+                        html += `<h2 class="chapter-title" id="chapter-${chapters.length - 1}">${chapterTitle}</h2>`;
+                        i = j - 1;
+                        continue;
+                    }
                 }
+                
+                currentParagraph += (currentParagraph ? '' : '') + line;
             }
+            
+            flushParagraph();
 
             return { html, chapters, wordCount };
         }
@@ -768,14 +808,19 @@
             const listDiv = document.getElementById('chapterList');
             document.getElementById('chapterCount').textContent = `共 ${chapters.length} 回`;
             
+            if (chapters.length === 0) {
+                listDiv.innerHTML = '<div class="loading"><p>未找到章节</p></div>';
+                return;
+            }
+            
             listDiv.innerHTML = chapters.map((ch, i) => `
                 <div class="chapter-item" onclick="jumpToChapter(${i})" data-index="${i}">
                     ${ch.title}
                 </div>
             `).join('');
             
-            document.getElementById('prevChapter').disabled = false;
-            document.getElementById('nextChapter').disabled = false;
+            document.getElementById('prevChapter').disabled = true;
+            document.getElementById('nextChapter').disabled = chapters.length <= 1;
         }
 
         function updateStats() {
@@ -797,6 +842,8 @@
         }
 
         function goToChapter(direction) {
+            if (chapters.length === 0) return;
+            
             let newIndex = currentChapterIndex + direction;
             if (newIndex < 0) newIndex = 0;
             if (newIndex >= chapters.length) newIndex = chapters.length - 1;
@@ -804,6 +851,8 @@
         }
 
         function updateCurrentChapter(index) {
+            if (chapters.length === 0) return;
+            
             currentChapterIndex = index;
             
             document.querySelectorAll('.chapter-item').forEach((item, i) => {
@@ -821,11 +870,13 @@
         function updateProgressBar() {
             const scrollTop = window.scrollY;
             const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const progress = (scrollTop / docHeight) * 100;
+            const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
             document.getElementById('progressBar').style.width = Math.min(progress, 100) + '%';
         }
 
         function detectCurrentChapter() {
+            if (chapters.length === 0) return;
+            
             const chapterTitles = document.querySelectorAll('.chapter-title');
             let foundIndex = -1;
             

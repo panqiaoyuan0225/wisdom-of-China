@@ -87,6 +87,28 @@
             box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
         }
 
+        .avatar.frame_scroll {
+            box-shadow: 0 0 0 6px #8B4513, 0 0 0 10px #D2691E, 0 0 0 14px #8B4513;
+        }
+
+        .avatar.frame_plum {
+            box-shadow: 0 0 0 6px #FFB7C5, 0 0 0 10px #FF69B4, 0 0 0 14px #FFB7C5;
+        }
+
+        .username.glow-effect {
+            text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700, 0 0 30px #FFD700;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700;
+            }
+            to {
+                text-shadow: 0 0 15px #FFD700, 0 0 30px #FFD700, 0 0 40px #FFA500;
+            }
+        }
+
         .avatar img {
             width: 100%;
             height: 100%;
@@ -302,6 +324,76 @@
             text-align: right;
         }
 
+        .appearance-section {
+            background: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .appearance-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .appearance-item:last-child {
+            border-bottom: none;
+        }
+
+        .appearance-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .appearance-icon {
+            font-size: 1.5rem;
+        }
+
+        .appearance-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .appearance-status {
+            font-size: 0.9rem;
+            padding: 5px 15px;
+            border-radius: 15px;
+        }
+
+        .appearance-status.owned {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .appearance-status.active {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .appearance-status.not-owned {
+            background: #f5f5f5;
+            color: #999;
+        }
+
+        .appearance-use-btn {
+            padding: 5px 15px;
+            border: none;
+            background: #4CAF50;
+            color: white;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .appearance-use-btn:hover {
+            background: #45a049;
+        }
+
         @media (max-width: 600px) {
             .profile-header {
                 flex-direction: column;
@@ -351,6 +443,11 @@
     </div>
 
     <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">🪙</div>
+            <div class="stat-value" id="totalPoints">0</div>
+            <div class="stat-label">当前积分</div>
+        </div>
         <div class="stat-card">
             <div class="stat-icon">📝</div>
             <div class="stat-value" id="totalQuestions">0</div>
@@ -429,6 +526,33 @@
                     </div>
                 </div>
                 <span class="book-status" id="xiyouStatus">未开始</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">🎨 外观道具</h2>
+        <div class="appearance-section">
+            <div class="appearance-item">
+                <div class="appearance-info">
+                    <span class="appearance-icon">📜</span>
+                    <span class="appearance-name">头像框-书卷</span>
+                </div>
+                <div class="appearance-status" id="frame_scroll_status">未拥有</div>
+            </div>
+            <div class="appearance-item">
+                <div class="appearance-info">
+                    <span class="appearance-icon">🌸</span>
+                    <span class="appearance-name">头像框-梅花</span>
+                </div>
+                <div class="appearance-status" id="frame_plum_status">未拥有</div>
+            </div>
+            <div class="appearance-item">
+                <div class="appearance-info">
+                    <span class="appearance-icon">✨</span>
+                    <span class="appearance-name">昵称特效</span>
+                </div>
+                <div class="appearance-status" id="nickname_glow_status">未拥有</div>
             </div>
         </div>
     </div>
@@ -1350,6 +1474,116 @@
             }
         }
 
+        function applyAppearance() {
+            try {
+                const data = localStorage.getItem('user_points_v1');
+                if (!data) return;
+                
+                const pointsData = JSON.parse(data);
+                const appearance = pointsData.activeAppearance || {};
+                
+                const avatar = document.getElementById('avatar');
+                const username = document.getElementById('usernameDisplay');
+                
+                if (appearance.frame) {
+                    avatar.classList.add(appearance.frame);
+                }
+                
+                if (appearance.nicknameEffect && appearance.nicknameExpiry && Date.now() < appearance.nicknameExpiry) {
+                    username.classList.add('glow-effect');
+                }
+            } catch (e) {
+                console.error('应用外观失败:', e);
+            }
+        }
+
+        function renderAppearanceItems() {
+            try {
+                const data = localStorage.getItem('user_points_v1');
+                if (!data) {
+                    console.log('没有找到 user_points_v1 数据');
+                    return;
+                }
+                
+                const pointsData = JSON.parse(data);
+                console.log('积分数据:', pointsData);
+                const ownedItems = pointsData.ownedItems || {};
+                console.log('拥有的道具:', ownedItems);
+                const appearance = pointsData.activeAppearance || {};
+                console.log('激活的外观:', appearance);
+                
+                const items = [
+                    { id: 'frame_scroll', name: '头像框-书卷' },
+                    { id: 'frame_plum', name: '头像框-梅花' },
+                    { id: 'nickname_glow', name: '昵称特效' }
+                ];
+                
+                items.forEach(item => {
+                    const statusEl = document.getElementById(item.id + '_status');
+                    if (!statusEl) {
+                        console.log('找不到元素:', item.id + '_status');
+                        return;
+                    }
+                    
+                    const count = ownedItems[item.id] || 0;
+                    const isActive = (item.id.startsWith('frame_') && appearance.frame === item.id) ||
+                                    (item.id === 'nickname_glow' && appearance.nicknameEffect === item.id && Date.now() < (appearance.nicknameExpiry || 0));
+                    
+                    console.log(item.name, '数量:', count, '是否激活:', isActive);
+                    
+                    if (isActive) {
+                        statusEl.className = 'appearance-status active';
+                        statusEl.innerHTML = '使用中';
+                    } else if (count > 0) {
+                        statusEl.className = 'appearance-status owned';
+                        statusEl.innerHTML = `<button class="appearance-use-btn" onclick="useAppearanceItem('${item.id}')">使用 (${count})</button>`;
+                    } else {
+                        statusEl.className = 'appearance-status not-owned';
+                        statusEl.innerHTML = '未拥有';
+                    }
+                });
+            } catch (e) {
+                console.error('渲染外观道具失败:', e);
+            }
+        }
+
+        function useAppearanceItem(itemId) {
+            try {
+                const data = localStorage.getItem('user_points_v1');
+                if (!data) return;
+                
+                const pointsData = JSON.parse(data);
+                const ownedItems = pointsData.ownedItems || {};
+                
+                if (!ownedItems[itemId] || ownedItems[itemId] <= 0) {
+                    alert('道具数量不足！');
+                    return;
+                }
+                
+                ownedItems[itemId]--;
+                pointsData.ownedItems = ownedItems;
+                
+                if (!pointsData.activeAppearance) {
+                    pointsData.activeAppearance = { frame: null, nicknameEffect: null, nicknameExpiry: null };
+                }
+                
+                if (itemId === 'frame_scroll' || itemId === 'frame_plum') {
+                    pointsData.activeAppearance.frame = itemId;
+                } else if (itemId === 'nickname_glow') {
+                    pointsData.activeAppearance.nicknameEffect = itemId;
+                    pointsData.activeAppearance.nicknameExpiry = Date.now() + 30 * 24 * 60 * 60 * 1000;
+                }
+                
+                localStorage.setItem('user_points_v1', JSON.stringify(pointsData));
+                
+                alert('外观道具已激活！');
+                
+                location.reload();
+            } catch (e) {
+                console.error('使用外观道具失败:', e);
+            }
+        }
+
         let cloudStats = null;
 
         async function init() {
@@ -1374,6 +1608,8 @@
             renderRank();
             renderBadges();
             renderReadingProgress();
+            renderAppearanceItems();
+            applyAppearance();
         }
 
         async function loadFromCloud(userId) {
@@ -1408,6 +1644,16 @@
                 ? Math.round((correctAnswers / totalQuestions) * 100) 
                 : 0;
             
+            try {
+                const pointsData = localStorage.getItem('user_points_v1');
+                if (pointsData) {
+                    const points = JSON.parse(pointsData);
+                    document.getElementById('totalPoints').textContent = points.totalPoints || 0;
+                }
+            } catch (e) {
+                document.getElementById('totalPoints').textContent = '0';
+            }
+            
             document.getElementById('totalQuestions').textContent = totalQuestions;
             document.getElementById('accuracy').textContent = accuracy + '%';
             
@@ -1427,37 +1673,37 @@
         }
 
         function renderRank() {
-            let masteredCount;
-            
-            if (cloudStats && cloudStats.mastered_count !== undefined) {
-                masteredCount = cloudStats.mastered_count;
-            } else {
-                const history = ProfileManager.getHistoryData();
-                masteredCount = 0;
-                Object.values(history).forEach(item => {
-                    if (item.totalAttempts > 0 && (item.correctCount / item.totalAttempts) >= 0.8) {
-                        masteredCount++;
-                    }
-                });
-            }
-            
-            const TOTAL_QUESTIONS = 800;
-            const percent = Math.round((masteredCount / TOTAL_QUESTIONS) * 100);
-            
             let rankInfo = null;
-            for (let i = RANKS.length - 1; i >= 0; i--) {
-                const rank = RANKS[i];
-                for (let j = rank.stages.length - 1; j >= 0; j--) {
-                    if (percent >= rank.stages[j]) {
-                        rankInfo = {
-                            rank: rank,
-                            stageIndex: j,
-                            stageLabel: ['Ⅰ', 'Ⅱ', 'Ⅲ'][j] || ''
-                        };
-                        break;
+            
+            try {
+                const pointsData = localStorage.getItem('user_points_v1');
+                if (pointsData) {
+                    const points = JSON.parse(pointsData);
+                    const totalPoints = points.totalPoints || 0;
+                    
+                    const RANK_THRESHOLDS = [
+                        { name: '状元', minPoints: 50000, icon: 'zhuangyuan', color: '#FFD700' },
+                        { name: '翰林', minPoints: 30000, icon: 'hanlin', color: '#00897B' },
+                        { name: '进士', minPoints: 15000, icon: 'jinshi', color: '#AB47BC' },
+                        { name: '举人', minPoints: 8000, icon: 'juren', color: '#E53935' },
+                        { name: '秀才', minPoints: 3000, icon: 'xiucai', color: '#81D4FA' },
+                        { name: '书生', minPoints: 1000, icon: 'shusheng', color: '#5C6BC0' },
+                        { name: '蒙童', minPoints: 0, icon: 'mengtong', color: '#7CB342' }
+                    ];
+                    
+                    for (const rank of RANK_THRESHOLDS) {
+                        if (totalPoints >= rank.minPoints) {
+                            rankInfo = {
+                                rank: rank,
+                                stageIndex: 0,
+                                stageLabel: ''
+                            };
+                            break;
+                        }
                     }
                 }
-                if (rankInfo) break;
+            } catch (e) {
+                console.error('读取积分失败:', e);
             }
             
             if (!rankInfo) {

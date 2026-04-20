@@ -148,12 +148,15 @@
             border: none;
             background: transparent;
             color: var(--theme-color);
-            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
             border-radius: 4px;
             transition: all 0.2s;
         }
+
+        .font-btn[data-size="small"] { font-size: 12px; }
+        .font-btn[data-size="medium"] { font-size: 15px; }
+        .font-btn[data-size="large"] { font-size: 18px; }
 
         .font-btn:hover, .font-btn.active {
             background: var(--theme-color);
@@ -741,27 +744,93 @@
             let html = '';
             let chapters = [];
             let wordCount = 0;
+            let currentParagraph = '';
+            const expectedChapters = 120;
+            const chapterRegex = /^第[零一二三四五六七八九十百千○０-９0-9]+回/;
+            const titleSuffixes = ['诗曰：', '词曰：', '古风一首：', '返回总目录', '《满庭芳》：', '[1]', '[2]', '[3]'];
+            const seenChapterNumbers = new Set();
+
+            function extractChapterNumber(title) {
+                const match = title.match(/^第([零一二三四五六七八九十百千○０-９0-9]+)回/);
+                return match ? match[1] : null;
+            }
+
+            function cleanTitle(title) {
+                let cleaned = title;
+                for (const suffix of titleSuffixes) {
+                    const idx = cleaned.indexOf(suffix);
+                    if (idx > 0) {
+                        cleaned = cleaned.substring(0, idx).trim();
+                    }
+                }
+                return cleaned;
+            }
+
+            function flushParagraph() {
+                if (currentParagraph.trim()) {
+                    html += `<p class="content-text">${currentParagraph.trim()}</p>`;
+                    wordCount += currentParagraph.length;
+                    currentParagraph = '';
+                }
+            }
             
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i].trim();
-                if (!line) continue;
                 
-                const chapterMatch = line.match(/^第[零一二三四五六七八九十百千]+回 [^。！？]+$/);
-                if (chapterMatch) {
-                    chapters.push({
-                        title: line,
-                        index: chapters.length,
-                        id: `chapter-${chapters.length}`
-                    });
-                    html += `<h2 class="chapter-title" id="chapter-${chapters.length - 1}">${line}</h2>`;
+                if (!line) {
+                    flushParagraph();
                     continue;
                 }
                 
-                if (line.length > 10) {
-                    html += `<p class="content-text">${line}</p>`;
-                    wordCount += line.length;
+                if (chapterRegex.test(line)) {
+                    flushParagraph();
+                    
+                    let chapterTitle = cleanTitle(line);
+                    let j = i + 1;
+
+                    while (j < lines.length) {
+                        const nextLine = lines[j].trim();
+                        if (!nextLine) {
+                            j++;
+                            continue;
+                        }
+                        if (nextLine.length < 20 && !nextLine.includes('。') && !chapterRegex.test(nextLine)) {
+                            chapterTitle += nextLine;
+                            j++;
+                        } else {
+                            break;
+                        }
+                    }
+
+                    chapterTitle = cleanTitle(chapterTitle);
+                    
+                    const chapterNum = extractChapterNumber(chapterTitle);
+                    
+                    if (chapterTitle.length > 0 && chapterTitle.length < 80) {
+                        if (chapterNum && seenChapterNumbers.has(chapterNum)) {
+                            i = j - 1;
+                            continue;
+                        }
+                        
+                        if (chapterNum) {
+                            seenChapterNumbers.add(chapterNum);
+                        }
+                        
+                        chapters.push({
+                            title: chapterTitle,
+                            index: chapters.length,
+                            id: `chapter-${chapters.length}`
+                        });
+                        html += `<h2 class="chapter-title" id="chapter-${chapters.length - 1}">${chapterTitle}</h2>`;
+                        i = j - 1;
+                        continue;
+                    }
                 }
+                
+                currentParagraph += (currentParagraph ? '' : '') + line;
             }
+            
+            flushParagraph();
 
             return { html, chapters, wordCount };
         }

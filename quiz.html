@@ -2361,6 +2361,8 @@
         const ItemEffects = {
             doublePointsActive: false,
             doublePointsExpiry: 0,
+            pointsProtectActive: false,
+            pointsProtectExpiry: 0,
             
             // 使用答案提示
             useHint() {
@@ -2465,6 +2467,26 @@
                 }
                 this.doublePointsActive = false;
                 return false;
+            },
+            
+            usePointsProtect() {
+                if (!PointsManager.useItem('points_protect')) {
+                    alert('没有积分保护卡道具！');
+                    return false;
+                }
+                this.pointsProtectActive = true;
+                this.pointsProtectExpiry = Date.now() + 24 * 60 * 60 * 1000;
+                alert('积分保护已激活！24小时内答题不计负分');
+                updateItemsBar();
+                return true;
+            },
+            
+            isPointsProtectActive() {
+                if (this.pointsProtectActive && Date.now() < this.pointsProtectExpiry) {
+                    return true;
+                }
+                this.pointsProtectActive = false;
+                return false;
             }
         };
 
@@ -2474,7 +2496,8 @@
             eliminate: { name: '排除干扰', icon: '🚫' },
             skip: { name: '跳过题目', icon: '⏭️' },
             double: { name: '双倍积分', icon: '⭐' },
-            revive: { name: '复活卡', icon: '🔄' }
+            revive: { name: '复活卡', icon: '🔄' },
+            points_protect: { name: '积分保护', icon: '🛡️' }
         };
 
         // 更新道具栏显示
@@ -2483,12 +2506,12 @@
             if (!grid) return;
             
             const ownedItems = PointsManager.getOwnedItems();
-            const items = ['hint', 'eliminate', 'skip', 'double', 'revive'];
+            const items = ['hint', 'eliminate', 'skip', 'double', 'revive', 'points_protect'];
             
             grid.innerHTML = items.map(itemId => {
                 const count = ownedItems[itemId] || 0;
                 const info = ITEM_INFO[itemId];
-                const disabled = count <= 0 || answered;
+                const disabled = count <= 0 || (answered && itemId !== 'revive' && itemId !== 'points_protect');
                 
                 return `
                     <div class="item-slot ${disabled ? 'disabled' : ''}" onclick="${disabled ? '' : `useItem('${itemId}')`}">
@@ -2534,6 +2557,9 @@
                     break;
                 case 'revive':
                     ItemEffects.useRevive();
+                    break;
+                case 'points_protect':
+                    ItemEffects.usePointsProtect();
                     break;
             }
         }
@@ -2905,9 +2931,18 @@
         }
 
         function confirmClearWrongBook() {
-            if (confirm('确定要清空错题本吗？此操作不可恢复。')) {
+            const wrongResetCount = PointsManager.getItemCount('wrong_reset');
+            if (wrongResetCount <= 0) {
+                alert('清空错题本需要错题重置卡！请前往积分商城购买。');
+                return;
+            }
+            
+            if (confirm('确定要使用错题重置卡清空错题本吗？此操作不可恢复。')) {
+                PointsManager.useItem('wrong_reset');
                 WrongBookManager.clear();
                 updateWrongBookUI();
+                updateItemsBar();
+                alert('错题本已清空！');
             }
         }
 
@@ -3185,8 +3220,9 @@
                 if (!isWrongBookMode) {
                     WrongBookManager.add(question, settings.mode, 'wrong', labels[index]);
                 }
-                // 答错也得少量积分
-                PointsManager.addPoints(2, '答题参与');
+                if (!ItemEffects.isPointsProtectActive()) {
+                    PointsManager.spendPoints(2, '答错扣分');
+                }
                 PointsManager.resetStreak();
             } else {
                 score++;
@@ -3277,7 +3313,9 @@
                 if (!isWrongBookMode) {
                     WrongBookManager.add(question, settings.mode, 'wrong', userAnswer);
                 }
-                PointsManager.addPoints(2, '答题参与');
+                if (!ItemEffects.isPointsProtectActive()) {
+                    PointsManager.spendPoints(2, '答错扣分');
+                }
                 PointsManager.resetStreak();
             }
             

@@ -253,6 +253,36 @@
             font-size: 0.9rem;
         }
 
+        .owned-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .use-btn {
+            padding: 5px 12px;
+            border: none;
+            background: #4CAF50;
+            color: white;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .use-btn:hover {
+            background: #45a049;
+            transform: scale(1.05);
+        }
+
+        .active-tag {
+            background: #FF9800;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
         .empty-items {
             text-align: center;
             color: #999;
@@ -474,6 +504,46 @@
                 data.ownedItems[itemId]--;
                 this.saveData(data);
                 return true;
+            },
+            
+            getItemCount(itemId) {
+                const ownedItems = this.getOwnedItems();
+                return ownedItems[itemId] || 0;
+            },
+            
+            getAppearance() {
+                const data = this.getData();
+                return data.activeAppearance || {
+                    frame: null,
+                    nicknameEffect: null,
+                    nicknameExpiry: null
+                };
+            },
+            
+            setAppearance(type, itemId) {
+                const data = this.getData();
+                if (!data.activeAppearance) {
+                    data.activeAppearance = { frame: null, nicknameEffect: null, nicknameExpiry: null };
+                }
+                if (type === 'frame') {
+                    data.activeAppearance.frame = itemId;
+                } else if (type === 'nickname') {
+                    data.activeAppearance.nicknameEffect = itemId;
+                    data.activeAppearance.nicknameExpiry = Date.now() + 30 * 24 * 60 * 60 * 1000;
+                }
+                this.saveData(data);
+            },
+            
+            useAppearanceItem(itemId) {
+                if (!this.useItem(itemId)) {
+                    return false;
+                }
+                if (itemId === 'frame_scroll' || itemId === 'frame_plum') {
+                    this.setAppearance('frame', itemId);
+                } else if (itemId === 'nickname_glow') {
+                    this.setAppearance('nickname', itemId);
+                }
+                return true;
             }
         };
 
@@ -534,8 +604,24 @@
             if (!confirm(`确定花费 ${price} 积分购买 ${name} 吗？`)) return;
             
             if (PointsManager.spendPoints(price, `购买 ${name}`)) {
-                PointsManager.addItem(itemId);
-                alert('购买成功！');
+                if (itemId === 'daily_pack') {
+                    PointsManager.addItem('hint');
+                    PointsManager.addItem('hint');
+                    PointsManager.addItem('eliminate');
+                    alert('购买成功！获得：提示×2、排除×1');
+                } else if (itemId === 'weekly_pack') {
+                    for (let i = 0; i < 7; i++) {
+                        PointsManager.addItem('hint');
+                        PointsManager.addItem('eliminate');
+                        PointsManager.addItem('skip');
+                        PointsManager.addItem('double');
+                        PointsManager.addItem('revive');
+                    }
+                    alert('购买成功！获得所有基础道具×7');
+                } else {
+                    PointsManager.addItem(itemId);
+                    alert('购买成功！');
+                }
                 updateDisplay();
                 renderShop();
                 renderMyItems();
@@ -547,6 +633,7 @@
         function renderMyItems() {
             const grid = document.getElementById('myItemsGrid');
             const ownedItems = PointsManager.getOwnedItems();
+            const appearance = PointsManager.getAppearance();
             
             const allItems = [...ITEMS.quiz, ...ITEMS.appearance, ...ITEMS.function, ...ITEMS.package];
             
@@ -560,16 +647,56 @@
             grid.innerHTML = ownedList.map(([itemId, count]) => {
                 const item = allItems.find(i => i.id === itemId);
                 if (!item) return '';
+                
+                const isAppearance = itemId.startsWith('frame_') || itemId === 'nickname_glow';
+                const isFunction = itemId === 'wrong_reset' || itemId === 'points_protect';
+                const isActive = isAppearance && (
+                    (itemId.startsWith('frame_') && appearance.frame === itemId) ||
+                    (itemId === 'nickname_glow' && appearance.nicknameEffect === itemId && Date.now() < (appearance.nicknameExpiry || 0))
+                );
+                
+                let actionBtn = '';
+                if (isAppearance) {
+                    if (isActive) {
+                        actionBtn = '<span class="active-tag">使用中</span>';
+                    } else {
+                        actionBtn = `<button class="use-btn" onclick="useAppearanceItem('${itemId}')">使用</button>`;
+                    }
+                } else if (isFunction) {
+                    actionBtn = `<button class="use-btn" onclick="useFunctionItem('${itemId}')">使用</button>`;
+                }
+                
                 return `
                     <div class="owned-item">
                         <div class="owned-item-info">
                             <span class="owned-item-icon">${item.icon}</span>
                             <span class="owned-item-name">${item.name}</span>
                         </div>
-                        <span class="owned-item-count">×${count}</span>
+                        <div class="owned-item-actions">
+                            ${actionBtn}
+                            <span class="owned-item-count">×${count}</span>
+                        </div>
                     </div>
                 `;
             }).join('');
+        }
+        
+        function useAppearanceItem(itemId) {
+            if (PointsManager.useAppearanceItem(itemId)) {
+                const item = [...ITEMS.appearance].find(i => i.id === itemId);
+                alert(`${item ? item.name : '外观道具'}已激活！`);
+                renderMyItems();
+            } else {
+                alert('道具数量不足！');
+            }
+        }
+        
+        function useFunctionItem(itemId) {
+            if (itemId === 'wrong_reset') {
+                alert('错题重置卡请在答题页面的错题本中使用！');
+            } else if (itemId === 'points_protect') {
+                alert('积分保护卡请在答题页面使用！');
+            }
         }
 
         function renderHistory() {
