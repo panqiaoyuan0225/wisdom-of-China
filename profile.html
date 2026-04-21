@@ -637,10 +637,48 @@
     </div>
 
     <script>
-        const PROFILE_STORAGE_KEY = 'user_profile_v1';
-        const TIME_STORAGE_KEY = 'browsing_time_v1';
-        const BADGE_STORAGE_KEY = 'badge_data_v1';
-        const HISTORY_KEY = 'quiz_history_v1';
+        const PointsManager = {
+            STORAGE_KEY: 'user_points_v1',
+            
+            getData() {
+                try {
+                    const data = localStorage.getItem(this.STORAGE_KEY);
+                    return data ? JSON.parse(data) : {
+                        totalPoints: 0,
+                        todayPoints: 0,
+                        lastDate: '',
+                        pointsHistory: [],
+                        ownedItems: {},
+                        ownedAppearance: [],
+                        activeAppearance: { frame: null, nicknameEffect: null, nicknameExpiry: null },
+                        streak: 0
+                    };
+                } catch (e) {
+                    return {
+                        totalPoints: 0,
+                        todayPoints: 0,
+                        lastDate: '',
+                        pointsHistory: [],
+                        ownedItems: {},
+                        ownedAppearance: [],
+                        activeAppearance: { frame: null, nicknameEffect: null, nicknameExpiry: null },
+                        streak: 0
+                    };
+                }
+            },
+            
+            getTotalPoints() {
+                return this.getData().totalPoints;
+            },
+            
+            getOwnedAppearance() {
+                return this.getData().ownedAppearance || [];
+            },
+            
+            getActiveAppearance() {
+                return this.getData().activeAppearance || { frame: null, nicknameEffect: null, nicknameExpiry: null };
+            }
+        };
 
         const BADGES = [
             { id: 'honglou_reader', name: '红楼初探', rarity: 'common' },
@@ -1555,11 +1593,7 @@
 
         function applyAppearance() {
             try {
-                const data = localStorage.getItem('user_points_v1');
-                if (!data) return;
-                
-                const pointsData = JSON.parse(data);
-                const appearance = pointsData.activeAppearance || {};
+                const appearance = PointsManager.getActiveAppearance();
                 
                 const avatar = document.getElementById('avatar');
                 const username = document.getElementById('usernameDisplay');
@@ -1578,17 +1612,11 @@
 
         function renderAppearanceItems() {
             try {
-                const data = localStorage.getItem('user_points_v1');
-                if (!data) {
-                    console.log('没有找到 user_points_v1 数据');
-                    return;
-                }
-                
-                const pointsData = JSON.parse(data);
+                const pointsData = PointsManager.getData();
                 console.log('积分数据:', pointsData);
-                const ownedAppearance = pointsData.ownedAppearance || [];
+                const ownedAppearance = PointsManager.getOwnedAppearance();
                 console.log('拥有的外观道具:', ownedAppearance);
-                const appearance = pointsData.activeAppearance || {};
+                const appearance = PointsManager.getActiveAppearance();
                 console.log('激活的外观:', appearance);
                 
                 const items = [
@@ -1628,11 +1656,8 @@
 
         function useAppearanceItem(itemId) {
             try {
-                const data = localStorage.getItem('user_points_v1');
-                if (!data) return;
-                
-                const pointsData = JSON.parse(data);
-                const ownedAppearance = pointsData.ownedAppearance || [];
+                const pointsData = PointsManager.getData();
+                const ownedAppearance = PointsManager.getOwnedAppearance();
                 
                 if (!ownedAppearance.includes(itemId)) {
                     alert('未拥有此外观道具！');
@@ -1652,7 +1677,7 @@
                     alert('昵称特效已激活！');
                 }
                 
-                localStorage.setItem('user_points_v1', JSON.stringify(pointsData));
+                localStorage.setItem(PointsManager.STORAGE_KEY, JSON.stringify(pointsData));
                 
                 location.reload();
             } catch (e) {
