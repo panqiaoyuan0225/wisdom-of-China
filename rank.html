@@ -549,11 +549,15 @@
         function getAppearanceData() {
             try {
                 const data = localStorage.getItem(STORAGE_KEYS.POINTS);
-                if (!data) return { frame: null };
+                if (!data) return { frame: null, frameActive: false };
                 const pointsData = JSON.parse(data);
-                return pointsData.activeAppearance || { frame: null };
+                const appearance = pointsData.activeAppearance || { frame: null, frameActive: false };
+                if (appearance.frame && appearance.frameActive) {
+                    return { frame: appearance.frame, frameActive: true };
+                }
+                return { frame: null, frameActive: false };
             } catch (e) {
-                return { frame: null };
+                return { frame: null, frameActive: false };
             }
         }
 
@@ -761,7 +765,8 @@
                             score: totalPoints + ' 积分',
                             scoreLabel: '总积分',
                             isCurrentUser: true,
-                            frame: userAppearance.frame
+                            frame: userAppearance.frame,
+                            frameActive: userAppearance.frameActive
                         });
                         leaderboard.sort((a, b) => b.points - a.points);
                     } else if (type === 'time') {
@@ -772,7 +777,8 @@
                             score: formatTime(timeData.totalMinutes),
                             scoreLabel: '学习时长',
                             isCurrentUser: true,
-                            frame: userAppearance.frame
+                            frame: userAppearance.frame,
+                            frameActive: userAppearance.frameActive
                         });
                         leaderboard.sort((a, b) => b.minutes - a.minutes);
                     } else if (type === 'accuracy') {
@@ -783,7 +789,8 @@
                             score: quizStats.accuracy + '%',
                             scoreLabel: '正确率',
                             isCurrentUser: true,
-                            frame: userAppearance.frame
+                            frame: userAppearance.frame,
+                            frameActive: userAppearance.frameActive
                         });
                         leaderboard.sort((a, b) => b.accuracy - a.accuracy);
                     }
@@ -811,7 +818,8 @@
                     score: totalPoints + ' 积分',
                     scoreLabel: '总积分',
                     isCurrentUser: true,
-                    frame: userAppearance ? userAppearance.frame : null
+                    frame: userAppearance ? userAppearance.frame : null,
+                    frameActive: userAppearance ? userAppearance.frameActive : false
                 });
             } else if (type === 'time') {
                 leaderboard.push({
@@ -821,7 +829,8 @@
                     score: formatTime(timeData.totalMinutes),
                     scoreLabel: '学习时长',
                     isCurrentUser: true,
-                    frame: userAppearance ? userAppearance.frame : null
+                    frame: userAppearance ? userAppearance.frame : null,
+                    frameActive: userAppearance ? userAppearance.frameActive : false
                 });
             } else if (type === 'accuracy') {
                 leaderboard.push({
@@ -831,7 +840,8 @@
                     score: quizStats.accuracy + '%',
                     scoreLabel: '正确率',
                     isCurrentUser: true,
-                    frame: userAppearance ? userAppearance.frame : null
+                    frame: userAppearance ? userAppearance.frame : null,
+                    frameActive: userAppearance ? userAppearance.frameActive : false
                 });
             }
 
@@ -929,7 +939,7 @@
                         ? `<img src="${item.avatar}" alt="头像">` 
                         : item.avatar;
                     
-                    const frameClass = item.frame ? item.frame : '';
+                    const frameClass = (item.frame && item.frameActive) ? item.frame : '';
 
                     html += `
                         <div class="rank-item ${positionClass} ${currentUserClass}">

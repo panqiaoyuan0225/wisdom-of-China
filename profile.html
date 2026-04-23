@@ -680,7 +680,12 @@
                     pointsHistory: [],
                     ownedItems: {},
                     ownedAppearance: [],
-                    activeAppearance: { frame: null, nicknameEffect: null, nicknameExpiry: null },
+                    activeAppearance: { 
+                        frame: null, 
+                        frameActive: false,
+                        nicknameEffect: null, 
+                        nicknameActive: false
+                    },
                     streak: 0
                 };
             },
@@ -694,7 +699,13 @@
             },
             
             getActiveAppearance() {
-                return this.getData().activeAppearance || { frame: null, nicknameEffect: null, nicknameExpiry: null };
+                const data = this.getData();
+                return data.activeAppearance || { 
+                    frame: null, 
+                    frameActive: false,
+                    nicknameEffect: null, 
+                    nicknameActive: false
+                };
             }
         };
 
@@ -1616,11 +1627,11 @@
                 const avatar = document.getElementById('avatar');
                 const username = document.getElementById('usernameDisplay');
                 
-                if (appearance.frame) {
+                if (appearance.frame && appearance.frameActive) {
                     avatar.classList.add(appearance.frame);
                 }
                 
-                if (appearance.nicknameEffect && appearance.nicknameExpiry && Date.now() < appearance.nicknameExpiry) {
+                if (appearance.nicknameEffect && appearance.nicknameActive) {
                     username.classList.add('glow-effect');
                 }
             } catch (e) {
@@ -1651,17 +1662,22 @@
                     }
                     
                     const isOwned = ownedAppearance.includes(item.id);
-                    const isActive = (item.id.startsWith('frame_') && appearance.frame === item.id) ||
-                                    (item.id === 'nickname_glow' && appearance.nicknameEffect === item.id && Date.now() < (appearance.nicknameExpiry || 0));
+                    let isActive = false;
+                    
+                    if (item.id.startsWith('frame_')) {
+                        isActive = appearance.frame === item.id && appearance.frameActive;
+                    } else if (item.id === 'nickname_glow') {
+                        isActive = appearance.nicknameEffect === item.id && appearance.nicknameActive;
+                    }
                     
                     console.log(item.name, '是否拥有:', isOwned, '是否激活:', isActive);
                     
                     if (isActive) {
                         statusEl.className = 'appearance-status active';
-                        statusEl.innerHTML = '使用中';
+                        statusEl.innerHTML = `<button class="appearance-use-btn" style="background:#f44336;" onclick="toggleAppearanceItem('${item.id}', false)">脱下</button>`;
                     } else if (isOwned) {
                         statusEl.className = 'appearance-status owned';
-                        statusEl.innerHTML = `<button class="appearance-use-btn" onclick="useAppearanceItem('${item.id}')">使用</button>`;
+                        statusEl.innerHTML = `<button class="appearance-use-btn" onclick="toggleAppearanceItem('${item.id}', true)">穿上</button>`;
                     } else {
                         statusEl.className = 'appearance-status not-owned';
                         statusEl.innerHTML = '未拥有';
@@ -1672,7 +1688,7 @@
             }
         }
 
-        function useAppearanceItem(itemId) {
+        function toggleAppearanceItem(itemId, setActive) {
             try {
                 const pointsData = PointsManager.getData();
                 const ownedAppearance = PointsManager.getOwnedAppearance();
@@ -1683,24 +1699,34 @@
                 }
                 
                 if (!pointsData.activeAppearance) {
-                    pointsData.activeAppearance = { frame: null, nicknameEffect: null, nicknameExpiry: null };
+                    pointsData.activeAppearance = { 
+                        frame: null, 
+                        frameActive: false,
+                        nicknameEffect: null, 
+                        nicknameActive: false
+                    };
                 }
                 
                 if (itemId === 'frame_scroll' || itemId === 'frame_plum') {
                     pointsData.activeAppearance.frame = itemId;
-                    alert('头像框已激活！');
+                    pointsData.activeAppearance.frameActive = setActive;
+                    alert(setActive ? '头像框已穿上！' : '头像框已脱下！');
                 } else if (itemId === 'nickname_glow') {
                     pointsData.activeAppearance.nicknameEffect = itemId;
-                    pointsData.activeAppearance.nicknameExpiry = Date.now() + 30 * 24 * 60 * 60 * 1000;
-                    alert('昵称特效已激活！');
+                    pointsData.activeAppearance.nicknameActive = setActive;
+                    alert(setActive ? '昵称特效已穿上！' : '昵称特效已脱下！');
                 }
                 
                 localStorage.setItem(PointsManager.STORAGE_KEY, JSON.stringify(pointsData));
                 
                 location.reload();
             } catch (e) {
-                console.error('使用外观道具失败:', e);
+                console.error('切换外观道具失败:', e);
             }
+        }
+
+        function useAppearanceItem(itemId) {
+            toggleAppearanceItem(itemId, true);
         }
 
         let cloudStats = null;

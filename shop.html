@@ -443,17 +443,22 @@
             },
             
             getDefaultData() {
-                return {
-                    totalPoints: 0,
-                    todayPoints: 0,
-                    lastDate: '',
-                    pointsHistory: [],
-                    ownedItems: {},
-                    ownedAppearance: [],
-                    activeAppearance: { frame: null, nicknameEffect: null, nicknameExpiry: null },
-                    streak: 0
-                };
-            },
+                 return {
+                     totalPoints: 0,
+                     todayPoints: 0,
+                     lastDate: '',
+                     pointsHistory: [],
+                     ownedItems: {},
+                     ownedAppearance: [],
+                     activeAppearance: { 
+                         frame: null, 
+                         frameActive: false,
+                         nicknameEffect: null, 
+                         nicknameActive: false
+                     },
+                     streak: 0
+                 };
+             },
             
             saveData(data) {
                 localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
@@ -551,21 +556,28 @@
                 const data = this.getData();
                 return data.activeAppearance || {
                     frame: null,
+                    frameActive: false,
                     nicknameEffect: null,
-                    nicknameExpiry: null
+                    nicknameActive: false
                 };
             },
             
-            setAppearance(type, itemId) {
+            setAppearance(type, itemId, setActive) {
                 const data = this.getData();
                 if (!data.activeAppearance) {
-                    data.activeAppearance = { frame: null, nicknameEffect: null, nicknameExpiry: null };
+                    data.activeAppearance = { 
+                        frame: null, 
+                        frameActive: false, 
+                        nicknameEffect: null, 
+                        nicknameActive: false 
+                    };
                 }
                 if (type === 'frame') {
                     data.activeAppearance.frame = itemId;
+                    data.activeAppearance.frameActive = setActive;
                 } else if (type === 'nickname') {
                     data.activeAppearance.nicknameEffect = itemId;
-                    data.activeAppearance.nicknameExpiry = Date.now() + 30 * 24 * 60 * 60 * 1000;
+                    data.activeAppearance.nicknameActive = setActive;
                 }
                 this.saveData(data);
             },
@@ -575,9 +587,9 @@
                     return false;
                 }
                 if (itemId === 'frame_scroll' || itemId === 'frame_plum') {
-                    this.setAppearance('frame', itemId);
+                    this.setAppearance('frame', itemId, true);
                 } else if (itemId === 'nickname_glow') {
-                    this.setAppearance('nickname', itemId);
+                    this.setAppearance('nickname', itemId, true);
                 }
                 return true;
             }
@@ -698,8 +710,12 @@
                 const item = allItems.find(i => i.id === itemId);
                 if (!item) return;
                 
-                const isActive = (itemId.startsWith('frame_') && appearance.frame === itemId) ||
-                                (itemId === 'nickname_glow' && appearance.nicknameEffect === itemId && Date.now() < (appearance.nicknameExpiry || 0));
+                let isActive = false;
+                if (itemId.startsWith('frame_')) {
+                    isActive = appearance.frame === itemId && appearance.frameActive;
+                } else if (itemId === 'nickname_glow') {
+                    isActive = appearance.nicknameEffect === itemId && appearance.nicknameActive;
+                }
                 
                 html += `
                     <div class="owned-item" style="background: linear-gradient(135deg, #fff9e6 0%, #fff5d6 100%); border: 2px solid #d4af37;">
