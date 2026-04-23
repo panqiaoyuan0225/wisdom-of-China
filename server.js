@@ -17,26 +17,26 @@ const supabase = supabaseUrl && supabaseKey
   : null;
 
 if (!supabase) {
-  console.warn('警告: Supabase 环境变量未配置，请设置 SUPABASE_URL 和 SUPABASE_ANON_KEY');
+    console.warn('警告: Supabase 环境变量未配置，请设置 SUPABASE_URL 和 SUPABASE_ANON_KEY');
 } else {
-  console.log('Supabase 已连接');
+    console.log('Supabase 已连接');
 }
 
-app.post('/sync-stats', async (req, res) => {
-    const { userId, username, totalQuestions, correctAnswers, studyMinutes, masteredCount, totalPoints } = req.body;
-
+async function findUserByIdOrUsername(userId, username, supabase, res) {
     if (!userId && !username) {
-        return res.status(400).json({ 
+        res.status(400).json({ 
             success: false, 
             message: '用户ID或用户名不能为空' 
         });
+        return null;
     }
 
     if (!supabase) {
-        return res.status(500).json({ 
+        res.status(500).json({ 
             success: false, 
             message: '数据库未配置' 
         });
+        return null;
     }
 
     let targetUserId = userId;
@@ -48,12 +48,24 @@ app.post('/sync-stats', async (req, res) => {
             .single();
         
         if (findError || !user) {
-            return res.status(404).json({ 
+            res.status(404).json({ 
                 success: false, 
                 message: '用户不存在' 
             });
+            return null;
         }
         targetUserId = user.user_id;
+    }
+
+    return targetUserId;
+}
+
+app.post('/sync-stats', async (req, res) => {
+    const { userId, username, totalQuestions, correctAnswers, studyMinutes, masteredCount, totalPoints } = req.body;
+
+    const targetUserId = await findUserByIdOrUsername(userId, username, supabase, res);
+    if (targetUserId === null) {
+        return;
     }
 
     const updateData = {
@@ -89,35 +101,9 @@ app.post('/sync-stats', async (req, res) => {
 app.post('/sync-quiz-data', async (req, res) => {
     const { userId, username, quizData } = req.body;
 
-    if (!userId && !username) {
-        return res.status(400).json({ 
-            success: false, 
-            message: '用户ID或用户名不能为空' 
-        });
-    }
-
-    if (!supabase) {
-        return res.status(500).json({ 
-            success: false, 
-            message: '数据库未配置' 
-        });
-    }
-
-    let targetUserId = userId;
-    if (!targetUserId && username) {
-        const { data: user, error: findError } = await supabase
-            .from('users')
-            .select('user_id')
-            .eq('username', username)
-            .single();
-        
-        if (findError || !user) {
-            return res.status(404).json({ 
-                success: false, 
-                message: '用户不存在' 
-            });
-        }
-        targetUserId = user.user_id;
+    const targetUserId = await findUserByIdOrUsername(userId, username, supabase, res);
+    if (targetUserId === null) {
+        return;
     }
 
     const { error } = await supabase
@@ -144,35 +130,9 @@ app.post('/sync-quiz-data', async (req, res) => {
 app.get('/load-quiz-data', async (req, res) => {
     const { userId, username } = req.query;
 
-    if (!userId && !username) {
-        return res.status(400).json({ 
-            success: false, 
-            message: '用户ID或用户名不能为空' 
-        });
-    }
-
-    if (!supabase) {
-        return res.status(500).json({ 
-            success: false, 
-            message: '数据库未配置' 
-        });
-    }
-
-    let targetUserId = userId;
-    if (!targetUserId && username) {
-        const { data: user, error: findError } = await supabase
-            .from('users')
-            .select('user_id')
-            .eq('username', username)
-            .single();
-        
-        if (findError || !user) {
-            return res.status(404).json({ 
-                success: false, 
-                message: '用户不存在' 
-            });
-        }
-        targetUserId = user.user_id;
+    const targetUserId = await findUserByIdOrUsername(userId, username, supabase, res);
+    if (targetUserId === null) {
+        return;
     }
 
     const { data, error } = await supabase
@@ -198,35 +158,9 @@ app.get('/load-quiz-data', async (req, res) => {
 app.get('/load-user-stats', async (req, res) => {
     const { userId, username } = req.query;
 
-    if (!userId && !username) {
-        return res.status(400).json({ 
-            success: false, 
-            message: '用户ID或用户名不能为空' 
-        });
-    }
-
-    if (!supabase) {
-        return res.status(500).json({ 
-            success: false, 
-            message: '数据库未配置' 
-        });
-    }
-
-    let targetUserId = userId;
-    if (!targetUserId && username) {
-        const { data: user, error: findError } = await supabase
-            .from('users')
-            .select('user_id')
-            .eq('username', username)
-            .single();
-        
-        if (findError || !user) {
-            return res.status(404).json({ 
-                success: false, 
-                message: '用户不存在' 
-            });
-        }
-        targetUserId = user.user_id;
+    const targetUserId = await findUserByIdOrUsername(userId, username, supabase, res);
+    if (targetUserId === null) {
+        return;
     }
 
     const { data, error } = await supabase
