@@ -418,20 +418,70 @@
                     }
                     
                     let parsedData = JSON.parse(data);
+                    let needSave = false;
                     
+                    // 确保 ownedAppearance 数组存在
                     if (!parsedData.ownedAppearance) {
                         parsedData.ownedAppearance = [];
-                        if (parsedData.ownedItems) {
-                            if (parsedData.ownedItems.frame_scroll && parsedData.ownedItems.frame_scroll > 0) {
-                                parsedData.ownedAppearance.push('frame_scroll');
+                        needSave = true;
+                    }
+                    
+                    // 迁移旧数据：从 ownedItems 迁移到 ownedAppearance
+                    const appearanceItems = ['frame_scroll', 'frame_plum', 'nickname_glow'];
+                    
+                    if (parsedData.ownedItems) {
+                        appearanceItems.forEach(itemId => {
+                            if (parsedData.ownedItems[itemId] && parsedData.ownedItems[itemId] > 0) {
+                                if (!parsedData.ownedAppearance.includes(itemId)) {
+                                    parsedData.ownedAppearance.push(itemId);
+                                    needSave = true;
+                                }
                             }
-                            if (parsedData.ownedItems.frame_plum && parsedData.ownedItems.frame_plum > 0) {
-                                parsedData.ownedAppearance.push('frame_plum');
+                        });
+                    }
+                    
+                    // 检查购买历史，确保已购买的外观道具不会丢失
+                    if (parsedData.pointsHistory) {
+                        appearanceItems.forEach(itemId => {
+                            const itemName = itemId === 'frame_scroll' ? '头像框-书卷' : 
+                                           itemId === 'frame_plum' ? '头像框-梅花' : '昵称特效';
+                            const hasPurchase = parsedData.pointsHistory.some(h => 
+                                h.reason && h.reason.includes(`购买 ${itemName}`) && h.points < 0
+                            );
+                            if (hasPurchase && !parsedData.ownedAppearance.includes(itemId)) {
+                                parsedData.ownedAppearance.push(itemId);
+                                needSave = true;
                             }
-                            if (parsedData.ownedItems.nickname_glow && parsedData.ownedItems.nickname_glow > 0) {
-                                parsedData.ownedAppearance.push('nickname_glow');
-                            }
+                        });
+                    }
+                    
+                    // 确保 activeAppearance 对象存在且结构正确
+                    if (!parsedData.activeAppearance) {
+                        parsedData.activeAppearance = { 
+                            frame: null, 
+                            frameActive: false,
+                            nicknameEffect: null, 
+                            nicknameActive: false
+                        };
+                        needSave = true;
+                    } else {
+                        // 只在字段缺失时才添加默认值，不要覆盖已有值
+                        if (parsedData.activeAppearance.frameActive === undefined) {
+                            parsedData.activeAppearance.frameActive = false;
+                            needSave = true;
                         }
+                        if (parsedData.activeAppearance.nicknameActive === undefined) {
+                            parsedData.activeAppearance.nicknameActive = false;
+                            needSave = true;
+                        }
+                        // 移除旧字段
+                        if (parsedData.activeAppearance.nicknameExpiry !== undefined) {
+                            delete parsedData.activeAppearance.nicknameExpiry;
+                            needSave = true;
+                        }
+                    }
+                    
+                    if (needSave) {
                         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(parsedData));
                     }
                     
@@ -461,10 +511,18 @@
              },
             
             saveData(data) {
-                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
-                // 同步到云端
-                if (window.DataManager && typeof window.DataManager.syncToCloud === 'function') {
-                    window.DataManager.syncToCloud();
+                try {
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+                } catch (e) {
+                    console.error('保存本地数据失败:', e);
+                }
+                try {
+                    // 同步到云端
+                    if (window.DataManager && typeof window.DataManager.syncToCloud === 'function') {
+                        window.DataManager.syncToCloud();
+                    }
+                } catch (e) {
+                    console.error('同步到云端失败:', e);
                 }
             },
             
@@ -528,8 +586,8 @@
                 if (!data.ownedAppearance) data.ownedAppearance = [];
                 if (!data.ownedAppearance.includes(itemId)) {
                     data.ownedAppearance.push(itemId);
+                    this.saveData(data);
                 }
-                this.saveData(data);
             },
             
             hasAppearanceItem(itemId) {

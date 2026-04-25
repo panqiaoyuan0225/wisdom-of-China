@@ -5,6 +5,9 @@
     <link rel="icon" type="image/png" href="images/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>四大名著争议话题</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -357,15 +360,29 @@
     <script>
         function showContent(num) {
             const contentArea = document.getElementById('content-area');
+            if (!contentArea) {
+                console.error('content-area not found');
+                return;
+            }
+            
+            let sourceElement = null;
             if (num === 2) {
-                contentArea.style.display = 'block';
-                contentArea.innerHTML = document.getElementById('songjiang-content').innerHTML;
+                sourceElement = document.getElementById('songjiang-content');
             } else if (num === 1) {
-                contentArea.style.display = 'block';
-                contentArea.innerHTML = document.getElementById('liubei-content').innerHTML;
+                sourceElement = document.getElementById('liubei-content');
             } else if (num === 3) {
-                contentArea.style.display = 'block';
-                contentArea.innerHTML = document.getElementById('author-content').innerHTML;
+                sourceElement = document.getElementById('author-content');
+            }
+            
+            if (!sourceElement) {
+                console.error('Source content not found for num:', num);
+                return;
+            }
+            
+            contentArea.style.display = 'block';
+            contentArea.innerHTML = sourceElement.innerHTML;
+            
+            if (num === 3) {
                 setTimeout(function() {
                     initAuthorChart();
                 }, 100);
@@ -417,9 +434,6 @@
     </script>
 
     <div id="songjiang-content" style="display: none;">
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
         <style>
             .songjiang-card {
                 background-color: white;
@@ -918,9 +932,6 @@
     </div>
 
     <div id="author-content" style="display: none;">
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
         <style>
             .author-card {
                 background-color: white;
@@ -1146,8 +1157,6 @@
     </div>
 
     <div id="liubei-content" style="display: none;">
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
         <style>
             .liubei-card {
                 background-color: white;

@@ -89,103 +89,138 @@
 
         .avatar.frame_scroll {
             position: relative;
-            box-shadow: 
-                0 0 0 4px #8B4513,
-                0 0 0 8px #D2691E,
-                0 0 0 12px #8B4513,
-                0 0 0 14px #D4AF37,
-                0 0 20px rgba(212, 175, 55, 0.4);
+            border: none;
+            background: linear-gradient(135deg, #8B4513, #D2691E, #8B4513);
+            padding: 6px;
+            border-radius: 50%;
+            animation: scrollRotate 3s linear infinite;
+            filter: drop-shadow(0 0 10px rgba(139, 69, 19, 0.6));
         }
         
         .avatar.frame_scroll::before {
-            content: '📜';
+            content: '';
             position: absolute;
-            top: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 16px;
-            z-index: 10;
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            background: conic-gradient(from 0deg, #FFD700, #8B4513, #D2691E, #8B4513, #FFD700);
+            border-radius: 50%;
+            z-index: -1;
+            animation: scrollBorder 2s linear infinite;
         }
         
         .avatar.frame_scroll::after {
-            content: '📜';
+            content: '书';
             position: absolute;
-            bottom: -8px;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%) rotate(180deg);
-            font-size: 16px;
-            z-index: 10;
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+            transform: translate(-50%, -50%);
+            font-size: 60px;
+            font-family: 'KaiTi', 'SimKai', serif;
+            color: rgba(255, 215, 0, 0.1);
+            z-index: 0;
+            pointer-events: none;
+            text-shadow: 0 0 5px rgba(139, 69, 19, 0.3);
+        }
+        
+        @keyframes scrollBorder {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes scrollRotate {
+            0% { box-shadow: 0 0 15px rgba(212, 175, 55, 0.6); }
+            50% { box-shadow: 0 0 25px rgba(212, 175, 55, 0.9); }
+            100% { box-shadow: 0 0 15px rgba(212, 175, 55, 0.6); }
         }
 
         .avatar.frame_plum {
             position: relative;
-            box-shadow: 
-                0 0 0 4px #FFB7C5,
-                0 0 0 8px #FF69B4,
-                0 0 0 12px #FFB7C5,
-                0 0 0 14px #C71585,
-                0 0 25px rgba(255, 105, 180, 0.5);
-            animation: plumGlow 3s ease-in-out infinite;
-        }
-        
-        @keyframes plumGlow {
-            0%, 100% {
-                box-shadow: 
-                    0 0 0 4px #FFB7C5,
-                    0 0 0 8px #FF69B4,
-                    0 0 0 12px #FFB7C5,
-                    0 0 0 14px #C71585,
-                    0 0 25px rgba(255, 105, 180, 0.5);
-            }
-            50% {
-                box-shadow: 
-                    0 0 0 4px #FFB7C5,
-                    0 0 0 8px #FF69B4,
-                    0 0 0 12px #FFB7C5,
-                    0 0 0 14px #C71585,
-                    0 0 35px rgba(255, 105, 180, 0.7);
-            }
+            border: none;
+            background: linear-gradient(135deg, #FF69B4, #FFB7C5, #FF69B4);
+            padding: 6px;
+            border-radius: 50%;
+            animation: plumPulse 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 15px rgba(255, 105, 180, 0.5));
         }
         
         .avatar.frame_plum::before {
-            content: '🌸';
+            content: '';
             position: absolute;
-            top: -10px;
-            left: -10px;
-            font-size: 20px;
-            z-index: 10;
-            animation: floatFlower 2s ease-in-out infinite;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 50%),
+                conic-gradient(from 0deg, #FFB7C5, #FF69B4, #C71585, #FF69B4, #FFB7C5);
+            border-radius: 50%;
+            z-index: -1;
+            animation: plumGlow 2s ease-in-out infinite;
         }
         
         .avatar.frame_plum::after {
-            content: '🌸';
+            content: '❀';
             position: absolute;
-            bottom: -10px;
-            right: -10px;
-            font-size: 20px;
-            z-index: 10;
-            animation: floatFlower 2s ease-in-out infinite 0.5s;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 50px;
+            color: rgba(255, 182, 193, 0.15);
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(1px);
         }
         
-        @keyframes floatFlower {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-3px) rotate(10deg); }
+        @keyframes plumPulse {
+            0%, 100% { 
+                box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 35px rgba(255, 105, 180, 0.8);
+                transform: scale(1.02);
+            }
+        }
+        
+        @keyframes plumGlow {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
         }
 
         .username.glow-effect {
-            text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700, 0 0 30px #FFD700;
-            animation: glow 2s ease-in-out infinite alternate;
+            background: linear-gradient(90deg, #FFD700, #FFA500, #FFD700, #FFA500);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 2s linear infinite;
+            font-weight: bold;
+            display: inline-block;
+            position: relative;
+        }
+        
+        .username.glow-effect::before {
+            content: attr(data-text);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500, #FFD700, #FFA500);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: textShine 2s linear infinite;
+            filter: blur(8px);
+            opacity: 0.7;
+            z-index: -1;
         }
 
-        @keyframes glow {
-            from {
-                text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700;
-            }
-            to {
-                text-shadow: 0 0 15px #FFD700, 0 0 30px #FFD700, 0 0 40px #FFA500;
-            }
+        @keyframes textShine {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
         }
 
         .avatar img {
@@ -231,6 +266,7 @@
             font-size: 1.8rem;
             font-weight: bold;
             color: #8b4513;
+            position: relative;
         }
 
         .user-rank {
@@ -643,25 +679,76 @@
             getData() {
                 try {
                     let data = localStorage.getItem(this.STORAGE_KEY);
+                    
                     if (!data) {
                         return this.getDefaultData();
                     }
                     
                     let parsedData = JSON.parse(data);
+                    let needSave = false;
                     
+                    // 确保 ownedAppearance 数组存在
                     if (!parsedData.ownedAppearance) {
                         parsedData.ownedAppearance = [];
-                        if (parsedData.ownedItems) {
-                            if (parsedData.ownedItems.frame_scroll && parsedData.ownedItems.frame_scroll > 0) {
-                                parsedData.ownedAppearance.push('frame_scroll');
+                        needSave = true;
+                    }
+                    
+                    // 迁移旧数据：从 ownedItems 迁移到 ownedAppearance
+                    const appearanceItems = ['frame_scroll', 'frame_plum', 'nickname_glow'];
+                    
+                    if (parsedData.ownedItems) {
+                        appearanceItems.forEach(itemId => {
+                            if (parsedData.ownedItems[itemId] && parsedData.ownedItems[itemId] > 0) {
+                                if (!parsedData.ownedAppearance.includes(itemId)) {
+                                    parsedData.ownedAppearance.push(itemId);
+                                    needSave = true;
+                                }
                             }
-                            if (parsedData.ownedItems.frame_plum && parsedData.ownedItems.frame_plum > 0) {
-                                parsedData.ownedAppearance.push('frame_plum');
+                        });
+                    }
+                    
+                    // 检查购买历史，确保已购买的外观道具不会丢失
+                    if (parsedData.pointsHistory) {
+                        appearanceItems.forEach(itemId => {
+                            const itemName = itemId === 'frame_scroll' ? '头像框-书卷' : 
+                                           itemId === 'frame_plum' ? '头像框-梅花' : '昵称特效';
+                            const hasPurchase = parsedData.pointsHistory.some(h => 
+                                h.reason && h.reason.includes(`购买 ${itemName}`) && h.points < 0
+                            );
+                            if (hasPurchase && !parsedData.ownedAppearance.includes(itemId)) {
+                                parsedData.ownedAppearance.push(itemId);
+                                needSave = true;
                             }
-                            if (parsedData.ownedItems.nickname_glow && parsedData.ownedItems.nickname_glow > 0) {
-                                parsedData.ownedAppearance.push('nickname_glow');
-                            }
+                        });
+                    }
+                    
+                    // 确保 activeAppearance 对象存在且结构正确
+                    if (!parsedData.activeAppearance) {
+                        parsedData.activeAppearance = { 
+                            frame: null, 
+                            frameActive: false,
+                            nicknameEffect: null, 
+                            nicknameActive: false
+                        };
+                        needSave = true;
+                    } else {
+                        // 只在字段缺失时才添加默认值，不要覆盖已有值
+                        if (parsedData.activeAppearance.frameActive === undefined) {
+                            parsedData.activeAppearance.frameActive = false;
+                            needSave = true;
                         }
+                        if (parsedData.activeAppearance.nicknameActive === undefined) {
+                            parsedData.activeAppearance.nicknameActive = false;
+                            needSave = true;
+                        }
+                        // 移除旧字段
+                        if (parsedData.activeAppearance.nicknameExpiry !== undefined) {
+                            delete parsedData.activeAppearance.nicknameExpiry;
+                            needSave = true;
+                        }
+                    }
+                    
+                    if (needSave) {
                         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(parsedData));
                     }
                     
@@ -1449,6 +1536,11 @@
 </svg>`
         };
 
+        const PROFILE_STORAGE_KEY = 'user_profile_v1';
+        const TIME_STORAGE_KEY = 'browsing_time_v1';
+        const BADGE_STORAGE_KEY = 'badge_data_v1';
+        const HISTORY_KEY = 'quiz_history_v1';
+
         const ProfileManager = {
             getProfileData() {
                 try {
@@ -1465,7 +1557,7 @@
 
             saveProfileData(data) {
                 try {
-                    window.DataManager.saveData(PROFILE_STORAGE_KEY, data);
+                    localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(data));
                 } catch (e) {
                     console.error('保存用户数据失败:', e);
                 }
@@ -1500,7 +1592,7 @@
 
             saveTimeData(data) {
                 try {
-                    window.DataManager.saveData(TIME_STORAGE_KEY, data);
+                    localStorage.setItem(TIME_STORAGE_KEY, JSON.stringify(data));
                 } catch (e) {
                     console.error('保存时间数据失败:', e);
                 }
@@ -1623,16 +1715,24 @@
         function applyAppearance() {
             try {
                 const appearance = PointsManager.getActiveAppearance();
+                console.log('applyAppearance - 激活的外观:', appearance);
                 
                 const avatar = document.getElementById('avatar');
                 const username = document.getElementById('usernameDisplay');
                 
+                console.log('avatar元素:', avatar);
+                console.log('username元素:', username);
+                
                 if (appearance.frame && appearance.frameActive) {
+                    console.log('添加头像框类:', appearance.frame);
                     avatar.classList.add(appearance.frame);
                 }
                 
                 if (appearance.nicknameEffect && appearance.nicknameActive) {
+                    console.log('添加昵称特效类: glow-effect');
                     username.classList.add('glow-effect');
+                    username.setAttribute('data-text', username.textContent);
+                    console.log('username当前类列表:', username.classList);
                 }
             } catch (e) {
                 console.error('应用外观失败:', e);
@@ -1708,6 +1808,10 @@
                 }
                 
                 if (itemId === 'frame_scroll' || itemId === 'frame_plum') {
+                    // 如果穿上新的头像框，先脱下当前的头像框
+                    if (setActive && pointsData.activeAppearance.frameActive) {
+                        pointsData.activeAppearance.frameActive = false;
+                    }
                     pointsData.activeAppearance.frame = itemId;
                     pointsData.activeAppearance.frameActive = setActive;
                     alert(setActive ? '头像框已穿上！' : '头像框已脱下！');

@@ -272,7 +272,14 @@ window.DataManager = {
             lastDate: local.lastDate || cloud.lastDate || '',
             streak: Math.max(local.streak || 0, cloud.streak || 0),
             ownedItems: { ...cloud.ownedItems },
-            pointsHistory: [...(cloud.pointsHistory || [])]
+            pointsHistory: [...(cloud.pointsHistory || [])],
+            ownedAppearance: [...(cloud.ownedAppearance || [])],
+            activeAppearance: cloud.activeAppearance || { 
+                frame: null, 
+                frameActive: false,
+                nicknameEffect: null, 
+                nicknameActive: false
+            }
         };
         
         // 合并拥有的道具：取较大数量
@@ -281,6 +288,28 @@ window.DataManager = {
                 if (!merged.ownedItems[itemId] || count > merged.ownedItems[itemId]) {
                     merged.ownedItems[itemId] = count;
                 }
+            }
+        }
+        
+        // 合并拥有的外观道具：合并数组去重
+        if (local.ownedAppearance) {
+            for (const itemId of local.ownedAppearance) {
+                if (!merged.ownedAppearance.includes(itemId)) {
+                    merged.ownedAppearance.push(itemId);
+                }
+            }
+        }
+        
+        // 保留本地的 activeAppearance（如果存在且有效）
+        if (local.activeAppearance) {
+            // 如果本地有激活的外观，优先使用本地的设置
+            if (local.activeAppearance.frameActive) {
+                merged.activeAppearance.frame = local.activeAppearance.frame;
+                merged.activeAppearance.frameActive = true;
+            }
+            if (local.activeAppearance.nicknameActive) {
+                merged.activeAppearance.nicknameEffect = local.activeAppearance.nicknameEffect;
+                merged.activeAppearance.nicknameActive = true;
             }
         }
         

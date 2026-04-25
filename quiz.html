@@ -2354,6 +2354,21 @@
             getItemCount(itemId) {
                 const ownedItems = this.getOwnedItems();
                 return ownedItems[itemId] || 0;
+            },
+            
+            spendPoints(points, reason) {
+                const data = this.getData();
+                if (data.totalPoints < points) return false;
+                
+                data.totalPoints -= points;
+                data.pointsHistory.unshift({
+                    points: -points,
+                    reason: reason,
+                    time: Date.now()
+                });
+                
+                this.saveData(data);
+                return true;
             }
         };
 
