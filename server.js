@@ -127,6 +127,47 @@ app.post('/sync-quiz-data', async (req, res) => {
     });
 });
 
+app.post('/sync-avatar', async (req, res) => {
+    const { userId, avatar, frame, frameActive } = req.body;
+
+    if (!userId) {
+        return res.status(400).json({ 
+            success: false, 
+            message: '用户ID不能为空' 
+        });
+    }
+
+    if (!supabase) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '数据库未配置' 
+        });
+    }
+
+    const updateData = {
+        avatar: avatar,
+        avatar_frame: frame,
+        avatar_frame_active: frameActive
+    };
+
+    const { error } = await supabase
+        .from('users')
+        .update(updateData)
+        .eq('user_id', userId);
+
+    if (error) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '同步头像失败: ' + error.message 
+        });
+    }
+
+    res.json({ 
+        success: true, 
+        message: '头像同步成功' 
+    });
+});
+
 app.get('/load-quiz-data', async (req, res) => {
     const { userId, username } = req.query;
 
@@ -198,7 +239,7 @@ app.get('/leaderboard/rank', async (req, res) => {
 
     const { data, error } = await supabase
         .from('users')
-        .select('username, total_points, mastered_count')
+        .select('username, total_points, mastered_count, avatar, avatar_frame, avatar_frame_active')
         .order('total_points', { ascending: false })
         .limit(50);
 
@@ -213,7 +254,10 @@ app.get('/leaderboard/rank', async (req, res) => {
         return {
             username: user.username,
             score: user.total_points || 0,
-            masteredCount: user.mastered_count || 0
+            masteredCount: user.mastered_count || 0,
+            avatar: user.avatar || null,
+            frame: user.avatar_frame || null,
+            frameActive: user.avatar_frame_active || false
         };
     });
 
@@ -233,7 +277,7 @@ app.get('/leaderboard/time', async (req, res) => {
 
     const { data, error } = await supabase
         .from('users')
-        .select('username, study_minutes')
+        .select('username, study_minutes, avatar, avatar_frame, avatar_frame_active')
         .order('study_minutes', { ascending: false })
         .limit(50);
 
@@ -246,7 +290,10 @@ app.get('/leaderboard/time', async (req, res) => {
 
     const leaderboard = data.map(user => ({
         username: user.username,
-        minutes: user.study_minutes || 0
+        minutes: user.study_minutes || 0,
+        avatar: user.avatar || null,
+        frame: user.avatar_frame || null,
+        frameActive: user.avatar_frame_active || false
     }));
 
     res.json({ 
@@ -265,7 +312,7 @@ app.get('/leaderboard/accuracy', async (req, res) => {
 
     const { data, error } = await supabase
         .from('users')
-        .select('username, total_questions, correct_answers')
+        .select('username, total_questions, correct_answers, avatar, avatar_frame, avatar_frame_active')
         .gte('total_questions', 10)
         .order('correct_answers', { ascending: false })
         .limit(50);
@@ -285,7 +332,10 @@ app.get('/leaderboard/accuracy', async (req, res) => {
             username: user.username,
             accuracy: accuracy,
             totalQuestions: user.total_questions || 0,
-            correctAnswers: user.correct_answers || 0
+            correctAnswers: user.correct_answers || 0,
+            avatar: user.avatar || null,
+            frame: user.avatar_frame || null,
+            frameActive: user.avatar_frame_active || false
         };
     }).sort((a, b) => b.accuracy - a.accuracy);
 

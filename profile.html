@@ -5,6 +5,7 @@
     <link rel="icon" type="image/png" href="images/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>个人档案</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
             box-sizing: border-box;
@@ -535,9 +536,9 @@
     <div class="profile-header">
         <div class="avatar-container">
             <div class="avatar" id="avatar" onclick="document.getElementById('avatarInput').click()">
-                <span id="avatarPlaceholder">👤</span>
+                <span id="avatarPlaceholder"><i class="fa-solid fa-user" style="font-size: 2.5rem; color: #6b7280;"></i></span>
             </div>
-            <div class="avatar-upload-hint" onclick="document.getElementById('avatarInput').click()">📷</div>
+            <div class="avatar-upload-hint" onclick="document.getElementById('avatarInput').click()"><i class="fa-solid fa-camera" style="color: #fff;"></i></div>
             <input type="file" id="avatarInput" class="avatar-input" accept="image/*" onchange="handleAvatarUpload(event)">
         </div>
         <div class="user-info">
@@ -553,39 +554,39 @@
 
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="stat-icon">🪙</div>
+            <div class="stat-icon"><i class="fa-solid fa-coins" style="color: #fbbf24;"></i></div>
             <div class="stat-value" id="totalPoints">0</div>
-            <div class="stat-label">当前积分</div>
+            <div class="stat-label">当前书卷</div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon">📝</div>
+            <div class="stat-icon"><i class="fa-solid fa-pen-to-square" style="color: #3b82f6;"></i></div>
             <div class="stat-value" id="totalQuestions">0</div>
             <div class="stat-label">累计答题</div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon">✅</div>
+            <div class="stat-icon"><i class="fa-solid fa-circle-check" style="color: #22c55e;"></i></div>
             <div class="stat-value" id="accuracy">0%</div>
             <div class="stat-label">正确率</div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon">🎖️</div>
+            <div class="stat-icon"><i class="fa-solid fa-medal" style="color: #f59e0b;"></i></div>
             <div class="stat-value" id="badgeCount">0</div>
             <div class="stat-label">获得勋章</div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon">📚</div>
+            <div class="stat-icon"><i class="fa-solid fa-book-bookmark" style="color: #8b4513;"></i></div>
             <div class="stat-value" id="booksCompleted">0/4</div>
             <div class="stat-label">名著阅读</div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon">⏱️</div>
+            <div class="stat-icon"><i class="fa-solid fa-clock" style="color: #6b7280;"></i></div>
             <div class="stat-value" id="totalTime">0分钟</div>
             <div class="stat-label">浏览时长</div>
         </div>
     </div>
 
     <div class="section">
-        <h2 class="section-title">🏅 我的勋章</h2>
+        <h2 class="section-title"><i class="fa-solid fa-medal" style="color: #f59e0b;"></i> 我的勋章</h2>
         <div class="badge-showcase">
             <div class="badge-list" id="badgeList">
                 <div class="no-badges">暂无勋章，继续努力吧！</div>
@@ -594,10 +595,10 @@
     </div>
 
     <div class="section">
-        <h2 class="section-title">📖 名著阅读进度</h2>
+        <h2 class="section-title"><i class="fa-solid fa-book-open" style="color: #8b4513;"></i> 名著阅读进度</h2>
         <div class="reading-progress">
             <div class="book-progress-item">
-                <span class="book-icon">📕</span>
+                <span class="book-icon"><i class="fa-solid fa-book" style="color: #dc2626;"></i></span>
                 <div class="book-info">
                     <div class="book-name">红楼梦</div>
                     <div class="progress-bar-bg">
@@ -607,7 +608,7 @@
                 <span class="book-status" id="honglouStatus">未开始</span>
             </div>
             <div class="book-progress-item">
-                <span class="book-icon">📘</span>
+                <span class="book-icon"><i class="fa-solid fa-book" style="color: #2563eb;"></i></span>
                 <div class="book-info">
                     <div class="book-name">三国演义</div>
                     <div class="progress-bar-bg">
@@ -617,7 +618,7 @@
                 <span class="book-status" id="sanguoStatus">未开始</span>
             </div>
             <div class="book-progress-item">
-                <span class="book-icon">📙</span>
+                <span class="book-icon"><i class="fa-solid fa-book" style="color: #d97706;"></i></span>
                 <div class="book-info">
                     <div class="book-name">水浒传</div>
                     <div class="progress-bar-bg">
@@ -627,7 +628,7 @@
                 <span class="book-status" id="shuihuStatus">未开始</span>
             </div>
             <div class="book-progress-item">
-                <span class="book-icon">📗</span>
+                <span class="book-icon"><i class="fa-solid fa-book" style="color: #16a34a;"></i></span>
                 <div class="book-info">
                     <div class="book-name">西游记</div>
                     <div class="progress-bar-bg">
@@ -640,25 +641,25 @@
     </div>
 
     <div class="section">
-        <h2 class="section-title">🎨 外观道具</h2>
+        <h2 class="section-title"><i class="fa-solid fa-palette" style="color: #a855f7;"></i> 外观道具</h2>
         <div class="appearance-section">
             <div class="appearance-item">
                 <div class="appearance-info">
-                    <span class="appearance-icon">📜</span>
+                    <span class="appearance-icon"><i class="fa-solid fa-scroll" style="color: #8b4513;"></i></span>
                     <span class="appearance-name">头像框-书卷</span>
                 </div>
                 <div class="appearance-status" id="frame_scroll_status">未拥有</div>
             </div>
             <div class="appearance-item">
                 <div class="appearance-info">
-                    <span class="appearance-icon">🌸</span>
+                    <span class="appearance-icon"><i class="fa-solid fa-spa" style="color: #ec4899;"></i></span>
                     <span class="appearance-name">头像框-梅花</span>
                 </div>
                 <div class="appearance-status" id="frame_plum_status">未拥有</div>
             </div>
             <div class="appearance-item">
                 <div class="appearance-info">
-                    <span class="appearance-icon">✨</span>
+                    <span class="appearance-icon"><i class="fa-solid fa-wand-magic-sparkles" style="color: #a855f7;"></i></span>
                     <span class="appearance-name">昵称特效</span>
                 </div>
                 <div class="appearance-status" id="nickname_glow_status">未拥有</div>
@@ -1685,14 +1686,73 @@
                 return;
             }
 
+            compressAndSaveAvatar(file);
+        }
+
+        function compressAndSaveAvatar(file) {
+            const img = new Image();
             const reader = new FileReader();
+            
             reader.onload = function(e) {
-                const profileData = ProfileManager.getProfileData();
-                profileData.avatar = e.target.result;
-                ProfileManager.saveProfileData(profileData);
-                displayAvatar(e.target.result);
+                img.src = e.target.result;
             };
+            
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const maxSize = 100;
+                let width = img.width;
+                let height = img.height;
+                
+                if (width > height) {
+                    if (width > maxSize) {
+                        height = Math.round(height * maxSize / width);
+                        width = maxSize;
+                    }
+                } else {
+                    if (height > maxSize) {
+                        width = Math.round(width * maxSize / height);
+                        height = maxSize;
+                    }
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                const compressedData = canvas.toDataURL('image/jpeg', 0.7);
+                
+                const profileData = ProfileManager.getProfileData();
+                profileData.avatar = compressedData;
+                ProfileManager.saveProfileData(profileData);
+                displayAvatar(compressedData);
+                applyAppearance();
+                
+                syncAvatarToServer(compressedData);
+            };
+            
             reader.readAsDataURL(file);
+        }
+
+        async function syncAvatarToServer(avatarData) {
+            const userId = sessionStorage.getItem('userId');
+            if (!userId) return;
+            
+            try {
+                const appearance = PointsManager.getActiveAppearance();
+                await fetch('/sync-avatar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId,
+                        avatar: avatarData,
+                        frame: appearance.frame,
+                        frameActive: appearance.frameActive
+                    })
+                });
+            } catch (err) {
+                console.error('同步头像失败:', err);
+            }
         }
 
         function displayAvatar(avatarData) {
@@ -1702,7 +1762,7 @@
             if (avatarData) {
                 avatar.innerHTML = `<img src="${avatarData}" alt="头像">`;
             } else {
-                avatar.innerHTML = `<span id="avatarPlaceholder">👤</span>`;
+                avatar.innerHTML = `<span id="avatarPlaceholder"><i class="fa-solid fa-user" style="font-size: 2.5rem; color: #6b7280;"></i></span>`;
             }
         }
 
@@ -1736,15 +1796,15 @@
         function renderAppearanceItems() {
             try {
                 const pointsData = PointsManager.getData();
-                console.log('积分数据:', pointsData);
+                console.log('书卷数据:', pointsData);
                 const ownedAppearance = PointsManager.getOwnedAppearance();
                 console.log('拥有的外观道具:', ownedAppearance);
                 const appearance = PointsManager.getActiveAppearance();
                 console.log('激活的外观:', appearance);
                 
                 const items = [
-                    { id: 'frame_scroll', name: '头像框-书卷', icon: '📜' },
-                    { id: 'frame_plum', name: '头像框-梅花', icon: '🌸' },
+                    { id: 'frame_scroll', name: '头像框-书卷', icon: '<i class="fa-solid fa-scroll" style="color: #8b4513;"></i>' },
+                    { id: 'frame_plum', name: '头像框-梅花', icon: '<i class="fa-solid fa-spa" style="color: #ec4899;"></i>' },
                     { id: 'nickname_glow', name: '昵称特效', icon: '✨' }
                 ];
                 
@@ -1946,7 +2006,7 @@
                     }
                 }
             } catch (e) {
-                console.error('读取积分失败:', e);
+                console.error('读取书卷失败:', e);
             }
             
             if (!rankInfo) {

@@ -5,6 +5,7 @@
     <link rel="icon" type="image/png" href="images/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>答题练习</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
             box-sizing: border-box;
@@ -1040,11 +1041,11 @@
             <span class="section-label">选择模式</span>
             <div class="btn-group">
                 <button class="option-btn mode-btn selected" data-mode="review" onclick="selectMode(this)">
-                    <span class="emoji">📚</span>
+                    <span class="emoji"><i class="fa-solid fa-book" style="color: #8b4513;"></i></span>
                     <span>复习模式</span>
                 </button>
                 <button class="option-btn mode-btn" data-mode="extend" onclick="selectMode(this)">
-                    <span class="emoji">🌟</span>
+                    <span class="emoji"><i class="fa-solid fa-star" style="color: #fbbf24;"></i></span>
                     <span>拓展模式</span>
                 </button>
             </div>
@@ -1088,15 +1089,15 @@
             <span class="section-label">辅助功能</span>
             <div class="btn-group">
                 <button class="option-btn helper-btn" onclick="openWrongBook()">
-                    <span class="emoji">📖</span>
+                    <span class="emoji"><i class="fa-solid fa-book-open" style="color: #8b4513;"></i></span>
                     <span>错题本</span>
                 </button>
                 <button class="option-btn helper-btn" id="autoAnalysisBtn" onclick="toggleAutoAnalysis()">
-                    <span class="emoji">💡</span>
+                    <span class="emoji"><i class="fa-solid fa-lightbulb" style="color: #fbbf24;"></i></span>
                     <span>自动显示解析</span>
                 </button>
                 <button class="option-btn helper-btn" id="smartQuizBtn" onclick="toggleSmartQuiz()">
-                    <span class="emoji">🎯</span>
+                    <span class="emoji"><i class="fa-solid fa-bullseye" style="color: #ef4444;"></i></span>
                     <span>优先薄弱题</span>
                 </button>
             </div>
@@ -1123,13 +1124,13 @@
         </div>
         
         <div class="analysis-box" id="analysisBox">
-            <div class="analysis-title">📝 解析</div>
+            <div class="analysis-title"><i class="fa-solid fa-pen-to-square" style="color: #8b4513;"></i> 解析</div>
             <div class="analysis-text" id="analysisText">解析内容</div>
         </div>
         
         <!-- 道具栏 -->
         <div class="items-bar" id="itemsBar">
-            <div class="items-bar-title">🎒 道具栏</div>
+            <div class="items-bar-title"><i class="fa-solid fa-bag-shopping" style="color: #8b4513;"></i> 道具栏</div>
             <div class="items-bar-grid" id="itemsBarGrid">
                 <!-- 道具将动态生成 -->
             </div>
@@ -1144,7 +1145,7 @@
 
     <div class="result-container" id="resultContainer">
         <div class="result-content">
-            <span class="result-emoji">🎉</span>
+            <span class="result-emoji"><i class="fa-solid fa-party-horn" style="color: #f59e0b;"></i></span>
             <div class="result-center">
                 <div class="result-score" id="resultScore">0/10</div>
                 <div class="result-text" id="resultText">正确率：0%</div>
@@ -1153,7 +1154,7 @@
                     <button class="result-btn" onclick="backToSettings()">返回设置</button>
                 </div>
             </div>
-            <span class="result-emoji">🎉</span>
+            <span class="result-emoji"><i class="fa-solid fa-party-horn" style="color: #f59e0b;"></i></span>
         </div>
     </div>
 
@@ -1161,7 +1162,7 @@
     <div class="wrong-book-modal" id="wrongBookModal">
         <div class="wrong-book-content">
             <div class="wrong-book-header">
-                <h2>📖 错题本</h2>
+                <h2><i class="fa-solid fa-book-open" style="color: #8b4513;"></i> 错题本</h2>
                 <button class="wrong-book-close" onclick="closeWrongBook()">×</button>
             </div>
             <div class="wrong-book-stats" id="wrongBookStats">
@@ -2205,7 +2206,7 @@
             return null;
         }
 
-        // 积分管理器
+        // 书卷管理器
         const PointsManager = {
             STORAGE_KEY: 'user_points_v1',
             
@@ -2287,7 +2288,7 @@
             },
             
             showPointsNotification(points, reason) {
-                // 创建积分提示
+                // 创建书卷提示
                 const notification = document.createElement('div');
                 notification.style.cssText = `
                     position: fixed;
@@ -2302,7 +2303,7 @@
                     font-weight: bold;
                     animation: slideInRight 0.5s ease;
                 `;
-                notification.innerHTML = `+${points} 积分<br><small>${reason}</small>`;
+                notification.innerHTML = `+${points} 书卷<br><small>${reason}</small>`;
                 
                 // 添加动画样式
                 if (!document.getElementById('pointsNotificationStyle')) {
@@ -2438,17 +2439,17 @@
                 return true;
             },
             
-            // 使用双倍积分
+            // 使用双倍书卷
             useDouble() {
                 if (!PointsManager.useItem('double')) {
-                    alert('没有双倍积分道具！');
+                    alert('没有双倍书卷道具！');
                     return false;
                 }
                 
                 this.doublePointsActive = true;
                 this.doublePointsExpiry = Date.now() + 10 * 60 * 1000; // 10分钟
                 
-                alert('双倍积分已激活！持续10分钟');
+                alert('双倍书卷已激活！持续10分钟');
                 updateItemsBar();
                 return true;
             },
@@ -2475,7 +2476,7 @@
                 return true;
             },
             
-            // 检查双倍积分是否有效
+            // 检查双倍书卷是否有效
             isDoubleActive() {
                 if (this.doublePointsActive && Date.now() < this.doublePointsExpiry) {
                     return true;
@@ -2486,12 +2487,12 @@
             
             usePointsProtect() {
                 if (!PointsManager.useItem('points_protect')) {
-                    alert('没有积分保护卡道具！');
+                    alert('没有书卷保护卡道具！');
                     return false;
                 }
                 this.pointsProtectActive = true;
                 this.pointsProtectExpiry = Date.now() + 24 * 60 * 60 * 1000;
-                alert('积分保护已激活！24小时内答题不计负分');
+                alert('书卷保护已激活！24小时内答题不计负分');
                 updateItemsBar();
                 return true;
             },
@@ -2507,12 +2508,12 @@
 
         // 道具信息
         const ITEM_INFO = {
-            hint: { name: '答案提示', icon: '💡' },
-            eliminate: { name: '排除干扰', icon: '🚫' },
-            skip: { name: '跳过题目', icon: '⏭️' },
-            double: { name: '双倍积分', icon: '⭐' },
-            revive: { name: '复活卡', icon: '🔄' },
-            points_protect: { name: '积分保护', icon: '🛡️' }
+            hint: { name: '答案提示', icon: '<i class="fa-solid fa-lightbulb" style="color: #fbbf24;"></i>' },
+            eliminate: { name: '排除干扰', icon: '<i class="fa-solid fa-ban" style="color: #ef4444;"></i>' },
+            skip: { name: '跳过题目', icon: '<i class="fa-solid fa-forward" style="color: #3b82f6;"></i>' },
+            double: { name: '双倍书卷', icon: '<i class="fa-solid fa-star" style="color: #fbbf24;"></i>' },
+            revive: { name: '复活卡', icon: '<i class="fa-solid fa-rotate" style="color: #22c55e;"></i>' },
+            points_protect: { name: '书卷保护', icon: '<i class="fa-solid fa-shield" style="color: #3b82f6;"></i>' }
         };
 
         // 更新道具栏显示
@@ -2892,7 +2893,7 @@
             if (data.length === 0) {
                 list.innerHTML = `
                     <div class="wrong-book-empty">
-                        <div class="emoji">📚</div>
+                        <div class="emoji"><i class="fa-solid fa-book" style="font-size: 2.5rem; color: #8b4513;"></i></div>
                         <p>${filter === 'all' ? '暂时没有错题，继续保持这份严谨吧。' : '没有此类错题'}</p>
                     </div>
                 `;
@@ -2948,7 +2949,7 @@
         function confirmClearWrongBook() {
             const wrongResetCount = PointsManager.getItemCount('wrong_reset');
             if (wrongResetCount <= 0) {
-                alert('清空错题本需要错题重置卡！请前往积分商城购买。');
+                alert('清空错题本需要错题重置卡！请前往书卷商城购买。');
                 return;
             }
             
@@ -3243,8 +3244,8 @@
                 score++;
                 WrongBookManager.removeByQuestion(question);
                 
-                // 计算积分
-                let points = 10;  // 基础积分
+                // 计算书卷
+                let points = 10;  // 基础书卷
                 const streak = PointsManager.incrementStreak();
                 
                 // 连击奖励
@@ -3256,10 +3257,10 @@
                     points += 50;
                 }
                 
-                // 检查双倍积分
+                // 检查双倍书卷
                 if (ItemEffects.isDoubleActive()) {
                     points *= 2;
-                    PointsManager.addPoints(points, `双倍积分！答对题目`);
+                    PointsManager.addPoints(points, `双倍书卷！答对题目`);
                 } else {
                     let reason = '答对题目';
                     if (streak >= 20) reason = `完美连击！连续答对${streak}题`;
@@ -3307,7 +3308,7 @@
                 input.classList.add('correct');
                 WrongBookManager.removeByQuestion(question);
                 
-                // 计算积分
+                // 计算书卷
                 let points = 10;
                 const streak = PointsManager.incrementStreak();
                 
@@ -3390,7 +3391,7 @@
             `;
             document.getElementById('optionsList').appendChild(answerReveal);
             
-            // 简答题完成即得积分
+            // 简答题完成即得书卷
             if (userAnswer.length > 10) {
                 PointsManager.addPoints(8, '简答题作答');
             } else {
@@ -3469,7 +3470,7 @@
             
             document.getElementById('progressFill').style.width = '100%';
             
-            // 完成一套题目的积分奖励
+            // 完成一套题目的书卷奖励
             PointsManager.addPoints(30, '完成一套题目');
             
             // 全对奖励
@@ -3744,8 +3745,8 @@
                     transform: scale(0.8);
                     transition: transform 0.3s;
                 ">
-                    <div style="font-size: 1.5rem; color: #8b4513; margin-bottom: 20px;">🎉 恭喜获得勋章！</div>
-                    <div style="font-size: 2.5rem; margin-bottom: 15px;">🎖️</div>
+                    <div style="font-size: 1.5rem; color: #8b4513; margin-bottom: 20px;"><i class="fa-solid fa-party-horn" style="color: #f59e0b;"></i> 恭喜获得勋章！</div>
+                    <div style="font-size: 2.5rem; margin-bottom: 15px;"><i class="fa-solid fa-medal" style="color: #f59e0b;"></i></div>
                     <div style="font-size: 1.8rem; font-weight: bold; margin-bottom: 10px; color: ${colors.border};">${badge.name}</div>
                     <div style="color: #666; margin-bottom: 20px;">${badge.desc}</div>
                     <button onclick="closeBadgeNotification()" style="

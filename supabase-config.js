@@ -111,7 +111,11 @@ window.DataManager = {
             mastery: JSON.parse(localStorage.getItem('category_mastery_v1') || '{}'),
             browsingTime: JSON.parse(localStorage.getItem('browsing_time_v1') || '{"totalMinutes":0}'),
             badgeData: JSON.parse(localStorage.getItem('badge_data_v1') || '{}'),
-            profileData: JSON.parse(localStorage.getItem('user_profile_v1') || '{}'),
+            profileData: (() => {
+                const profile = JSON.parse(localStorage.getItem('user_profile_v1') || '{}');
+                const { avatar, ...rest } = profile;
+                return rest;
+            })(),
             pendingBadge: localStorage.getItem('pending_badge_notification') || null,
             pointsData: JSON.parse(localStorage.getItem('user_points_v1') || '{"totalPoints":0,"todayPoints":0,"lastDate":"","pointsHistory":[],"ownedItems":{},"streak":0}'),
             syncTime: Date.now()
@@ -206,10 +210,19 @@ window.DataManager = {
                 }
                 
                 if (cloudData.badgeData) localStorage.setItem('badge_data_v1', JSON.stringify(cloudData.badgeData));
-                if (cloudData.profileData) localStorage.setItem('user_profile_v1', JSON.stringify(cloudData.profileData));
+                if (cloudData.profileData) {
+                    const localProfile = finalForceOverwrite ? {} : JSON.parse(localStorage.getItem('user_profile_v1') || '{}');
+                    const mergedProfile = {
+                        ...cloudData.profileData,
+                        avatar: localProfile.avatar || cloudData.profileData.avatar || null,
+                        username: localProfile.username || cloudData.profileData.username || '书友',
+                        firstVisit: cloudData.profileData.firstVisit || localProfile.firstVisit || Date.now()
+                    };
+                    localStorage.setItem('user_profile_v1', JSON.stringify(mergedProfile));
+                }
                 if (cloudData.pendingBadge) localStorage.setItem('pending_badge_notification', cloudData.pendingBadge);
                 
-                // 合并或覆盖积分数据
+                // 合并或覆盖书卷数据
                 if (cloudData.pointsData) {
                     const localPoints = finalForceOverwrite ? {"totalPoints":0,"todayPoints":0,"lastDate":"","pointsHistory":[],"ownedItems":{},"streak":0} : JSON.parse(localStorage.getItem('user_points_v1') || '{"totalPoints":0,"todayPoints":0,"lastDate":"","pointsHistory":[],"ownedItems":{},"streak":0}');
                     const mergedPoints = this.mergePoints(localPoints, cloudData.pointsData);
@@ -265,7 +278,7 @@ window.DataManager = {
     },
 
     mergePoints(local, cloud) {
-        // 合并积分数据：取较大的总积分
+        // 合并书卷数据：取较大的总书卷
         const merged = {
             totalPoints: Math.max(local.totalPoints || 0, cloud.totalPoints || 0),
             todayPoints: local.todayPoints || 0,
@@ -313,7 +326,7 @@ window.DataManager = {
             }
         }
         
-        // 合并积分历史：去重并按时间排序
+        // 合并书卷历史：去重并按时间排序
         const localHistory = local.pointsHistory || [];
         const cloudHistorySet = new Set((cloud.pointsHistory || []).map(h => h.time));
         

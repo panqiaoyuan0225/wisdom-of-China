@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <link rel="icon" type="image/png" href="images/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>积分商城 - 四大名著经典学习网</title>
+    <title>书卷商城 - 四大名著经典学习网</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
             box-sizing: border-box;
@@ -362,10 +363,10 @@
 <body>
     <a href="home.html" class="back-link">← 返回主页</a>
 
-    <h1 class="page-title">🏪 积分商城</h1>
+    <h1 class="page-title"><i class="fa-solid fa-store" style="color: #a855f7;"></i> 书卷商城</h1>
 
     <div class="points-card">
-        <div class="points-label">当前积分</div>
+        <div class="points-label">当前书卷</div>
         <div class="points-value" id="totalPoints">0</div>
         <div class="points-stats">
             <div class="stat-item">
@@ -391,22 +392,22 @@
     </div>
 
     <div class="my-items">
-        <h2 class="my-items-title">🎒 我的道具</h2>
+        <h2 class="my-items-title"><i class="fa-solid fa-bag-shopping" style="color: #8b4513;"></i> 我的道具</h2>
         <div class="my-items-grid" id="myItemsGrid">
             <!-- 已购道具将动态生成 -->
         </div>
     </div>
 
     <div class="history-section">
-        <h2 class="history-title">📜 积分记录</h2>
+        <h2 class="history-title"><i class="fa-solid fa-scroll" style="color: #8b4513;"></i> 书卷记录</h2>
         <div class="history-list" id="historyList">
-            <!-- 积分记录将动态生成 -->
+            <!-- 书卷记录将动态生成 -->
         </div>
     </div>
 
     <script src="supabase-config.js"></script>
     <script>
-        // 积分管理器
+        // 书卷管理器
         const PointsManager = {
             STORAGE_KEY: 'user_points_v1',
             
@@ -638,6 +639,29 @@
                     data.activeAppearance.nicknameActive = setActive;
                 }
                 this.saveData(data);
+                this.syncAppearanceToServer();
+            },
+            
+            async syncAppearanceToServer() {
+                const userId = sessionStorage.getItem('userId');
+                if (!userId) return;
+                
+                const appearance = this.getAppearance();
+                
+                try {
+                    await fetch('/sync-avatar', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            userId,
+                            avatar: null,
+                            frame: appearance.frame,
+                            frameActive: appearance.frameActive
+                        })
+                    });
+                } catch (err) {
+                    console.error('同步外观失败:', err);
+                }
             },
             
             useAppearanceItem(itemId) {
@@ -656,24 +680,24 @@
         // 道具数据
         const ITEMS = {
             quiz: [
-                { id: 'hint', name: '答案提示', icon: '💡', price: 50, desc: '显示正确答案提示', usage: '每题限用1次' },
-                { id: 'eliminate', name: '排除干扰', icon: '🚫', price: 80, desc: '排除2个错误选项', usage: '仅选择题可用' },
-                { id: 'skip', name: '跳过题目', icon: '⏭️', price: 100, desc: '跳过当前题目不计分', usage: '每套题限用3次' },
-                { id: 'double', name: '双倍积分', icon: '⭐', price: 150, desc: '下次答题积分翻倍', usage: '持续10分钟' },
-                { id: 'revive', name: '复活卡', icon: '🔄', price: 200, desc: '答错后重新答题', usage: '每题限用1次' }
+                { id: 'hint', name: '答案提示', icon: '<i class="fa-solid fa-lightbulb" style="color: #fbbf24;"></i>', price: 50, desc: '显示正确答案提示', usage: '每题限用1次' },
+                { id: 'eliminate', name: '排除干扰', icon: '<i class="fa-solid fa-ban" style="color: #ef4444;"></i>', price: 80, desc: '排除2个错误选项', usage: '仅选择题可用' },
+                { id: 'skip', name: '跳过题目', icon: '<i class="fa-solid fa-forward" style="color: #3b82f6;"></i>', price: 100, desc: '跳过当前题目不计分', usage: '每套题限用3次' },
+                { id: 'double', name: '双倍书卷', icon: '<i class="fa-solid fa-star" style="color: #fbbf24;"></i>', price: 150, desc: '下次答题书卷翻倍', usage: '持续10分钟' },
+                { id: 'revive', name: '复活卡', icon: '<i class="fa-solid fa-rotate" style="color: #22c55e;"></i>', price: 200, desc: '答错后重新答题', usage: '每题限用1次' }
             ],
             appearance: [
-                { id: 'frame_scroll', name: '头像框-书卷', icon: '📜', price: 300, desc: '古典书卷头像框', usage: '永久' },
-                { id: 'frame_plum', name: '头像框-梅花', icon: '🌸', price: 500, desc: '精美梅花头像框', usage: '永久' },
-                { id: 'nickname_glow', name: '昵称特效', icon: '✨', price: 200, desc: '昵称发光效果', usage: '30天' }
+                { id: 'frame_scroll', name: '头像框-书卷', icon: '<i class="fa-solid fa-scroll" style="color: #8b4513;"></i>', price: 300, desc: '古典书卷头像框', usage: '永久' },
+                { id: 'frame_plum', name: '头像框-梅花', icon: '<i class="fa-solid fa-spa" style="color: #ec4899;"></i>', price: 500, desc: '精美梅花头像框', usage: '永久' },
+                { id: 'nickname_glow', name: '昵称特效', icon: '<i class="fa-solid fa-wand-magic-sparkles" style="color: #a855f7;"></i>', price: 200, desc: '昵称发光效果', usage: '30天' }
             ],
             function: [
-                { id: 'wrong_reset', name: '错题重置卡', icon: '🗑️', price: 100, desc: '清空错题本', usage: '每周限用1次' },
-                { id: 'points_protect', name: '积分保护卡', icon: '🛡️', price: 300, desc: '24小时内答题不计负分', usage: '每日限用1次' }
+                { id: 'wrong_reset', name: '错题重置卡', icon: '<i class="fa-solid fa-trash" style="color: #6b7280;"></i>', price: 100, desc: '清空错题本', usage: '每周限用1次' },
+                { id: 'points_protect', name: '书卷保护卡', icon: '<i class="fa-solid fa-shield" style="color: #3b82f6;"></i>', price: 300, desc: '24小时内答题不计负分', usage: '每日限用1次' }
             ],
             package: [
-                { id: 'daily_pack', name: '每日礼包', icon: '🎁', price: 100, desc: '提示×2、排除×1', usage: '每日限购1次' },
-                { id: 'weekly_pack', name: '周卡礼包', icon: '📦', price: 800, desc: '所有基础道具×7', usage: '每周限购1次' }
+                { id: 'daily_pack', name: '每日礼包', icon: '<i class="fa-solid fa-gift" style="color: #ef4444;"></i>', price: 100, desc: '提示×2、排除×1', usage: '每日限购1次' },
+                { id: 'weekly_pack', name: '周卡礼包', icon: '<i class="fa-solid fa-box" style="color: #f59e0b;"></i>', price: 800, desc: '所有基础道具×7', usage: '每周限购1次' }
             ]
         };
 
@@ -706,7 +730,7 @@
                         <div class="item-desc">${item.desc}<br><small style="color:#999">${item.usage}</small></div>
                         <div class="item-price">🪙 ${item.price}</div>
                         <button class="buy-btn" onclick="buyItem('${item.id}', ${item.price}, '${item.name}')" ${!canBuy ? 'disabled' : ''}>
-                            ${alreadyOwned ? '已拥有' : (totalPoints < item.price ? '积分不足' : '购买')}
+                            ${alreadyOwned ? '已拥有' : (totalPoints < item.price ? '书卷不足' : '购买')}
                         </button>
                     </div>
                 `;
@@ -714,7 +738,7 @@
         }
 
         function buyItem(itemId, price, name) {
-            if (!confirm(`确定花费 ${price} 积分购买 ${name} 吗？`)) return;
+            if (!confirm(`确定花费 ${price} 书卷购买 ${name} 吗？`)) return;
             
             if (PointsManager.spendPoints(price, `购买 ${name}`)) {
                 if (itemId === 'daily_pack') {
@@ -742,7 +766,7 @@
                 renderShop();
                 renderMyItems();
             } else {
-                alert('积分不足！');
+                alert('书卷不足！');
             }
         }
 
@@ -821,7 +845,7 @@
             if (itemId === 'wrong_reset') {
                 alert('错题重置卡请在答题页面的错题本中使用！');
             } else if (itemId === 'points_protect') {
-                alert('积分保护卡请在答题页面使用！');
+                alert('书卷保护卡请在答题页面使用！');
             }
         }
 
@@ -876,6 +900,7 @@
             renderShop();
             renderMyItems();
             renderHistory();
+            PointsManager.syncAppearanceToServer();
         }
 
         init();

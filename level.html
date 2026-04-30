@@ -242,7 +242,7 @@
 
     <script src="supabase-config.js"></script>
     <script>
-        // 积分数据管理
+        // 书卷数据管理
         const PointsManager = {
             STORAGE_KEY: 'user_points_v1',
             
@@ -310,7 +310,7 @@
                 icon: 'mengtong',
                 color: '#7CB342',
                 bgColor: '#E8F5E9',
-                stages: [300, 600, 900]  // 积分阈值
+                stages: [300, 600, 900]  // 书卷阈值
             },
             {
                 name: '书生',
@@ -655,7 +655,7 @@
         }
 
         function getRankByPoints() {
-            // 基于积分判断段位
+            // 基于书卷判断段位
             const totalPoints = PointsManager.getTotalPoints();
             
             for (let i = RANKS.length - 1; i >= 0; i--) {
@@ -706,7 +706,7 @@
             document.getElementById('currentRankIcon').innerHTML = RANK_ICONS[currentRank.rank.icon];
             
             const progressText = nextTarget 
-                ? `距离 ${nextTarget.rank.name} ${['Ⅰ', 'Ⅱ', 'Ⅲ'][nextTarget.stage - 1]} 还需 ${nextTarget.target - totalPoints} 积分`
+                ? `距离 ${nextTarget.rank.name} ${['Ⅰ', 'Ⅱ', 'Ⅲ'][nextTarget.stage - 1]} 还需 ${nextTarget.target - totalPoints} 书卷`
                 : '已达到最高段位！';
             document.getElementById('rankProgressText').textContent = progressText;
             
@@ -726,8 +726,8 @@
             progressBar.style.width = progressPercent + '%';
             progressBar.style.background = currentRank.rank.color;
             
-            document.getElementById('progressCurrent').textContent = `当前积分 ${totalPoints}`;
-            document.getElementById('progressTotal').textContent = nextTarget ? `目标 ${nextTarget.target} 积分` : '已达最高';
+            document.getElementById('progressCurrent').textContent = `当前书卷 ${totalPoints}`;
+            document.getElementById('progressTotal').textContent = nextTarget ? `目标 ${nextTarget.target} 书卷` : '已达最高';
             
             const card = document.getElementById('currentRankCard');
             card.style.borderColor = currentRank.rank.color;
@@ -773,7 +773,7 @@
                     ${lockIcon}
                     <div class="rank-icon-small">${RANK_ICONS[rank.icon]}</div>
                     <div class="rank-name-small" style="color: ${rank.color}">${rank.name}</div>
-                    <div class="rank-requirement">${rank.stages[rank.stages.length - 1]} 积分</div>
+                    <div class="rank-requirement">${rank.stages[rank.stages.length - 1]} 书卷</div>
                     ${stagesHtml}
                 `;
                 

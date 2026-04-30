@@ -5,6 +5,7 @@
     <link rel="icon" type="image/png" href="images/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>排行榜 - 四大名著经典学习网</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -478,22 +479,22 @@
     <a href="home.html" class="back-link">← 返回主页</a>
 
     <div class="page-header">
-        <h1 class="page-title">🏆 荣誉排行榜</h1>
+        <h1 class="page-title"><i class="fa-solid fa-trophy" style="color: #fbbf24;"></i> 荣誉排行榜</h1>
         <p class="page-subtitle">学海无涯，唯勤是岸</p>
     </div>
 
     <div class="rank-container">
         <div class="tab-container">
             <button class="tab-btn active" data-tab="rank" onclick="switchTab('rank')">
-                <span class="tab-icon">⭐</span>
-                <span>积分排行</span>
+                <span class="tab-icon"><i class="fa-solid fa-star" style="color: #fbbf24;"></i></span>
+                <span>书卷排行</span>
             </button>
             <button class="tab-btn" data-tab="time" onclick="switchTab('time')">
-                <span class="tab-icon">⏱️</span>
+                <span class="tab-icon"><i class="fa-solid fa-clock" style="color: #3b82f6;"></i></span>
                 <span>学习时长</span>
             </button>
             <button class="tab-btn" data-tab="accuracy" onclick="switchTab('accuracy')">
-                <span class="tab-icon">🎯</span>
+                <span class="tab-icon"><i class="fa-solid fa-bullseye" style="color: #ef4444;"></i></span>
                 <span>正确率</span>
             </button>
         </div>
@@ -728,6 +729,8 @@
             }
         }
 
+        const DEFAULT_AVATAR = '<i class="fa-solid fa-user" style="font-size: 1.5rem; color: #6b7280;"></i>';
+
         async function fetchLeaderboard(type) {
             const profile = getProfileData();
             const timeData = getTimeData();
@@ -752,43 +755,53 @@
                 if (type === 'rank') {
                     leaderboard = serverData.map(user => {
                         const rank = getRankByPoints(user.score);
+                        const isCurrentUser = user.username === currentUsername;
+                        const userAvatar = isCurrentUser ? (profile.avatar || user.avatar || DEFAULT_AVATAR) : (user.avatar || DEFAULT_AVATAR);
                         return {
                             name: user.username,
-                            avatar: '👤',
+                            avatar: userAvatar,
                             rank: rank,
                             points: user.score,
-                            score: user.score + ' 积分',
-                            scoreLabel: '总积分',
-                            isCurrentUser: user.username === currentUsername,
-                            frame: user.username === currentUsername ? userAppearance.frame : null,
-                            frameActive: user.username === currentUsername ? userAppearance.frameActive : false,
-                            nicknameActive: user.username === currentUsername ? userAppearance.nicknameActive : false
+                            score: user.score + ' 书卷',
+                            scoreLabel: '总书卷',
+                            isCurrentUser: isCurrentUser,
+                            frame: isCurrentUser ? userAppearance.frame : user.frame,
+                            frameActive: isCurrentUser ? userAppearance.frameActive : user.frameActive,
+                            nicknameActive: isCurrentUser ? userAppearance.nicknameActive : false
                         };
                     });
                 } else if (type === 'time') {
-                    leaderboard = serverData.map(user => ({
-                        name: user.username,
-                        avatar: '👤',
-                        minutes: user.minutes,
-                        score: formatTime(user.minutes),
-                        scoreLabel: '学习时长',
-                        isCurrentUser: user.username === currentUsername,
-                        frame: user.username === currentUsername ? userAppearance.frame : null,
-                        frameActive: user.username === currentUsername ? userAppearance.frameActive : false,
-                        nicknameActive: user.username === currentUsername ? userAppearance.nicknameActive : false
-                    }));
+                    leaderboard = serverData.map(user => {
+                        const isCurrentUser = user.username === currentUsername;
+                        const userAvatar = isCurrentUser ? (profile.avatar || user.avatar || DEFAULT_AVATAR) : (user.avatar || DEFAULT_AVATAR);
+                        return {
+                            name: user.username,
+                            avatar: userAvatar,
+                            minutes: user.minutes,
+                            score: formatTime(user.minutes),
+                            scoreLabel: '学习时长',
+                            isCurrentUser: isCurrentUser,
+                            frame: isCurrentUser ? userAppearance.frame : user.frame,
+                            frameActive: isCurrentUser ? userAppearance.frameActive : user.frameActive,
+                            nicknameActive: isCurrentUser ? userAppearance.nicknameActive : false
+                        };
+                    });
                 } else if (type === 'accuracy') {
-                    leaderboard = serverData.map(user => ({
-                        name: user.username,
-                        avatar: '👤',
-                        accuracy: user.accuracy,
-                        score: user.accuracy + '%',
-                        scoreLabel: '正确率',
-                        isCurrentUser: user.username === currentUsername,
-                        frame: user.username === currentUsername ? userAppearance.frame : null,
-                        frameActive: user.username === currentUsername ? userAppearance.frameActive : false,
-                        nicknameActive: user.username === currentUsername ? userAppearance.nicknameActive : false
-                    }));
+                    leaderboard = serverData.map(user => {
+                        const isCurrentUser = user.username === currentUsername;
+                        const userAvatar = isCurrentUser ? (profile.avatar || user.avatar || DEFAULT_AVATAR) : (user.avatar || DEFAULT_AVATAR);
+                        return {
+                            name: user.username,
+                            avatar: userAvatar,
+                            accuracy: user.accuracy,
+                            score: user.accuracy + '%',
+                            scoreLabel: '正确率',
+                            isCurrentUser: isCurrentUser,
+                            frame: isCurrentUser ? userAppearance.frame : user.frame,
+                            frameActive: isCurrentUser ? userAppearance.frameActive : user.frameActive,
+                            nicknameActive: isCurrentUser ? userAppearance.nicknameActive : false
+                        };
+                    });
                 }
 
                 const hasCurrentUser = leaderboard.some(item => item.isCurrentUser);
@@ -796,11 +809,11 @@
                     if (type === 'rank') {
                         leaderboard.push({
                             name: currentUsername,
-                            avatar: profile.avatar || '👤',
+                            avatar: profile.avatar || DEFAULT_AVATAR,
                             rank: userRank,
                             points: totalPoints,
-                            score: totalPoints + ' 积分',
-                            scoreLabel: '总积分',
+                            score: totalPoints + ' 书卷',
+                            scoreLabel: '总书卷',
                             isCurrentUser: true,
                             frame: userAppearance.frame,
                             frameActive: userAppearance.frameActive,
@@ -810,7 +823,7 @@
                     } else if (type === 'time') {
                         leaderboard.push({
                             name: currentUsername,
-                            avatar: profile.avatar || '👤',
+                            avatar: profile.avatar || DEFAULT_AVATAR,
                             minutes: timeData.totalMinutes,
                             score: formatTime(timeData.totalMinutes),
                             scoreLabel: '学习时长',
@@ -823,7 +836,7 @@
                     } else if (type === 'accuracy') {
                         leaderboard.push({
                             name: currentUsername,
-                            avatar: profile.avatar || '👤',
+                            avatar: profile.avatar || DEFAULT_AVATAR,
                             accuracy: quizStats.accuracy,
                             score: quizStats.accuracy + '%',
                             scoreLabel: '正确率',
@@ -852,11 +865,11 @@
             if (type === 'rank') {
                 leaderboard.push({
                     name: currentUsername || profile.username,
-                    avatar: profile.avatar || '👤',
+                    avatar: profile.avatar || DEFAULT_AVATAR,
                     rank: userRank,
                     points: totalPoints,
-                    score: totalPoints + ' 积分',
-                    scoreLabel: '总积分',
+                    score: totalPoints + ' 书卷',
+                    scoreLabel: '总书卷',
                     isCurrentUser: true,
                     frame: userAppearance ? userAppearance.frame : null,
                     frameActive: userAppearance ? userAppearance.frameActive : false,
@@ -865,7 +878,7 @@
             } else if (type === 'time') {
                 leaderboard.push({
                     name: currentUsername || profile.username,
-                    avatar: profile.avatar || '👤',
+                    avatar: profile.avatar || DEFAULT_AVATAR,
                     minutes: timeData.totalMinutes,
                     score: formatTime(timeData.totalMinutes),
                     scoreLabel: '学习时长',
@@ -877,7 +890,7 @@
             } else if (type === 'accuracy') {
                 leaderboard.push({
                     name: currentUsername || profile.username,
-                    avatar: profile.avatar || '👤',
+                    avatar: profile.avatar || DEFAULT_AVATAR,
                     accuracy: quizStats.accuracy,
                     score: quizStats.accuracy + '%',
                     scoreLabel: '正确率',
@@ -915,9 +928,9 @@
         }
 
         function getPositionIcon(index) {
-            if (index === 0) return '🥇';
-            if (index === 1) return '🥈';
-            if (index === 2) return '🥉';
+            if (index === 0) return '<i class="fa-solid fa-medal" style="color: #fbbf24;"></i>';
+            if (index === 1) return '<i class="fa-solid fa-medal" style="color: #9ca3af;"></i>';
+            if (index === 2) return '<i class="fa-solid fa-medal" style="color: #d97706;"></i>';
             return index + 1;
         }
 
@@ -931,7 +944,7 @@
                 </div>
                 <div class="rank-list">
                     <div class="empty-state">
-                        <div class="empty-icon">⏳</div>
+                        <div class="empty-icon"><i class="fa-solid fa-hourglass-half" style="font-size: 3rem; color: #6b7280;"></i></div>
                         <p>正在加载...</p>
                     </div>
                 </div>
@@ -940,7 +953,7 @@
             const leaderboard = await fetchLeaderboard(type);
 
             const titles = {
-                rank: { title: '积分排行榜', desc: '按总积分排名，勤学苦练积少成多' },
+                rank: { title: '书卷排行榜', desc: '按总书卷排名，勤学苦练积少成多' },
                 time: { title: '学习时长排行榜', desc: '勤能补拙，天道酬勤' },
                 accuracy: { title: '正确率排行榜', desc: '精益求精，百发百中' }
             };
@@ -956,7 +969,7 @@
             if (leaderboard.length === 0) {
                 html += `
                     <div class="empty-state">
-                        <div class="empty-icon">🏆</div>
+                        <div class="empty-icon"><i class="fa-solid fa-trophy" style="font-size: 3rem; color: #d4af37;"></i></div>
                         <p>暂无排行数据，快来学习上榜吧！</p>
                     </div>
                 `;

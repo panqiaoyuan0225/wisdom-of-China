@@ -572,7 +572,7 @@
                 <button class="font-btn active" onclick="setFontSize('medium')" data-size="medium">A</button>
                 <button class="font-btn" onclick="setFontSize('large')" data-size="large">A</button>
             </div>
-            <button class="mode-btn" onclick="cycleMode()" id="modeBtn" title="切换阅读模式">☀️</button>
+            <button class="mode-btn" onclick="cycleMode()" id="modeBtn" title="切换阅读模式"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg></button>
         </div>
     </div>
 
@@ -580,7 +580,7 @@
 
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h3>📖 章节目录</h3>
+            <h3><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="vertical-align: middle; margin-right: 5px;"><path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H6zm0 2h6v8l-3-2-3 2V4zm0 12h12v2H6v-2z"/></svg> 章节目录</h3>
             <p id="chapterCount">加载中...</p>
         </div>
         <div class="chapter-list" id="chapterList">
@@ -599,15 +599,15 @@
 
         <div class="stats-bar">
             <div class="stat-item">
-                <span>📝</span>
+                <span><svg viewBox="0 0 24 24" width="18" height="18" fill="#8b4513"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></span>
                 <span>总字数：<strong id="totalWords">计算中...</strong></span>
             </div>
             <div class="stat-item">
-                <span>⏱️</span>
+                <span><svg viewBox="0 0 24 24" width="18" height="18" fill="#8b4513"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg></span>
                 <span>预计阅读：<strong id="readTime">计算中...</strong></span>
             </div>
             <div class="stat-item">
-                <span>📄</span>
+                <span><svg viewBox="0 0 24 24" width="18" height="18" fill="#8b4513"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></span>
                 <span>当前章节：<strong id="currentChapter">-</strong></span>
             </div>
         </div>
@@ -622,7 +622,7 @@
         <div class="content-container" id="content">
             <div class="loading">
                 <div class="loading-spinner"></div>
-                <p style="font-size: 20px; margin-bottom: 10px;">📖 正在加载原文...</p>
+                <p style="font-size: 20px; margin-bottom: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" fill="#8b4513" style="vertical-align: middle;"><path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H6zm0 2h6v8l-3-2-3 2V4zm0 12h12v2H6v-2z"/></svg> 正在加载原文...</p>
                 <p style="color: #999; font-size: 14px;">首次加载可能需要几秒钟，请耐心等待</p>
             </div>
         </div>
@@ -671,26 +671,30 @@
             if (save) saveSettings();
         }
 
+        const SUN_ICON = '<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg>';
+        const MOON_ICON = '<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>';
+        const BOOK_ICON = '<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H6zm0 2h6v8l-3-2-3 2V4zm0 12h12v2H6v-2z"/></svg>';
+
         function cycleMode() {
             const modes = ['', 'dark-mode', 'sepia-mode'];
-            const icons = ['☀️', '🌙', '📖'];
+            const icons = [SUN_ICON, MOON_ICON, BOOK_ICON];
             const currentMode = document.body.className;
             const currentIndex = modes.indexOf(currentMode);
             const nextIndex = (currentIndex + 1) % modes.length;
             
             document.body.className = modes[nextIndex];
-            document.getElementById('modeBtn').textContent = icons[nextIndex];
+            document.getElementById('modeBtn').innerHTML = icons[nextIndex];
             saveSettings();
         }
 
         function applyMode(mode, save = true) {
             const modes = ['', 'dark-mode', 'sepia-mode'];
-            const icons = ['☀️', '🌙', '📖'];
+            const icons = [SUN_ICON, MOON_ICON, BOOK_ICON];
             const index = modes.indexOf(mode);
             
             if (index >= 0) {
                 document.body.className = modes[index];
-                document.getElementById('modeBtn').textContent = icons[index];
+                document.getElementById('modeBtn').innerHTML = icons[index];
             }
             if (save) saveSettings();
         }
