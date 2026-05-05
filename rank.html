@@ -741,6 +741,11 @@
 
             try {
                 const response = await fetch(`/leaderboard/${type}`);
+                if (!response.ok) {
+                    console.log('获取排行榜失败（本地模式）');
+                    return generateLocalLeaderboard(type, profile, timeData, quizStats, totalPoints, userRank, userAppearance);
+                }
+                
                 const result = await response.json();
 
                 if (!result.success) {

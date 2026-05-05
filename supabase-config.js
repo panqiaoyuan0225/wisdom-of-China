@@ -95,7 +95,7 @@ window.DataManager = {
         
         const userId = sessionStorage.getItem('userId');
         const username = sessionStorage.getItem('currentUser');
-        if (!userId) return;
+        if (!userId || userId === 'undefined' || userId === 'null') return;
 
         // 同步前检查用户ID匹配，防止同步了错误的数据
         const lastUserId = localStorage.getItem('last_user_id');
@@ -135,26 +135,34 @@ window.DataManager = {
                 }
             });
 
-            await fetch('/sync-stats', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    userId,
-                    username,
-                    totalQuestions,
-                    correctAnswers,
-                    studyMinutes: quizData.browsingTime.totalMinutes || 0,
-                    masteredCount,
-                    totalPoints: quizData.pointsData?.totalPoints || 0
-                })
-            });
+            try {
+                await fetch('/sync-stats', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId,
+                        username,
+                        totalQuestions,
+                        correctAnswers,
+                        studyMinutes: quizData.browsingTime.totalMinutes || 0,
+                        masteredCount,
+                        totalPoints: quizData.pointsData?.totalPoints || 0
+                    })
+                });
+            } catch (e) {
+                console.log('同步统计数据失败（本地模式）');
+            }
 
             // 同步详细数据
-            await fetch('/sync-quiz-data', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId, username, quizData })
-            });
+            try {
+                await fetch('/sync-quiz-data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, username, quizData })
+                });
+            } catch (e) {
+                console.log('同步答题数据失败（本地模式）');
+            }
             
             console.log('数据已同步到云端');
         } catch (e) {
@@ -167,7 +175,7 @@ window.DataManager = {
     async loadFromCloud(forceOverwrite = false) {
         const userId = sessionStorage.getItem('userId');
         const username = sessionStorage.getItem('currentUser');
-        if (!userId) return;
+        if (!userId || userId === 'undefined' || userId === 'null') return;
 
         // 登录时或账号切换时，强制检查用户匹配
         const isUserMatch = this.checkUserMatch();
@@ -177,6 +185,10 @@ window.DataManager = {
         this.isLoading = true;
         try {
             const response = await fetch(`/load-quiz-data?userId=${userId}&username=${encodeURIComponent(username || '')}`);
+            if (!response.ok) {
+                console.log('加载云端数据失败（本地模式）');
+                return false;
+            }
             const result = await response.json();
             
             if (result.success && result.data) {

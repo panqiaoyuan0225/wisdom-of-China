@@ -1717,6 +1717,36 @@
             }
             
             updateRankBadge();
+            
+            recordLoginStreak();
+        }
+
+        function recordLoginStreak() {
+            try {
+                const today = new Date().toDateString();
+                let streakData = { lastLoginDate: null, currentStreak: 0, bestStreak: 0 };
+                try {
+                    const saved = localStorage.getItem('streak_data_v1');
+                    if (saved) streakData = JSON.parse(saved);
+                } catch (e) {}
+                
+                if (streakData.lastLoginDate === today) return;
+                
+                const yesterday = new Date(Date.now() - 86400000).toDateString();
+                
+                if (streakData.lastLoginDate === yesterday) {
+                    streakData.currentStreak += 1;
+                } else {
+                    streakData.currentStreak = 1;
+                }
+                
+                streakData.lastLoginDate = today;
+                if (streakData.currentStreak > streakData.bestStreak) {
+                    streakData.bestStreak = streakData.currentStreak;
+                }
+                
+                localStorage.setItem('streak_data_v1', JSON.stringify(streakData));
+            } catch (e) {}
         }
 
         initData();

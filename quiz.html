@@ -3696,6 +3696,18 @@
             }
         };
 
+        const QUIZ_BADGE_ICONS = {
+            '100_questions': '<img src="images/badges/100_questions.png" alt="初试锋芒" style="width:90px;height:90px;object-fit:contain;border-radius:16px;border:3px solid #d4af37;box-shadow:0 4px 12px rgba(0,0,0,0.2);background:linear-gradient(135deg,#fff9e6,#fff);">',
+            '500_questions': '<img src="images/badges/500_questions.png" alt="勤学不辍" style="width:90px;height:90px;object-fit:contain;border-radius:16px;border:3px solid #d4af37;box-shadow:0 4px 12px rgba(0,0,0,0.2);background:linear-gradient(135deg,#fff9e6,#fff);">',
+            '1000_questions': '<img src="images/badges/1000_questions.png" alt="博闻强识" style="width:90px;height:90px;object-fit:contain;border-radius:16px;border:3px solid #9c27b0;box-shadow:0 4px 12px rgba(0,0,0,0.2);background:linear-gradient(135deg,#fff9e6,#fff);">',
+            '2000_questions': '<img src="images/badges/2000_questions.png" alt="学海无涯" style="width:90px;height:90px;object-fit:contain;border-radius:16px;border:3px solid #ff6b35;box-shadow:0 4px 12px rgba(0,0,0,0.2);background:linear-gradient(135deg,#fff9e6,#fff);">',
+            honglou_characters: '<img src="images/badges/honglou_characters.png" alt="金陵十二钗" style="width:90px;height:90px;object-fit:contain;border-radius:16px;border:3px solid #9c27b0;box-shadow:0 4px 12px rgba(0,0,0,0.2);background:linear-gradient(135deg,#fff9e6,#fff);">',
+            sanguo_strategists: '<img src="images/badges/sanguo_strategists.png" alt="卧龙凤雏" style="width:90px;height:90px;object-fit:contain;border-radius:16px;border:3px solid #9c27b0;box-shadow:0 4px 12px rgba(0,0,0,0.2);background:linear-gradient(135deg,#fff9e6,#fff);">',
+            shuihu_heroes: '<img src="images/badges/shuihu_heroes.png" alt="一百零八将" style="width:90px;height:90px;object-fit:contain;border-radius:16px;border:3px solid #9c27b0;box-shadow:0 4px 12px rgba(0,0,0,0.2);background:linear-gradient(135deg,#fff9e6,#fff);">',
+            xiyou_plot: '<img src="images/badges/xiyou_plot.png" alt="九九八十一难" style="width:90px;height:90px;object-fit:contain;border-radius:16px;border:3px solid #9c27b0;box-shadow:0 4px 12px rgba(0,0,0,0.2);background:linear-gradient(135deg,#fff9e6,#fff);">',
+            poetry_master: '<img src="images/badges/poetry_master.png" alt="诗词雅士" style="width:90px;height:90px;object-fit:contain;border-radius:16px;border:3px solid #ff6b35;box-shadow:0 4px 12px rgba(0,0,0,0.2);background:linear-gradient(135deg,#fff9e6,#fff);">'
+        };
+
         function checkAndNotifyBadges() {
             const newlyUnlocked = BadgeChecker.checkAndUnlockBadges();
             
@@ -3733,6 +3745,8 @@
             };
             const colors = rarityColors[badge.rarity] || rarityColors.common;
             
+            const badgeIconHtml = QUIZ_BADGE_ICONS[badge.id] || '<i class="fa-solid fa-medal" style="font-size:2.5rem;color:#f59e0b;"></i>';
+            
             overlay.innerHTML = `
                 <div style="
                     background: linear-gradient(135deg, #fff9e6, #fff);
@@ -3746,7 +3760,7 @@
                     transition: transform 0.3s;
                 ">
                     <div style="font-size: 1.5rem; color: #8b4513; margin-bottom: 20px;"><i class="fa-solid fa-party-horn" style="color: #f59e0b;"></i> 恭喜获得勋章！</div>
-                    <div style="font-size: 2.5rem; margin-bottom: 15px;"><i class="fa-solid fa-medal" style="color: #f59e0b;"></i></div>
+                    <div style="margin-bottom: 15px; display: flex; justify-content: center; align-items: center;">${badgeIconHtml}</div>
                     <div style="font-size: 1.8rem; font-weight: bold; margin-bottom: 10px; color: ${colors.border};">${badge.name}</div>
                     <div style="color: #666; margin-bottom: 20px;">${badge.desc}</div>
                     <button onclick="closeBadgeNotification()" style="

@@ -101,13 +101,28 @@
 
         .badge-card {
             background: #fff;
-            border-radius: 15px;
-            padding: 20px;
+            border-radius: 20px;
+            padding: 25px 20px;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
+            border: 4px solid transparent;
+            background-clip: padding-box;
+        }
+
+        .badge-card::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border-radius: 22px;
+            z-index: -1;
+            background: linear-gradient(135deg, #d4af37, #f0d78c);
+            opacity: 0.3;
         }
 
         .badge-card.locked {
@@ -130,22 +145,46 @@
         }
 
         .badge-card.common.unlocked {
-            border: 3px solid #d4af37;
-            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+            border: 4px solid #d4af37;
+            background: linear-gradient(135deg, #fff9e6, #fff);
+            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.4);
+        }
+
+        .badge-card.common.unlocked::before {
+            background: linear-gradient(135deg, #d4af37, #f0d78c, #d4af37);
+            opacity: 0.5;
+            animation: borderGlow 3s ease-in-out infinite;
         }
 
         .badge-card.rare.unlocked {
-            border: 3px solid #9c27b0;
-            background: linear-gradient(135deg, #fff, #f3e5f5);
-            box-shadow: 0 4px 20px rgba(156, 39, 176, 0.3);
+            border: 4px solid #9c27b0;
+            background: linear-gradient(135deg, #f3e5f5, #fff);
+            box-shadow: 0 8px 30px rgba(156, 39, 176, 0.4);
+        }
+
+        .badge-card.rare.unlocked::before {
+            background: linear-gradient(135deg, #9c27b0, #ce93d8, #9c27b0);
+            opacity: 0.6;
+            animation: borderGlow 2.5s ease-in-out infinite;
         }
 
         .badge-card.epic.unlocked {
-            border: 3px solid transparent;
+            border: 4px solid transparent;
             background: linear-gradient(#fff, #fff) padding-box,
                         linear-gradient(135deg, #ff6b35, #f7931e, #ff6b35) border-box;
-            box-shadow: 0 4px 25px rgba(255, 107, 53, 0.4);
+            box-shadow: 0 8px 35px rgba(255, 107, 53, 0.5);
             animation: epicGlow 2s ease-in-out infinite;
+        }
+
+        .badge-card.epic.unlocked::before {
+            background: linear-gradient(135deg, #ff6b35, #f7931e, #ffd700, #ff6b35);
+            opacity: 0.7;
+            animation: borderGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
         }
 
         @keyframes epicGlow {
@@ -154,29 +193,87 @@
         }
 
         .badge-icon {
-            width: 80px;
-            height: 80px;
+            width: 100px;
+            height: 100px;
             margin: 0 auto 15px;
-            transition: transform 0.3s;
+            transition: all 0.3s;
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
+        }
+
+        .badge-icon::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4af37, #f0d78c, #d4af37);
+            opacity: 0.3;
+            z-index: -1;
         }
 
         .badge-icon img {
             max-width: 100%;
             max-height: 100%;
-            width: 80px;
-            height: 80px;
+            width: 90px;
+            height: 90px;
             object-fit: contain;
-            border-radius: 12px;
-            border: 2px solid #d4af37;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-            background: linear-gradient(135deg, #fff9e6, #fff);
+            border-radius: 50%;
+            border: 4px solid #d4af37;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25), 
+                        inset 0 2px 10px rgba(255, 255, 255, 0.5);
+            background: linear-gradient(135deg, #fff9e6, #f5f5dc, #fff9e6);
+            padding: 5px;
+        }
+
+        .badge-card.common.unlocked .badge-icon img {
+            border: 4px solid #d4af37;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4), 
+                        inset 0 2px 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .badge-card.rare.unlocked .badge-icon img {
+            border: 4px solid #9c27b0;
+            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.4), 
+                        inset 0 2px 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .badge-card.epic.unlocked .badge-icon img {
+            border: 4px solid transparent;
+            background: linear-gradient(#fff, #fff) padding-box,
+                        linear-gradient(135deg, #ff6b35, #f7931e, #ffd700) border-box;
+            box-shadow: 0 4px 20px rgba(255, 107, 53, 0.5), 
+                        inset 0 2px 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .badge-card.unlocked:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
         }
 
         .badge-card.unlocked:hover .badge-icon {
-            transform: scale(1.1);
+            transform: scale(1.15) rotate(5deg);
+        }
+
+        .badge-card.unlocked:hover .badge-icon img {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), 
+                        inset 0 2px 10px rgba(255, 255, 255, 0.6);
+        }
+
+        .badge-card.common.unlocked:hover {
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.5);
+        }
+
+        .badge-card.rare.unlocked:hover {
+            box-shadow: 0 15px 40px rgba(156, 39, 176, 0.5);
+        }
+
+        .badge-card.epic.unlocked:hover {
+            box-shadow: 0 15px 45px rgba(255, 107, 53, 0.6);
         }
 
         .badge-name {
@@ -482,6 +579,11 @@
         <div class="badge-grid" id="leaderboardBadges"></div>
     </div>
 
+    <div class="section">
+        <h2 class="section-title"><i class="fa-solid fa-fire" style="color: #f97316;"></i> 连续学习</h2>
+        <div class="badge-grid" id="streakBadges"></div>
+    </div>
+
     <div class="notification-overlay" id="notificationOverlay">
         <div class="notification-card" id="notificationCard">
             <div class="particles" id="particles"></div>
@@ -512,7 +614,11 @@
             { id: 'rank_top_10', name: '榜上有名', desc: '进入排行榜前10名', rarity: 'common', type: 'leaderboard', targetRank: 10 },
             { id: 'rank_top_5', name: '五强争霸', desc: '进入排行榜前5名', rarity: 'rare', type: 'leaderboard', targetRank: 5 },
             { id: 'rank_top_1', name: '独占鳌头', desc: '登顶排行榜第一名', rarity: 'epic', type: 'leaderboard', targetRank: 1 },
-            { id: 'rank_master', name: '榜首常客', desc: '三个排行榜均前10名', rarity: 'epic', type: 'leaderboard', targetAll: 10 }
+            { id: 'rank_master', name: '榜首常客', desc: '三个排行榜均前10名', rarity: 'epic', type: 'leaderboard', targetAll: 10 },
+            { id: 'streak_3', name: '三日之约', desc: '连续3天登录学习', rarity: 'common', type: 'streak', target: 3 },
+            { id: 'streak_7', name: '七日之志', desc: '连续7天登录学习', rarity: 'common', type: 'streak', target: 7 },
+            { id: 'streak_30', name: '月下苦读', desc: '连续30天登录学习', rarity: 'rare', type: 'streak', target: 30 },
+            { id: 'streak_100', name: '百日筑基', desc: '连续100天登录学习', rarity: 'epic', type: 'streak', target: 100 }
         ];
 
         const BADGE_ICONS = {
@@ -533,7 +639,11 @@
             rank_top_10: '<img src="images/badges/rank_top_10.png" alt="榜上有名">',
             rank_top_5: '<img src="images/badges/rank_top_5.png" alt="五强争霸">',
             rank_top_1: '<img src="images/badges/rank_top_1.png" alt="独占鳌头">',
-            rank_master: '<img src="images/badges/rank_master.png" alt="榜首常客">'
+            rank_master: '<img src="images/badges/rank_master.png" alt="榜首常客">',
+            streak_3: '<img src="images/badges/streak_3.png" alt="三日之约">',
+            streak_7: '<img src="images/badges/streak_7.png" alt="七日之志">',
+            streak_30: '<img src="images/badges/streak_30.png" alt="月下苦读">',
+            streak_100: '<img src="images/badges/streak_100.png" alt="百日筑基">'
         };
 
         const RARITY_NAMES = {
@@ -596,6 +706,59 @@
                     total += item.totalAttempts || 0;
                 });
                 return total;
+            },
+            
+            recordLogin() {
+                const today = new Date().toDateString();
+                const streakData = this.getStreakData();
+                
+                if (streakData.lastLoginDate === today) {
+                    return streakData.currentStreak;
+                }
+                
+                const yesterday = new Date(Date.now() - 86400000).toDateString();
+                
+                if (streakData.lastLoginDate === yesterday) {
+                    streakData.currentStreak += 1;
+                } else {
+                    streakData.currentStreak = 1;
+                }
+                
+                streakData.lastLoginDate = today;
+                if (streakData.currentStreak > streakData.bestStreak) {
+                    streakData.bestStreak = streakData.currentStreak;
+                }
+                
+                this.saveStreakData(streakData);
+                return streakData.currentStreak;
+            },
+            
+            getStreakData() {
+                try {
+                    const data = localStorage.getItem('streak_data_v1');
+                    return data ? JSON.parse(data) : { lastLoginDate: null, currentStreak: 0, bestStreak: 0 };
+                } catch (e) {
+                    return { lastLoginDate: null, currentStreak: 0, bestStreak: 0 };
+                }
+            },
+            
+            saveStreakData(data) {
+                try {
+                    localStorage.setItem('streak_data_v1', JSON.stringify(data));
+                } catch (e) {
+                    console.error('保存连续学习数据失败:', e);
+                }
+            },
+            
+            getCurrentStreak() {
+                const streakData = this.getStreakData();
+                const today = new Date().toDateString();
+                const yesterday = new Date(Date.now() - 86400000).toDateString();
+                
+                if (streakData.lastLoginDate === today || streakData.lastLoginDate === yesterday) {
+                    return streakData.currentStreak;
+                }
+                return 0;
             },
             
             getHistoryData() {
@@ -678,6 +841,13 @@
                         target: badge.target || 10,
                         percent: Math.min(100, Math.round((mastered / (badge.target || 10)) * 100))
                     };
+                } else if (badge.type === 'streak') {
+                    const currentStreak = this.getCurrentStreak();
+                    return {
+                        current: Math.min(currentStreak, badge.target),
+                        target: badge.target,
+                        percent: Math.min(100, Math.round((currentStreak / badge.target) * 100))
+                    };
                 }
                 return { current: 0, target: 1, percent: 0 };
             },
@@ -728,6 +898,9 @@
                                 rankData.time <= badge.targetAll && 
                                 rankData.accuracy <= badge.targetAll;
                         }
+                    } else if (badge.type === 'streak') {
+                        const currentStreak = this.getCurrentStreak();
+                        shouldUnlock = currentStreak >= badge.target;
                     }
                     
                     if (shouldUnlock) {
@@ -777,6 +950,7 @@
                 const quizBadges = BADGES.filter(b => b.type === 'quiz');
                 const masteryBadges = BADGES.filter(b => b.type === 'mastery');
                 const leaderboardBadges = BADGES.filter(b => b.type === 'leaderboard');
+                const streakBadges = BADGES.filter(b => b.type === 'streak');
                 
                 document.getElementById('readingBadges').innerHTML = 
                     readingBadges.map(renderBadgeCard).join('');
@@ -786,6 +960,8 @@
                     masteryBadges.map(renderBadgeCard).join('');
                 document.getElementById('leaderboardBadges').innerHTML = 
                     leaderboardBadges.map(renderBadgeCard).join('');
+                document.getElementById('streakBadges').innerHTML = 
+                    streakBadges.map(renderBadgeCard).join('');
                 
                 const data = BadgeManager.getData();
                 document.getElementById('unlockedCount').textContent = data.unlockedBadges.length;
@@ -891,6 +1067,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            BadgeManager.recordLogin();
+            BadgeManager.checkAndUnlockBadges();
             renderBadges();
             checkPendingNotification();
         });
