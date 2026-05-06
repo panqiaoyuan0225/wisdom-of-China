@@ -206,7 +206,7 @@ app.get('/load-user-stats', async (req, res) => {
 
     const { data, error } = await supabase
         .from('users')
-        .select('total_questions, correct_answers, study_minutes, mastered_count, last_sync')
+        .select('total_questions, correct_answers, study_minutes, mastered_count, last_sync, avatar, avatar_frame, avatar_frame_active')
         .eq('user_id', targetUserId)
         .single();
 
@@ -224,7 +224,10 @@ app.get('/load-user-stats', async (req, res) => {
             correct_answers: data?.correct_answers || 0,
             study_minutes: data?.study_minutes || 0,
             mastered_count: data?.mastered_count || 0,
-            last_sync: data?.last_sync || null
+            last_sync: data?.last_sync || null,
+            avatar: data?.avatar || null,
+            frame: data?.avatar_frame || null,
+            frameActive: data?.avatar_frame_active || false
         }
     });
 });

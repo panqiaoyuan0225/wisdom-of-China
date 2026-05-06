@@ -835,28 +835,28 @@
         };
 
         const BADGES = [
-            { id: 'honglou_reader', name: '红楼初探', rarity: 'common' },
-            { id: 'sanguo_reader', name: '三国通览', rarity: 'common' },
-            { id: 'shuihu_reader', name: '水浒知音', rarity: 'common' },
-            { id: 'xiyou_reader', name: '西游行者', rarity: 'common' },
-            { id: 'all_books_reader', name: '四大名著通', rarity: 'rare' },
-            { id: '100_questions', name: '初试锋芒', rarity: 'common' },
-            { id: '500_questions', name: '勤学不辍', rarity: 'common' },
-            { id: '1000_questions', name: '博闻强识', rarity: 'rare' },
-            { id: '2000_questions', name: '学海无涯', rarity: 'epic' },
-            { id: 'honglou_characters', name: '金陵十二钗', rarity: 'rare' },
-            { id: 'sanguo_strategists', name: '卧龙凤雏', rarity: 'rare' },
-            { id: 'shuihu_heroes', name: '一百零八将', rarity: 'rare' },
-            { id: 'xiyou_plot', name: '九九八十一难', rarity: 'rare' },
-            { id: 'poetry_master', name: '诗词雅士', rarity: 'epic' },
-            { id: 'rank_top_10', name: '榜上有名', rarity: 'common' },
-            { id: 'rank_top_5', name: '五强争霸', rarity: 'rare' },
-            { id: 'rank_top_1', name: '独占鳌头', rarity: 'epic' },
-            { id: 'rank_master', name: '榜首常客', rarity: 'epic' },
-            { id: 'streak_3', name: '三日之约', rarity: 'common' },
-            { id: 'streak_7', name: '七日之志', rarity: 'common' },
-            { id: 'streak_30', name: '月下苦读', rarity: 'rare' },
-            { id: 'streak_100', name: '百日筑基', rarity: 'epic' }
+            { id: 'honglou_reader', name: '红楼初探', rarity: 'common', type: 'reading', book: 'honglou' },
+            { id: 'sanguo_reader', name: '三国通览', rarity: 'common', type: 'reading', book: 'sanguo' },
+            { id: 'shuihu_reader', name: '水浒知音', rarity: 'common', type: 'reading', book: 'shuihu' },
+            { id: 'xiyou_reader', name: '西游行者', rarity: 'common', type: 'reading', book: 'xiyou' },
+            { id: 'all_books_reader', name: '四大名著通', rarity: 'rare', type: 'reading', book: 'all' },
+            { id: '100_questions', name: '初试锋芒', rarity: 'common', type: 'quiz', target: 100 },
+            { id: '500_questions', name: '勤学不辍', rarity: 'common', type: 'quiz', target: 500 },
+            { id: '1000_questions', name: '博闻强识', rarity: 'rare', type: 'quiz', target: 1000 },
+            { id: '2000_questions', name: '学海无涯', rarity: 'epic', type: 'quiz', target: 2000 },
+            { id: 'honglou_characters', name: '金陵十二钗', rarity: 'rare', type: 'mastery', category: 'honglou', target: 12 },
+            { id: 'sanguo_strategists', name: '卧龙凤雏', rarity: 'rare', type: 'mastery', category: 'sanguo', target: 10 },
+            { id: 'shuihu_heroes', name: '一百零八将', rarity: 'rare', type: 'mastery', category: 'shuihu', target: 108 },
+            { id: 'xiyou_plot', name: '九九八十一难', rarity: 'rare', type: 'mastery', category: 'xiyou', target: 81 },
+            { id: 'poetry_master', name: '诗词雅士', rarity: 'epic', type: 'mastery', category: 'poetry', target: 20 },
+            { id: 'rank_top_10', name: '榜上有名', rarity: 'common', type: 'leaderboard', targetRank: 10 },
+            { id: 'rank_top_5', name: '五强争霸', rarity: 'rare', type: 'leaderboard', targetRank: 5 },
+            { id: 'rank_top_1', name: '独占鳌头', rarity: 'epic', type: 'leaderboard', targetRank: 1 },
+            { id: 'rank_master', name: '榜首常客', rarity: 'epic', type: 'leaderboard', targetAll: 1 },
+            { id: 'streak_3', name: '三日之约', rarity: 'common', type: 'streak', target: 3 },
+            { id: 'streak_7', name: '七日之志', rarity: 'common', type: 'streak', target: 7 },
+            { id: 'streak_30', name: '月下苦读', rarity: 'rare', type: 'streak', target: 30 },
+            { id: 'streak_100', name: '百日筑基', rarity: 'epic', type: 'streak', target: 100 }
         ];
 
         const RANKS = [
@@ -874,9 +874,9 @@
             shusheng: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="brushHandle" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#4E342E"/><stop offset="30%" style="stop-color:#8D6E63"/><stop offset="60%" style="stop-color:#5D4037"/><stop offset="100%" style="stop-color:#3E2723"/></linearGradient><linearGradient id="brushTip" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#666"/><stop offset="70%" style="stop-color:#222"/><stop offset="100%" style="stop-color:#000"/></linearGradient></defs><g transform="rotate(-20 50 50)"><circle cx="50" cy="12" r="1.5" fill="none" stroke="#8D6E63" stroke-width="0.5"/><rect x="47.5" y="14" width="5" height="50" rx="1.5" fill="url(#brushHandle)" /><path d="M47 62 L53 62 L54 68 Q54 70 52 70 L48 70 Q46 70 46 68 Z" fill="#212121" /><rect x="46.5" y="62" width="7" height="1.5" fill="#C0C0C0" opacity="0.3" /><path d="M46 69 Q46 75 44 82 Q43 92 50 95 Q57 92 56 82 Q54 75 54 69 Z" fill="url(#brushTip)" /><path d="M48 72 Q47 80 49 88" stroke="white" stroke-width="0.3" opacity="0.2" fill="none" /><path d="M51 75 Q52 82 51 90" stroke="white" stroke-width="0.2" opacity="0.1" fill="none" /></g></svg>`,
             xiucai: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="fanPaper" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#F5F5DC"/><stop offset="50%" style="stop-color:#FFFDE7"/><stop offset="100%" style="stop-color:#F5F5DC"/></linearGradient><linearGradient id="bambooBone" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#795548"/><stop offset="50%" style="stop-color:#A1887F"/><stop offset="100%" style="stop-color:#5D4037"/></linearGradient></defs><path d="M10 75 Q10 25 50 15 Q90 25 90 75 L55 85 Q50 87 45 85 Z" fill="url(#fanPaper)" stroke="#D7CCC8" stroke-width="0.5"/><g stroke="#E0E0E0" stroke-width="0.2" opacity="0.6"><line x1="50" y1="85" x2="20" y2="45" /><line x1="50" y1="85" x2="35" y2="25" /><line x1="50" y1="85" x2="50" y2="15" /><line x1="50" y1="85" x2="65" y2="25" /><line x1="50" y1="85" x2="80" y2="45" /></g><path d="M10 75 L14 78 L50 85 L50 82 Z" fill="url(#bambooBone)" /><path d="M90 75 L86 78 L50 85 L50 82 Z" fill="url(#bambooBone)" /><path d="M65 60 Q68 50 75 45 M67 55 Q72 53 78 55 M64 58 Q60 50 62 42" stroke="#424242" stroke-width="0.8" fill="none" opacity="0.7"/><text x="50" y="50" text-anchor="middle" font-family="serif" font-size="8" fill="#212121" style="writing-mode: tb;">清风</text><circle cx="50" cy="85" r="2.5" fill="#3E2723"/><path d="M50 87.5 Q50 92 48 94 M50 87.5 Q50 92 52 94" stroke="#B71C1C" stroke-width="1" fill="none" /></svg>`,
             juren: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lanternBody" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#D32F2F"/><stop offset="50%" style="stop-color:#FF5252"/><stop offset="100%" style="stop-color:#B71C1C"/></linearGradient><linearGradient id="goldFrame" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#FFD700"/><stop offset="50%" style="stop-color:#FFF176"/><stop offset="100%" style="stop-color:#FFA000"/></linearGradient></defs><path d="M50 5 L50 15" stroke="#424242" stroke-width="1.5" fill="none"/><rect x="42" y="15" width="16" height="4" rx="1" fill="#3E2723"/><path d="M30 20 L70 20 L75 45 L70 70 L30 70 L25 45 Z" fill="url(#lanternBody)" stroke="url(#goldFrame)" stroke-width="1.5"/><line x1="30" y1="20" x2="30" y2="70" stroke="#FFCDD2" stroke-width="0.5" opacity="0.3"/><line x1="70" y1="20" x2="70" y2="70" stroke="#FFCDD2" stroke-width="0.5" opacity="0.3"/><text x="50" y="52" text-anchor="middle" font-family="serif" font-size="22" fill="#FFD700" font-weight="900" style="text-shadow: 0 0 5px rgba(255,215,0,0.5);">才</text><rect x="38" y="70" width="24" height="5" rx="1" fill="#3E2723"/><g stroke="#D32F2F" stroke-width="1.2"><path d="M42 75 Q40 88 40 95" fill="none"/><path d="M46 75 Q46 90 46 98" fill="none"/><path d="M50 75 L50 99" fill="none" stroke="#FF5252"/><path d="M54 75 Q54 90 54 98" fill="none"/><path d="M58 75 Q60 88 60 95" fill="none"/></g><circle cx="50" cy="78" r="2.5" fill="url(#goldFrame)"/></svg>`,
-            jinshi: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="towerGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#9575CD"/><stop offset="100%" style="stop-color:#512DA8"/></linearGradient><radialGradient id="petalGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#FFF9C4"/><stop offset="70%" style="stop-color:#F06292"/><stop offset="100%" style="stop-color:#880E4F"/></radialGradient><radialGradient id="centerSun" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#FFF176"/><stop offset="100%" style="stop-color:#FBC02D"/></radialGradient></defs><g opacity="0.15"><path d="M40 95 L60 95 L58 75 L42 75 Z" fill="url(#towerGrad)"/><path d="M43 75 L57 75 L55 58 L45 58 Z" fill="url(#towerGrad)"/><path d="M46 58 L54 58 L52 45 L48 45 Z" fill="url(#towerGrad)"/><path d="M49 45 L51 45 L50 38 Z" fill="url(#towerGrad)"/></g><g transform="translate(50, 55)"><circle cx="0" cy="-12" r="10" fill="url(#petalGrad)" opacity="0.9"/><circle cx="11" cy="-4" r="10" fill="url(#petalGrad)" opacity="0.9"/><circle cx="7" cy="10" r="10" fill="url(#petalGrad)" opacity="0.9"/><circle cx="-7" cy="10" r="10" fill="url(#petalGrad)" opacity="0.9"/><circle cx="-11" cy="-4" r="10" fill="url(#petalGrad)" opacity="0.9"/><g scale="0.6"><path d="M-6 -6 Q0 -18 6 -6 Q18 0 6 6 Q0 18 -6 6 Q-18 0 -6 -6 Z" fill="white" opacity="0.4"/></g><circle cx="0" cy="0" r="4.5" fill="url(#centerSun)"/><circle cx="0" cy="0" r="2" fill="#F9A825"/><g stroke="#FBC02D" stroke-width="0.3" opacity="0.8"><line x1="0" y1="0" x2="0" y2="-6"/><line x1="0" y1="0" x2="5" y2="-3"/><line x1="0" y1="0" x2="5" y2="3"/><line x1="0" y1="0" x2="0" y2="6"/><line x1="0" y1="0" x2="-5" y2="3"/><line x1="0" y1="0" x2="-5" y2="-3"/></g></g><path d="M25 25 Q30 20 35 25 T45 25" fill="none" stroke="#CE93D8" stroke-width="1" opacity="0.4"/><path d="M55 15 Q60 10 65 15 T75 15" fill="none" stroke="#CE93D8" stroke-width="1" opacity="0.4"/></svg>`,
+            jinshi: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="towerGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#9575CD"/><stop offset="100%" style="stop-color:#512DA4"/></linearGradient><radialGradient id="petalGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#FFF9C4"/><stop offset="70%" style="stop-color:#F06292"/><stop offset="100%" style="stop-color:#880E4F"/></radialGradient><radialGradient id="centerSun" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#FFF176"/><stop offset="100%" style="stop-color:#FBC02D"/></radialGradient></defs><g opacity="0.15"><path d="M40 95 L60 95 L58 75 L42 75 Z" fill="url(#towerGrad)"/><path d="M43 75 L57 75 L55 58 L45 58 Z" fill="url(#towerGrad)"/><path d="M46 58 L54 58 L52 45 L48 45 Z" fill="url(#towerGrad)"/><path d="M49 45 L51 45 L50 38 Z" fill="url(#towerGrad)"/></g><g transform="translate(50, 55)"><circle cx="0" cy="-12" r="10" fill="url(#petalGrad)" opacity="0.9"/><circle cx="11" cy="-4" r="10" fill="url(#petalGrad)" opacity="0.9"/><circle cx="7" cy="10" r="10" fill="url(#petalGrad)" opacity="0.9"/><circle cx="-7" cy="10" r="10" fill="url(#petalGrad)" opacity="0.9"/><circle cx="-11" cy="-4" r="10" fill="url(#petalGrad)" opacity="0.9"/><g scale="0.6"><path d="M-6 -6 Q0 -18 6 -6 Q18 0 6 6 Q0 18 -6 6 Q-18 0 -6 -6 Z" fill="white" opacity="0.4"/></g><circle cx="0" cy="0" r="4.5" fill="url(#centerSun)"/><circle cx="0" cy="0" r="2" fill="#F9A825"/><g stroke="#FBC02D" stroke-width="0.3" opacity="0.8"><line x1="0" y1="0" x2="0" y2="-6"/><line x1="0" y1="0" x2="5" y2="-3"/><line x1="0" y1="0" x2="5" y2="3"/><line x1="0" y1="0" x2="0" y2="6"/><line x1="0" y1="0" x2="-5" y2="3"/><line x1="0" y1="0" x2="-5" y2="-3"/></g></g><path d="M25 25 Q30 20 35 25 T45 25" fill="none" stroke="#CE93D8" stroke-width="1" opacity="0.4"/><path d="M55 15 Q60 10 65 15 T75 15" fill="none" stroke="#CE93D8" stroke-width="1" opacity="0.4"/></svg>`,
             hanlin: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00695C"/><stop offset="50%" style="stop-color:#4DB6AC"/><stop offset="100%" style="stop-color:#004D40"/></linearGradient><linearGradient id="silkGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#FFD54F"/><stop offset="100%" style="stop-color:#FF8F00"/></linearGradient></defs><g transform="translate(50, 50)"><path d="M5 0 C 25 -20, 45 0, 30 15 C 20 25, 5 10, 0 0" fill="none" stroke="url(#emeraldGrad)" stroke-width="4" stroke-linecap="round" /><path d="M-5 0 C -25 -20, -45 0, -30 15 C -20 25, -5 10, 0 0" fill="none" stroke="url(#emeraldGrad)" stroke-width="4" stroke-linecap="round" /><circle cx="0" cy="0" r="3" fill="#004D40" /><path d="M-32 8 Q-20 18 -8 5" fill="none" stroke="#B2DFDB" stroke-width="0.8" opacity="0.6" /><path d="M32 8 Q20 18 8 5" fill="none" stroke="#B2DFDB" stroke-width="0.8" opacity="0.6" /></g><g opacity="0.8"><path d="M47 55 Q45 75 42 90" fill="none" stroke="url(#silkGrad)" stroke-width="1.2" stroke-linecap="round" /><path d="M53 55 Q55 75 58 90" fill="none" stroke="url(#silkGrad)" stroke-width="1.2" stroke-linecap="round" /><circle cx="44" cy="70" r="1.5" fill="#4DB6AC" /><circle cx="56" cy="70" r="1.5" fill="#4DB6AC" /></g><circle cx="50" cy="45" r="25" fill="url(#emeraldGrad)" opacity="0.05" /></svg>`,
-            zhuangyuan: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="haloGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#FF5252; stop-opacity:0.4"/><stop offset="70%" style="stop-color:#B71C1C; stop-opacity:0.1"/><stop offset="100%" style="stop-color:#B71C1C; stop-opacity:0"/></radialGradient><linearGradient id="goldTop" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#FFF176"/><stop offset="50%" style="stop-color:#FFD700"/><stop offset="100%" style="stop-color:#FFA000"/></linearGradient><radialGradient id="rubyGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#FF8A80"/><stop offset="60%" style="stop-color:#D32F2F"/><stop offset="100%" style="stop-color:#5D4037"/></radialGradient></defs><circle cx="50" cy="45" r="45" fill="url(#haloGrad)" /><path d="M25 55 Q50 5 75 55" fill="#1A1A1A" stroke="url(#goldTop)" stroke-width="1.5" /><path d="M32 48 Q50 18 68 48" fill="none" stroke="#FFD700" stroke-width="0.5" opacity="0.6" /><g><rect x="2" y="50" width="30" height="10" rx="2" fill="#111" stroke="url(#goldTop)" stroke-width="1.2" /><path d="M5 53 H28 M5 57 H28" stroke="url(#goldTop)" stroke-width="0.3" opacity="0.4" /><circle cx="5" cy="55" r="1" fill="#FFD700" /><rect x="68" y="50" width="30" height="10" rx="2" fill="#111" stroke="url(#goldTop)" stroke-width="1.2" /><path d="M72 53 H95 M72 57 H95" stroke="url(#goldTop)" stroke-width="0.3" opacity="0.4" /><circle cx="95" cy="55" r="1" fill="#FFD700" /></g><path d="M32 68 C 32 35, 68 35, 68 68 Z" fill="#1A1A1A" stroke="#333" stroke-width="0.5" /><path d="M40 45 Q50 38 60 45" fill="none" stroke="#FFD700" stroke-width="0.2" opacity="0.2" /><path d="M31 62 Q50 56 69 62 L68 70 Q50 64 32 70 Z" fill="url(#goldTop)" /><g transform="translate(50, 48)"><circle cx="0" cy="0" r="10" fill="url(#goldTop)" opacity="0.8" /><circle cx="0" cy="0" r="8" fill="#1A1A1A" /><circle cx="0" cy="0" r="6.5" fill="url(#rubyGrad)" /><circle cx="-1.5" cy="-1.5" r="1.5" fill="white" opacity="0.3" /><g stroke="#FFD700" stroke-width="0.6"><line x1="0" y1="-10" x2="0" y2="-13" /><line x1="10" y1="0" x2="13" y2="0" /><line x1="-10" y1="0" x2="-13" y2="0" /><path d="M-5 -11 Q0 -15 5 -11" fill="none" stroke-width="0.4" /></g></g><path d="M30 40 Q25 30 30 20" fill="none" stroke="white" stroke-width="0.8" opacity="0.4" /><path d="M70 40 Q75 30 70 20" fill="none" stroke="white" stroke-width="0.8" opacity="0.4" /><path d="M36 70 Q35 78 28 82" fill="none" stroke="#B71C1C" stroke-width="3.5" stroke-linecap="round" /><path d="M64 70 Q65 78 72 82" fill="none" stroke="#B71C1C" stroke-width="3.5" stroke-linecap="round" /></svg>`,
+            zhuangyuan: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="haloGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#FF5252; stop-opacity:0.4"/><stop offset="70%" style="stop-color:#B71C1C; stop-opacity:0.1"/><stop offset="100%" style="stop-color:#B71C1C; stop-opacity:0"/></radialGradient><linearGradient id="goldTop" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#FFF176"/><stop offset="50%" style="stop-color:#FFD700"/><stop offset="100%" style="stop-color:#FFA000"/></linearGradient><radialGradient id="rubyGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#FF8A80"/><stop offset="60%" style="stop-color:#D32F2F"/><stop offset="100%" style="stop-color:#5D4037"/></radialGradient></defs><circle cx="50" cy="45" r="45" fill="url(#haloGrad)" /><path d="M25 55 Q50 5 75 55" fill="#1A1A1A" stroke="url(#goldTop)" stroke-width="1.5" /><path d="M32 48 Q50 18 68 48" fill="none" stroke="#FFD700" stroke-width="0.5" opacity="0.6" /><g><rect x="2" y="50" width="30" height="10" rx="2" fill="#111" stroke="url(#goldTop)" stroke-width="1.2" /><path d="M5 53 H28 M5 57 H28" stroke="url(#goldTop)" stroke-width="0.3" opacity="0.4" /><circle cx="5" cy="55" r="1" fill="#FFD700" /><rect x="68" y="50" width="30" height="10" rx="2" fill="#111" stroke="url(#goldTop)" stroke-width="1.2" /><path d="M72 53 H95 M72 57 H95" stroke="url(#goldTop)" stroke-width="0.3" opacity="0.4" /><circle cx="95" cy="55" r="1" fill="#FFD700" /></g><path d="M32 68 C 32 35, 68 35, 68 68 Z" fill="#1A1A1A" stroke="#333" stroke-width="0.5" /><path d="M40 45 Q50 38 60 45" fill="none" stroke="#FFD700" stroke-width="0.2" opacity="0.2" /><path d="M31 62 Q50 56 69 62 L68 70 Q50 64 32 70 Z" fill="url(#goldTop)" /><g transform="translate(50, 48)"><circle cx="0" cy="0" r="10" fill="url(#goldTop)" opacity="0.8" /><circle cx="0" cy="0" r="8" fill="#1A1A1A" /><circle cx="0" cy="0" r="6.5" fill="url(#rubyGrad)" /><circle cx="-1.5" cy="-2" r="1.5" fill="#FFF" opacity="0.6"/><circle cx="1.5" cy="-1" r="1" fill="#FFF" opacity="0.4"/></g><path d="M38 78 Q42 72 46 74 Q44 78 40 80 Q38 82 36 80 Z" fill="url(#goldTop)" stroke="#B8860B" stroke-width="0.3"/><path d="M62 78 Q58 72 54 74 Q56 78 60 80 Q62 82 64 80 Z" fill="url(#goldTop)" stroke="#B8860B" stroke-width="0.3"/><path d="M48 83 Q50 79 52 81 L51 86 Q50 88 49 86 Z" fill="url(#goldTop)" stroke="#B8860B" stroke-width="0.3"/></svg>`
         };
 
         const BADGE_ICONS = {
@@ -898,15 +898,15 @@
             
             '2000_questions': '<img src="images/badges/2000_questions.png" alt="学海无涯">',
             
-            'honglou_characters': '<img src="images/badges/honglou_characters.png" alt="金陵十二钗">',
+            honglou_characters: '<img src="images/badges/honglou_characters.png" alt="金陵十二钗">',
             
-            'sanguo_strategists': '<img src="images/badges/sanguo_strategists.png" alt="卧龙凤雏">',
+            sanguo_strategists: '<img src="images/badges/sanguo_strategists.png" alt="卧龙凤雏">',
             
-            'shuihu_heroes': '<img src="images/badges/shuihu_heroes.png" alt="一百零八将">',
+            shuihu_heroes: '<img src="images/badges/shuihu_heroes.png" alt="一百零八将">',
             
-            'xiyou_plot': '<img src="images/badges/xiyou_plot.png" alt="九九八十一难">',
+            xiyou_plot: '<img src="images/badges/xiyou_plot.png" alt="九九八十一难">',
             
-            'poetry_master': '<img src="images/badges/poetry_master.png" alt="诗词雅士">',
+            poetry_master: '<img src="images/badges/poetry_master.png" alt="诗词雅士">',
             
             rank_top_10: '<img src="images/badges/rank_top_10.png" alt="榜上有名">',
             rank_top_5: '<img src="images/badges/rank_top_5.png" alt="五强争霸">',
@@ -1309,6 +1309,32 @@
                     const result = await response.json();
                     if (result.success && result.data) {
                         cloudStats = result.data;
+                        
+                        if (result.data.avatar) {
+                            const profileData = ProfileManager.getProfileData();
+                            profileData.avatar = result.data.avatar;
+                            ProfileManager.saveProfileData(profileData);
+                            displayAvatar(result.data.avatar);
+                        }
+                        
+                        if (result.data.frame || result.data.frameActive) {
+                            const pointsData = PointsManager.getData();
+                            if (!pointsData.activeAppearance) {
+                                pointsData.activeAppearance = { 
+                                    frame: null, 
+                                    frameActive: false,
+                                    nicknameEffect: null, 
+                                    nicknameActive: false
+                                };
+                            }
+                            if (result.data.frame) {
+                                pointsData.activeAppearance.frame = result.data.frame;
+                            }
+                            if (result.data.frameActive !== undefined) {
+                                pointsData.activeAppearance.frameActive = result.data.frameActive;
+                            }
+                            localStorage.setItem(PointsManager.STORAGE_KEY, JSON.stringify(pointsData));
+                        }
                     }
                 } else {
                     console.log('从云端加载数据失败（本地模式）');

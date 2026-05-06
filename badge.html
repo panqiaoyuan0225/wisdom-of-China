@@ -834,12 +834,13 @@
                         };
                     }
                 } else if (badge.type === 'mastery') {
-                    const masteryData = JSON.parse(localStorage.getItem('category_mastery_v1') || '{}');
-                    const mastered = Object.values(masteryData).filter(v => v === true).length;
+                    const mastery = this.getCategoryMastery(badge.category);
+                    const currentPercent = Math.round(mastery * 100);
+                    const targetPercent = Math.round(badge.target * 100);
                     return {
-                        current: mastered,
-                        target: badge.target || 10,
-                        percent: Math.min(100, Math.round((mastered / (badge.target || 10)) * 100))
+                        current: currentPercent + '%',
+                        target: targetPercent + '%',
+                        percent: Math.min(100, Math.round((mastery / badge.target) * 100))
                     };
                 } else if (badge.type === 'streak') {
                     const currentStreak = this.getCurrentStreak();
@@ -848,6 +849,25 @@
                         target: badge.target,
                         percent: Math.min(100, Math.round((currentStreak / badge.target) * 100))
                     };
+                } else if (badge.type === 'leaderboard') {
+                    const rankData = this.getLeaderboardRank();
+                    if (badge.targetRank) {
+                        const isReached = rankData.rank > 0 && rankData.rank <= badge.targetRank;
+                        return {
+                            current: rankData.rank > 0 && rankData.rank < 999 ? `第${rankData.rank}名` : '未上榜',
+                            target: `前${badge.targetRank}名`,
+                            percent: isReached ? 100 : 0
+                        };
+                    } else if (badge.targetAll) {
+                        const reachedCount = (rankData.rank > 0 && rankData.rank <= badge.targetAll ? 1 : 0) +
+                                             (rankData.time > 0 && rankData.time <= badge.targetAll ? 1 : 0) +
+                                             (rankData.accuracy > 0 && rankData.accuracy <= badge.targetAll ? 1 : 0);
+                        return {
+                            current: reachedCount,
+                            target: 3,
+                            percent: Math.round((reachedCount / 3) * 100)
+                        };
+                    }
                 }
                 return { current: 0, target: 1, percent: 0 };
             },
@@ -887,8 +907,15 @@
                             shouldUnlock = this.isBookCompleted(badge.book);
                         }
                     } else if (badge.type === 'mastery') {
-                        const mastery = this.getCategoryMastery(badge.category);
-                        shouldUnlock = mastery >= badge.target;
+                        const statsData = localStorage.getItem('category_stats_v1');
+                        const stats = statsData ? JSON.parse(statsData) : {};
+                        const categoryStats = stats[badge.category] || { total: 0, correct: 0 };
+                        
+                        // 强制要求至少完成 20 题才能解锁掌握勋章
+                        if (categoryStats.total >= 20) {
+                            const mastery = categoryStats.total > 0 ? categoryStats.correct / categoryStats.total : 0;
+                            shouldUnlock = mastery >= badge.target;
+                        }
                     } else if (badge.type === 'leaderboard') {
                         const rankData = this.getLeaderboardRank();
                         if (badge.targetRank) {

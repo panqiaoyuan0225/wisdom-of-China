@@ -899,6 +899,7 @@
         
         console.log('Supabase 初始化:', SUPABASE_URL ? '成功' : '失败');
     </script>
+<script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/1.2.0-beta.3/libs/cn/index.js" onload="console.log('✅ Coze SDK 加载成功')" onerror="console.error('❌ Coze SDK 加载失败，请检查网络连接')"></script>
 </head>
 <body>
     <div class="falling-leaves" id="fallingLeaves"></div>
@@ -1750,6 +1751,109 @@
         }
 
         initData();
+    </script>
+    <script>
+        (function initCozeChat() {
+            const SUPABASE_URL = window.SUPABASE_CONFIG?.url || 'https://icawhplodojtniydplrb.supabase.co';
+            const SUPABASE_ANON_KEY = window.SUPABASE_CONFIG?.anonKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImljYXdocGxvZG9qdG5peWRwbHJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2OTc2MzgsImV4cCI6MjA4NzI3MzYzOH0._hzQpBdQ5OjoXv_1ns7BzOmwoDX3tU9wNrRjbivO5xQ';
+            const COZE_TOKEN_API = `${SUPABASE_URL}/functions/v1/coze-token`;
+
+            const LOCAL_TOKEN = 'pat_mS5K9H54p47XNQWfrjsCz4Dywg0U9DkcaHgfSYJOo1FzwD5WBNw748kVkHgR2nMz';
+
+            async function fetchCozeToken() {
+                try {
+                    console.log('正在从 Supabase 获取 Coze Token...');
+                    const response = await fetch(COZE_TOKEN_API, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    console.log('✅ 成功获取 Coze Token');
+                    return data.token;
+                } catch (error) {
+                    console.warn('⚠️ 从 Supabase 获取 Token 失败，尝试使用本地 Token...');
+                    if (LOCAL_TOKEN && LOCAL_TOKEN !== 'YOUR_PAT_TOKEN_HERE') {
+                        console.log('✅ 使用本地 Token（开发模式）');
+                        return LOCAL_TOKEN;
+                    }
+                    throw error;
+                }
+            }
+
+            async function checkAndInit() {
+                if (typeof CozeWebSDK !== 'undefined' && CozeWebSDK.WebChatClient) {
+                    console.log('正在初始化 Coze AI 聊天...');
+                    try {
+                        const token = await fetchCozeToken();
+
+                        new CozeWebSDK.WebChatClient({
+                            config: {
+                                type: 'bot',
+                                bot_id: '7636259562638786600',
+                                isIframe: false,
+                            },
+                            auth: {
+                                type: 'token',
+                                token: token,
+                                onRefreshToken: async () => {
+                                    console.log('Token 正在自动刷新...');
+                                    return await fetchCozeToken();
+                                }
+                            },
+                            userInfo: {
+                                id: 'user',
+                                url: 'https://lf-coze-web-cdn.coze.cn/obj/eden-cn/lm-lgvj/ljhwZthlaukjlkulzlp/coze/coze-logo.png',
+                                nickname: 'User',
+                            },
+                            ui: {
+                                base: {
+                                    icon: 'https://lf-coze-web-cdn.coze.cn/obj/eden-cn/lm-lgvj/ljhwZthlaukjlkulzlp/coze/chatsdk-logo.png',
+                                    layout: 'pc',
+                                    lang: 'zh-CN',
+                                    zIndex: 1000
+                                },
+                                header: {
+                                    isShow: true,
+                                    isNeedClose: true,
+                                },
+                                asstBtn: {
+                                    isNeed: true
+                                },
+                                footer: {
+                                    isShow: true,
+                                    expressionText: 'Powered by ...',
+                                },
+                                chatBot: {
+                                    title: '四大名著 AI 助手',
+                                    uploadable: true,
+                                    width: 390,
+                                },
+                            },
+                        });
+                        console.log('Coze AI 聊天初始化成功！');
+                    } catch (error) {
+                        console.error('Coze AI 聊天初始化失败:', error);
+                    }
+                } else {
+                    console.warn('CozeWebSDK 未加载，1秒后重试...');
+                    setTimeout(checkAndInit, 1000);
+                }
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', checkAndInit);
+            } else {
+                checkAndInit();
+            }
+        })();
     </script>
 </body>
 </html>

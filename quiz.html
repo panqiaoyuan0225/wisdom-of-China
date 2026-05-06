@@ -3677,8 +3677,15 @@
                         const count = this.getTotalQuizCount();
                         shouldUnlock = count >= badge.target;
                     } else if (badge.type === 'mastery') {
-                        const mastery = this.getCategoryMastery(badge.category);
-                        shouldUnlock = mastery >= badge.target;
+                        const statsData = localStorage.getItem('category_stats_v1');
+                        const stats = statsData ? JSON.parse(statsData) : {};
+                        const categoryStats = stats[badge.category] || { total: 0, correct: 0 };
+                        
+                        // 强制要求至少完成 20 题才能解锁掌握勋章
+                        if (categoryStats.total >= 20) {
+                            const mastery = categoryStats.total > 0 ? categoryStats.correct / categoryStats.total : 0;
+                            shouldUnlock = mastery >= badge.target;
+                        }
                     }
                     
                     if (shouldUnlock) {
