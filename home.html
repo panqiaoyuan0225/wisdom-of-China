@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>四大名著经典学习网</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary-brown: #8b4513;
+            --secondary-brown: #a0522d;
+            --gold: #d4af37;
+            --light-gold: #f0d78c;
+            --paper-bg: #f5f5dc;
+            --paper-dark: #efe8d0;
+            --ink-black: #2c2c2c;
+            --cinnabar-red: #c41e3a;
+            --bamboo-green: #7CB342;
+            --indigo: #5C6BC0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "SimSun", sans-serif;
+            background: 
+                linear-gradient(135deg, rgba(245,245,220,0.95) 0%, rgba(239,232,208,0.95) 100%),
+                url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(124, 179, 66, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .falling-leaves {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .leaf {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            opacity: 0.6;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        .header-decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, 
+                var(--primary-brown) 0%, 
+                var(--gold) 25%, 
+                var(--cinnabar-red) 50%, 
+                var(--gold) 75%, 
+                var(--primary-brown) 100%);
+            z-index: 100;
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 40px 20px 80px;
+            width: 100%;
+            max-width: 1400px;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .content-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 60px;
+            width: 100%;
+        }
+
+        .right-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 40px;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-title {
+            font-size: 3rem;
+            color: var(--primary-brown);
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .main-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--secondary-brown);
+            margin-top: 20px;
+            letter-spacing: 3px;
+        }
+
+        .welcome-text {
+            font-size: 1.1rem;
+            color: var(--ink-black);
+            background: rgba(255,255,255,0.6);
+            padding: 10px 25px;
+            border-radius: 20px;
+            display: inline-block;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 100;
+            animation: fadeInLeft 0.8s ease;
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .rank-section {
+            margin: 0;
+            animation: fadeInUp 0.8s ease 0.2s both;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 320px;
+            padding: 30px 20px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .topic-button-container {
+            margin-top: 25px;
+            width: 100%;
+            animation: fadeInUp 0.8s ease 0.6s both;
+        }
+
+        .topic-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.5);
+            border-radius: 20px;
+            padding: 30px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .topic-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .topic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.4);
+        }
+
+        .topic-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .topic-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-brown);
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            background: linear-gradient(135deg, #fff9e6, #fff5d6);
+            border: 3px solid var(--gold);
+            border-radius: 50px;
+            padding: 15px 35px;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rank-badge::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .rank-badge:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.4);
+        }
+
+        .rank-badge-icon {
+            width: 50px;
+            height: 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .rank-badge-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-brown);
+            position: relative;
+            z-index: 1;
+        }
+
+        .rank-badge-arrow {
+            color: var(--gold);
+            font-size: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-container {
+            margin-top: 15px;
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--light-gold));
+            border-radius: 10px;
+            transition: width 1s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: progressShine 2s infinite;
+        }
+
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--secondary-brown);
+            margin-top: 8px;
+        }
+
+        .button-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 25px;
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .btn {
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary-brown) 0%, var(--secondary-brown) 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 6px 20px rgba(139, 69, 19, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1;
+            width: 100%;
+            max-width: 200px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(139, 69, 19, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(-4px) scale(1);
+        }
+
+        .btn .emoji {
+            font-size: 3.5rem;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .btn .text {
+            font-size: 1.2rem;
+            color: white;
+            letter-spacing: 2px;
+        }
+
+        .menu-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .menu-btn {
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            transition: all 0.3s;
+        }
+
+        .menu-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .menu-btn span {
+            width: 5px;
+            height: 5px;
+            background: #333;
+            border-radius: 50%;
+        }
+
+        .menu-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            min-width: 160px;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s;
+        }
+
+        .menu-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .menu-item {
+            display: block;
+            width: 100%;
+            padding: 14px 20px;
+            border: none;
+            background: none;
+            text-align: left;
+            font-size: 1rem;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: "Microsoft YaHei", "SimSun", sans-serif;
+        }
+
+        .menu-item:hover {
+            background: #f5f5dc;
+            color: #8b4513;
+        }
+
+        .menu-item:not(:last-child) {
+            border-bottom: 1px solid #eee;
+        }
+
+        .menu-item.logout {
+            color: #c0392b;
+        }
+
+        .menu-item.logout:hover {
+            background: #fdf2f2;
+            color: #e74c3c;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, transparent, rgba(139, 69, 19, 0.05));
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            z-index: 5;
+        }
+
+        .footer-text {
+            color: var(--secondary-brown);
+            font-size: 0.9rem;
+        }
+
+        .footer-divider {
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 10px auto;
+        }
+
+        .feedback-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .feedback-modal.show {
+            display: flex;
+        }
+
+        .feedback-content {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            width: 90%;
+            max-width: 480px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+            position: relative;
+            border: 2px solid var(--gold);
+        }
+
+        .feedback-title {
+            font-size: 1.6rem;
+            color: var(--primary-brown);
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .feedback-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.8rem;
+            color: #999;
+            cursor: pointer;
+            border: none;
+            background: none;
+            line-height: 1;
+            transition: color 0.3s;
+        }
+
+        .feedback-close:hover {
+            color: var(--primary-brown);
+        }
+
+        .feedback-group {
+            margin-bottom: 20px;
+        }
+
+        .feedback-label {
+            display: block;
+            font-size: 1rem;
+            color: var(--ink-black);
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .feedback-input, .feedback-textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: "Microsoft YaHei", sans-serif;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        .feedback-input:focus, .feedback-textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+        }
+
+        .feedback-textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+
+        .feedback-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--gold), var(--light-gold));
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary-brown);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .feedback-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .feedback-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .feedback-success {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .feedback-success-icon {
+            font-size: 4.5rem;
+            margin-bottom: 25px;
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .feedback-success-text {
+            font-size: 1.3rem;
+            color: var(--ink-black);
+        }
+
+        .donate-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .donate-modal.show {
+            display: flex;
+        }
+
+        .donate-content {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            width: 90%;
+            max-width: 420px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+            position: relative;
+            text-align: center;
+            border: 2px solid var(--gold);
+        }
+
+        .donate-title {
+            font-size: 1.6rem;
+            color: var(--primary-brown);
+            margin-bottom: 12px;
+        }
+
+        .donate-subtitle {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .donate-qrcode {
+            width: 240px;
+            height: 240px;
+            margin: 0 auto 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            border: 3px solid var(--gold);
+        }
+
+        .donate-qrcode img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .donate-hint {
+            font-size: 0.95rem;
+            color: #888;
+        }
+
+        .donate-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.8rem;
+            color: #999;
+            cursor: pointer;
+            border: none;
+            background: none;
+            line-height: 1;
+            transition: color 0.3s;
+        }
+
+        .donate-close:hover {
+            color: var(--primary-brown);
+        }
+
+        @media (max-width: 1024px) {
+            .content-wrapper {
+                flex-direction: column;
+                align-items: center;
+                gap: 30px;
+            }
+
+            .right-section {
+                width: 100%;
+                max-width: 400px;
+            }
+
+            .rank-section {
+                min-width: auto;
+                width: 100%;
+            }
+
+            .topic-button-container {
+                margin-top: 20px;
+                max-width: 400px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .welcome-section {
+                margin-bottom: 30px;
+            }
+
+            .main-title {
+                font-size: 2.2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .button-container {
+                gap: 20px;
+                padding: 15px;
+                max-width: 350px;
+            }
+
+            .btn {
+                max-width: 160px;
+            }
+
+            .btn .emoji {
+                font-size: 2.8rem;
+            }
+
+            .btn .text {
+                font-size: 1rem;
+            }
+
+            .rank-badge {
+                padding: 12px 25px;
+            }
+
+            .rank-badge-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .rank-badge-text {
+                font-size: 1rem;
+            }
+
+            .menu-btn {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 20px 15px 60px;
+            }
+
+            .main-title {
+                font-size: 1.8rem;
+            }
+
+            .button-container {
+                gap: 15px;
+                padding: 10px;
+            }
+
+            .btn {
+                max-width: 130px;
+                padding: 15px;
+            }
+
+            .btn .emoji {
+                font-size: 2.5rem;
+            }
+
+            .btn .text {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script>
+        if (!window.SUPABASE_CONFIG || !window.SUPABASE_CONFIG.url) {
+            console.error('配置文件加载失败：SUPABASE_CONFIG 未定义或不完整');
+            // 可以根据需要添加用户界面反馈
+        }
+
+        const SUPABASE_URL = window.SUPABASE_CONFIG.url;
+        const SUPABASE_ANON_KEY = window.SUPABASE_CONFIG.anonKey;
+        const { createClient } = window.supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        console.log('Supabase 初始化:', SUPABASE_URL ? '成功' : '失败');
+    </script>
+<script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/1.2.0-beta.3/libs/cn/index.js" onload="console.log('✅ Coze SDK 加载成功')" onerror="console.error('❌ Coze SDK 加载失败，请检查网络连接')"></script>
+</head>
+<body>
+    <div class="falling-leaves" id="fallingLeaves"></div>
+
+    <div class="menu-container">
+        <button class="menu-btn" id="menuBtn" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="menu-dropdown" id="menuDropdown">
+            <button class="menu-item logout" onclick="handleLogout()">退出登录</button>
+            <button class="menu-item" onclick="handleDonate()">赞助开发者</button>
+            <button class="menu-item" onclick="handleFeedback()">反馈与建议</button>
+        </div>
+    </div>
+
+    <div class="feedback-modal" id="feedbackModal">
+        <div class="feedback-content">
+            <button class="feedback-close" onclick="closeFeedbackModal()">&times;</button>
+            <h2 class="feedback-title">反馈与建议</h2>
+            <form id="feedbackForm" action="https://forminit.com/f/kq5xv541027" method="POST">
+                <div class="feedback-group">
+                    <label class="feedback-label">您的邮箱（可选）</label>
+                    <input type="email" class="feedback-input" name="fi-email-contact" placeholder="方便我们回复您">
+                </div>
+                <div class="feedback-group">
+                    <label class="feedback-label">反馈内容</label>
+                    <textarea class="feedback-textarea" name="fi-text-message" placeholder="请输入您的反馈或建议..." required></textarea>
+                </div>
+                <button type="submit" class="feedback-submit" id="feedbackSubmitBtn">提交反馈</button>
+            </form>
+            <div class="feedback-success" id="feedbackSuccess" style="display: none;">
+                <div class="feedback-success-icon">✅</div>
+                <div class="feedback-success-text">感谢您的反馈！</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="donate-modal" id="donateModal">
+        <div class="donate-content">
+            <button class="donate-close" onclick="closeDonateModal()">&times;</button>
+            <h2 class="donate-title">☕ 赞助开发者</h2>
+            <p class="donate-subtitle">感谢您的支持，让项目持续发展</p>
+            <div class="donate-qrcode">
+                <img src="images/zanzhuma.jpg" alt="赞助二维码">
+            </div>
+            <p class="donate-hint">扫码支持开发者</p>
+        </div>
+    </div>
+
+    <div class="welcome-text" id="welcomeText">欢迎回来</div>
+    
+    <div class="main-container">
+        <div class="welcome-section">
+            <h1 class="main-title">经典学习网</h1>
+            <p class="subtitle">品读经典 · 传承文化</p>
+        </div>
+
+        <div class="content-wrapper">
+            <div class="button-container">
+            <a href="book.html" class="btn" data-require-auth="false">
+                <i class="fa-solid fa-book-open" style="font-size: 3.5rem; color: #f97316;"></i>
+                <span class="text">名著阅读</span>
+            </a>
+            <a href="rank.html" class="btn" data-require-auth="true">
+                <i class="fa-solid fa-ranking-star" style="font-size: 3.5rem; color: #ef4444;"></i>
+                <span class="text">排行榜</span>
+            </a>
+            <a href="badge.html" class="btn" data-require-auth="true">
+                <i class="fa-solid fa-medal" style="font-size: 3.5rem; color: #14b8a6;"></i>
+                <span class="text">勋章墙</span>
+            </a>
+            <a href="level.html" class="btn" data-require-auth="true">
+                 <i class="fa-solid fa-trophy" style="font-size: 3.5rem; color: #eab308;"></i>
+                <span class="text">段位</span>
+            </a>
+            <a href="quiz.html" class="btn" data-require-auth="true">
+                <i class="fa-solid fa-pen-to-square" style="font-size: 3.5rem; color: #3b82f6;"></i>
+                <span class="text">答题练习</span>
+            </a>
+            <a href="profile.html" class="btn" data-require-auth="true">
+                <i class="fa-solid fa-user" style="font-size: 3.5rem; color: #6b7280;"></i>
+                <span class="text">个人档案</span>
+            </a>
+            <a href="shop.html" class="btn" data-require-auth="true">
+                <i class="fa-solid fa-store" style="font-size: 3.5rem; color: #a855f7;"></i>
+                <span class="text">书卷商城</span>
+            </a>
+        </div>
+
+        <div class="right-section">
+            <div class="rank-section">
+                <a href="level.html" class="rank-badge" id="rankBadge" data-require-auth="true">
+                    <div class="rank-badge-icon" id="rankBadgeIcon"></div>
+                    <span class="rank-badge-text" id="rankBadgeText">加载中...</span>
+                    <span class="rank-badge-arrow">›</span>
+                </a>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">加载中...</div>
+                </div>
+            </div>
+
+            <div class="topic-button-container">
+                <a href="topic.html" class="topic-card" data-require-auth="true">
+                    <i class="fa-solid fa-comments" style="font-size: 3rem; color: #8b5cf6;"></i>
+                    <span class="topic-text">四大名著争议话题</span>
+                </a>
+            </div>
+
+            <div class="topic-button-container" style="margin-top: 25px;">
+                <a href="original.html" class="topic-card" data-require-auth="false">
+                    <i class="fa-solid fa-book" style="font-size: 3rem; color: #059669;"></i>
+                    <span class="topic-text">四大名著整本原文</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-text">传承经典文化 · 弘扬民族精神</div>
+        <div class="footer-divider"></div>
+        <div class="footer-text">© 2026 四大名著经典学习网</div>
+    </div>
+
+    <script>
+        function checkGuestAccess() {
+            const isGuest = sessionStorage.getItem('isGuest') === 'true';
+            if (!isGuest) return;
+
+            document.querySelectorAll('[data-require-auth="true"]').forEach(el => {
+                el.style.opacity = '0.5';
+                el.style.pointerEvents = 'none';
+                el.style.cursor = 'not-allowed';
+                el.style.position = 'relative';
+                
+                el.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    alert('游客模式无法使用此功能，请先登录');
+                }, true);
+                
+                if (el.classList.contains('rank-badge')) {
+                    el.querySelector('.rank-badge-text').textContent = '请登录';
+                    el.querySelector('.rank-badge-icon').innerHTML = '';
+                }
+            });
+
+            const progressText = document.getElementById('progressText');
+            if (progressText) {
+                progressText.textContent = '游客模式，部分功能受限';
+            }
+
+            const welcomeText = document.getElementById('welcomeText');
+            if (welcomeText) {
+                welcomeText.textContent = '欢迎，游客！';
+            }
+        }
+
+        function createFallingLeaves() {
+            const container = document.getElementById('fallingLeaves');
+            const leafCount = 8;
+            const emojis = ['🍃',  '', ''];
+
+            for (let i = 0; i < leafCount; i++) {
+                const leaf = document.createElement('div');
+                leaf.className = 'leaf';
+                leaf.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                leaf.style.left = Math.random() * 100 + '%';
+                leaf.style.animationDelay = Math.random() * 10 + 's';
+                leaf.style.animationDuration = (15 + Math.random() * 10) + 's';
+                leaf.style.fontSize = (15 + Math.random() * 10) + 'px';
+                container.appendChild(leaf);
+            }
+        }
+
+        createFallingLeaves();
+
+        function toggleMenu() {
+            const dropdown = document.getElementById('menuDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        document.addEventListener('click', function(event) {
+            const menuContainer = document.querySelector('.menu-container');
+            const dropdown = document.getElementById('menuDropdown');
+            if (!menuContainer.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        async function handleLogout() {
+            if (confirm('确定要退出登录吗？')) {
+                const userId = sessionStorage.getItem('userId');
+                const username = sessionStorage.getItem('currentUser');
+                
+                if (userId || username) {
+                    try {
+                        if (window.DataManager && typeof window.DataManager.syncToCloud === 'function') {
+                            await window.DataManager.syncToCloud();
+                        }
+                    } catch (e) {
+                        console.error('同步数据失败:', e);
+                    }
+                }
+                
+                // 使用 DataManager 统一清理所有本地数据
+                if (window.DataManager && typeof window.DataManager.clearLocalData === 'function') {
+                    window.DataManager.checkUserMatch(); // 额外检查，确保清理逻辑被触发
+                    window.DataManager.clearLocalData();
+                } else {
+                    // 备用方案
+                    localStorage.removeItem('quiz_history_v1');
+                    localStorage.removeItem('quiz_wrong_book_v1');
+                    localStorage.removeItem('category_stats_v1');
+                    localStorage.removeItem('category_mastery_v1');
+                    localStorage.removeItem('browsing_time_v1');
+                    localStorage.removeItem('badge_data_v1');
+                    localStorage.removeItem('leaderboard_rank_v1');
+                    localStorage.removeItem('user_profile_v1');
+                    localStorage.removeItem('user_points_v1');
+                    localStorage.removeItem('pending_badge_notification');
+                }
+                
+                sessionStorage.removeItem('isLoggedIn');
+                sessionStorage.removeItem('currentUser');
+                sessionStorage.removeItem('userId');
+                sessionStorage.removeItem('userEmail');
+                sessionStorage.removeItem('isGuest');
+                
+                window.location.href = 'index.html';
+            }
+        }
+
+        function handleDonate() {
+            document.getElementById('donateModal').classList.add('show');
+            document.getElementById('menuDropdown').classList.remove('show');
+        }
+
+        function closeDonateModal() {
+            document.getElementById('donateModal').classList.remove('show');
+        }
+
+        document.getElementById('donateModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDonateModal();
+            }
+        });
+
+        function handleFeedback() {
+            document.getElementById('feedbackModal').classList.add('show');
+            document.getElementById('menuDropdown').classList.remove('show');
+        }
+
+        function closeFeedbackModal() {
+            document.getElementById('feedbackModal').classList.remove('show');
+            document.getElementById('feedbackForm').reset();
+            document.getElementById('feedbackForm').style.display = 'block';
+            document.getElementById('feedbackSuccess').style.display = 'none';
+            document.getElementById('feedbackSubmitBtn').disabled = false;
+            document.getElementById('feedbackSubmitBtn').textContent = '提交反馈';
+        }
+
+        async function submitFeedback(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('feedbackForm');
+            const submitBtn = document.getElementById('feedbackSubmitBtn');
+            const messageInput = form.querySelector('textarea[name="fi-text-message"]');
+            const contactInput = form.querySelector('input[name="fi-email-contact"]');
+            
+            const message = messageInput.value.trim();
+            
+            if (!message) {
+                alert('请输入反馈内容');
+                return;
+            }
+            
+            if (message.length < 5) {
+                alert('反馈内容至少需要 5 个字符');
+                return;
+            }
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = '提交中...';
+            
+            try {
+                const formData = new FormData();
+                formData.append('fi-email-contact', contactInput.value || '');
+                formData.append('fi-text-message', message);
+                
+                const response = await fetch('https://forminit.com/f/kq5xv541027', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    form.style.display = 'none';
+                    document.getElementById('feedbackSuccess').style.display = 'block';
+                } else {
+                    const text = await response.text();
+                    console.error('Forminit response:', text);
+                    throw new Error('提交失败');
+                }
+            } catch (error) {
+                alert('提交失败，请稍后重试');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '提交反馈';
+            }
+        }
+
+        document.getElementById('feedbackModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeFeedbackModal();
+            }
+        });
+
+        const RANKS = [
+            { name: '蒙童', icon: 'mengtong', color: '#7CB342', stages: [300, 600, 900] },
+            { name: '书生', icon: 'shusheng', color: '#5C6BC0', stages: [1300, 1800, 2400] },
+            { name: '秀才', icon: 'xiucai', color: '#81D4FA', stages: [3500, 4500, 5500] },
+            { name: '举人', icon: 'juren', color: '#E53935', stages: [7000, 8000, 9000] },
+            { name: '进士', icon: 'jinshi', color: '#AB47BC', stages: [11000, 12500, 14000] },
+            { name: '翰林', icon: 'hanlin', color: '#00897B', stages: [16000, 17500, 19000] },
+            { name: '状元', icon: 'zhuangyuan', color: '#FFD700', stages: [20000] }
+        ];
+
+        const RANK_ICONS = {
+            mengtong: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="bambooGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#C5E1A5"/>
+            <stop offset="50%" style="stop-color:#DCEDC8"/>
+            <stop offset="100%" style="stop-color:#C5E1A5"/>
+        </linearGradient>
+    </defs>
+
+    <line x1="20" y1="35" x2="80" y2="35" stroke="#7CB342" stroke-width="1.5" />
+    <line x1="20" y1="65" x2="80" y2="65" stroke="#7CB342" stroke-width="1.5" />
+
+    <rect x="22" y="25" width="10" height="50" rx="1.5" fill="url(#bambooGrad)" stroke="#9CCC65" stroke-width="0.5" />
+    <rect x="33" y="25" width="10" height="50" rx="1.5" fill="url(#bambooGrad)" stroke="#9CCC65" stroke-width="0.5" />
+    <rect x="44" y="25" width="10" height="50" rx="1.5" fill="url(#bambooGrad)" stroke="#9CCC65" stroke-width="0.5" />
+    <rect x="55" y="25" width="10" height="50" rx="1.5" fill="url(#bambooGrad)" stroke="#9CCC65" stroke-width="0.5" />
+    <rect x="66" y="25" width="10" height="50" rx="1.5" fill="url(#bambooGrad)" stroke="#9CCC65" stroke-width="0.5" />
+</svg>`,
+            
+            shusheng: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="brushHandle" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#4E342E"/>
+            <stop offset="30%" style="stop-color:#8D6E63"/>
+            <stop offset="60%" style="stop-color:#5D4037"/>
+            <stop offset="100%" style="stop-color:#3E2723"/>
+        </linearGradient>
+        
+        <linearGradient id="brushTip" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#666"/>
+            <stop offset="70%" style="stop-color:#222"/>
+            <stop offset="100%" style="stop-color:#000"/>
+        </linearGradient>
+    </defs>
+
+    <g transform="rotate(-20 50 50)">
+        <circle cx="50" cy="12" r="1.5" fill="none" stroke="#8D6E63" stroke-width="0.5"/>
+        
+        <rect x="47.5" y="14" width="5" height="50" rx="1.5" fill="url(#brushHandle)" />
+        
+        <path d="M47 62 L53 62 L54 68 Q54 70 52 70 L48 70 Q46 70 46 68 Z" fill="#212121" />
+        <rect x="46.5" y="62" width="7" height="1.5" fill="#C0C0C0" opacity="0.3" />
+        <path d="M46 69 
+                 Q46 75 44 82 
+                 Q43 92 50 95 
+                 Q57 92 56 82 
+                 Q54 75 54 69 
+                 Z" fill="url(#brushTip)" />
+        
+        <path d="M48 72 Q47 80 49 88" stroke="white" stroke-width="0.3" opacity="0.2" fill="none" />
+        <path d="M51 75 Q52 82 51 90" stroke="white" stroke-width="0.2" opacity="0.1" fill="none" />
+    </g>
+</svg>`,
+            
+            xiucai: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="fanPaper" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#F5F5DC"/>
+            <stop offset="50%" style="stop-color:#FFFDE7"/>
+            <stop offset="100%" style="stop-color:#F5F5DC"/>
+        </linearGradient>
+        <linearGradient id="bambooBone" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#795548"/>
+            <stop offset="50%" style="stop-color:#A1887F"/>
+            <stop offset="100%" style="stop-color:#5D4037"/>
+        </linearGradient>
+    </defs>
+
+    <path d="M10 75 Q10 25 50 15 Q90 25 90 75 L55 85 Q50 87 45 85 Z" fill="url(#fanPaper)" stroke="#D7CCC8" stroke-width="0.5"/>
+    
+    <g stroke="#E0E0E0" stroke-width="0.2" opacity="0.6">
+        <line x1="50" y1="85" x2="20" y2="45" />
+        <line x1="50" y1="85" x2="35" y2="25" />
+        <line x1="50" y1="85" x2="50" y2="15" />
+        <line x1="50" y1="85" x2="65" y2="25" />
+        <line x1="50" y1="85" x2="80" y2="45" />
+    </g>
+
+    <path d="M10 75 L14 78 L50 85 L50 82 Z" fill="url(#bambooBone)" />
+    <path d="M90 75 L86 78 L50 85 L50 82 Z" fill="url(#bambooBone)" />
+
+    <path d="M65 60 Q68 50 75 45 M67 55 Q72 53 78 55 M64 58 Q60 50 62 42" stroke="#424242" stroke-width="0.8" fill="none" opacity="0.7"/>
+    
+    <text x="50" y="50" text-anchor="middle" font-family="serif" font-size="8" fill="#212121" style="writing-mode: tb;">清风</text>
+
+    <circle cx="50" cy="85" r="2.5" fill="#3E2723"/>
+    <path d="M50 87.5 Q50 92 48 94 M50 87.5 Q50 92 52 94" stroke="#B71C1C" stroke-width="1" fill="none" />
+</svg>`,
+            
+            juren: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="lanternBody" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#D32F2F"/>
+            <stop offset="50%" style="stop-color:#FF5252"/>
+            <stop offset="100%" style="stop-color:#B71C1C"/>
+        </linearGradient>
+        <linearGradient id="goldFrame" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#FFD700"/>
+            <stop offset="50%" style="stop-color:#FFF176"/>
+            <stop offset="100%" style="stop-color:#FFA000"/>
+        </linearGradient>
+    </defs>
+
+    <path d="M50 5 L50 15" stroke="#424242" stroke-width="1.5" fill="none"/>
+    <rect x="42" y="15" width="16" height="4" rx="1" fill="#3E2723"/>
+
+    <path d="M30 20 L70 20 L75 45 L70 70 L30 70 L25 45 Z" fill="url(#lanternBody)" stroke="url(#goldFrame)" stroke-width="1.5"/>
+    
+    <line x1="30" y1="20" x2="30" y2="70" stroke="#FFCDD2" stroke-width="0.5" opacity="0.3"/>
+    <line x1="70" y1="20" x2="70" y2="70" stroke="#FFCDD2" stroke-width="0.5" opacity="0.3"/>
+
+    <text x="50" y="52" text-anchor="middle" font-family="serif" font-size="22" fill="#FFD700" font-weight="900" style="text-shadow: 0 0 5px rgba(255,215,0,0.5);">才</text>
+    
+    <rect x="38" y="70" width="24" height="5" rx="1" fill="#3E2723"/>
+
+    <g stroke="#D32F2F" stroke-width="1.2">
+        <path d="M42 75 Q40 88 40 95" fill="none"/>
+        <path d="M46 75 Q46 90 46 98" fill="none"/>
+        <path d="M50 75 L50 99" fill="none" stroke="#FF5252"/>
+        <path d="M54 75 Q54 90 54 98" fill="none"/>
+        <path d="M58 75 Q60 88 60 95" fill="none"/>
+    </g>
+    
+    <circle cx="50" cy="78" r="2.5" fill="url(#goldFrame)"/>
+</svg>`,
+            
+            jinshi: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="towerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#9575CD"/>
+            <stop offset="100%" style="stop-color:#512DA8"/>
+        </linearGradient>
+        <radialGradient id="petalGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#FFF9C4"/>
+            <stop offset="70%" style="stop-color:#F06292"/>
+            <stop offset="100%" style="stop-color:#880E4F"/>
+        </radialGradient>
+        <radialGradient id="centerSun" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#FFF176"/>
+            <stop offset="100%" style="stop-color:#FBC02D"/>
+        </radialGradient>
+    </defs>
+
+    <g opacity="0.15">
+        <path d="M40 95 L60 95 L58 75 L42 75 Z" fill="url(#towerGrad)"/>
+        <path d="M43 75 L57 75 L55 58 L45 58 Z" fill="url(#towerGrad)"/>
+        <path d="M46 58 L54 58 L52 45 L48 45 Z" fill="url(#towerGrad)"/>
+        <path d="M49 45 L51 45 L50 38 Z" fill="url(#towerGrad)"/>
+    </g>
+
+    <g transform="translate(50, 55)">
+        <circle cx="0" cy="-12" r="10" fill="url(#petalGrad)" opacity="0.9"/>
+        <circle cx="11" cy="-4" r="10" fill="url(#petalGrad)" opacity="0.9"/>
+        <circle cx="7" cy="10" r="10" fill="url(#petalGrad)" opacity="0.9"/>
+        <circle cx="-7" cy="10" r="10" fill="url(#petalGrad)" opacity="0.9"/>
+        <circle cx="-11" cy="-4" r="10" fill="url(#petalGrad)" opacity="0.9"/>
+        
+        <g scale="0.6">
+            <path d="M-6 -6 Q0 -18 6 -6 Q18 0 6 6 Q0 18 -6 6 Q-18 0 -6 -6 Z" fill="white" opacity="0.4"/>
+        </g>
+        
+        <circle cx="0" cy="0" r="4.5" fill="url(#centerSun)"/>
+        <circle cx="0" cy="0" r="2" fill="#F9A825"/>
+        
+        <g stroke="#FBC02D" stroke-width="0.3" opacity="0.8">
+            <line x1="0" y1="0" x2="0" y2="-6"/>
+            <line x1="0" y1="0" x2="5" y2="-3"/>
+            <line x1="0" y1="0" x2="5" y2="3"/>
+            <line x1="0" y1="0" x2="0" y2="6"/>
+            <line x1="0" y1="0" x2="-5" y2="3"/>
+            <line x1="0" y1="0" x2="-5" y2="-3"/>
+        </g>
+    </g>
+
+    <path d="M25 25 Q30 20 35 25 T45 25" fill="none" stroke="#CE93D8" stroke-width="1" opacity="0.4"/>
+    <path d="M55 15 Q60 10 65 15 T75 15" fill="none" stroke="#CE93D8" stroke-width="1" opacity="0.4"/>
+</svg>`,
+            
+            hanlin: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#00695C"/>
+            <stop offset="50%" style="stop-color:#4DB6AC"/>
+            <stop offset="100%" style="stop-color:#004D40"/>
+        </linearGradient>
+        <linearGradient id="silkGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#FFD54F"/>
+            <stop offset="100%" style="stop-color:#FF8F00"/>
+        </linearGradient>
+    </defs>
+
+    <g transform="translate(50, 50)">
+        <path d="M5 0 C 25 -20, 45 0, 30 15 C 20 25, 5 10, 0 0" 
+              fill="none" stroke="url(#emeraldGrad)" stroke-width="4" stroke-linecap="round" />
+        <path d="M-5 0 C -25 -20, -45 0, -30 15 C -20 25, -5 10, 0 0" 
+              fill="none" stroke="url(#emeraldGrad)" stroke-width="4" stroke-linecap="round" />
+        
+        <circle cx="0" cy="0" r="3" fill="#004D40" />
+        
+        <path d="M-32 8 Q-20 18 -8 5" fill="none" stroke="#B2DFDB" stroke-width="0.8" opacity="0.6" />
+        <path d="M32 8 Q20 18 8 5" fill="none" stroke="#B2DFDB" stroke-width="0.8" opacity="0.6" />
+    </g>
+
+    <g opacity="0.8">
+        <path d="M47 55 Q45 75 42 90" fill="none" stroke="url(#silkGrad)" stroke-width="1.2" stroke-linecap="round" />
+        <path d="M53 55 Q55 75 58 90" fill="none" stroke="url(#silkGrad)" stroke-width="1.2" stroke-linecap="round" />
+        <circle cx="44" cy="70" r="1.5" fill="#4DB6AC" />
+        <circle cx="56" cy="70" r="1.5" fill="#4DB6AC" />
+    </g>
+
+    <circle cx="50" cy="45" r="25" fill="url(#emeraldGrad)" opacity="0.05" />
+</svg>`,
+            
+            zhuangyuan: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <radialGradient id="haloGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#FF5252; stop-opacity:0.4"/>
+            <stop offset="70%" style="stop-color:#B71C1C; stop-opacity:0.1"/>
+            <stop offset="100%" style="stop-color:#B71C1C; stop-opacity:0"/>
+        </radialGradient>
+        
+        <linearGradient id="goldTop" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#FFF176"/>
+            <stop offset="50%" style="stop-color:#FFD700"/>
+            <stop offset="100%" style="stop-color:#FFA000"/>
+        </linearGradient>
+        
+        <radialGradient id="rubyGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#FF8A80"/>
+            <stop offset="60%" style="stop-color:#D32F2F"/>
+            <stop offset="100%" style="stop-color:#5D4037"/>
+        </radialGradient>
+    </defs>
+
+    <circle cx="50" cy="45" r="45" fill="url(#haloGrad)" />
+
+    <path d="M25 55 Q50 5 75 55" fill="#1A1A1A" stroke="url(#goldTop)" stroke-width="1.5" />
+    <path d="M32 48 Q50 18 68 48" fill="none" stroke="#FFD700" stroke-width="0.5" opacity="0.6" />
+
+    <g>
+        <rect x="2" y="50" width="30" height="10" rx="2" fill="#111" stroke="url(#goldTop)" stroke-width="1.2" />
+        <path d="M5 53 H28 M5 57 H28" stroke="url(#goldTop)" stroke-width="0.3" opacity="0.4" />
+        <circle cx="5" cy="55" r="1" fill="#FFD700" />
+        <rect x="68" y="50" width="30" height="10" rx="2" fill="#111" stroke="url(#goldTop)" stroke-width="1.2" />
+        <path d="M72 53 H95 M72 57 H95" stroke="url(#goldTop)" stroke-width="0.3" opacity="0.4" />
+        <circle cx="95" cy="55" r="1" fill="#FFD700" />
+    </g>
+
+    <path d="M32 68 C 32 35, 68 35, 68 68 Z" fill="#1A1A1A" stroke="#333" stroke-width="0.5" />
+    <path d="M40 45 Q50 38 60 45" fill="none" stroke="#FFD700" stroke-width="0.2" opacity="0.2" />
+    
+    <path d="M31 62 Q50 56 69 62 L68 70 Q50 64 32 70 Z" fill="url(#goldTop)" />
+
+    <g transform="translate(50, 48)">
+        <circle cx="0" cy="0" r="10" fill="url(#goldTop)" opacity="0.8" />
+        <circle cx="0" cy="0" r="8" fill="#1A1A1A" />
+        <circle cx="0" cy="0" r="6.5" fill="url(#rubyGrad)" />
+        <circle cx="-1.5" cy="-1.5" r="1.5" fill="white" opacity="0.3" />
+        <g stroke="#FFD700" stroke-width="0.6">
+            <line x1="0" y1="-10" x2="0" y2="-13" />
+            <line x1="10" y1="0" x2="13" y2="0" />
+            <line x1="-10" y1="0" x2="-13" y2="0" />
+            <path d="M-5 -11 Q0 -15 5 -11" fill="none" stroke-width="0.4" />
+        </g>
+    </g>
+
+    <path d="M30 40 Q25 30 30 20" fill="none" stroke="white" stroke-width="0.8" opacity="0.4" />
+    <path d="M70 40 Q75 30 70 20" fill="none" stroke="white" stroke-width="0.8" opacity="0.4" />
+
+    <path d="M36 70 Q35 78 28 82" fill="none" stroke="#B71C1C" stroke-width="3.5" stroke-linecap="round" />
+    <path d="M64 70 Q65 78 72 82" fill="none" stroke="#B71C1C" stroke-width="3.5" stroke-linecap="round" />
+</svg>`
+        };
+
+        const TOTAL_QUESTIONS = 800;
+        const STORAGE_KEY = 'quiz_history_v1';
+
+        function getHistoryData() {
+            try {
+                const data = localStorage.getItem(STORAGE_KEY);
+                return data ? JSON.parse(data) : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function calculateMastery() {
+            const history = getHistoryData();
+            let mastered = 0;
+            Object.values(history).forEach(item => {
+                if (item.totalAttempts > 0 && (item.correctCount / item.totalAttempts) >= 0.8) {
+                    mastered++;
+                }
+            });
+            return mastered;
+        }
+
+        function getRankByMastery(masteryPercent) {
+            for (let i = RANKS.length - 1; i >= 0; i--) {
+                const rank = RANKS[i];
+                for (let j = rank.stages.length - 1; j >= 0; j--) {
+                    if (masteryPercent >= rank.stages[j]) {
+                        return { rank, stageIndex: j, stageLabel: ['Ⅰ', 'Ⅱ', 'Ⅲ'][j] || '' };
+                    }
+                }
+            }
+            return { rank: RANKS[0], stageIndex: -1, stageLabel: '' };
+        }
+
+        function getNextRankThreshold(currentRankIndex, currentStageIndex) {
+            if (currentRankIndex >= RANKS.length - 1 && currentStageIndex >= RANKS[currentRankIndex].stages.length - 1) {
+                return 100;
+            }
+            
+            if (currentStageIndex < RANKS[currentRankIndex].stages.length - 1) {
+                return RANKS[currentRankIndex].stages[currentStageIndex + 1];
+            }
+            
+            if (currentRankIndex < RANKS.length - 1) {
+                return RANKS[currentRankIndex + 1].stages[0];
+            }
+            
+            return 100;
+        }
+
+        function getRankByPoints(points) {
+            for (let i = RANKS.length - 1; i >= 0; i--) {
+                const rank = RANKS[i];
+                for (let j = rank.stages.length - 1; j >= 0; j--) {
+                    if (points >= rank.stages[j]) {
+                        return {
+                            rank: rank,
+                            stageIndex: j,
+                            stage: j + 1,
+                            stageLabel: ['Ⅰ', 'Ⅱ', 'Ⅲ'][j] || ''
+                        };
+                    }
+                }
+            }
+            return {
+                rank: RANKS[0],
+                stageIndex: -1,
+                stage: 0,
+                stageLabel: ''
+            };
+        }
+
+        function getNextTarget(currentPoints) {
+            for (const rank of RANKS) {
+                for (let i = 0; i < rank.stages.length; i++) {
+                    if (currentPoints < rank.stages[i]) {
+                        return {
+                            target: rank.stages[i],
+                            rank: rank,
+                            stage: i + 1
+                        };
+                    }
+                }
+            }
+            return null;
+        }
+
+        function updateRankBadge() {
+            const totalPoints = PointsManager.getTotalPoints();
+            const currentRank = getRankByPoints(totalPoints);
+            
+            const rankName = currentRank.rank.name + (currentRank.stageLabel ? ' ' + currentRank.stageLabel : '');
+            document.getElementById('rankBadgeText').textContent = rankName;
+            document.getElementById('rankBadgeIcon').innerHTML = RANK_ICONS[currentRank.rank.icon];
+            document.getElementById('rankBadge').style.borderColor = currentRank.rank.color;
+            
+            // 计算书卷进度
+            const nextTarget = getNextTarget(totalPoints);
+            let progressPercent;
+            if (nextTarget) {
+                const prevTarget = currentRank.stageIndex >= 0 
+                    ? currentRank.rank.stages[currentRank.stageIndex] 
+                    : 0;
+                const range = nextTarget.target - prevTarget;
+                const current = totalPoints - prevTarget;
+                progressPercent = Math.round((current / range) * 100);
+            } else {
+                progressPercent = 100;
+            }
+            
+            document.getElementById('progressFill').style.width = progressPercent + '%';
+            document.getElementById('progressText').textContent = `当前书卷 ${totalPoints}`;
+            
+            if (nextTarget) {
+                const nextRankName = nextTarget.rank.name + ' ' + (['Ⅰ', 'Ⅱ', 'Ⅲ'][nextTarget.stage - 1] || '');
+                const remaining = nextTarget.target - totalPoints;
+                document.getElementById('progressText').textContent += ` · 再获 ${remaining} 书卷可升级${nextRankName}`;
+            } else {
+                document.getElementById('progressText').textContent += ` · 已达到最高等级`;
+            }
+        }
+
+        function updateWelcomeText() {
+            const currentUser = sessionStorage.getItem('currentUser');
+            const welcomeText = document.getElementById('welcomeText');
+            
+            if (currentUser) {
+                welcomeText.textContent = `欢迎回来，${currentUser}！`;
+            } else {
+                welcomeText.textContent = '欢迎学习四大名著经典';
+            }
+        }
+
+        // 书卷管理器
+        const PointsManager = {
+            STORAGE_KEY: 'user_points_v1',
+            
+            getData() {
+                try {
+                    const data = localStorage.getItem(this.STORAGE_KEY);
+                    return data ? JSON.parse(data) : {
+                        totalPoints: 0,
+                        todayPoints: 0,
+                        lastDate: '',
+                        pointsHistory: [],
+                        ownedItems: {},
+                        streak: 0
+                    };
+                } catch (e) {
+                    return {
+                        totalPoints: 0,
+                        todayPoints: 0,
+                        lastDate: '',
+                        pointsHistory: [],
+                        ownedItems: {},
+                        streak: 0
+                    };
+                }
+            },
+            
+            getTotalPoints() {
+                return this.getData().totalPoints;
+            }
+        };
+
+        function updatePointsDisplay() {
+            const pointsDisplay = document.getElementById('homePointsDisplay');
+            if (pointsDisplay) {
+                pointsDisplay.textContent = PointsManager.getTotalPoints();
+            }
+        }
+
+        window.addEventListener('storage', function(e) {
+            if (e.key === STORAGE_KEY) {
+                updateRankBadge();
+            }
+            if (e.key === 'user_points_v1') {
+                updatePointsDisplay();
+            }
+        });
+
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                updateRankBadge();
+            }
+        });
+
+        async function initData() {
+            checkGuestAccess();
+            
+            const isGuest = sessionStorage.getItem('isGuest') === 'true';
+            if (isGuest) return;
+            
+            window.DataManager.checkUserMatch();
+            updateWelcomeText();
+            updatePointsDisplay();
+            
+            if (window.DataManager && typeof window.DataManager.loadFromCloud === 'function') {
+                try {
+                    const success = await window.DataManager.loadFromCloud();
+                    if (success) {
+                        updatePointsDisplay();
+                        updateRankBadge();
+                    }
+                } catch (error) {
+                    console.error('加载数据失败:', error);
+                }
+            } else {
+                console.warn('DataManager 未加载，跳过云端数据同步');
+            }
+            
+            updateRankBadge();
+            
+            recordLoginStreak();
+        }
+
+        function recordLoginStreak() {
+            try {
+                const today = new Date().toDateString();
+                let streakData = { lastLoginDate: null, currentStreak: 0, bestStreak: 0 };
+                try {
+                    const saved = localStorage.getItem('streak_data_v1');
+                    if (saved) streakData = JSON.parse(saved);
+                } catch (e) {}
+                
+                if (streakData.lastLoginDate === today) return;
+                
+                const yesterday = new Date(Date.now() - 86400000).toDateString();
+                
+                if (streakData.lastLoginDate === yesterday) {
+                    streakData.currentStreak += 1;
+                } else {
+                    streakData.currentStreak = 1;
+                }
+                
+                streakData.lastLoginDate = today;
+                if (streakData.currentStreak > streakData.bestStreak) {
+                    streakData.bestStreak = streakData.currentStreak;
+                }
+                
+                localStorage.setItem('streak_data_v1', JSON.stringify(streakData));
+            } catch (e) {}
+        }
+
+        initData();
+    </script>
+    <script>
+        (function initCozeChat() {
+            const SUPABASE_URL = window.SUPABASE_CONFIG?.url || 'https://icawhplodojtniydplrb.supabase.co';
+            const SUPABASE_ANON_KEY = window.SUPABASE_CONFIG?.anonKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImljYXdocGxvZG9qdG5peWRwbHJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2OTc2MzgsImV4cCI6MjA4NzI3MzYzOH0._hzQpBdQ5OjoXv_1ns7BzOmwoDX3tU9wNrRjbivO5xQ';
+            const COZE_TOKEN_API = `${SUPABASE_URL}/functions/v1/coze-token`;
+
+            const LOCAL_TOKEN = 'pat_mS5K9H54p47XNQWfrjsCz4Dywg0U9DkcaHgfSYJOo1FzwD5WBNw748kVkHgR2nMz';
+
+            async function fetchCozeToken() {
+                try {
+                    console.log('正在从 Supabase 获取 Coze Token...');
+                    const response = await fetch(COZE_TOKEN_API, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    console.log('✅ 成功获取 Coze Token');
+                    return data.token;
+                } catch (error) {
+                    console.warn('⚠️ 从 Supabase 获取 Token 失败，尝试使用本地 Token...');
+                    if (LOCAL_TOKEN && LOCAL_TOKEN !== 'YOUR_PAT_TOKEN_HERE') {
+                        console.log('✅ 使用本地 Token（开发模式）');
+                        return LOCAL_TOKEN;
+                    }
+                    throw error;
+                }
+            }
+
+            async function checkAndInit() {
+                if (typeof CozeWebSDK !== 'undefined' && CozeWebSDK.WebChatClient) {
+                    console.log('正在初始化 Coze AI 聊天...');
+                    try {
+                        const token = await fetchCozeToken();
+
+                        new CozeWebSDK.WebChatClient({
+                            config: {
+                                type: 'bot',
+                                bot_id: '7636259562638786600',
+                                isIframe: false,
+                            },
+                            auth: {
+                                type: 'token',
+                                token: token,
+                                onRefreshToken: async () => {
+                                    console.log('Token 正在自动刷新...');
+                                    return await fetchCozeToken();
+                                }
+                            },
+                            userInfo: {
+                                id: (function() {
+                                    let uid = localStorage.getItem('coze_user_id');
+                                    if (!uid) {
+                                        uid = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                                        localStorage.setItem('coze_user_id', uid);
+                                    }
+                                    return uid;
+                                })(),
+                                url: 'images/wukong.png',
+                                nickname: '书友',
+                            },
+                            ui: {
+                                base: {
+                                    icon: 'images/ai-assistant-icon.svg',
+                                    layout: 'pc',
+                                    lang: 'zh-CN',
+                                    zIndex: 1000
+                                },
+                                header: {
+                                    isShow: true,
+                                    isNeedClose: true,
+                                },
+                                asstBtn: {
+                                    isNeed: true
+                                },
+                                footer: {
+                                    isShow: true,
+                                    expressionText: '四大名著经典学习网 · AI 助手',
+                                },
+                                chatBot: {
+                                    title: '📚 四大名著 AI 助手',
+                                    uploadable: true,
+                                    width: 420,
+                                },
+                            },
+                        });
+                        console.log('Coze AI 聊天初始化成功！');
+                    } catch (error) {
+                        console.error('Coze AI 聊天初始化失败:', error);
+                    }
+                } else {
+                    console.warn('CozeWebSDK 未加载，1秒后重试...');
+                    setTimeout(checkAndInit, 1000);
+                }
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', checkAndInit);
+            } else {
+                checkAndInit();
+            }
+        })();
+    </script>
+</body>
+</html>

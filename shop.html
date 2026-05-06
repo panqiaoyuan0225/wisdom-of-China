@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>书卷商城 - 四大名著经典学习网</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "SimSun", sans-serif;
+            background: linear-gradient(135deg, #f5f5dc 0%, #e8e4c9 100%);
+            min-height: 100vh;
+            padding: 20px;
+            padding-top: 80px;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            right: 40px;
+            text-decoration: none;
+            color: #f5f5dc;
+            font-weight: bold;
+            background: #8b4513;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .page-title {
+            text-align: center;
+            color: #8b4513;
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .points-card {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .points-label {
+            font-size: 1rem;
+            color: #8B4513;
+            margin-bottom: 10px;
+        }
+
+        .points-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #8B4513;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .points-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #8B4513;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #A0522D;
+        }
+
+        .tabs {
+            max-width: 900px;
+            margin: 0 auto 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 25px;
+            border: 2px solid #8b4513;
+            background: white;
+            color: #8b4513;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #8b4513;
+            color: white;
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .shop-grid {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .item-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .item-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .item-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #8b4513;
+            margin-bottom: 10px;
+        }
+
+        .item-desc {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .item-price {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #8B4513;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .buy-btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background: #8b4513;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .buy-btn:hover:not(:disabled) {
+            background: #a0522d;
+            transform: translateY(-2px);
+        }
+
+        .buy-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .my-items {
+            max-width: 900px;
+            margin: 40px auto 0;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .my-items-title {
+            font-size: 1.3rem;
+            color: #8b4513;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f5f5dc;
+        }
+
+        .my-items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .owned-item {
+            background: #f5f5dc;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .owned-item-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .owned-item-icon {
+            font-size: 1.5rem;
+        }
+
+        .owned-item-name {
+            font-weight: bold;
+            color: #8b4513;
+        }
+
+        .owned-item-count {
+            background: #8b4513;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+
+        .owned-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .use-btn {
+            padding: 5px 12px;
+            border: none;
+            background: #4CAF50;
+            color: white;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .use-btn:hover {
+            background: #45a049;
+            transform: scale(1.05);
+        }
+
+        .active-tag {
+            background: #FF9800;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        .empty-items {
+            text-align: center;
+            color: #999;
+            padding: 30px;
+        }
+
+        .history-section {
+            max-width: 900px;
+            margin: 40px auto 0;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .history-title {
+            font-size: 1.3rem;
+            color: #8b4513;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f5f5dc;
+        }
+
+        .history-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f5f5dc;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-reason {
+            color: #333;
+        }
+
+        .history-points {
+            font-weight: bold;
+        }
+
+        .history-points.positive {
+            color: #4CAF50;
+        }
+
+        .history-points.negative {
+            color: #f44336;
+        }
+
+        .history-time {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        @media (max-width: 600px) {
+            .page-title {
+                font-size: 1.8rem;
+            }
+
+            .points-value {
+                font-size: 2.5rem;
+            }
+
+            .shop-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <script src="guest-access-check.js"></script>
+</head>
+<body>
+    <a href="home.html" class="back-link">← 返回主页</a>
+
+    <h1 class="page-title"><i class="fa-solid fa-store" style="color: #a855f7;"></i> 书卷商城</h1>
+
+    <div class="points-card">
+        <div class="points-label">当前书卷</div>
+        <div class="points-value" id="totalPoints">0</div>
+        <div class="points-stats">
+            <div class="stat-item">
+                <div class="stat-value" id="todayPoints">0</div>
+                <div class="stat-label">今日获得</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalItems">0</div>
+                <div class="stat-label">拥有道具</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('quiz')">答题道具</button>
+        <button class="tab-btn" onclick="showTab('appearance')">外观道具</button>
+        <button class="tab-btn" onclick="showTab('function')">功能道具</button>
+        <button class="tab-btn" onclick="showTab('package')">礼包</button>
+    </div>
+
+    <div class="shop-grid" id="shopGrid">
+        <!-- 道具卡片将动态生成 -->
+    </div>
+
+    <div class="my-items">
+        <h2 class="my-items-title"><i class="fa-solid fa-bag-shopping" style="color: #8b4513;"></i> 我的道具</h2>
+        <div class="my-items-grid" id="myItemsGrid">
+            <!-- 已购道具将动态生成 -->
+        </div>
+    </div>
+
+    <div class="history-section">
+        <h2 class="history-title"><i class="fa-solid fa-scroll" style="color: #8b4513;"></i> 书卷记录</h2>
+        <div class="history-list" id="historyList">
+            <!-- 书卷记录将动态生成 -->
+        </div>
+    </div>
+
+    <script src="supabase-config.js"></script>
+    <script>
+        // 书卷管理器
+        const PointsManager = {
+            STORAGE_KEY: 'user_points_v1',
+            
+            getData() {
+                try {
+                    let data = localStorage.getItem(this.STORAGE_KEY);
+                    if (!data) {
+                        return this.getDefaultData();
+                    }
+                    
+                    let parsedData = JSON.parse(data);
+                    let needSave = false;
+                    
+                    // 确保 ownedAppearance 数组存在
+                    if (!parsedData.ownedAppearance) {
+                        parsedData.ownedAppearance = [];
+                        needSave = true;
+                    }
+                    
+                    // 迁移旧数据：从 ownedItems 迁移到 ownedAppearance
+                    const appearanceItems = ['frame_scroll', 'frame_plum', 'nickname_glow'];
+                    
+                    if (parsedData.ownedItems) {
+                        appearanceItems.forEach(itemId => {
+                            if (parsedData.ownedItems[itemId] && parsedData.ownedItems[itemId] > 0) {
+                                if (!parsedData.ownedAppearance.includes(itemId)) {
+                                    parsedData.ownedAppearance.push(itemId);
+                                    needSave = true;
+                                }
+                            }
+                        });
+                    }
+                    
+                    // 检查购买历史，确保已购买的外观道具不会丢失
+                    if (parsedData.pointsHistory) {
+                        appearanceItems.forEach(itemId => {
+                            const itemName = itemId === 'frame_scroll' ? '头像框-书卷' : 
+                                           itemId === 'frame_plum' ? '头像框-梅花' : '昵称特效';
+                            const hasPurchase = parsedData.pointsHistory.some(h => 
+                                h.reason && h.reason.includes(`购买 ${itemName}`) && h.points < 0
+                            );
+                            if (hasPurchase && !parsedData.ownedAppearance.includes(itemId)) {
+                                parsedData.ownedAppearance.push(itemId);
+                                needSave = true;
+                            }
+                        });
+                    }
+                    
+                    // 确保 activeAppearance 对象存在且结构正确
+                    if (!parsedData.activeAppearance) {
+                        parsedData.activeAppearance = { 
+                            frame: null, 
+                            frameActive: false,
+                            nicknameEffect: null, 
+                            nicknameActive: false
+                        };
+                        needSave = true;
+                    } else {
+                        // 只在字段缺失时才添加默认值，不要覆盖已有值
+                        if (parsedData.activeAppearance.frameActive === undefined) {
+                            parsedData.activeAppearance.frameActive = false;
+                            needSave = true;
+                        }
+                        if (parsedData.activeAppearance.nicknameActive === undefined) {
+                            parsedData.activeAppearance.nicknameActive = false;
+                            needSave = true;
+                        }
+                        // 移除旧字段
+                        if (parsedData.activeAppearance.nicknameExpiry !== undefined) {
+                            delete parsedData.activeAppearance.nicknameExpiry;
+                            needSave = true;
+                        }
+                    }
+                    
+                    if (needSave) {
+                        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(parsedData));
+                    }
+                    
+                    return parsedData;
+                } catch (e) {
+                    console.error('读取数据失败:', e);
+                    return this.getDefaultData();
+                }
+            },
+            
+            getDefaultData() {
+                 return {
+                     totalPoints: 0,
+                     todayPoints: 0,
+                     lastDate: '',
+                     pointsHistory: [],
+                     ownedItems: {},
+                     ownedAppearance: [],
+                     activeAppearance: { 
+                         frame: null, 
+                         frameActive: false,
+                         nicknameEffect: null, 
+                         nicknameActive: false
+                     },
+                     streak: 0
+                 };
+             },
+            
+            saveData(data) {
+                try {
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+                } catch (e) {
+                    console.error('保存本地数据失败:', e);
+                }
+                try {
+                    // 同步到云端
+                    if (window.DataManager && typeof window.DataManager.syncToCloud === 'function') {
+                        window.DataManager.syncToCloud();
+                    }
+                } catch (e) {
+                    console.error('同步到云端失败:', e);
+                }
+            },
+            
+            getTotalPoints() {
+                return this.getData().totalPoints;
+            },
+            
+            addPoints(points, reason) {
+                const data = this.getData();
+                const today = new Date().toDateString();
+                
+                if (data.lastDate !== today) {
+                    data.todayPoints = 0;
+                    data.lastDate = today;
+                }
+                
+                data.totalPoints += points;
+                data.todayPoints += points;
+                data.pointsHistory.unshift({
+                    points: points,
+                    reason: reason,
+                    time: Date.now()
+                });
+                
+                if (data.pointsHistory.length > 100) {
+                    data.pointsHistory = data.pointsHistory.slice(0, 100);
+                }
+                
+                this.saveData(data);
+                return data.totalPoints;
+            },
+            
+            spendPoints(points, reason) {
+                const data = this.getData();
+                if (data.totalPoints < points) return false;
+                
+                data.totalPoints -= points;
+                data.pointsHistory.unshift({
+                    points: -points,
+                    reason: reason,
+                    time: Date.now()
+                });
+                
+                this.saveData(data);
+                return true;
+            },
+            
+            getOwnedItems() {
+                return this.getData().ownedItems || {};
+            },
+            
+            addItem(itemId) {
+                const data = this.getData();
+                if (!data.ownedItems) data.ownedItems = {};
+                data.ownedItems[itemId] = (data.ownedItems[itemId] || 0) + 1;
+                this.saveData(data);
+            },
+            
+            addAppearanceItem(itemId) {
+                const data = this.getData();
+                if (!data.ownedAppearance) data.ownedAppearance = [];
+                if (!data.ownedAppearance.includes(itemId)) {
+                    data.ownedAppearance.push(itemId);
+                    this.saveData(data);
+                }
+            },
+            
+            hasAppearanceItem(itemId) {
+                const data = this.getData();
+                return (data.ownedAppearance || []).includes(itemId);
+            },
+            
+            useItem(itemId) {
+                const data = this.getData();
+                if (!data.ownedItems || !data.ownedItems[itemId] || data.ownedItems[itemId] <= 0) {
+                    return false;
+                }
+                data.ownedItems[itemId]--;
+                this.saveData(data);
+                return true;
+            },
+            
+            getItemCount(itemId) {
+                const ownedItems = this.getOwnedItems();
+                return ownedItems[itemId] || 0;
+            },
+            
+            getAppearance() {
+                const data = this.getData();
+                return data.activeAppearance || {
+                    frame: null,
+                    frameActive: false,
+                    nicknameEffect: null,
+                    nicknameActive: false
+                };
+            },
+            
+            setAppearance(type, itemId, setActive) {
+                const data = this.getData();
+                if (!data.activeAppearance) {
+                    data.activeAppearance = { 
+                        frame: null, 
+                        frameActive: false, 
+                        nicknameEffect: null, 
+                        nicknameActive: false 
+                    };
+                }
+                if (type === 'frame') {
+                    data.activeAppearance.frame = itemId;
+                    data.activeAppearance.frameActive = setActive;
+                } else if (type === 'nickname') {
+                    data.activeAppearance.nicknameEffect = itemId;
+                    data.activeAppearance.nicknameActive = setActive;
+                }
+                this.saveData(data);
+                this.syncAppearanceToServer();
+            },
+            
+            async syncAppearanceToServer() {
+                const userId = sessionStorage.getItem('userId');
+                if (!userId) return;
+                
+                const appearance = this.getAppearance();
+                
+                try {
+                    await fetch('/sync-avatar', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            userId,
+                            avatar: null,
+                            frame: appearance.frame,
+                            frameActive: appearance.frameActive
+                        })
+                    });
+                } catch (err) {
+                    console.log('同步外观失败（本地模式）');
+                }
+            },
+            
+            useAppearanceItem(itemId) {
+                if (!this.useItem(itemId)) {
+                    return false;
+                }
+                if (itemId === 'frame_scroll' || itemId === 'frame_plum') {
+                    this.setAppearance('frame', itemId, true);
+                } else if (itemId === 'nickname_glow') {
+                    this.setAppearance('nickname', itemId, true);
+                }
+                return true;
+            }
+        };
+
+        // 道具数据
+        const ITEMS = {
+            quiz: [
+                { id: 'hint', name: '答案提示', icon: '<i class="fa-solid fa-lightbulb" style="color: #fbbf24;"></i>', price: 50, desc: '显示正确答案提示', usage: '每题限用1次' },
+                { id: 'eliminate', name: '排除干扰', icon: '<i class="fa-solid fa-ban" style="color: #ef4444;"></i>', price: 80, desc: '排除2个错误选项', usage: '仅选择题可用' },
+                { id: 'skip', name: '跳过题目', icon: '<i class="fa-solid fa-forward" style="color: #3b82f6;"></i>', price: 100, desc: '跳过当前题目不计分', usage: '每套题限用3次' },
+                { id: 'double', name: '双倍书卷', icon: '<i class="fa-solid fa-star" style="color: #fbbf24;"></i>', price: 150, desc: '下次答题书卷翻倍', usage: '持续10分钟' },
+                { id: 'revive', name: '复活卡', icon: '<i class="fa-solid fa-rotate" style="color: #22c55e;"></i>', price: 200, desc: '答错后重新答题', usage: '每题限用1次' }
+            ],
+            appearance: [
+                { id: 'frame_scroll', name: '头像框-书卷', icon: '<i class="fa-solid fa-scroll" style="color: #8b4513;"></i>', price: 300, desc: '古典书卷头像框', usage: '永久' },
+                { id: 'frame_plum', name: '头像框-梅花', icon: '<i class="fa-solid fa-spa" style="color: #ec4899;"></i>', price: 500, desc: '精美梅花头像框', usage: '永久' },
+                { id: 'nickname_glow', name: '昵称特效', icon: '<i class="fa-solid fa-wand-magic-sparkles" style="color: #a855f7;"></i>', price: 200, desc: '昵称发光效果', usage: '30天' }
+            ],
+            function: [
+                { id: 'wrong_reset', name: '错题重置卡', icon: '<i class="fa-solid fa-trash" style="color: #6b7280;"></i>', price: 100, desc: '清空错题本', usage: '每周限用1次' },
+                { id: 'points_protect', name: '书卷保护卡', icon: '<i class="fa-solid fa-shield" style="color: #3b82f6;"></i>', price: 300, desc: '24小时内答题不计负分', usage: '每日限用1次' }
+            ],
+            package: [
+                { id: 'daily_pack', name: '每日礼包', icon: '<i class="fa-solid fa-gift" style="color: #ef4444;"></i>', price: 100, desc: '提示×2、排除×1', usage: '每日限购1次' },
+                { id: 'weekly_pack', name: '周卡礼包', icon: '<i class="fa-solid fa-box" style="color: #f59e0b;"></i>', price: 800, desc: '所有基础道具×7', usage: '每周限购1次' }
+            ]
+        };
+
+        let currentTab = 'quiz';
+
+        function showTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            renderShop();
+        }
+
+        function renderShop() {
+            const grid = document.getElementById('shopGrid');
+            const items = ITEMS[currentTab];
+            const totalPoints = PointsManager.getTotalPoints();
+            const ownedAppearance = PointsManager.getData().ownedAppearance || [];
+            
+            grid.innerHTML = items.map(item => {
+                const isAppearance = item.id.startsWith('frame_') || item.id === 'nickname_glow';
+                const alreadyOwned = isAppearance && ownedAppearance.includes(item.id);
+                const canBuy = !alreadyOwned && totalPoints >= item.price;
+                
+                return `
+                    <div class="item-card">
+                        <div class="item-icon">${item.icon}</div>
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-desc">${item.desc}<br><small style="color:#999">${item.usage}</small></div>
+                        <div class="item-price">🪙 ${item.price}</div>
+                        <button class="buy-btn" onclick="buyItem('${item.id}', ${item.price}, '${item.name}')" ${!canBuy ? 'disabled' : ''}>
+                            ${alreadyOwned ? '已拥有' : (totalPoints < item.price ? '书卷不足' : '购买')}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function buyItem(itemId, price, name) {
+            if (!confirm(`确定花费 ${price} 书卷购买 ${name} 吗？`)) return;
+            
+            if (PointsManager.spendPoints(price, `购买 ${name}`)) {
+                if (itemId === 'daily_pack') {
+                    PointsManager.addItem('hint');
+                    PointsManager.addItem('hint');
+                    PointsManager.addItem('eliminate');
+                    alert('购买成功！获得：提示×2、排除×1');
+                } else if (itemId === 'weekly_pack') {
+                    for (let i = 0; i < 7; i++) {
+                        PointsManager.addItem('hint');
+                        PointsManager.addItem('eliminate');
+                        PointsManager.addItem('skip');
+                        PointsManager.addItem('double');
+                        PointsManager.addItem('revive');
+                    }
+                    alert('购买成功！获得所有基础道具×7');
+                } else if (itemId.startsWith('frame_') || itemId === 'nickname_glow') {
+                    PointsManager.addAppearanceItem(itemId);
+                    alert('购买成功！请前往个人档案使用外观道具');
+                } else {
+                    PointsManager.addItem(itemId);
+                    alert('购买成功！');
+                }
+                updateDisplay();
+                renderShop();
+                renderMyItems();
+            } else {
+                alert('书卷不足！');
+            }
+        }
+
+        function renderMyItems() {
+            const grid = document.getElementById('myItemsGrid');
+            const ownedItems = PointsManager.getOwnedItems();
+            const ownedAppearance = PointsManager.getData().ownedAppearance || [];
+            const appearance = PointsManager.getAppearance();
+            
+            const allItems = [...ITEMS.quiz, ...ITEMS.appearance, ...ITEMS.function, ...ITEMS.package];
+            
+            const ownedList = Object.entries(ownedItems).filter(([_, count]) => count > 0);
+            const appearanceList = ownedAppearance.filter(id => id.startsWith('frame_') || id === 'nickname_glow');
+            
+            if (ownedList.length === 0 && appearanceList.length === 0) {
+                grid.innerHTML = '<div class="empty-items">暂无道具，快去购买吧！</div>';
+                return;
+            }
+            
+            let html = '';
+            
+            appearanceList.forEach(itemId => {
+                const item = allItems.find(i => i.id === itemId);
+                if (!item) return;
+                
+                let isActive = false;
+                if (itemId.startsWith('frame_')) {
+                    isActive = appearance.frame === itemId && appearance.frameActive;
+                } else if (itemId === 'nickname_glow') {
+                    isActive = appearance.nicknameEffect === itemId && appearance.nicknameActive;
+                }
+                
+                html += `
+                    <div class="owned-item" style="background: linear-gradient(135deg, #fff9e6 0%, #fff5d6 100%); border: 2px solid #d4af37;">
+                        <div class="owned-item-info">
+                            <span class="owned-item-icon">${item.icon}</span>
+                            <span class="owned-item-name">${item.name}</span>
+                        </div>
+                        <div class="owned-item-actions">
+                            ${isActive ? '<span class="active-tag">使用中</span>' : '<span style="color:#8b4513;font-size:0.8rem;">前往档案使用</span>'}
+                            <span class="owned-item-count" style="background:#d4af37;">永久</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            ownedList.forEach(([itemId, count]) => {
+                const item = allItems.find(i => i.id === itemId);
+                if (!item) return;
+                
+                const isFunction = itemId === 'wrong_reset' || itemId === 'points_protect';
+                
+                let actionBtn = '';
+                if (isFunction) {
+                    actionBtn = `<button class="use-btn" onclick="useFunctionItem('${itemId}')">使用</button>`;
+                }
+                
+                html += `
+                    <div class="owned-item">
+                        <div class="owned-item-info">
+                            <span class="owned-item-icon">${item.icon}</span>
+                            <span class="owned-item-name">${item.name}</span>
+                        </div>
+                        <div class="owned-item-actions">
+                            ${actionBtn}
+                            <span class="owned-item-count">×${count}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            grid.innerHTML = html;
+        }
+        
+        function useFunctionItem(itemId) {
+            if (itemId === 'wrong_reset') {
+                alert('错题重置卡请在答题页面的错题本中使用！');
+            } else if (itemId === 'points_protect') {
+                alert('书卷保护卡请在答题页面使用！');
+            }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const data = PointsManager.getData();
+            const history = data.pointsHistory || [];
+            
+            if (history.length === 0) {
+                list.innerHTML = '<div class="empty-items">暂无记录</div>';
+                return;
+            }
+            
+            list.innerHTML = history.slice(0, 50).map(item => {
+                const date = new Date(item.time);
+                const timeStr = `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+                const isPositive = item.points > 0;
+                return `
+                    <div class="history-item">
+                        <div>
+                            <div class="history-reason">${item.reason}</div>
+                            <div class="history-time">${timeStr}</div>
+                        </div>
+                        <div class="history-points ${isPositive ? 'positive' : 'negative'}">
+                            ${isPositive ? '+' : ''}${item.points}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateDisplay() {
+            const data = PointsManager.getData();
+            const today = new Date().toDateString();
+            const todayPoints = data.lastDate === today ? data.todayPoints : 0;
+            
+            document.getElementById('totalPoints').textContent = data.totalPoints;
+            document.getElementById('todayPoints').textContent = todayPoints;
+            
+            const ownedItems = data.ownedItems || {};
+            const ownedAppearance = data.ownedAppearance || [];
+            const totalCount = Object.values(ownedItems).reduce((sum, count) => sum + count, 0) + ownedAppearance.length;
+            document.getElementById('totalItems').textContent = totalCount;
+        }
+
+        // 初始化
+        async function init() {
+            if (window.DataManager && typeof window.DataManager.loadFromCloud === 'function') {
+                await DataManager.loadFromCloud();
+            }
+            updateDisplay();
+            renderShop();
+            renderMyItems();
+            renderHistory();
+            PointsManager.syncAppearanceToServer();
+        }
+
+        init();
+    </script>
+</body>
+</html>

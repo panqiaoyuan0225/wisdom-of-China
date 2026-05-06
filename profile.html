@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人档案</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "SimSun", sans-serif;
+            background-color: #f5f5dc;
+            min-height: 100vh;
+            padding: 20px;
+            padding-top: 60px;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            right: 40px;
+            text-decoration: none;
+            color: #f0e68c;
+            font-weight: bold;
+            background: #8b4513;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .page-title {
+            text-align: center;
+            color: #8b4513;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .profile-header {
+            max-width: 800px;
+            margin: 0 auto 30px;
+            background: linear-gradient(135deg, #fff9e6, #fff5d6);
+            border-radius: 20px;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            border: 3px solid #d4af37;
+        }
+
+        .avatar-container {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid #d4af37;
+            object-fit: cover;
+            background: #e8e0c0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #8b4513;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        /* --- 优化后的：头像框-书卷 (frame_scroll) --- */
+        .avatar.frame_scroll {
+            position: relative;
+            border: 4px solid #8b4513; /* 木质色深色边 */
+            box-shadow: 
+                0 0 0 2px #d2691e, /* 外圈浅木色 */
+                0 0 15px rgba(139, 69, 19, 0.4), /* 扩散阴影 */
+                inset 0 0 10px rgba(0,0,0,0.1);
+            background: #fff9e6; /* 古典纸张色背景 */
+            animation: scrollBreathe 3s ease-in-out infinite;
+        }
+        
+        .avatar.frame_scroll::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 2px solid #d4af37;
+            border-radius: 50%;
+            clip-path: polygon(0 0, 30% 0, 30% 100%, 0 100%, 0 0, 70% 0, 70% 100%, 100% 100%, 100% 0, 70% 0); /* 模拟画轴两端 */
+            opacity: 0.6;
+        }
+
+        .avatar.frame_scroll::after {
+            content: '✒️'; 
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 18px;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
+            animation: floatIcon 3s ease-in-out infinite;
+        }
+
+        @keyframes scrollBreathe {
+            0%, 100% { box-shadow: 0 0 10px rgba(139, 69, 19, 0.3), inset 0 0 5px rgba(0,0,0,0.1); }
+            50% { box-shadow: 0 0 20px rgba(139, 69, 19, 0.6), inset 0 0 8px rgba(0,0,0,0.15); }
+        }
+
+        /* --- 优化后的：头像框-梅花 (frame_plum) --- */
+        .avatar.frame_plum {
+            position: relative;
+            border: 4px solid #ffb7c5;
+            box-shadow: 
+                0 0 0 2px #ff69b4,
+                0 0 20px rgba(255, 182, 193, 0.5);
+            animation: plumGlow 4s ease-in-out infinite;
+        }
+        
+        /* 模拟飘落的花瓣粒子 */
+        .avatar.frame_plum::before {
+            content: '🌸';
+            position: absolute;
+            font-size: 10px;
+            top: -10px;
+            left: 20%;
+            opacity: 0;
+            animation: petalRain 5s linear infinite;
+        }
+        
+        .avatar.frame_plum::after {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            right: -6px;
+            bottom: -6px;
+            border: 2px dashed #ffb7c5;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: rotateFrame 10s linear infinite;
+        }
+
+        @keyframes plumGlow {
+            0%, 100% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.02); filter: brightness(1.1); }
+        }
+
+        @keyframes petalRain {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translateY(130px) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes rotateFrame {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        .username.glow-effect {
+            background: linear-gradient(90deg, #FFD700, #FFA500, #FFD700, #FFA500);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 2s linear infinite;
+            font-weight: bold;
+            display: inline-block;
+            position: relative;
+        }
+        
+        .username.glow-effect::before {
+            content: attr(data-text);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500, #FFD700, #FFA500);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: textShine 2s linear infinite;
+            filter: blur(8px);
+            opacity: 0.7;
+            z-index: -1;
+        }
+
+        @keyframes textShine {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .avatar-upload-hint {
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            background: #8b4513;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            border: 2px solid #d4af37;
+        }
+
+        .avatar-input {
+            display: none;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .username-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .username {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #8b4513;
+            position: relative;
+        }
+
+        .user-rank {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .rank-icon-small {
+            width: 40px;
+            height: 40px;
+        }
+
+        .rank-name-text {
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .stats-grid {
+            max-width: 800px;
+            margin: 0 auto 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #8b4513;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .section {
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+
+        .section-title {
+            color: #8b4513;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #d4af37;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge-showcase {
+            background: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .badge-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .badge-item {
+            width: 90px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .badge-item:hover {
+            transform: scale(1.1);
+        }
+
+        .badge-icon-small {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .badge-icon-small::before {
+            content: '';
+            position: absolute;
+            top: -4px; left: -4px; right: -4px; bottom: -4px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4af37, #f0d78c, #d4af37);
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        .badge-icon-small img {
+            width: 62px;
+            height: 62px;
+            object-fit: contain;
+            border-radius: 50%;
+            border: 3px solid #d4af37;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2), inset 0 2px 8px rgba(255,255,255,0.5);
+            background: linear-gradient(135deg, #fff9e6, #f5f5dc, #fff9e6);
+            padding: 4px;
+        }
+
+        .badge-item.rare .badge-icon-small img {
+            border-color: #9c27b0;
+            box-shadow: 0 3px 10px rgba(156,39,176,0.35), inset 0 2px 8px rgba(255,255,255,0.5);
+        }
+
+        .badge-item.rare .badge-icon-small::before {
+            background: linear-gradient(135deg, #9c27b0, #ce93d8, #9c27b0);
+        }
+
+        .badge-item.epic .badge-icon-small img {
+            border-color: #ff6b35;
+            box-shadow: 0 3px 12px rgba(255,107,53,0.45), inset 0 2px 8px rgba(255,255,255,0.5);
+        }
+
+        .badge-item.epic .badge-icon-small::before {
+            background: linear-gradient(135deg, #ff6b35, #f7931e, #ff6b35);
+        }
+
+        .badge-name-small {
+            font-size: 0.75rem;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .no-badges {
+            color: #999;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .reading-progress {
+            background: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .book-progress-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .book-progress-item:last-child {
+            border-bottom: none;
+        }
+
+        .book-icon {
+            font-size: 2rem;
+        }
+
+        .book-info {
+            flex: 1;
+        }
+
+        .book-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .progress-bar-bg {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #d4af37, #f0d78c);
+            transition: width 0.5s ease;
+        }
+
+        .book-status {
+            font-size: 0.85rem;
+            color: #666;
+            min-width: 60px;
+            text-align: right;
+        }
+
+        .appearance-section {
+            background: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .appearance-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .appearance-item:last-child {
+            border-bottom: none;
+        }
+
+        .appearance-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .appearance-icon {
+            font-size: 1.5rem;
+        }
+
+        .appearance-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .appearance-status {
+            font-size: 0.9rem;
+            padding: 5px 15px;
+            border-radius: 15px;
+        }
+
+        .appearance-status.owned {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .appearance-status.active {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .appearance-status.not-owned {
+            background: #f5f5f5;
+            color: #999;
+        }
+
+        .appearance-use-btn {
+            padding: 5px 15px;
+            border: none;
+            background: #4CAF50;
+            color: white;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .appearance-use-btn:hover {
+            background: #45a049;
+        }
+
+        @media (max-width: 600px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+            }
+
+            .username {
+                font-size: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .avatar {
+                width: 100px;
+                height: 100px;
+                font-size: 40px;
+            }
+        }
+    </style>
+    <script src="guest-access-check.js"></script>
+</head>
+<body>
+    <a href="home.html" class="back-link">← 返回主页</a>
+    
+    <h1 class="page-title">个人档案</h1>
+    
+    <div class="profile-header">
+        <div class="avatar-container">
+            <div class="avatar" id="avatar" onclick="document.getElementById('avatarInput').click()">
+                <span id="avatarPlaceholder"><i class="fa-solid fa-user" style="font-size: 2.5rem; color: #6b7280;"></i></span>
+            </div>
+            <div class="avatar-upload-hint" onclick="document.getElementById('avatarInput').click()"><i class="fa-solid fa-camera" style="color: #fff;"></i></div>
+            <input type="file" id="avatarInput" class="avatar-input" accept="image/*" onchange="handleAvatarUpload(event)">
+        </div>
+        <div class="user-info">
+            <div class="username-container">
+                <span class="username" id="usernameDisplay">书友</span>
+            </div>
+            <div class="user-rank">
+                <div class="rank-icon-small" id="rankIcon"></div>
+                <span class="rank-name-text" id="rankName">加载中...</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-coins" style="color: #fbbf24;"></i></div>
+            <div class="stat-value" id="totalPoints">0</div>
+            <div class="stat-label">当前书卷</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-pen-to-square" style="color: #3b82f6;"></i></div>
+            <div class="stat-value" id="totalQuestions">0</div>
+            <div class="stat-label">累计答题</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-circle-check" style="color: #22c55e;"></i></div>
+            <div class="stat-value" id="accuracy">0%</div>
+            <div class="stat-label">正确率</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-medal" style="color: #f59e0b;"></i></div>
+            <div class="stat-value" id="badgeCount">0</div>
+            <div class="stat-label">获得勋章</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-book-bookmark" style="color: #8b4513;"></i></div>
+            <div class="stat-value" id="booksCompleted">0/4</div>
+            <div class="stat-label">名著阅读</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-clock" style="color: #6b7280;"></i></div>
+            <div class="stat-value" id="totalTime">0分钟</div>
+            <div class="stat-label">浏览时长</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title"><i class="fa-solid fa-medal" style="color: #f59e0b;"></i> 我的勋章</h2>
+        <div class="badge-showcase">
+            <div class="badge-list" id="badgeList">
+                <div class="no-badges">暂无勋章，继续努力吧！</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title"><i class="fa-solid fa-book-open" style="color: #8b4513;"></i> 名著阅读进度</h2>
+        <div class="reading-progress">
+            <div class="book-progress-item">
+                <span class="book-icon"><i class="fa-solid fa-book" style="color: #dc2626;"></i></span>
+                <div class="book-info">
+                    <div class="book-name">红楼梦</div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="honglouProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+                <span class="book-status" id="honglouStatus">未开始</span>
+            </div>
+            <div class="book-progress-item">
+                <span class="book-icon"><i class="fa-solid fa-book" style="color: #2563eb;"></i></span>
+                <div class="book-info">
+                    <div class="book-name">三国演义</div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="sanguoProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+                <span class="book-status" id="sanguoStatus">未开始</span>
+            </div>
+            <div class="book-progress-item">
+                <span class="book-icon"><i class="fa-solid fa-book" style="color: #d97706;"></i></span>
+                <div class="book-info">
+                    <div class="book-name">水浒传</div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="shuihuProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+                <span class="book-status" id="shuihuStatus">未开始</span>
+            </div>
+            <div class="book-progress-item">
+                <span class="book-icon"><i class="fa-solid fa-book" style="color: #16a34a;"></i></span>
+                <div class="book-info">
+                    <div class="book-name">西游记</div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="xiyouProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+                <span class="book-status" id="xiyouStatus">未开始</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title"><i class="fa-solid fa-palette" style="color: #a855f7;"></i> 外观道具</h2>
+        <div class="appearance-section">
+            <div class="appearance-item">
+                <div class="appearance-info">
+                    <span class="appearance-icon"><i class="fa-solid fa-scroll" style="color: #8b4513;"></i></span>
+                    <span class="appearance-name">头像框-书卷</span>
+                </div>
+                <div class="appearance-status" id="frame_scroll_status">未拥有</div>
+            </div>
+            <div class="appearance-item">
+                <div class="appearance-info">
+                    <span class="appearance-icon"><i class="fa-solid fa-spa" style="color: #ec4899;"></i></span>
+                    <span class="appearance-name">头像框-梅花</span>
+                </div>
+                <div class="appearance-status" id="frame_plum_status">未拥有</div>
+            </div>
+            <div class="appearance-item">
+                <div class="appearance-info">
+                    <span class="appearance-icon"><i class="fa-solid fa-wand-magic-sparkles" style="color: #a855f7;"></i></span>
+                    <span class="appearance-name">昵称特效</span>
+                </div>
+                <div class="appearance-status" id="nickname_glow_status">未拥有</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PointsManager = {
+            STORAGE_KEY: 'user_points_v1',
+            
+            getData() {
+                try {
+                    let data = localStorage.getItem(this.STORAGE_KEY);
+                    
+                    if (!data) {
+                        return this.getDefaultData();
+                    }
+                    
+                    let parsedData = JSON.parse(data);
+                    let needSave = false;
+                    
+                    // 确保 ownedAppearance 数组存在
+                    if (!parsedData.ownedAppearance) {
+                        parsedData.ownedAppearance = [];
+                        needSave = true;
+                    }
+                    
+                    // 迁移旧数据：从 ownedItems 迁移到 ownedAppearance
+                    const appearanceItems = ['frame_scroll', 'frame_plum', 'nickname_glow'];
+                    
+                    if (parsedData.ownedItems) {
+                        appearanceItems.forEach(itemId => {
+                            if (parsedData.ownedItems[itemId] && parsedData.ownedItems[itemId] > 0) {
+                                if (!parsedData.ownedAppearance.includes(itemId)) {
+                                    parsedData.ownedAppearance.push(itemId);
+                                    needSave = true;
+                                }
+                            }
+                        });
+                    }
+                    
+                    // 检查购买历史，确保已购买的外观道具不会丢失
+                    if (parsedData.pointsHistory) {
+                        appearanceItems.forEach(itemId => {
+                            const itemName = itemId === 'frame_scroll' ? '头像框-书卷' : 
+                                           itemId === 'frame_plum' ? '头像框-梅花' : '昵称特效';
+                            const hasPurchase = parsedData.pointsHistory.some(h => 
+                                h.reason && h.reason.includes(`购买 ${itemName}`) && h.points < 0
+                            );
+                            if (hasPurchase && !parsedData.ownedAppearance.includes(itemId)) {
+                                parsedData.ownedAppearance.push(itemId);
+                                needSave = true;
+                            }
+                        });
+                    }
+                    
+                    // 确保 activeAppearance 对象存在且结构正确
+                    if (!parsedData.activeAppearance) {
+                        parsedData.activeAppearance = { 
+                            frame: null, 
+                            frameActive: false,
+                            nicknameEffect: null, 
+                            nicknameActive: false
+                        };
+                        needSave = true;
+                    } else {
+                        // 只在字段缺失时才添加默认值，不要覆盖已有值
+                        if (parsedData.activeAppearance.frameActive === undefined) {
+                            parsedData.activeAppearance.frameActive = false;
+                            needSave = true;
+                        }
+                        if (parsedData.activeAppearance.nicknameActive === undefined) {
+                            parsedData.activeAppearance.nicknameActive = false;
+                            needSave = true;
+                        }
+                        // 移除旧字段
+                        if (parsedData.activeAppearance.nicknameExpiry !== undefined) {
+                            delete parsedData.activeAppearance.nicknameExpiry;
+                            needSave = true;
+                        }
+                    }
+                    
+                    if (needSave) {
+                        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(parsedData));
+                    }
+                    
+                    return parsedData;
+                } catch (e) {
+                    console.error('读取数据失败:', e);
+                    return this.getDefaultData();
+                }
+            },
+            
+            getDefaultData() {
+                return {
+                    totalPoints: 0,
+                    todayPoints: 0,
+                    lastDate: '',
+                    pointsHistory: [],
+                    ownedItems: {},
+                    ownedAppearance: [],
+                    activeAppearance: { 
+                        frame: null, 
+                        frameActive: false,
+                        nicknameEffect: null, 
+                        nicknameActive: false
+                    },
+                    streak: 0
+                };
+            },
+            
+            getTotalPoints() {
+                return this.getData().totalPoints;
+            },
+            
+            getOwnedAppearance() {
+                return this.getData().ownedAppearance || [];
+            },
+            
+            getActiveAppearance() {
+                const data = this.getData();
+                return data.activeAppearance || { 
+                    frame: null, 
+                    frameActive: false,
+                    nicknameEffect: null, 
+                    nicknameActive: false
+                };
+            }
+        };
+
+        const BADGES = [
+            { id: 'honglou_reader', name: '红楼初探', rarity: 'common', type: 'reading', book: 'honglou' },
+            { id: 'sanguo_reader', name: '三国通览', rarity: 'common', type: 'reading', book: 'sanguo' },
+            { id: 'shuihu_reader', name: '水浒知音', rarity: 'common', type: 'reading', book: 'shuihu' },
+            { id: 'xiyou_reader', name: '西游行者', rarity: 'common', type: 'reading', book: 'xiyou' },
+            { id: 'all_books_reader', name: '四大名著通', rarity: 'rare', type: 'reading', book: 'all' },
+            { id: '100_questions', name: '初试锋芒', rarity: 'common', type: 'quiz', target: 100 },
+            { id: '500_questions', name: '勤学不辍', rarity: 'common', type: 'quiz', target: 500 },
+            { id: '1000_questions', name: '博闻强识', rarity: 'rare', type: 'quiz', target: 1000 },
+            { id: '2000_questions', name: '学海无涯', rarity: 'epic', type: 'quiz', target: 2000 },
+            { id: 'honglou_characters', name: '金陵十二钗', rarity: 'rare', type: 'mastery', category: 'honglou', target: 12 },
+            { id: 'sanguo_strategists', name: '卧龙凤雏', rarity: 'rare', type: 'mastery', category: 'sanguo', target: 10 },
+            { id: 'shuihu_heroes', name: '一百零八将', rarity: 'rare', type: 'mastery', category: 'shuihu', target: 108 },
+            { id: 'xiyou_plot', name: '九九八十一难', rarity: 'rare', type: 'mastery', category: 'xiyou', target: 81 },
+            { id: 'poetry_master', name: '诗词雅士', rarity: 'epic', type: 'mastery', category: 'poetry', target: 20 },
+            { id: 'rank_top_10', name: '榜上有名', rarity: 'common', type: 'leaderboard', targetRank: 10 },
+            { id: 'rank_top_5', name: '五强争霸', rarity: 'rare', type: 'leaderboard', targetRank: 5 },
+            { id: 'rank_top_1', name: '独占鳌头', rarity: 'epic', type: 'leaderboard', targetRank: 1 },
+            { id: 'rank_master', name: '榜首常客', rarity: 'epic', type: 'leaderboard', targetAll: 1 },
+            { id: 'streak_3', name: '三日之约', rarity: 'common', type: 'streak', target: 3 },
+            { id: 'streak_7', name: '七日之志', rarity: 'common', type: 'streak', target: 7 },
+            { id: 'streak_30', name: '月下苦读', rarity: 'rare', type: 'streak', target: 30 },
+            { id: 'streak_100', name: '百日筑基', rarity: 'epic', type: 'streak', target: 100 }
+        ];
+
+        const RANKS = [
+            { name: '蒙童', icon: 'mengtong', color: '#7CB342', stages: [5, 10, 15] },
+            { name: '书生', icon: 'shusheng', color: '#5C6BC0', stages: [20, 28, 36] },
+            { name: '秀才', icon: 'xiucai', color: '#81D4FA', stages: [45, 54, 63] },
+            { name: '举人', icon: 'juren', color: '#E53935', stages: [70, 77, 84] },
+            { name: '进士', icon: 'jinshi', color: '#AB47BC', stages: [88, 92, 96] },
+            { name: '翰林', icon: 'hanlin', color: '#00897B', stages: [97, 98, 99] },
+            { name: '状元', icon: 'zhuangyuan', color: '#FFD700', stages: [100] }
+        ];
+
+        const RANK_ICONS = {
+            mengtong: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="bambooGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#C5E1A5"/><stop offset="50%" style="stop-color:#DCEDC8"/><stop offset="100%" style="stop-color:#C5E1A5"/></linearGradient></defs><line x1="20" y1="35" x2="80" y2="35" stroke="#7CB342" stroke-width="1.5" /><line x1="20" y1="65" x2="80" y2="65" stroke="#7CB342" stroke-width="1.5" /><rect x="22" y="25" width="10" height="50" rx="1.5" fill="url(#bambooGrad)" stroke="#9CCC65" stroke-width="0.5" /><rect x="33" y="25" width="10" height="50" rx="1.5" fill="url(#bambooGrad)" stroke="#9CCC65" stroke-width="0.5" /><rect x="44" y="25" width="10" height="50" rx="1.5" fill="url(#bambooGrad)" stroke="#9CCC65" stroke-width="0.5" /><rect x="55" y="25" width="10" height="50" rx="1.5" fill="url(#bambooGrad)" stroke="#9CCC65" stroke-width="0.5" /><rect x="66" y="25" width="10" height="50" rx="1.5" fill="url(#bambooGrad)" stroke="#9CCC65" stroke-width="0.5" /></svg>`,
+            shusheng: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="brushHandle" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#4E342E"/><stop offset="30%" style="stop-color:#8D6E63"/><stop offset="60%" style="stop-color:#5D4037"/><stop offset="100%" style="stop-color:#3E2723"/></linearGradient><linearGradient id="brushTip" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#666"/><stop offset="70%" style="stop-color:#222"/><stop offset="100%" style="stop-color:#000"/></linearGradient></defs><g transform="rotate(-20 50 50)"><circle cx="50" cy="12" r="1.5" fill="none" stroke="#8D6E63" stroke-width="0.5"/><rect x="47.5" y="14" width="5" height="50" rx="1.5" fill="url(#brushHandle)" /><path d="M47 62 L53 62 L54 68 Q54 70 52 70 L48 70 Q46 70 46 68 Z" fill="#212121" /><rect x="46.5" y="62" width="7" height="1.5" fill="#C0C0C0" opacity="0.3" /><path d="M46 69 Q46 75 44 82 Q43 92 50 95 Q57 92 56 82 Q54 75 54 69 Z" fill="url(#brushTip)" /><path d="M48 72 Q47 80 49 88" stroke="white" stroke-width="0.3" opacity="0.2" fill="none" /><path d="M51 75 Q52 82 51 90" stroke="white" stroke-width="0.2" opacity="0.1" fill="none" /></g></svg>`,
+            xiucai: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="fanPaper" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#F5F5DC"/><stop offset="50%" style="stop-color:#FFFDE7"/><stop offset="100%" style="stop-color:#F5F5DC"/></linearGradient><linearGradient id="bambooBone" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#795548"/><stop offset="50%" style="stop-color:#A1887F"/><stop offset="100%" style="stop-color:#5D4037"/></linearGradient></defs><path d="M10 75 Q10 25 50 15 Q90 25 90 75 L55 85 Q50 87 45 85 Z" fill="url(#fanPaper)" stroke="#D7CCC8" stroke-width="0.5"/><g stroke="#E0E0E0" stroke-width="0.2" opacity="0.6"><line x1="50" y1="85" x2="20" y2="45" /><line x1="50" y1="85" x2="35" y2="25" /><line x1="50" y1="85" x2="50" y2="15" /><line x1="50" y1="85" x2="65" y2="25" /><line x1="50" y1="85" x2="80" y2="45" /></g><path d="M10 75 L14 78 L50 85 L50 82 Z" fill="url(#bambooBone)" /><path d="M90 75 L86 78 L50 85 L50 82 Z" fill="url(#bambooBone)" /><path d="M65 60 Q68 50 75 45 M67 55 Q72 53 78 55 M64 58 Q60 50 62 42" stroke="#424242" stroke-width="0.8" fill="none" opacity="0.7"/><text x="50" y="50" text-anchor="middle" font-family="serif" font-size="8" fill="#212121" style="writing-mode: tb;">清风</text><circle cx="50" cy="85" r="2.5" fill="#3E2723"/><path d="M50 87.5 Q50 92 48 94 M50 87.5 Q50 92 52 94" stroke="#B71C1C" stroke-width="1" fill="none" /></svg>`,
+            juren: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lanternBody" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#D32F2F"/><stop offset="50%" style="stop-color:#FF5252"/><stop offset="100%" style="stop-color:#B71C1C"/></linearGradient><linearGradient id="goldFrame" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#FFD700"/><stop offset="50%" style="stop-color:#FFF176"/><stop offset="100%" style="stop-color:#FFA000"/></linearGradient></defs><path d="M50 5 L50 15" stroke="#424242" stroke-width="1.5" fill="none"/><rect x="42" y="15" width="16" height="4" rx="1" fill="#3E2723"/><path d="M30 20 L70 20 L75 45 L70 70 L30 70 L25 45 Z" fill="url(#lanternBody)" stroke="url(#goldFrame)" stroke-width="1.5"/><line x1="30" y1="20" x2="30" y2="70" stroke="#FFCDD2" stroke-width="0.5" opacity="0.3"/><line x1="70" y1="20" x2="70" y2="70" stroke="#FFCDD2" stroke-width="0.5" opacity="0.3"/><text x="50" y="52" text-anchor="middle" font-family="serif" font-size="22" fill="#FFD700" font-weight="900" style="text-shadow: 0 0 5px rgba(255,215,0,0.5);">才</text><rect x="38" y="70" width="24" height="5" rx="1" fill="#3E2723"/><g stroke="#D32F2F" stroke-width="1.2"><path d="M42 75 Q40 88 40 95" fill="none"/><path d="M46 75 Q46 90 46 98" fill="none"/><path d="M50 75 L50 99" fill="none" stroke="#FF5252"/><path d="M54 75 Q54 90 54 98" fill="none"/><path d="M58 75 Q60 88 60 95" fill="none"/></g><circle cx="50" cy="78" r="2.5" fill="url(#goldFrame)"/></svg>`,
+            jinshi: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="towerGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#9575CD"/><stop offset="100%" style="stop-color:#512DA4"/></linearGradient><radialGradient id="petalGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#FFF9C4"/><stop offset="70%" style="stop-color:#F06292"/><stop offset="100%" style="stop-color:#880E4F"/></radialGradient><radialGradient id="centerSun" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#FFF176"/><stop offset="100%" style="stop-color:#FBC02D"/></radialGradient></defs><g opacity="0.15"><path d="M40 95 L60 95 L58 75 L42 75 Z" fill="url(#towerGrad)"/><path d="M43 75 L57 75 L55 58 L45 58 Z" fill="url(#towerGrad)"/><path d="M46 58 L54 58 L52 45 L48 45 Z" fill="url(#towerGrad)"/><path d="M49 45 L51 45 L50 38 Z" fill="url(#towerGrad)"/></g><g transform="translate(50, 55)"><circle cx="0" cy="-12" r="10" fill="url(#petalGrad)" opacity="0.9"/><circle cx="11" cy="-4" r="10" fill="url(#petalGrad)" opacity="0.9"/><circle cx="7" cy="10" r="10" fill="url(#petalGrad)" opacity="0.9"/><circle cx="-7" cy="10" r="10" fill="url(#petalGrad)" opacity="0.9"/><circle cx="-11" cy="-4" r="10" fill="url(#petalGrad)" opacity="0.9"/><g scale="0.6"><path d="M-6 -6 Q0 -18 6 -6 Q18 0 6 6 Q0 18 -6 6 Q-18 0 -6 -6 Z" fill="white" opacity="0.4"/></g><circle cx="0" cy="0" r="4.5" fill="url(#centerSun)"/><circle cx="0" cy="0" r="2" fill="#F9A825"/><g stroke="#FBC02D" stroke-width="0.3" opacity="0.8"><line x1="0" y1="0" x2="0" y2="-6"/><line x1="0" y1="0" x2="5" y2="-3"/><line x1="0" y1="0" x2="5" y2="3"/><line x1="0" y1="0" x2="0" y2="6"/><line x1="0" y1="0" x2="-5" y2="3"/><line x1="0" y1="0" x2="-5" y2="-3"/></g></g><path d="M25 25 Q30 20 35 25 T45 25" fill="none" stroke="#CE93D8" stroke-width="1" opacity="0.4"/><path d="M55 15 Q60 10 65 15 T75 15" fill="none" stroke="#CE93D8" stroke-width="1" opacity="0.4"/></svg>`,
+            hanlin: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00695C"/><stop offset="50%" style="stop-color:#4DB6AC"/><stop offset="100%" style="stop-color:#004D40"/></linearGradient><linearGradient id="silkGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#FFD54F"/><stop offset="100%" style="stop-color:#FF8F00"/></linearGradient></defs><g transform="translate(50, 50)"><path d="M5 0 C 25 -20, 45 0, 30 15 C 20 25, 5 10, 0 0" fill="none" stroke="url(#emeraldGrad)" stroke-width="4" stroke-linecap="round" /><path d="M-5 0 C -25 -20, -45 0, -30 15 C -20 25, -5 10, 0 0" fill="none" stroke="url(#emeraldGrad)" stroke-width="4" stroke-linecap="round" /><circle cx="0" cy="0" r="3" fill="#004D40" /><path d="M-32 8 Q-20 18 -8 5" fill="none" stroke="#B2DFDB" stroke-width="0.8" opacity="0.6" /><path d="M32 8 Q20 18 8 5" fill="none" stroke="#B2DFDB" stroke-width="0.8" opacity="0.6" /></g><g opacity="0.8"><path d="M47 55 Q45 75 42 90" fill="none" stroke="url(#silkGrad)" stroke-width="1.2" stroke-linecap="round" /><path d="M53 55 Q55 75 58 90" fill="none" stroke="url(#silkGrad)" stroke-width="1.2" stroke-linecap="round" /><circle cx="44" cy="70" r="1.5" fill="#4DB6AC" /><circle cx="56" cy="70" r="1.5" fill="#4DB6AC" /></g><circle cx="50" cy="45" r="25" fill="url(#emeraldGrad)" opacity="0.05" /></svg>`,
+            zhuangyuan: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="haloGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#FF5252; stop-opacity:0.4"/><stop offset="70%" style="stop-color:#B71C1C; stop-opacity:0.1"/><stop offset="100%" style="stop-color:#B71C1C; stop-opacity:0"/></radialGradient><linearGradient id="goldTop" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#FFF176"/><stop offset="50%" style="stop-color:#FFD700"/><stop offset="100%" style="stop-color:#FFA000"/></linearGradient><radialGradient id="rubyGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:#FF8A80"/><stop offset="60%" style="stop-color:#D32F2F"/><stop offset="100%" style="stop-color:#5D4037"/></radialGradient></defs><circle cx="50" cy="45" r="45" fill="url(#haloGrad)" /><path d="M25 55 Q50 5 75 55" fill="#1A1A1A" stroke="url(#goldTop)" stroke-width="1.5" /><path d="M32 48 Q50 18 68 48" fill="none" stroke="#FFD700" stroke-width="0.5" opacity="0.6" /><g><rect x="2" y="50" width="30" height="10" rx="2" fill="#111" stroke="url(#goldTop)" stroke-width="1.2" /><path d="M5 53 H28 M5 57 H28" stroke="url(#goldTop)" stroke-width="0.3" opacity="0.4" /><circle cx="5" cy="55" r="1" fill="#FFD700" /><rect x="68" y="50" width="30" height="10" rx="2" fill="#111" stroke="url(#goldTop)" stroke-width="1.2" /><path d="M72 53 H95 M72 57 H95" stroke="url(#goldTop)" stroke-width="0.3" opacity="0.4" /><circle cx="95" cy="55" r="1" fill="#FFD700" /></g><path d="M32 68 C 32 35, 68 35, 68 68 Z" fill="#1A1A1A" stroke="#333" stroke-width="0.5" /><path d="M40 45 Q50 38 60 45" fill="none" stroke="#FFD700" stroke-width="0.2" opacity="0.2" /><path d="M31 62 Q50 56 69 62 L68 70 Q50 64 32 70 Z" fill="url(#goldTop)" /><g transform="translate(50, 48)"><circle cx="0" cy="0" r="10" fill="url(#goldTop)" opacity="0.8" /><circle cx="0" cy="0" r="8" fill="#1A1A1A" /><circle cx="0" cy="0" r="6.5" fill="url(#rubyGrad)" /><circle cx="-1.5" cy="-2" r="1.5" fill="#FFF" opacity="0.6"/><circle cx="1.5" cy="-1" r="1" fill="#FFF" opacity="0.4"/></g><path d="M38 78 Q42 72 46 74 Q44 78 40 80 Q38 82 36 80 Z" fill="url(#goldTop)" stroke="#B8860B" stroke-width="0.3"/><path d="M62 78 Q58 72 54 74 Q56 78 60 80 Q62 82 64 80 Z" fill="url(#goldTop)" stroke="#B8860B" stroke-width="0.3"/><path d="M48 83 Q50 79 52 81 L51 86 Q50 88 49 86 Z" fill="url(#goldTop)" stroke="#B8860B" stroke-width="0.3"/></svg>`
+        };
+
+        const BADGE_ICONS = {
+            honglou_reader: '<img src="images/badges/honglou_reader.png" alt="红楼初探">',
+            
+            sanguo_reader: '<img src="images/badges/sanguo_reader.png" alt="三国通览">',
+            
+            shuihu_reader: '<img src="images/badges/shuihu_reader.png" alt="水浒知音">',
+            
+            xiyou_reader: '<img src="images/badges/xiyou_reader.png" alt="西游行者">',
+            
+            all_books_reader: '<img src="images/badges/all_books_reader.png" alt="四大名著通">',
+            
+            '100_questions': '<img src="images/badges/100_questions.png" alt="初试锋芒">',
+            
+            '500_questions': '<img src="images/badges/500_questions.png" alt="勤学不辍">',
+            
+            '1000_questions': '<img src="images/badges/1000_questions.png" alt="博闻强识">',
+            
+            '2000_questions': '<img src="images/badges/2000_questions.png" alt="学海无涯">',
+            
+            honglou_characters: '<img src="images/badges/honglou_characters.png" alt="金陵十二钗">',
+            
+            sanguo_strategists: '<img src="images/badges/sanguo_strategists.png" alt="卧龙凤雏">',
+            
+            shuihu_heroes: '<img src="images/badges/shuihu_heroes.png" alt="一百零八将">',
+            
+            xiyou_plot: '<img src="images/badges/xiyou_plot.png" alt="九九八十一难">',
+            
+            poetry_master: '<img src="images/badges/poetry_master.png" alt="诗词雅士">',
+            
+            rank_top_10: '<img src="images/badges/rank_top_10.png" alt="榜上有名">',
+            rank_top_5: '<img src="images/badges/rank_top_5.png" alt="五强争霸">',
+            rank_top_1: '<img src="images/badges/rank_top_1.png" alt="独占鳌头">',
+            rank_master: '<img src="images/badges/rank_master.png" alt="榜首常客">',
+            streak_3: '<img src="images/badges/streak_3.png" alt="三日之约">',
+            streak_7: '<img src="images/badges/streak_7.png" alt="七日之志">',
+            streak_30: '<img src="images/badges/streak_30.png" alt="月下苦读">',
+            streak_100: '<img src="images/badges/streak_100.png" alt="百日筑基">'
+        };
+
+        const PROFILE_STORAGE_KEY = 'user_profile_v1';
+        const TIME_STORAGE_KEY = 'browsing_time_v1';
+        const BADGE_STORAGE_KEY = 'badge_data_v1';
+        const HISTORY_KEY = 'quiz_history_v1';
+
+        const ProfileManager = {
+            getProfileData() {
+                try {
+                    const data = localStorage.getItem(PROFILE_STORAGE_KEY);
+                    return data ? JSON.parse(data) : {
+                        username: '书友',
+                        avatar: null,
+                        firstVisit: Date.now()
+                    };
+                } catch (e) {
+                    return { username: '书友', avatar: null, firstVisit: Date.now() };
+                }
+            },
+
+            saveProfileData(data) {
+                try {
+                    localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(data));
+                } catch (e) {
+                    console.error('保存用户数据失败:', e);
+                }
+            },
+
+            getBadgeData() {
+                const defaultData = { unlockedBadges: [], badgeUnlockTime: {}, readingProgress: {} };
+                try {
+                    const data = localStorage.getItem(BADGE_STORAGE_KEY);
+                    if (!data) return defaultData;
+
+                    const parsedData = JSON.parse(data);
+                    return {
+                        unlockedBadges: Array.isArray(parsedData?.unlockedBadges) ? parsedData.unlockedBadges : [],
+                        badgeUnlockTime: parsedData?.badgeUnlockTime && typeof parsedData.badgeUnlockTime === 'object'
+                            ? parsedData.badgeUnlockTime
+                            : {},
+                        readingProgress: parsedData?.readingProgress && typeof parsedData.readingProgress === 'object'
+                            ? parsedData.readingProgress
+                            : {}
+                    };
+                } catch (e) {
+                    return defaultData;
+                }
+            },
+
+            getHistoryData() {
+                try {
+                    const data = localStorage.getItem(HISTORY_KEY);
+                    return data ? JSON.parse(data) : {};
+                } catch (e) {
+                    return {};
+                }
+            },
+
+            getTimeData() {
+                try {
+                    const data = localStorage.getItem(TIME_STORAGE_KEY);
+                    return data ? JSON.parse(data) : { totalMinutes: 0, lastVisit: null };
+                } catch (e) {
+                    return { totalMinutes: 0, lastVisit: null };
+                }
+            },
+
+            saveTimeData(data) {
+                try {
+                    localStorage.setItem(TIME_STORAGE_KEY, JSON.stringify(data));
+                } catch (e) {
+                    console.error('保存时间数据失败:', e);
+                }
+            },
+
+            updateBrowsingTime() {
+                const timeData = this.getTimeData();
+                const now = Date.now();
+                
+                if (timeData.lastVisit) {
+                    const diffMinutes = Math.floor((now - timeData.lastVisit) / 60000);
+                    if (diffMinutes > 0 && diffMinutes < 60) {
+                        timeData.totalMinutes += diffMinutes;
+                    }
+                }
+                
+                timeData.lastVisit = now;
+                this.saveTimeData(timeData);
+                
+                return timeData.totalMinutes;
+            },
+
+            getTotalQuizCount() {
+                const history = this.getHistoryData();
+                let total = 0;
+                let correct = 0;
+                Object.values(history).forEach(item => {
+                    total += item.totalAttempts || 0;
+                    correct += item.correctCount || 0;
+                });
+                return { total, correct };
+            },
+
+            getReadingProgress() {
+                const badgeData = this.getBadgeData();
+                const progress = badgeData.readingProgress || {};
+                const books = ['honglou', 'sanguo', 'shuihu', 'xiyou'];
+                const result = {};
+                let completed = 0;
+
+                books.forEach(book => {
+                    const bookProgress = progress[book] || { stage1: false, stage2: false, stage3: false };
+                    const stages = (bookProgress.stage1 ? 1 : 0) + (bookProgress.stage2 ? 1 : 0) + (bookProgress.stage3 ? 1 : 0);
+                    result[book] = {
+                        stages,
+                        percent: Math.round((stages / 3) * 100),
+                        completed: stages === 3
+                    };
+                    if (stages === 3) completed++;
+                });
+
+                return { books: result, completed };
+            },
+
+            getRank() {
+                const TOTAL_QUESTIONS = 800;
+                const history = this.getHistoryData();
+                let mastered = 0;
+                
+                Object.values(history).forEach(item => {
+                    if (item.totalAttempts > 0 && (item.correctCount / item.totalAttempts) >= 0.8) {
+                        mastered++;
+                    }
+                });
+                
+                const percent = Math.round((mastered / TOTAL_QUESTIONS) * 100);
+                
+                for (let i = RANKS.length - 1; i >= 0; i--) {
+                    const rank = RANKS[i];
+                    for (let j = rank.stages.length - 1; j >= 0; j--) {
+                        if (percent >= rank.stages[j]) {
+                            return {
+                                rank: rank,
+                                stageIndex: j,
+                                stageLabel: ['Ⅰ', 'Ⅱ', 'Ⅲ'][j] || ''
+                            };
+                        }
+                    }
+                }
+                
+                return { rank: RANKS[0], stageIndex: -1, stageLabel: '' };
+            }
+        };
+
+        function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                alert('请选择图片文件');
+                return;
+            }
+
+            if (file.size > 2 * 1024 * 1024) {
+                alert('图片大小不能超过2MB');
+                return;
+            }
+
+            compressAndSaveAvatar(file);
+        }
+
+        function compressAndSaveAvatar(file) {
+            const img = new Image();
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                img.src = e.target.result;
+            };
+            
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const maxSize = 100;
+                let width = img.width;
+                let height = img.height;
+                
+                if (width > height) {
+                    if (width > maxSize) {
+                        height = Math.round(height * maxSize / width);
+                        width = maxSize;
+                    }
+                } else {
+                    if (height > maxSize) {
+                        width = Math.round(width * maxSize / height);
+                        height = maxSize;
+                    }
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                const compressedData = canvas.toDataURL('image/jpeg', 0.7);
+                
+                const profileData = ProfileManager.getProfileData();
+                profileData.avatar = compressedData;
+                ProfileManager.saveProfileData(profileData);
+                displayAvatar(compressedData);
+                applyAppearance();
+                
+                syncAvatarToServer(compressedData);
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        async function syncAvatarToServer(avatarData) {
+            const userId = sessionStorage.getItem('userId');
+            if (!userId) return;
+            
+            try {
+                const appearance = PointsManager.getActiveAppearance();
+                await fetch('/sync-avatar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId,
+                        avatar: avatarData,
+                        frame: appearance.frame,
+                        frameActive: appearance.frameActive
+                    })
+                });
+            } catch (err) {
+                console.error('同步头像失败:', err);
+            }
+        }
+
+        function displayAvatar(avatarData) {
+            const avatar = document.getElementById('avatar');
+            const placeholder = document.getElementById('avatarPlaceholder');
+            
+            if (avatarData) {
+                avatar.innerHTML = `<img src="${avatarData}" alt="头像">`;
+            } else {
+                avatar.innerHTML = `<span id="avatarPlaceholder"><i class="fa-solid fa-user" style="font-size: 2.5rem; color: #6b7280;"></i></span>`;
+            }
+        }
+
+        function applyAppearance() {
+            try {
+                const appearance = PointsManager.getActiveAppearance();
+                console.log('applyAppearance - 激活的外观:', appearance);
+                
+                const avatar = document.getElementById('avatar');
+                const username = document.getElementById('usernameDisplay');
+                
+                console.log('avatar元素:', avatar);
+                console.log('username元素:', username);
+                
+                if (appearance.frame && appearance.frameActive) {
+                    console.log('添加头像框类:', appearance.frame);
+                    avatar.classList.add(appearance.frame);
+                }
+                
+                if (appearance.nicknameEffect && appearance.nicknameActive) {
+                    console.log('添加昵称特效类: glow-effect');
+                    username.classList.add('glow-effect');
+                    username.setAttribute('data-text', username.textContent);
+                    console.log('username当前类列表:', username.classList);
+                }
+            } catch (e) {
+                console.error('应用外观失败:', e);
+            }
+        }
+
+        function renderAppearanceItems() {
+            try {
+                const pointsData = PointsManager.getData();
+                console.log('书卷数据:', pointsData);
+                const ownedAppearance = PointsManager.getOwnedAppearance();
+                console.log('拥有的外观道具:', ownedAppearance);
+                const appearance = PointsManager.getActiveAppearance();
+                console.log('激活的外观:', appearance);
+                
+                const items = [
+                    { id: 'frame_scroll', name: '头像框-书卷', icon: '<i class="fa-solid fa-scroll" style="color: #8b4513;"></i>' },
+                    { id: 'frame_plum', name: '头像框-梅花', icon: '<i class="fa-solid fa-spa" style="color: #ec4899;"></i>' },
+                    { id: 'nickname_glow', name: '昵称特效', icon: '✨' }
+                ];
+                
+                items.forEach(item => {
+                    const statusEl = document.getElementById(item.id + '_status');
+                    if (!statusEl) {
+                        console.log('找不到元素:', item.id + '_status');
+                        return;
+                    }
+                    
+                    const isOwned = ownedAppearance.includes(item.id);
+                    let isActive = false;
+                    
+                    if (item.id.startsWith('frame_')) {
+                        isActive = appearance.frame === item.id && appearance.frameActive;
+                    } else if (item.id === 'nickname_glow') {
+                        isActive = appearance.nicknameEffect === item.id && appearance.nicknameActive;
+                    }
+                    
+                    console.log(item.name, '是否拥有:', isOwned, '是否激活:', isActive);
+                    
+                    if (isActive) {
+                        statusEl.className = 'appearance-status active';
+                        statusEl.innerHTML = `<button class="appearance-use-btn" style="background:#f44336;" onclick="toggleAppearanceItem('${item.id}', false)">脱下</button>`;
+                    } else if (isOwned) {
+                        statusEl.className = 'appearance-status owned';
+                        statusEl.innerHTML = `<button class="appearance-use-btn" onclick="toggleAppearanceItem('${item.id}', true)">穿上</button>`;
+                    } else {
+                        statusEl.className = 'appearance-status not-owned';
+                        statusEl.innerHTML = '未拥有';
+                    }
+                });
+            } catch (e) {
+                console.error('渲染外观道具失败:', e);
+            }
+        }
+
+        function toggleAppearanceItem(itemId, setActive) {
+            try {
+                const pointsData = PointsManager.getData();
+                const ownedAppearance = PointsManager.getOwnedAppearance();
+                
+                if (!ownedAppearance.includes(itemId)) {
+                    alert('未拥有此外观道具！');
+                    return;
+                }
+                
+                if (!pointsData.activeAppearance) {
+                    pointsData.activeAppearance = { 
+                        frame: null, 
+                        frameActive: false,
+                        nicknameEffect: null, 
+                        nicknameActive: false
+                    };
+                }
+                
+                if (itemId === 'frame_scroll' || itemId === 'frame_plum') {
+                    // 如果穿上新的头像框，先脱下当前的头像框
+                    if (setActive && pointsData.activeAppearance.frameActive) {
+                        pointsData.activeAppearance.frameActive = false;
+                    }
+                    pointsData.activeAppearance.frame = itemId;
+                    pointsData.activeAppearance.frameActive = setActive;
+                    alert(setActive ? '头像框已穿上！' : '头像框已脱下！');
+                } else if (itemId === 'nickname_glow') {
+                    pointsData.activeAppearance.nicknameEffect = itemId;
+                    pointsData.activeAppearance.nicknameActive = setActive;
+                    alert(setActive ? '昵称特效已穿上！' : '昵称特效已脱下！');
+                }
+                
+                localStorage.setItem(PointsManager.STORAGE_KEY, JSON.stringify(pointsData));
+                
+                location.reload();
+            } catch (e) {
+                console.error('切换外观道具失败:', e);
+            }
+        }
+
+        function useAppearanceItem(itemId) {
+            toggleAppearanceItem(itemId, true);
+        }
+
+        let cloudStats = null;
+
+        async function init() {
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+            if (isLoggedIn !== 'true') {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const profileData = ProfileManager.getProfileData();
+            const currentUser = sessionStorage.getItem('currentUser');
+            const userId = sessionStorage.getItem('userId');
+            
+            displayAvatar(profileData.avatar);
+            document.getElementById('usernameDisplay').textContent = currentUser || profileData.username;
+            
+            if (userId) {
+                await loadFromCloud(userId);
+            }
+            
+            renderStats();
+            renderRank();
+            renderBadges();
+            renderReadingProgress();
+            renderAppearanceItems();
+            applyAppearance();
+        }
+
+        async function loadFromCloud(userId) {
+            try {
+                const response = await fetch(`/load-user-stats?userId=${userId}`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success && result.data) {
+                        cloudStats = result.data;
+                        
+                        if (result.data.avatar) {
+                            const profileData = ProfileManager.getProfileData();
+                            profileData.avatar = result.data.avatar;
+                            ProfileManager.saveProfileData(profileData);
+                            displayAvatar(result.data.avatar);
+                        }
+                        
+                        if (result.data.frame || result.data.frameActive) {
+                            const pointsData = PointsManager.getData();
+                            if (!pointsData.activeAppearance) {
+                                pointsData.activeAppearance = { 
+                                    frame: null, 
+                                    frameActive: false,
+                                    nicknameEffect: null, 
+                                    nicknameActive: false
+                                };
+                            }
+                            if (result.data.frame) {
+                                pointsData.activeAppearance.frame = result.data.frame;
+                            }
+                            if (result.data.frameActive !== undefined) {
+                                pointsData.activeAppearance.frameActive = result.data.frameActive;
+                            }
+                            localStorage.setItem(PointsManager.STORAGE_KEY, JSON.stringify(pointsData));
+                        }
+                    }
+                } else {
+                    console.log('从云端加载数据失败（本地模式）');
+                }
+            } catch (err) {
+                console.log('从云端加载数据失败（本地模式）');
+            }
+        }
+
+        function renderStats() {
+            let totalQuestions, correctAnswers, studyMinutes;
+            
+            if (cloudStats) {
+                totalQuestions = cloudStats.total_questions || 0;
+                correctAnswers = cloudStats.correct_answers || 0;
+                studyMinutes = cloudStats.study_minutes || 0;
+            } else {
+                const quizStats = ProfileManager.getTotalQuizCount();
+                totalQuestions = quizStats.total;
+                correctAnswers = quizStats.correct;
+                studyMinutes = ProfileManager.updateBrowsingTime();
+            }
+            
+            const accuracy = totalQuestions > 0 
+                ? Math.round((correctAnswers / totalQuestions) * 100) 
+                : 0;
+            
+            try {
+                const pointsData = localStorage.getItem('user_points_v1');
+                if (pointsData) {
+                    const points = JSON.parse(pointsData);
+                    document.getElementById('totalPoints').textContent = points.totalPoints || 0;
+                }
+            } catch (e) {
+                document.getElementById('totalPoints').textContent = '0';
+            }
+            
+            document.getElementById('totalQuestions').textContent = totalQuestions;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+            
+            const badgeData = ProfileManager.getBadgeData();
+            const unlockedBadges = Array.isArray(badgeData.unlockedBadges) ? badgeData.unlockedBadges : [];
+            document.getElementById('badgeCount').textContent = unlockedBadges.length;
+            
+            const readingProgress = ProfileManager.getReadingProgress();
+            document.getElementById('booksCompleted').textContent = readingProgress.completed + '/4';
+            
+            if (studyMinutes >= 60) {
+                const hours = Math.floor(studyMinutes / 60);
+                const mins = studyMinutes % 60;
+                document.getElementById('totalTime').textContent = hours + '小时' + (mins > 0 ? mins + '分' : '');
+            } else {
+                document.getElementById('totalTime').textContent = studyMinutes + '分钟';
+            }
+        }
+
+        function renderRank() {
+            let rankInfo = null;
+            
+            try {
+                const pointsData = localStorage.getItem('user_points_v1');
+                if (pointsData) {
+                    const points = JSON.parse(pointsData);
+                    const totalPoints = points.totalPoints || 0;
+                    
+                    const RANK_THRESHOLDS = [
+                        { name: '状元', minPoints: 50000, icon: 'zhuangyuan', color: '#FFD700' },
+                        { name: '翰林', minPoints: 30000, icon: 'hanlin', color: '#00897B' },
+                        { name: '进士', minPoints: 15000, icon: 'jinshi', color: '#AB47BC' },
+                        { name: '举人', minPoints: 8000, icon: 'juren', color: '#E53935' },
+                        { name: '秀才', minPoints: 3000, icon: 'xiucai', color: '#81D4FA' },
+                        { name: '书生', minPoints: 1000, icon: 'shusheng', color: '#5C6BC0' },
+                        { name: '蒙童', minPoints: 0, icon: 'mengtong', color: '#7CB342' }
+                    ];
+                    
+                    for (const rank of RANK_THRESHOLDS) {
+                        if (totalPoints >= rank.minPoints) {
+                            rankInfo = {
+                                rank: rank,
+                                stageIndex: 0,
+                                stageLabel: ''
+                            };
+                            break;
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error('读取书卷失败:', e);
+            }
+            
+            if (!rankInfo) {
+                rankInfo = { rank: RANKS[0], stageIndex: -1, stageLabel: '' };
+            }
+            
+            const rankName = rankInfo.rank.name + (rankInfo.stageLabel ? ' ' + rankInfo.stageLabel : '');
+            
+            document.getElementById('rankIcon').innerHTML = RANK_ICONS[rankInfo.rank.icon];
+            document.getElementById('rankName').textContent = rankName;
+            document.getElementById('rankName').style.color = rankInfo.rank.color;
+        }
+
+        function renderBadges() {
+            const badgeData = ProfileManager.getBadgeData();
+            const unlockedIds = badgeData.unlockedBadges || [];
+            
+            const badgeList = document.getElementById('badgeList');
+            
+            if (unlockedIds.length === 0) {
+                badgeList.innerHTML = '<div class="no-badges">暂无勋章，继续努力吧！</div>';
+                return;
+            }
+            
+            const unlockedBadges = BADGES.filter(b => unlockedIds.includes(b.id));
+            
+            badgeList.innerHTML = unlockedBadges.map(badge => `
+                <div class="badge-item ${badge.rarity}">
+                    <div class="badge-icon-small">${BADGE_ICONS[badge.id]}</div>
+                    <div class="badge-name-small">${badge.name}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderReadingProgress() {
+            const readingProgress = ProfileManager.getReadingProgress();
+            const books = readingProgress.books;
+            
+            const bookNames = ['honglou', 'sanguo', 'shuihu', 'xiyou'];
+            
+            bookNames.forEach(book => {
+                const progress = books[book];
+                document.getElementById(book + 'Progress').style.width = progress.percent + '%';
+                document.getElementById(book + 'Status').textContent = progress.completed ? '已完成' : progress.stages + '/3';
+            });
+        }
+
+        function syncToCloud() {
+            const userId = sessionStorage.getItem('userId');
+            if (!userId) return;
+            
+            const history = ProfileManager.getHistoryData();
+            let totalQuestions = 0;
+            let correctAnswers = 0;
+            let masteredCount = 0;
+            
+            Object.values(history).forEach(item => {
+                totalQuestions += item.totalAttempts || 0;
+                correctAnswers += item.correctCount || 0;
+                if (item.totalAttempts > 0 && (item.correctCount / item.totalAttempts) >= 0.8) {
+                    masteredCount++;
+                }
+            });
+            
+            const timeData = ProfileManager.getTimeData();
+            
+            fetch('/sync-stats', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userId,
+                    totalQuestions,
+                    correctAnswers,
+                    studyMinutes: timeData.totalMinutes || 0,
+                    masteredCount
+                })
+            }).catch(err => console.log('同步失败（本地模式）'));
+        }
+
+        init();
+
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'quiz_history_v1' || e.key === 'badge_data_v1' || e.key === 'browsing_time_v1') {
+                init();
+            }
+        });
+
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                init();
+            }
+        });
+
+        setInterval(() => {
+            ProfileManager.updateBrowsingTime();
+        }, 60000);
+
+        window.addEventListener('beforeunload', () => {
+            ProfileManager.updateBrowsingTime();
+            syncToCloud();
+        });
+    </script>
+</body>
+</html>

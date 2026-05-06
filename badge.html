@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>勋章墙</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "SimSun", sans-serif;
+            background-color: #f5f5dc;
+            min-height: 100vh;
+            padding: 20px;
+            padding-top: 60px;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            right: 40px;
+            text-decoration: none;
+            color: #f5f5dc;
+            font-weight: bold;
+            background: #8b4513;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .page-title {
+            text-align: center;
+            color: #8b4513;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .stats-summary {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            background: linear-gradient(135deg, #fff9e6, #fff5d6);
+            border-radius: 15px;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 2px solid #d4af37;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #8b4513;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .section {
+            max-width: 900px;
+            margin: 0 auto 40px;
+        }
+
+        .section-title {
+            color: #8b4513;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #d4af37;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .badge-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            border: 4px solid transparent;
+            background-clip: padding-box;
+        }
+
+        .badge-card::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border-radius: 22px;
+            z-index: -1;
+            background: linear-gradient(135deg, #d4af37, #f0d78c);
+            opacity: 0.3;
+        }
+
+        .badge-card.locked {
+            opacity: 0.6;
+            filter: grayscale(0.5);
+        }
+
+        .badge-card.locked .badge-icon {
+            filter: grayscale(1) brightness(0.7);
+        }
+
+        .badge-card.unlocked {
+            animation: unlockPulse 0.5s ease;
+        }
+
+        @keyframes unlockPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .badge-card.common.unlocked {
+            border: 4px solid #d4af37;
+            background: linear-gradient(135deg, #fff9e6, #fff);
+            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.4);
+        }
+
+        .badge-card.common.unlocked::before {
+            background: linear-gradient(135deg, #d4af37, #f0d78c, #d4af37);
+            opacity: 0.5;
+            animation: borderGlow 3s ease-in-out infinite;
+        }
+
+        .badge-card.rare.unlocked {
+            border: 4px solid #9c27b0;
+            background: linear-gradient(135deg, #f3e5f5, #fff);
+            box-shadow: 0 8px 30px rgba(156, 39, 176, 0.4);
+        }
+
+        .badge-card.rare.unlocked::before {
+            background: linear-gradient(135deg, #9c27b0, #ce93d8, #9c27b0);
+            opacity: 0.6;
+            animation: borderGlow 2.5s ease-in-out infinite;
+        }
+
+        .badge-card.epic.unlocked {
+            border: 4px solid transparent;
+            background: linear-gradient(#fff, #fff) padding-box,
+                        linear-gradient(135deg, #ff6b35, #f7931e, #ff6b35) border-box;
+            box-shadow: 0 8px 35px rgba(255, 107, 53, 0.5);
+            animation: epicGlow 2s ease-in-out infinite;
+        }
+
+        .badge-card.epic.unlocked::before {
+            background: linear-gradient(135deg, #ff6b35, #f7931e, #ffd700, #ff6b35);
+            opacity: 0.7;
+            animation: borderGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+
+        @keyframes epicGlow {
+            0%, 100% { box-shadow: 0 4px 25px rgba(255, 107, 53, 0.4); }
+            50% { box-shadow: 0 4px 35px rgba(255, 107, 53, 0.6); }
+        }
+
+        .badge-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .badge-icon::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4af37, #f0d78c, #d4af37);
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        .badge-icon img {
+            max-width: 100%;
+            max-height: 100%;
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            border-radius: 50%;
+            border: 4px solid #d4af37;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25), 
+                        inset 0 2px 10px rgba(255, 255, 255, 0.5);
+            background: linear-gradient(135deg, #fff9e6, #f5f5dc, #fff9e6);
+            padding: 5px;
+        }
+
+        .badge-card.common.unlocked .badge-icon img {
+            border: 4px solid #d4af37;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4), 
+                        inset 0 2px 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .badge-card.rare.unlocked .badge-icon img {
+            border: 4px solid #9c27b0;
+            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.4), 
+                        inset 0 2px 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .badge-card.epic.unlocked .badge-icon img {
+            border: 4px solid transparent;
+            background: linear-gradient(#fff, #fff) padding-box,
+                        linear-gradient(135deg, #ff6b35, #f7931e, #ffd700) border-box;
+            box-shadow: 0 4px 20px rgba(255, 107, 53, 0.5), 
+                        inset 0 2px 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .badge-card.unlocked:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .badge-card.unlocked:hover .badge-icon {
+            transform: scale(1.15) rotate(5deg);
+        }
+
+        .badge-card.unlocked:hover .badge-icon img {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), 
+                        inset 0 2px 10px rgba(255, 255, 255, 0.6);
+        }
+
+        .badge-card.common.unlocked:hover {
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.5);
+        }
+
+        .badge-card.rare.unlocked:hover {
+            box-shadow: 0 15px 40px rgba(156, 39, 176, 0.5);
+        }
+
+        .badge-card.epic.unlocked:hover {
+            box-shadow: 0 15px 45px rgba(255, 107, 53, 0.6);
+        }
+
+        .badge-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .badge-desc {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .badge-rarity {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .badge-rarity.common {
+            background: #fff9e6;
+            color: #d4af37;
+            border: 1px solid #d4af37;
+        }
+
+        .badge-rarity.rare {
+            background: #f3e5f5;
+            color: #9c27b0;
+            border: 1px solid #9c27b0;
+        }
+
+        .badge-rarity.epic {
+            background: linear-gradient(135deg, #fff5f0, #ffe0d0);
+            color: #ff6b35;
+            border: 1px solid #ff6b35;
+        }
+
+        .progress-container {
+            margin-top: 10px;
+        }
+
+        .progress-bar-bg {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .badge-card.common .progress-bar-fill {
+            background: linear-gradient(90deg, #d4af37, #f0d78c);
+        }
+
+        .badge-card.rare .progress-bar-fill {
+            background: linear-gradient(90deg, #9c27b0, #ce93d8);
+        }
+
+        .badge-card.epic .progress-bar-fill {
+            background: linear-gradient(90deg, #ff6b35, #f7931e);
+        }
+
+        .progress-text {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .lock-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.2rem;
+            opacity: 0.5;
+        }
+
+        .unlock-time {
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 8px;
+        }
+
+        .notification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .notification-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .notification-card {
+            background: linear-gradient(135deg, #fff9e6, #fff);
+            border-radius: 20px;
+            padding: 40px 50px;
+            text-align: center;
+            transform: scale(0.8);
+            transition: transform 0.3s;
+            max-width: 350px;
+            position: relative;
+        }
+
+        .notification-overlay.show .notification-card {
+            transform: scale(1);
+        }
+
+        .notification-card.common {
+            border: 4px solid #d4af37;
+            box-shadow: 0 10px 40px rgba(212, 175, 55, 0.5);
+        }
+
+        .notification-card.rare {
+            border: 4px solid #9c27b0;
+            box-shadow: 0 10px 40px rgba(156, 39, 176, 0.5);
+        }
+
+        .notification-card.epic {
+            border: 4px solid #ff6b35;
+            box-shadow: 0 10px 40px rgba(255, 107, 53, 0.5);
+            animation: epicNotify 1s ease-in-out infinite;
+        }
+
+        @keyframes epicNotify {
+            0%, 100% { box-shadow: 0 10px 40px rgba(255, 107, 53, 0.5); }
+            50% { box-shadow: 0 10px 60px rgba(255, 107, 53, 0.8); }
+        }
+
+        .notification-title {
+            font-size: 1.5rem;
+            color: #8b4513;
+            margin-bottom: 20px;
+        }
+
+        .notification-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            animation: bounceIn 0.5s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .notification-icon img {
+            max-width: 100%;
+            max-height: 100%;
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 16px;
+            border: 3px solid #d4af37;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #fff9e6, #fff);
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .notification-badge-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .notification-badge-name.common { color: #d4af37; }
+        .notification-badge-name.rare { color: #9c27b0; }
+        .notification-badge-name.epic { color: #ff6b35; }
+
+        .notification-badge-desc {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .notification-close {
+            background: #8b4513;
+            color: #fff;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .notification-close:hover {
+            background: #a0522d;
+            transform: scale(1.05);
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: particleFloat 2s ease-out forwards;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) scale(0);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .page-title {
+                font-size: 1.8rem;
+            }
+            
+            .badge-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+            }
+            
+            .badge-icon {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .stats-summary {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+    <script src="guest-access-check.js"></script>
+</head>
+<body>
+    <a href="home.html" class="back-link">← 返回主页</a>
+    
+    <h1 class="page-title"><i class="fa-solid fa-medal" style="color: #f59e0b;"></i> 勋章墙</h1>
+    
+    <div class="stats-summary">
+        <div class="stat-item">
+            <div class="stat-value" id="unlockedCount">0</div>
+            <div class="stat-label">已解锁勋章</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="totalQuestions">0</div>
+            <div class="stat-label">累计答题数</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="readingProgress">0/4</div>
+            <div class="stat-label">名著阅读</div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2 class="section-title"><i class="fa-solid fa-book" style="color: #8b4513;"></i> 阅读成就</h2>
+        <div class="badge-grid" id="readingBadges"></div>
+    </div>
+    
+    <div class="section">
+        <h2 class="section-title"><i class="fa-solid fa-pen-to-square" style="color: #3b82f6;"></i> 答题成就</h2>
+        <div class="badge-grid" id="quizBadges"></div>
+    </div>
+    
+    <div class="section">
+        <h2 class="section-title"><i class="fa-solid fa-trophy" style="color: #fbbf24;"></i> 名著精通</h2>
+        <div class="badge-grid" id="masteryBadges"></div>
+    </div>
+    
+    <div class="section">
+        <h2 class="section-title"><i class="fa-solid fa-ranking-star" style="color: #ef4444;"></i> 排行榜成就</h2>
+        <div class="badge-grid" id="leaderboardBadges"></div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title"><i class="fa-solid fa-fire" style="color: #f97316;"></i> 连续学习</h2>
+        <div class="badge-grid" id="streakBadges"></div>
+    </div>
+
+    <div class="notification-overlay" id="notificationOverlay">
+        <div class="notification-card" id="notificationCard">
+            <div class="particles" id="particles"></div>
+            <div class="notification-title"><i class="fa-solid fa-party-horn" style="color: #f59e0b;"></i> 恭喜获得勋章！</div>
+            <div class="notification-icon" id="notificationIcon"></div>
+            <div class="notification-badge-name" id="notificationBadgeName"></div>
+            <div class="notification-badge-desc" id="notificationBadgeDesc"></div>
+            <button class="notification-close" onclick="closeNotification()">太棒了！</button>
+        </div>
+    </div>
+
+    <script>
+        const BADGES = [
+            { id: 'honglou_reader', name: '红楼初探', desc: '完成红楼梦阅读', rarity: 'common', type: 'reading', book: 'honglou' },
+            { id: 'sanguo_reader', name: '三国通览', desc: '完成三国演义阅读', rarity: 'common', type: 'reading', book: 'sanguo' },
+            { id: 'shuihu_reader', name: '水浒知音', desc: '完成水浒传阅读', rarity: 'common', type: 'reading', book: 'shuihu' },
+            { id: 'xiyou_reader', name: '西游行者', desc: '完成西游记阅读', rarity: 'common', type: 'reading', book: 'xiyou' },
+            { id: 'all_books_reader', name: '四大名著通', desc: '完成全部名著阅读', rarity: 'rare', type: 'reading', book: 'all' },
+            { id: '100_questions', name: '初试锋芒', desc: '累计答题100道', rarity: 'common', type: 'quiz', target: 100 },
+            { id: '500_questions', name: '勤学不辍', desc: '累计答题500道', rarity: 'common', type: 'quiz', target: 500 },
+            { id: '1000_questions', name: '博闻强识', desc: '累计答题1000道', rarity: 'rare', type: 'quiz', target: 1000 },
+            { id: '2000_questions', name: '学海无涯', desc: '累计答题2000道', rarity: 'epic', type: 'quiz', target: 2000 },
+            { id: 'honglou_characters', name: '金陵十二钗', desc: '红楼梦人物题掌握', rarity: 'rare', type: 'mastery', category: 'honglou_character', target: 0.8 },
+            { id: 'sanguo_strategists', name: '卧龙凤雏', desc: '三国谋士题掌握', rarity: 'rare', type: 'mastery', category: 'sanguo_strategist', target: 0.8 },
+            { id: 'shuihu_heroes', name: '一百零八将', desc: '水浒人物题掌握', rarity: 'rare', type: 'mastery', category: 'shuihu_character', target: 0.8 },
+            { id: 'xiyou_plot', name: '九九八十一难', desc: '西游情节题掌握', rarity: 'rare', type: 'mastery', category: 'xiyou_plot', target: 0.8 },
+            { id: 'poetry_master', name: '诗词雅士', desc: '诗词填空题掌握', rarity: 'epic', type: 'mastery', category: 'poetry', target: 0.8 },
+            { id: 'rank_top_10', name: '榜上有名', desc: '进入排行榜前10名', rarity: 'common', type: 'leaderboard', targetRank: 10 },
+            { id: 'rank_top_5', name: '五强争霸', desc: '进入排行榜前5名', rarity: 'rare', type: 'leaderboard', targetRank: 5 },
+            { id: 'rank_top_1', name: '独占鳌头', desc: '登顶排行榜第一名', rarity: 'epic', type: 'leaderboard', targetRank: 1 },
+            { id: 'rank_master', name: '榜首常客', desc: '三个排行榜均前10名', rarity: 'epic', type: 'leaderboard', targetAll: 10 },
+            { id: 'streak_3', name: '三日之约', desc: '连续3天登录学习', rarity: 'common', type: 'streak', target: 3 },
+            { id: 'streak_7', name: '七日之志', desc: '连续7天登录学习', rarity: 'common', type: 'streak', target: 7 },
+            { id: 'streak_30', name: '月下苦读', desc: '连续30天登录学习', rarity: 'rare', type: 'streak', target: 30 },
+            { id: 'streak_100', name: '百日筑基', desc: '连续100天登录学习', rarity: 'epic', type: 'streak', target: 100 }
+        ];
+
+        const BADGE_ICONS = {
+            honglou_reader: '<img src="images/badges/honglou_reader.png" alt="红楼初探">',
+            sanguo_reader: '<img src="images/badges/sanguo_reader.png" alt="三国通览">',
+            shuihu_reader: '<img src="images/badges/shuihu_reader.png" alt="水浒知音">',
+            xiyou_reader: '<img src="images/badges/xiyou_reader.png" alt="西游行者">',
+            all_books_reader: '<img src="images/badges/all_books_reader.png" alt="四大名著通">',
+            '100_questions': '<img src="images/badges/100_questions.png" alt="初试锋芒">',
+            '500_questions': '<img src="images/badges/500_questions.png" alt="勤学不辍">',
+            '1000_questions': '<img src="images/badges/1000_questions.png" alt="博闻强识">',
+            '2000_questions': '<img src="images/badges/2000_questions.png" alt="学海无涯">',
+            honglou_characters: '<img src="images/badges/honglou_characters.png" alt="金陵十二钗">',
+            sanguo_strategists: '<img src="images/badges/sanguo_strategists.png" alt="卧龙凤雏">',
+            shuihu_heroes: '<img src="images/badges/shuihu_heroes.png" alt="一百零八将">',
+            xiyou_plot: '<img src="images/badges/xiyou_plot.png" alt="九九八十一难">',
+            poetry_master: '<img src="images/badges/poetry_master.png" alt="诗词雅士">',
+            rank_top_10: '<img src="images/badges/rank_top_10.png" alt="榜上有名">',
+            rank_top_5: '<img src="images/badges/rank_top_5.png" alt="五强争霸">',
+            rank_top_1: '<img src="images/badges/rank_top_1.png" alt="独占鳌头">',
+            rank_master: '<img src="images/badges/rank_master.png" alt="榜首常客">',
+            streak_3: '<img src="images/badges/streak_3.png" alt="三日之约">',
+            streak_7: '<img src="images/badges/streak_7.png" alt="七日之志">',
+            streak_30: '<img src="images/badges/streak_30.png" alt="月下苦读">',
+            streak_100: '<img src="images/badges/streak_100.png" alt="百日筑基">'
+        };
+
+        const RARITY_NAMES = {
+            common: '普通',
+            rare: '稀有',
+            epic: '史诗'
+        };
+
+        const BadgeManager = {
+            STORAGE_KEY: 'badge_data_v1',
+            QUIZ_COUNT_KEY: 'quiz_total_count_v1',
+            HISTORY_KEY: 'quiz_history_v1',
+            
+            getDefaultData() {
+                return {
+                    unlockedBadges: [],
+                    badgeUnlockTime: {},
+                    readingProgress: {
+                        xiyou: { stage1: false, stage2: false, stage3: false },
+                        sanguo: { stage1: false, stage2: false, stage3: false },
+                        shuihu: { stage1: false, stage2: false, stage3: false },
+                        honglou: { stage1: false, stage2: false, stage3: false }
+                    }
+                };
+            },
+            
+            getData() {
+                const defaultData = this.getDefaultData();
+                try {
+                    const data = localStorage.getItem(this.STORAGE_KEY);
+                    if (!data) return defaultData;
+                    const parsed = JSON.parse(data);
+                    return {
+                        unlockedBadges: parsed.unlockedBadges || [],
+                        badgeUnlockTime: parsed.badgeUnlockTime || {},
+                        readingProgress: {
+                            xiyou: parsed.readingProgress?.xiyou || { stage1: false, stage2: false, stage3: false },
+                            sanguo: parsed.readingProgress?.sanguo || { stage1: false, stage2: false, stage3: false },
+                            shuihu: parsed.readingProgress?.shuihu || { stage1: false, stage2: false, stage3: false },
+                            honglou: parsed.readingProgress?.honglou || { stage1: false, stage2: false, stage3: false }
+                        }
+                    };
+                } catch (e) {
+                    return defaultData;
+                }
+            },
+            
+            saveData(data) {
+                try {
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+                } catch (e) {
+                    console.error('保存勋章数据失败:', e);
+                }
+            },
+            
+            getTotalQuizCount() {
+                const history = this.getHistoryData();
+                let total = 0;
+                Object.values(history).forEach(item => {
+                    total += item.totalAttempts || 0;
+                });
+                return total;
+            },
+            
+            recordLogin() {
+                const today = new Date().toDateString();
+                const streakData = this.getStreakData();
+                
+                if (streakData.lastLoginDate === today) {
+                    return streakData.currentStreak;
+                }
+                
+                const yesterday = new Date(Date.now() - 86400000).toDateString();
+                
+                if (streakData.lastLoginDate === yesterday) {
+                    streakData.currentStreak += 1;
+                } else {
+                    streakData.currentStreak = 1;
+                }
+                
+                streakData.lastLoginDate = today;
+                if (streakData.currentStreak > streakData.bestStreak) {
+                    streakData.bestStreak = streakData.currentStreak;
+                }
+                
+                this.saveStreakData(streakData);
+                return streakData.currentStreak;
+            },
+            
+            getStreakData() {
+                try {
+                    const data = localStorage.getItem('streak_data_v1');
+                    return data ? JSON.parse(data) : { lastLoginDate: null, currentStreak: 0, bestStreak: 0 };
+                } catch (e) {
+                    return { lastLoginDate: null, currentStreak: 0, bestStreak: 0 };
+                }
+            },
+            
+            saveStreakData(data) {
+                try {
+                    localStorage.setItem('streak_data_v1', JSON.stringify(data));
+                } catch (e) {
+                    console.error('保存连续学习数据失败:', e);
+                }
+            },
+            
+            getCurrentStreak() {
+                const streakData = this.getStreakData();
+                const today = new Date().toDateString();
+                const yesterday = new Date(Date.now() - 86400000).toDateString();
+                
+                if (streakData.lastLoginDate === today || streakData.lastLoginDate === yesterday) {
+                    return streakData.currentStreak;
+                }
+                return 0;
+            },
+            
+            getHistoryData() {
+                try {
+                    const data = localStorage.getItem(this.HISTORY_KEY);
+                    return data ? JSON.parse(data) : {};
+                } catch (e) {
+                    return {};
+                }
+            },
+            
+            getReadingProgress(book) {
+                const data = this.getData();
+                const progress = data.readingProgress || {};
+                return progress[book] || { stage1: false, stage2: false, stage3: false };
+            },
+            
+            isBookCompleted(book) {
+                const progress = this.getReadingProgress(book);
+                return progress.stage1 && progress.stage2 && progress.stage3;
+            },
+            
+            getCompletedBooksCount() {
+                let count = 0;
+                ['xiyou', 'sanguo', 'shuihu', 'honglou'].forEach(book => {
+                    if (this.isBookCompleted(book)) count++;
+                });
+                return count;
+            },
+            
+            markStageRead(book, stage) {
+                const data = this.getData();
+                if (!data.readingProgress) {
+                    data.readingProgress = {
+                        xiyou: { stage1: false, stage2: false, stage3: false },
+                        sanguo: { stage1: false, stage2: false, stage3: false },
+                        shuihu: { stage1: false, stage2: false, stage3: false },
+                        honglou: { stage1: false, stage2: false, stage3: false }
+                    };
+                }
+                if (!data.readingProgress[book]) {
+                    data.readingProgress[book] = { stage1: false, stage2: false, stage3: false };
+                }
+                data.readingProgress[book]['stage' + stage] = true;
+                this.saveData(data);
+                
+                return this.checkAndUnlockBadges();
+            },
+            
+            getBadgeProgress(badge) {
+                if (badge.type === 'quiz') {
+                    const current = this.getTotalQuizCount();
+                    return {
+                        current: Math.min(current, badge.target),
+                        target: badge.target,
+                        percent: Math.min(100, Math.round((current / badge.target) * 100))
+                    };
+                } else if (badge.type === 'reading') {
+                    if (badge.book === 'all') {
+                        const completed = this.getCompletedBooksCount();
+                        return {
+                            current: completed,
+                            target: 4,
+                            percent: Math.round((completed / 4) * 100)
+                        };
+                    } else {
+                        const progress = this.getReadingProgress(badge.book);
+                        const completed = (progress.stage1 ? 1 : 0) + (progress.stage2 ? 1 : 0) + (progress.stage3 ? 1 : 0);
+                        return {
+                            current: completed,
+                            target: 3,
+                            percent: Math.round((completed / 3) * 100)
+                        };
+                    }
+                } else if (badge.type === 'mastery') {
+                    const mastery = this.getCategoryMastery(badge.category);
+                    const currentPercent = Math.round(mastery * 100);
+                    const targetPercent = Math.round(badge.target * 100);
+                    return {
+                        current: currentPercent + '%',
+                        target: targetPercent + '%',
+                        percent: Math.min(100, Math.round((mastery / badge.target) * 100))
+                    };
+                } else if (badge.type === 'streak') {
+                    const currentStreak = this.getCurrentStreak();
+                    return {
+                        current: Math.min(currentStreak, badge.target),
+                        target: badge.target,
+                        percent: Math.min(100, Math.round((currentStreak / badge.target) * 100))
+                    };
+                } else if (badge.type === 'leaderboard') {
+                    const rankData = this.getLeaderboardRank();
+                    if (badge.targetRank) {
+                        const isReached = rankData.rank > 0 && rankData.rank <= badge.targetRank;
+                        return {
+                            current: rankData.rank > 0 && rankData.rank < 999 ? `第${rankData.rank}名` : '未上榜',
+                            target: `前${badge.targetRank}名`,
+                            percent: isReached ? 100 : 0
+                        };
+                    } else if (badge.targetAll) {
+                        const reachedCount = (rankData.rank > 0 && rankData.rank <= badge.targetAll ? 1 : 0) +
+                                             (rankData.time > 0 && rankData.time <= badge.targetAll ? 1 : 0) +
+                                             (rankData.accuracy > 0 && rankData.accuracy <= badge.targetAll ? 1 : 0);
+                        return {
+                            current: reachedCount,
+                            target: 3,
+                            percent: Math.round((reachedCount / 3) * 100)
+                        };
+                    }
+                }
+                return { current: 0, target: 1, percent: 0 };
+            },
+            
+            unlockBadge(badgeId) {
+                const data = this.getData();
+                if (!data.unlockedBadges.includes(badgeId)) {
+                    data.unlockedBadges.push(badgeId);
+                    data.badgeUnlockTime[badgeId] = Date.now();
+                    this.saveData(data);
+                    return true;
+                }
+                return false;
+            },
+            
+            hasBadge(badgeId) {
+                const data = this.getData();
+                return data.unlockedBadges.includes(badgeId);
+            },
+            
+            checkAndUnlockBadges() {
+                const data = this.getData();
+                const newlyUnlocked = [];
+                
+                BADGES.forEach(badge => {
+                    if (data.unlockedBadges.includes(badge.id)) return;
+                    
+                    let shouldUnlock = false;
+                    
+                    if (badge.type === 'quiz') {
+                        const count = this.getTotalQuizCount();
+                        shouldUnlock = count >= badge.target;
+                    } else if (badge.type === 'reading') {
+                        if (badge.book === 'all') {
+                            shouldUnlock = this.getCompletedBooksCount() >= 4;
+                        } else {
+                            shouldUnlock = this.isBookCompleted(badge.book);
+                        }
+                    } else if (badge.type === 'mastery') {
+                        const statsData = localStorage.getItem('category_stats_v1');
+                        const stats = statsData ? JSON.parse(statsData) : {};
+                        const categoryStats = stats[badge.category] || { total: 0, correct: 0 };
+                        
+                        // 强制要求至少完成 20 题才能解锁掌握勋章
+                        if (categoryStats.total >= 20) {
+                            const mastery = categoryStats.total > 0 ? categoryStats.correct / categoryStats.total : 0;
+                            shouldUnlock = mastery >= badge.target;
+                        }
+                    } else if (badge.type === 'leaderboard') {
+                        const rankData = this.getLeaderboardRank();
+                        if (badge.targetRank) {
+                            shouldUnlock = rankData.rank <= badge.targetRank && rankData.rank > 0;
+                        } else if (badge.targetAll) {
+                            shouldUnlock = rankData.rank <= badge.targetAll && 
+                                rankData.time <= badge.targetAll && 
+                                rankData.accuracy <= badge.targetAll;
+                        }
+                    } else if (badge.type === 'streak') {
+                        const currentStreak = this.getCurrentStreak();
+                        shouldUnlock = currentStreak >= badge.target;
+                    }
+                    
+                    if (shouldUnlock) {
+                        data.unlockedBadges.push(badge.id);
+                        data.badgeUnlockTime[badge.id] = Date.now();
+                        newlyUnlocked.push(badge);
+                    }
+                });
+                
+                this.saveData(data);
+                return newlyUnlocked;
+            },
+            
+            getCategoryMastery(category) {
+                try {
+                    const statsData = localStorage.getItem('category_stats_v1');
+                    if (statsData) {
+                        const stats = JSON.parse(statsData);
+                        if (stats[category] && stats[category].total > 0) {
+                            return stats[category].correct / stats[category].total;
+                        }
+                    }
+                    const data = localStorage.getItem('category_mastery_v1');
+                    if (data) {
+                        const mastery = JSON.parse(data);
+                        return mastery[category] || 0;
+                    }
+                } catch (e) {
+                    console.error('获取分类掌握度失败:', e);
+                }
+                return 0;
+            },
+            
+            getLeaderboardRank() {
+                try {
+                    const data = localStorage.getItem('leaderboard_rank_v1');
+                    return data ? JSON.parse(data) : { rank: 999, time: 999, accuracy: 999 };
+                } catch (e) {
+                    return { rank: 999, time: 999, accuracy: 999 };
+                }
+            }
+        };
+
+        function renderBadges() {
+            try {
+                const readingBadges = BADGES.filter(b => b.type === 'reading');
+                const quizBadges = BADGES.filter(b => b.type === 'quiz');
+                const masteryBadges = BADGES.filter(b => b.type === 'mastery');
+                const leaderboardBadges = BADGES.filter(b => b.type === 'leaderboard');
+                const streakBadges = BADGES.filter(b => b.type === 'streak');
+                
+                document.getElementById('readingBadges').innerHTML = 
+                    readingBadges.map(renderBadgeCard).join('');
+                document.getElementById('quizBadges').innerHTML = 
+                    quizBadges.map(renderBadgeCard).join('');
+                document.getElementById('masteryBadges').innerHTML = 
+                    masteryBadges.map(renderBadgeCard).join('');
+                document.getElementById('leaderboardBadges').innerHTML = 
+                    leaderboardBadges.map(renderBadgeCard).join('');
+                document.getElementById('streakBadges').innerHTML = 
+                    streakBadges.map(renderBadgeCard).join('');
+                
+                const data = BadgeManager.getData();
+                document.getElementById('unlockedCount').textContent = data.unlockedBadges.length;
+                document.getElementById('totalQuestions').textContent = BadgeManager.getTotalQuizCount();
+                document.getElementById('readingProgress').textContent = `${BadgeManager.getCompletedBooksCount()}/4`;
+            } catch (e) {
+                console.error('渲染勋章失败:', e);
+            }
+        }
+
+        function showNotification(badge) {
+            const overlay = document.getElementById('notificationOverlay');
+            const card = document.getElementById('notificationCard');
+            const icon = document.getElementById('notificationIcon');
+            const name = document.getElementById('notificationBadgeName');
+            const desc = document.getElementById('notificationBadgeDesc');
+            
+            card.className = 'notification-card ' + badge.rarity;
+            icon.innerHTML = BADGE_ICONS[badge.id];
+            name.textContent = badge.name;
+            name.className = 'notification-badge-name ' + badge.rarity;
+            desc.textContent = badge.desc;
+            
+            createParticles(badge.rarity);
+            
+            overlay.classList.add('show');
+        }
+
+        function closeNotification() {
+            document.getElementById('notificationOverlay').classList.remove('show');
+        }
+
+        function createParticles(rarity) {
+            const container = document.getElementById('particles');
+            container.innerHTML = '';
+            
+            const colors = {
+                common: ['#d4af37', '#f0d78c', '#fff9e6'],
+                rare: ['#9c27b0', '#ce93d8', '#f3e5f5'],
+                epic: ['#ff6b35', '#f7931e', '#ffd700']
+            };
+            
+            const particleColors = colors[rarity] || colors.common;
+            
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.bottom = '0';
+                particle.style.background = particleColors[Math.floor(Math.random() * particleColors.length)];
+                particle.style.animationDelay = Math.random() * 0.5 + 's';
+                particle.style.animationDuration = (1 + Math.random()) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        function checkPendingNotification() {
+            try {
+                const pending = localStorage.getItem('pending_badge_notification');
+                if (pending) {
+                    localStorage.removeItem('pending_badge_notification');
+                    const badge = BADGES.find(b => b.id === pending);
+                    if (badge) {
+                        setTimeout(() => showNotification(badge), 500);
+                    }
+                }
+            } catch (e) {
+                console.error('检查通知失败:', e);
+            }
+        }
+
+        function renderBadgeCard(badge) {
+            try {
+                const isUnlocked = BadgeManager.hasBadge(badge.id);
+                const progress = BadgeManager.getBadgeProgress(badge);
+                const data = BadgeManager.getData();
+                
+                const lockIcon = !isUnlocked ? '<span class="lock-icon"><i class="fa-solid fa-lock" style="color: #6b7280;"></i></span>' : '';
+                const unlockTime = isUnlocked && data.badgeUnlockTime[badge.id] 
+                    ? `<div class="unlock-time">获得于 ${new Date(data.badgeUnlockTime[badge.id]).toLocaleDateString()}</div>` 
+                    : '';
+                
+                return `
+                    <div class="badge-card ${badge.rarity} ${isUnlocked ? 'unlocked' : 'locked'}">
+                        ${lockIcon}
+                        <div class="badge-icon">${BADGE_ICONS[badge.id]}</div>
+                        <div class="badge-name">${badge.name}</div>
+                        <div class="badge-desc">${badge.desc}</div>
+                        <span class="badge-rarity ${badge.rarity}">${RARITY_NAMES[badge.rarity]}</span>
+                        <div class="progress-container">
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: ${progress.percent}%"></div>
+                            </div>
+                            <div class="progress-text">${progress.current} / ${progress.target}</div>
+                        </div>
+                        ${unlockTime}
+                    </div>
+                `;
+            } catch (e) {
+                console.error('渲染勋章卡片失败:', badge.id, e);
+                return `<div class="badge-card locked">加载失败</div>`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            BadgeManager.recordLogin();
+            BadgeManager.checkAndUnlockBadges();
+            renderBadges();
+            checkPendingNotification();
+        });
+
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'quiz_history_v1' || e.key === 'badge_data_v1') {
+                renderBadges();
+                checkPendingNotification();
+            }
+        });
+
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                renderBadges();
+                checkPendingNotification();
+            }
+        });
+    </script>
+</body>
+</html>

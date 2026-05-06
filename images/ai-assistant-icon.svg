@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="rainbow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ec4774"/>
+      <stop offset="16%" style="stop-color:#f59506"/>
+      <stop offset="33%" style="stop-color:#f6af22"/>
+      <stop offset="50%" style="stop-color:#8bc34a"/>
+      <stop offset="67%" style="stop-color:#43a04a"/>
+      <stop offset="83%" style="stop-color:#2196f3"/>
+      <stop offset="100%" style="stop-color:#9c27b0"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="url(#rainbow)"/>
+  <text x="50" y="58" font-size="20" font-family="Microsoft YaHei, SimHei, sans-serif" font-weight="bold" fill="white" text-anchor="middle">AI助手</text>
+</svg>

@@ -1,0 +1,384 @@
+require('dotenv').config();
+
+const express = require('express');
+const path = require('path');
+const { createClient } = require('@supabase/supabase-js');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
+app.use(express.static(path.join(__dirname)));
+
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+const supabase = supabaseUrl && supabaseKey 
+  ? createClient(supabaseUrl, supabaseKey)
+  : null;
+
+if (!supabase) {
+    console.warn('警告: Supabase 环境变量未配置，请设置 SUPABASE_URL 和 SUPABASE_ANON_KEY');
+} else {
+    console.log('Supabase 已连接');
+}
+
+async function findUserByIdOrUsername(userId, username, supabase, res) {
+    if (!userId && !username) {
+        res.status(400).json({ 
+            success: false, 
+            message: '用户ID或用户名不能为空' 
+        });
+        return null;
+    }
+
+    if (!supabase) {
+        res.status(500).json({ 
+            success: false, 
+            message: '数据库未配置' 
+        });
+        return null;
+    }
+
+    let targetUserId = userId;
+    if (!targetUserId && username) {
+        const { data: user, error: findError } = await supabase
+            .from('users')
+            .select('user_id')
+            .eq('username', username)
+            .single();
+        
+        if (findError || !user) {
+            res.status(404).json({ 
+                success: false, 
+                message: '用户不存在' 
+            });
+            return null;
+        }
+        targetUserId = user.user_id;
+    }
+
+    return targetUserId;
+}
+
+app.post('/sync-stats', async (req, res) => {
+    const { userId, username, totalQuestions, correctAnswers, studyMinutes, masteredCount, totalPoints } = req.body;
+
+    const targetUserId = await findUserByIdOrUsername(userId, username, supabase, res);
+    if (targetUserId === null) {
+        return;
+    }
+
+    const updateData = {
+        total_questions: totalQuestions || 0,
+        correct_answers: correctAnswers || 0,
+        study_minutes: studyMinutes || 0,
+        mastered_count: masteredCount || 0,
+        last_sync: new Date().toISOString()
+    };
+    
+    if (totalPoints !== undefined) {
+        updateData.total_points = totalPoints;
+    }
+
+    const { error } = await supabase
+        .from('users')
+        .update(updateData)
+        .eq('user_id', targetUserId);
+
+    if (error) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '同步失败: ' + error.message 
+        });
+    }
+
+    res.json({ 
+        success: true, 
+        message: '同步成功' 
+    });
+});
+
+app.post('/sync-quiz-data', async (req, res) => {
+    const { userId, username, quizData } = req.body;
+
+    const targetUserId = await findUserByIdOrUsername(userId, username, supabase, res);
+    if (targetUserId === null) {
+        return;
+    }
+
+    const { error } = await supabase
+        .from('users')
+        .update({
+            quiz_data: quizData,
+            last_sync: new Date().toISOString()
+        })
+        .eq('user_id', targetUserId);
+
+    if (error) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '同步失败: ' + error.message 
+        });
+    }
+
+    res.json({ 
+        success: true, 
+        message: '同步成功' 
+    });
+});
+
+app.post('/sync-avatar', async (req, res) => {
+    const { userId, avatar, frame, frameActive } = req.body;
+
+    if (!userId) {
+        return res.status(400).json({ 
+            success: false, 
+            message: '用户ID不能为空' 
+        });
+    }
+
+    if (!supabase) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '数据库未配置' 
+        });
+    }
+
+    const updateData = {
+        avatar: avatar,
+        avatar_frame: frame,
+        avatar_frame_active: frameActive
+    };
+
+    const { error } = await supabase
+        .from('users')
+        .update(updateData)
+        .eq('user_id', userId);
+
+    if (error) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '同步头像失败: ' + error.message 
+        });
+    }
+
+    res.json({ 
+        success: true, 
+        message: '头像同步成功' 
+    });
+});
+
+app.get('/load-quiz-data', async (req, res) => {
+    const { userId, username } = req.query;
+
+    const targetUserId = await findUserByIdOrUsername(userId, username, supabase, res);
+    if (targetUserId === null) {
+        return;
+    }
+
+    const { data, error } = await supabase
+        .from('users')
+        .select('quiz_data, last_sync')
+        .eq('user_id', targetUserId)
+        .single();
+
+    if (error) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '加载失败: ' + error.message 
+        });
+    }
+
+    res.json({ 
+        success: true, 
+        data: data?.quiz_data || null,
+        lastSync: data?.last_sync || null
+    });
+});
+
+app.get('/load-user-stats', async (req, res) => {
+    const { userId, username } = req.query;
+
+    const targetUserId = await findUserByIdOrUsername(userId, username, supabase, res);
+    if (targetUserId === null) {
+        return;
+    }
+
+    const { data, error } = await supabase
+        .from('users')
+        .select('total_questions, correct_answers, study_minutes, mastered_count, last_sync, avatar, avatar_frame, avatar_frame_active')
+        .eq('user_id', targetUserId)
+        .single();
+
+    if (error) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '加载失败: ' + error.message 
+        });
+    }
+
+    res.json({ 
+        success: true, 
+        data: {
+            total_questions: data?.total_questions || 0,
+            correct_answers: data?.correct_answers || 0,
+            study_minutes: data?.study_minutes || 0,
+            mastered_count: data?.mastered_count || 0,
+            last_sync: data?.last_sync || null,
+            avatar: data?.avatar || null,
+            frame: data?.avatar_frame || null,
+            frameActive: data?.avatar_frame_active || false
+        }
+    });
+});
+
+app.get('/leaderboard/rank', async (req, res) => {
+    if (!supabase) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '数据库未配置' 
+        });
+    }
+
+    const { data, error } = await supabase
+        .from('users')
+        .select('username, total_points, mastered_count, avatar, avatar_frame, avatar_frame_active')
+        .order('total_points', { ascending: false })
+        .limit(50);
+
+    if (error) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '获取排行榜失败' 
+        });
+    }
+
+    const leaderboard = data.map(user => {
+        return {
+            username: user.username,
+            score: user.total_points || 0,
+            masteredCount: user.mastered_count || 0,
+            avatar: user.avatar || null,
+            frame: user.avatar_frame || null,
+            frameActive: user.avatar_frame_active || false
+        };
+    });
+
+    res.json({ 
+        success: true, 
+        data: leaderboard 
+    });
+});
+
+app.get('/leaderboard/time', async (req, res) => {
+    if (!supabase) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '数据库未配置' 
+        });
+    }
+
+    const { data, error } = await supabase
+        .from('users')
+        .select('username, study_minutes, avatar, avatar_frame, avatar_frame_active')
+        .order('study_minutes', { ascending: false })
+        .limit(50);
+
+    if (error) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '获取排行榜失败' 
+        });
+    }
+
+    const leaderboard = data.map(user => ({
+        username: user.username,
+        minutes: user.study_minutes || 0,
+        avatar: user.avatar || null,
+        frame: user.avatar_frame || null,
+        frameActive: user.avatar_frame_active || false
+    }));
+
+    res.json({ 
+        success: true, 
+        data: leaderboard 
+    });
+});
+
+app.get('/leaderboard/accuracy', async (req, res) => {
+    if (!supabase) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '数据库未配置' 
+        });
+    }
+
+    const { data, error } = await supabase
+        .from('users')
+        .select('username, total_questions, correct_answers, avatar, avatar_frame, avatar_frame_active')
+        .gte('total_questions', 10)
+        .order('correct_answers', { ascending: false })
+        .limit(50);
+
+    if (error) {
+        return res.status(500).json({ 
+            success: false, 
+            message: '获取排行榜失败' 
+        });
+    }
+
+    const leaderboard = data.map(user => {
+        const accuracy = user.total_questions > 0 
+            ? Math.round((user.correct_answers / user.total_questions) * 100) 
+            : 0;
+        return {
+            username: user.username,
+            accuracy: accuracy,
+            totalQuestions: user.total_questions || 0,
+            correctAnswers: user.correct_answers || 0,
+            avatar: user.avatar || null,
+            frame: user.avatar_frame || null,
+            frameActive: user.avatar_frame_active || false
+        };
+    }).sort((a, b) => b.accuracy - a.accuracy);
+
+    res.json({ 
+        success: true, 
+        data: leaderboard 
+    });
+});
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/epub_content/:file', (req, res) => {
+    res.sendFile(path.join(__dirname, 'epub_content', req.params.file));
+});
+
+app.get('/:page', (req, res, next) => {
+    const page = req.params.page;
+    if (page.endsWith('.js')) {
+        return res.sendFile(path.join(__dirname, page));
+    }
+    if (page.endsWith('.css')) {
+        return res.sendFile(path.join(__dirname, page));
+    }
+    if (page.endsWith('.html')) {
+        res.sendFile(path.join(__dirname, page));
+    } else {
+        res.sendFile(path.join(__dirname, page + '.html'));
+    }
+});
+
+app.get('/images/:file', (req, res) => {
+    res.sendFile(path.join(__dirname, 'images', req.params.file));
+});
+
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`服务器已启动: http://localhost:${PORT}`);
+    });
+}
+
+module.exports = app;
