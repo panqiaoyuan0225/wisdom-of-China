@@ -1809,13 +1809,20 @@
                                 }
                             },
                             userInfo: {
-                                id: 'user',
-                                url: 'https://lf-coze-web-cdn.coze.cn/obj/eden-cn/lm-lgvj/ljhwZthlaukjlkulzlp/coze/coze-logo.png',
-                                nickname: 'User',
+                                id: (function() {
+                                    let uid = localStorage.getItem('coze_user_id');
+                                    if (!uid) {
+                                        uid = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                                        localStorage.setItem('coze_user_id', uid);
+                                    }
+                                    return uid;
+                                })(),
+                                url: 'images/wukong.png',
+                                nickname: '书友',
                             },
                             ui: {
                                 base: {
-                                    icon: 'https://lf-coze-web-cdn.coze.cn/obj/eden-cn/lm-lgvj/ljhwZthlaukjlkulzlp/coze/chatsdk-logo.png',
+                                    icon: 'images/ai-assistant-icon.svg',
                                     layout: 'pc',
                                     lang: 'zh-CN',
                                     zIndex: 1000
@@ -1829,12 +1836,12 @@
                                 },
                                 footer: {
                                     isShow: true,
-                                    expressionText: 'Powered by ...',
+                                    expressionText: '四大名著经典学习网 · AI 助手',
                                 },
                                 chatBot: {
-                                    title: '四大名著 AI 助手',
+                                    title: '📚 四大名著 AI 助手',
                                     uploadable: true,
-                                    width: 390,
+                                    width: 420,
                                 },
                             },
                         });
